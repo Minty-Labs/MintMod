@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintMod", "MintMod.csproj", "{EC3B33B6-5CEE-49FD-85EE-275CFD030FD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyLoader", "MintyLoader\MintyLoader.csproj", "{B6F1F37D-8A64-4473-8484-6906F2DCBD13}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		PatchDebug|Any CPU = PatchDebug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC3B33B6-5CEE-49FD-85EE-275CFD030FD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC3B33B6-5CEE-49FD-85EE-275CFD030FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC3B33B6-5CEE-49FD-85EE-275CFD030FD3}.PatchDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC3B33B6-5CEE-49FD-85EE-275CFD030FD3}.PatchDebug|Any CPU.Build.0 = Debug|Any CPU
+		{EC3B33B6-5CEE-49FD-85EE-275CFD030FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC3B33B6-5CEE-49FD-85EE-275CFD030FD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6F1F37D-8A64-4473-8484-6906F2DCBD13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6F1F37D-8A64-4473-8484-6906F2DCBD13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6F1F37D-8A64-4473-8484-6906F2DCBD13}.PatchDebug|Any CPU.ActiveCfg = PatchDebug|Any CPU
+		{B6F1F37D-8A64-4473-8484-6906F2DCBD13}.PatchDebug|Any CPU.Build.0 = PatchDebug|Any CPU
+		{B6F1F37D-8A64-4473-8484-6906F2DCBD13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6F1F37D-8A64-4473-8484-6906F2DCBD13}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7369C13B-AA22-4529-94CD-EFD1C9925CB8}
+	EndGlobalSection
+EndGlobal

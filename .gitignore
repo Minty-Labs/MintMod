@@ -1,0 +1,10 @@
+.vs/
+.idea/
+.git/
+MintMod/bin/
+MintMod/obj/
+MintMod/Output/
+MintMod/packages/
+MintMod/.vs/
+MintMod/MintyLoader/bin/
+MintMod/MintyLoader/obj/
