@@ -1,6 +1,7 @@
 .vs/
 .idea/
 .git/
+.build/
 MintMod/bin/
 MintMod/obj/
 MintMod/Output/
