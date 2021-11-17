@@ -8,8 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MelonLoader;
+using MelonLoader.TinyJSON;
+using MintMod.Functions;
 using MintMod.Hooks;
+using MintMod.Libraries;
+using MintMod.Managers;
 using MintMod.Resources;
+using MintMod.UserInterface.AvatarFavs;
+using MintMod.UserInterface.OldUI;
+using MintMod.Utils;
+using SettingsMenu = MintMod.UserInterface.OldUI.SettingsMenu;
 
 namespace MintMod {
 
@@ -34,21 +42,45 @@ namespace MintMod {
 
         public override void OnApplicationStart() {
             Instance = this;
+#if DEBUG
+            isDebug = true;
+#endif
+#if !DEBUG
             if (Environment.CommandLine.Contains("--MintyDev")) isDebug = true;
-
             var melonVersion = new Version(BuildInfo.Version);
             if (melonVersion != ModBuildInfo.TargetMLVersion) {
                 MessageBox.Show("Your MelonLoader is outdated.", "Outdated Mod Loader");
                 Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
                 MelonLogger.Warning("Your MelonLoader version is out of date, please update it.");
             }
+#endif
 
             mods.Add(new Config());
             mods.Add(new GetAssembly());
             mods.Add(new Patches());
             mods.Add(new MintyResources());
+            mods.Add(new ServerAuth());
+            mods.Add(new Network());
+            mods.Add(new ESP());
+            mods.Add(new KeyBindings());
+            mods.Add(new Items());
+            mods.Add(new LoadingWorldAudio());
+            mods.Add(new MasterFinder());
+            mods.Add(new AviFavLogic());
+            mods.Add(new RankRecoloring());
+            mods.Add(new Movement());
+            mods.Add(new HudIcon());
+            mods.Add(new ModCompatibility());
+            mods.Add(new ReColor());
+            mods.Add(new AvatarMenu());
+            mods.Add(new SocialMenu());
+            mods.Add(new MenuContentBackdrop());
+            mods.Add(new UserInterface.OldUI.SettingsMenu());
+            mods.Add(new General());
+            mods.Add(new WorldActions());
+            //mods.Add(new );
 
-            mods.ForEach(a => a.OnApplicationStart());
+            mods.ForEach(a => a.OnStart());
         }
 
         public override void OnPreferencesSaved() => mods.ForEach(s => s.OnPrefSave());
@@ -58,9 +90,9 @@ namespace MintMod {
 
     class GetAssembly : MintSubMod {
         public override string Name => "Yield Assembly";
-        public override string Description => "";
+        public override string Description => "Waits for VRCUiManager to be called.";
 
-        internal override void OnApplicationStart() => MelonCoroutines.Start(GetVRCAssembly());
+        internal override void OnStart() => MelonCoroutines.Start(GetVRCAssembly());
 
         private System.Collections.IEnumerator GetVRCAssembly() {
             Assembly assemblyCSharp = null;
@@ -83,7 +115,12 @@ namespace MintMod {
                 yield return null;
 
             //ModCompatibility.RunIgnoreYieldedUI();
-            //StartAuthCheck();
+            MelonCoroutines.Start(Functions.ServerAuth.AuthUser());
+        }
+
+        internal static System.Collections.IEnumerator YieldUI() {
+            MintCore.mods.ForEach(u => u.OnUserInterface());
+            yield break;
         }
     }
 }

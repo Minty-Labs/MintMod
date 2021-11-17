@@ -53,7 +53,7 @@ namespace MintMod {
         public static MelonPreferences_Category Extras;
         public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
 
-        internal override void OnApplicationStart() {
+        internal override void OnStart() {
             // Info
             _Extra();
             MelonPreferences_Category yes = MelonPreferences.CreateCategory("MintMod_Info", "MintMod - * (requires game restart)");
@@ -86,7 +86,7 @@ namespace MintMod {
         static void _Color() {
             // Color
             Color = MelonPreferences.CreateCategory("MintMod_Color", "MintMod - Color");
-            RecolorRanks = Color.CreateEntry("RecolorRanks", false, "Recolor Ranks", "Recolor VRChat Ranks");
+            RecolorRanks = Color.CreateEntry("RecolorRanks", false, "ReColor Ranks", "ReColor VRChat Ranks");
             FriendRankHEX = Color.CreateEntry("FriendRankHEX", "FFFF00", "HEX: Friends", "Friend Color");
             LegendRankHEX = Color.CreateEntry("LegendRankHEX", "FF6982", "HEX: Legend", "Legend Color");
             VeteranRankHEX = Color.CreateEntry("VeteranRankHEX", "FFC261", "HEX: Veteran", "Veteran Color");
@@ -103,7 +103,7 @@ namespace MintMod {
             ColorUiExpansionKit = Color.CreateEntry("ColorUiExpansionKit", true, "* Color UIX", "* Color Ui Expansion Kit");
             ColorMenuText = Color.CreateEntry("ColorMenuText", false, "* Color QuickMenu Text", "* Toggle Quick Menu Text Color");
             QMTextColorHEX = Color.CreateEntry("QMTextColorHEX", "ffff00", "HEX: QM Text", "Quick Menu Text Color");
-            EnableCustomNameplateReColoring = Color.CreateEntry("EnableCustomNameplateReColoring", true, "Custom Mint Nameplate Recolor", "Custom Nameplate ReColoring");
+            EnableCustomNameplateReColoring = Color.CreateEntry("EnableCustomNameplateReColoring", true, "Custom Mint Nameplate ReColor", "Custom Nameplate ReColoring");
             ColorLoadingScreen = Color.CreateEntry("ColorLoadingScreen", false, "* Color Loading Environment", "Colors the Loading Environment");
         }
 

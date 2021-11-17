@@ -27,7 +27,7 @@ namespace MintMod.Hooks {
             }
         }
 
-        internal override void OnApplicationStart() {
+        internal override void OnStart() {
             if (MintCore.isDebug)
                 MelonLogger.Msg(ConsoleColor.Cyan, "Setting up patches");
 

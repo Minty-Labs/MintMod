@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -20,13 +21,23 @@ namespace MintMod {
 
         internal virtual void OnQuickMenu() {}
 
-        internal virtual void OnApplicationStart() {
+        internal virtual void OnStart() {
             new Thread(() => {
                 for (; ; ) {
                     Thread.Sleep(1000);
-                    OnApplicationStart();
+                    OnStart();
                 }
             }) { IsBackground = true }.Start();
+        }
+
+        internal virtual IEnumerator OnYieldStart() {
+            new Thread(() => {
+                for (; ; ) {
+                    Thread.Sleep(1000);
+                    MelonCoroutines.Start(OnYieldStart());
+                }
+            }) { IsBackground = true }.Start();
+            yield break;
         }
 
         internal virtual void OnUpdate() {}

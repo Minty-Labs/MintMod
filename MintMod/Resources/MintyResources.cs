@@ -19,7 +19,7 @@ namespace MintMod.Resources {
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
 
-        internal override void OnApplicationStart() {
+        internal override void OnStart() {
             MelonLogger.Msg("Loading AssetBundles");
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("MintMod.Resources.mintbundle")) {
                 using (var memoryStream = new MemoryStream((int)stream.Length)) {

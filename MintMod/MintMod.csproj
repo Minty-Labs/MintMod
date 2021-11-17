@@ -44,6 +44,8 @@
     <Reference Include="Il2Cppmscorlib">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
     </Reference>
+    <Reference Include="Il2CppSystem, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Il2CppSystem.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="MelonLoader">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
@@ -193,11 +195,41 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Functions\KeyBindings.cs" />
+    <Compile Include="Functions\LoadingWorldAudio.cs" />
+    <Compile Include="Functions\MasterFinder.cs" />
+    <Compile Include="Functions\Movement.cs" />
+    <Compile Include="Functions\PlayerActions.cs" />
+    <Compile Include="Functions\RankRecoloring.cs" />
+    <Compile Include="Functions\ServerAuth.cs" />
+    <Compile Include="Functions\WorldActions.cs" />
+    <Compile Include="Libraries\ColorConversion.cs" />
+    <Compile Include="Libraries\ModCompatibility.cs" />
+    <Compile Include="Managers\Colors.cs" />
+    <Compile Include="Managers\emmVRC_Config.cs" />
+    <Compile Include="Managers\ESP.cs" />
+    <Compile Include="Managers\Items.cs" />
+    <Compile Include="Managers\Players.cs" />
     <Compile Include="MintCore.cs" />
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Patches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflections\PlayerWrappers.cs" />
+    <Compile Include="Reflections\UserInterface.cs" />
+    <Compile Include="Reflections\VRCAPIObjects.cs" />
+    <Compile Include="Reflections\VRCMenuButtonAPI.cs" />
     <Compile Include="Resources\MintyResources.cs" />
+    <Compile Include="UserInterface\AvatarFavs\AviFavLogic.cs" />
+    <Compile Include="UserInterface\AvatarFavs\AviFavSetup.cs" />
+    <Compile Include="UserInterface\OldUI\AvatarMenu.cs" />
+    <Compile Include="UserInterface\OldUI\HudIcon.cs" />
+    <Compile Include="UserInterface\OldUI\MenuContentBackdrop.cs" />
+    <Compile Include="UserInterface\OldUI\ReColor.cs" />
+    <Compile Include="UserInterface\OldUI\SettingsMenu.cs" />
+    <Compile Include="UserInterface\OldUI\SocialMenu.cs" />
+    <Compile Include="Utils\General.cs" />
+    <Compile Include="Utils\Network.cs" />
+    <Compile Include="Utils\VRCUiPopups.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="MintyLoader\MintyLoader.csproj">
@@ -210,9 +242,7 @@
     <EmbeddedResource Include="Resources\mintbundle" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="UserInterface\OldUI\" />
     <Folder Include="UserInterface\QuickMenu\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
