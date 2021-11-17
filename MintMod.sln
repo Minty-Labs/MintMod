@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintMod", "MintMod\MintMod.csproj", "{EC3B33B6-5CEE-49FD-85EE-275CFD030FD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyLoader", "MintMod\MintyLoader\MintyLoader.csproj", "{B6F1F37D-8A64-4473-8484-6906F2DCBD13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyLoader", "MintyLoader\MintyLoader.csproj", "{B6F1F37D-8A64-4473-8484-6906F2DCBD13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReMod.Core", "ReMod.Core\ReMod.Core.csproj", "{C87FE758-ACB9-4FA2-AF6F-10AA9AA0023C}"
 EndProject

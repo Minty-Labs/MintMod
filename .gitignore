@@ -7,5 +7,5 @@ MintMod/obj/
 MintMod/Output/
 MintMod/packages/
 MintMod/.vs/
-MintMod/MintyLoader/bin/
-MintMod/MintyLoader/obj/
+MintyLoader/bin/
+MintyLoader/obj/
