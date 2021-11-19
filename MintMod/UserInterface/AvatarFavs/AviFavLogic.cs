@@ -22,6 +22,7 @@ namespace MintMod.UserInterface.AvatarFavs {
         internal static bool AviFavsErrored;
 
         internal override void OnStart() {
+            Intance = this;
             try {
                 Favorites.Instance = Favorites.Load();
             }
@@ -33,7 +34,7 @@ namespace MintMod.UserInterface.AvatarFavs {
 
         internal override void OnUserInterface() {
             if (!AviFavsErrored) return;
-            if (!ranOnce) return;
+            if (ranOnce) return;
             if (!Config.AviFavsEnabled.Value) {
                 MelonLogger.Msg("Extended Avatar Favoriting has been disabled.");
                 return;
@@ -54,6 +55,8 @@ namespace MintMod.UserInterface.AvatarFavs {
                 MelonLogger.Msg("Finished Minty Favorites");
             ranOnce = true;
         }
+
+        internal static AviFavLogic Intance;
 
         internal override void OnUpdate() {
             if (!AviFavsErrored) return;

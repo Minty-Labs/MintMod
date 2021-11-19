@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MintMod.Functions;
 using UnityEngine;
+using MintMod.UserInterface.AvatarFavs;
+using MintMod.UserInterface.QuickMenu;
 
 namespace MintMod {
     class Config : MintSubMod {
@@ -12,14 +15,14 @@ namespace MintMod {
         public override string Description => "Mint's Config system.";
 
         public static MelonPreferences_Category mint;
-        public static MelonPreferences_Entry<bool> SpoofDeviceType, QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate;
+        public static MelonPreferences_Entry<bool> SpoofDeviceType, QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc;
         public static MelonPreferences_Entry<int> SpoofedPingNumber;
         public static MelonPreferences_Entry<float> SpoofedFrameNumber;
 
         // Base
         public static MelonPreferences_Category Base;
         public static MelonPreferences_Entry<bool> KeepPriorityHighEnabled, ShowWelcomeMessages, UseCustomLoadingMusic, EnableMasterFinder, AutoAddJump,
-            EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, CustomConsoleLog, MintConsoleTitle;
+            EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, MintConsoleTitle, CanSitInChairs;
         public static MelonPreferences_Entry<int> MaxFrameRate;
 
         // Color
@@ -30,8 +33,7 @@ namespace MintMod {
 
         // Menu
         public static MelonPreferences_Category Menu;
-        public static MelonPreferences_Entry<int> MainMenuCordsX, MainMenuCordsY, PlayerActionsCordsX, PlayerActionsCordsY, PlayerTeleportCordsX, PlayerTeleportCordsY;
-        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, LookForUiExpansionKitInstall, ShowTabMenu, ActionMenuON;
+        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu;
         public static MelonPreferences_Entry<string> InfoHUDPosition;
 
         // Portal
@@ -55,7 +57,6 @@ namespace MintMod {
 
         internal override void OnStart() {
             // Info
-            _Extra();
             MelonPreferences_Category yes = MelonPreferences.CreateCategory("MintMod_Info", "MintMod - * (requires game restart)");
             _Base();
             _Color();
@@ -64,6 +65,7 @@ namespace MintMod {
             _MRBS();
             _Avatar();
             _Random();
+            _Extra();
         }
 
         static void _Base() {
@@ -79,8 +81,8 @@ namespace MintMod {
             EnablePlayerJoinLeave = Base.CreateEntry("EnablePlayerJoinLeave", false, "Join/Leave Notifs", "Log Player Join/Leave in console");
             FriendsOnlyJoinLeave = Base.CreateEntry("FriendsOnlyJoinLeave", false, "J/L Friends Only", "Friend only Join/Leave logs");
             HeadsUpDisplayNotifs = Base.CreateEntry("HeadsUpDisplayNotifs", false, "J/L HUD Messages", "Player/Friend Join/Leave HUD messages");
-            CustomConsoleLog = Base.CreateEntry("CustomConsoleLog", false, "* Custom Log Output", "*Use Custom Console Logs");
-            MintConsoleTitle = Base.CreateEntry("MintConsoleTitle", true, "* Mint Console Title", "*Use Custom Console Title");
+            //MintConsoleTitle = Base.CreateEntry("MintConsoleTitle", true, "* Mint Console Title", "*Use Custom Console Title");
+            CanSitInChairs = Base.CreateEntry("CanSitInChairs", true, "Can Sit In Chairs");
         }
 
         static void _Color() {
@@ -112,13 +114,12 @@ namespace MintMod {
             Menu = MelonPreferences.CreateCategory("MintMod_Menu", "MintMod - Menu");
 
             KeepFlightBTNsOnMainMenu = Menu.CreateEntry("KeepFlightBTNsOnMainMenu", false, "Put Fly/NoClip on Main Quick Menu", "");
-            LookForUiExpansionKitInstall = Menu.CreateEntry("LookForUiExpansionKitInstall", false, "Look for UIX", "Auto adjust elements if UIX is Detected");
-            ShowTabMenu = Menu.CreateEntry("ShowTabMenu", true, "Show Tab Menu", "");
             ActionMenuON = Menu.CreateEntry("ActionMenuON", true, "Mint ActionMenu Controls", "Toggle Action Menu integration");
 
-            InfoHUDPosition = Menu.CreateEntry("InfoHUDPosition", "3", "Quick Menu Player List Location", "");
-            UIExpansionKit.API.ExpansionKitApi.RegisterSettingAsStringEnum(Menu.Identifier, InfoHUDPosition.Identifier,
-                new[] { ("off", "Don't Show"), ("1", "Left"), ("2", "Top"), ("3", "Bottom"), ("4", "Right") });
+            //InfoHUDPosition = Menu.CreateEntry("InfoHUDPosition", "3", "Quick Menu Player List Location", "");
+            //UIExpansionKit.API.ExpansionKitApi.RegisterSettingAsStringEnum(Menu.Identifier, InfoHUDPosition.Identifier,
+            //    new[] { ("off", "Don't Show"), ("1", "Left"), ("2", "Top"), ("3", "Bottom"), ("4", "Right") });
+            KeepPhotonFreezesOnMainMenu = Menu.CreateEntry("KeepPhotonFreezeOnMainMenu", false, "* Puts a photon freeze toggle on QM");
         }
 
         static void _Portal() {
@@ -166,12 +167,13 @@ namespace MintMod {
             // Random
             mint = MelonPreferences.CreateCategory("MintMod_Random", "MintMod - Random");
             SpoofDeviceType = mint.CreateEntry("SpoofDeviceType", false, "Spoof Device to Quest", "");
-            QMStatus = mint.CreateEntry("QMStatus", false, "Dev Status on Quick Menu", "");
+            //QMStatus = mint.CreateEntry("QMStatus", false, "Dev Status on Quick Menu", "");
             SpoofPing = mint.CreateEntry("SpoofPing", false, "Spoof Ping", "");
             SpoofedPingNumber = mint.CreateEntry("SpoofedPingNumber", 0, "Spoofed Ping Number", "");
             SpoofedPingNegative = mint.CreateEntry("SpoofedPingNegative", false, "Fake Ping is Negative", "");
             SpoofFramerate = mint.CreateEntry("SpoofFramerate", true, "Spoof Framerate", "");
             SpoofedFrameNumber = mint.CreateEntry("SpoofedFrameNumber", 0f, "Spoofed Frame Number", "");
+            bypassRiskyFunc = mint.CreateEntry("bypassRiskyFunc", false, "Bypasses Mods' Risky Func Checks");
         }
 
         static void _Extra() {
@@ -181,7 +183,29 @@ namespace MintMod {
         }
 
         internal override void OnPrefSave() {
-            
+            Utils.General.SetPriority();
+            Utils.General.SetFrameRate();
+            MasterFinder.MasterIcon.SetActive(EnableMasterFinder.Value);
+            //if ()
+            if (AviFavsEnabled.Value) {
+                try {
+                    AviFavLogic.Intance.OnUserInterface();
+                } catch (Exception a) { MelonLogger.Error($"After game start, Avatar Favorites Start Error\n{a}"); }
+
+                try {
+                    MelonCoroutines.Start(AviFavLogic.RefreshMenu(1f));
+                }
+                catch (Exception r) {
+                    MelonLogger.Error($"{r}");
+                }
+            } else {
+                try {
+                    AviFavLogic.DestroyList();
+                }
+                catch (Exception d) { MelonLogger.Error($"{d}"); }
+            }
+            if (MintUserInterface.DeviceType != null)
+                MintUserInterface.DeviceType.Toggle(SpoofDeviceType.Value);
         }
     }
 }

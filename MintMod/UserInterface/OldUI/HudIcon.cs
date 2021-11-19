@@ -18,12 +18,19 @@ namespace MintMod.UserInterface.OldUI {
         internal override void OnUserInterface() {
             if (Config.ColorHUDMuteIcon.Value) {
                 HudVoiceIndicator = Object.FindObjectOfType<HudVoiceIndicator>();
-                HudVoiceIndicator.field_Private_Image_0.color = Minty;
-                HudVoiceIndicator.field_Private_Image_1.color = Minty;
-                HudVoiceIndicator.field_Private_GameObject_0.GetComponent<Image>().color = Minty;
-                HudVoiceIndicator.field_Private_GameObject_1.GetComponent<Image>().color = Minty;
-                var talking = HudVoiceIndicator.transform.Find("VoiceDot");
-                talking.GetComponentInChildren<Image>().color = Minty;
+                if (HudVoiceIndicator != null) {
+                    if (HudVoiceIndicator.field_Private_Image_0 != null)
+                        HudVoiceIndicator.field_Private_Image_0.color = Minty;
+                    if (HudVoiceIndicator.field_Private_Image_0 != null)
+                        HudVoiceIndicator.field_Private_Image_1.color = Minty;
+                    if (HudVoiceIndicator.field_Private_GameObject_0 != null)
+                        HudVoiceIndicator.field_Private_GameObject_0.GetComponent<Image>().color = Minty;
+                    if (HudVoiceIndicator.field_Private_GameObject_1 != null)
+                        HudVoiceIndicator.field_Private_GameObject_1.GetComponent<Image>().color = Minty;
+                    var talking = HudVoiceIndicator.transform.Find("VoiceDot");
+                    if (talking != null)
+                        talking.GetComponentInChildren<Image>().color = Minty;
+                }
             }
         }
     }

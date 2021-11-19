@@ -11,6 +11,7 @@ using MintMod.Libraries;
 using MintMod.Reflections;
 using static MintMod.Managers.Colors;
 using System.Diagnostics;
+using MintMod.Functions;
 using MintMod.Managers;
 
 namespace MintMod.UserInterface.OldUI {
@@ -18,7 +19,7 @@ namespace MintMod.UserInterface.OldUI {
         public override string Name => "Settings Menu";
         public override string Description => "Edits on the Settings Menu";
 
-        private static GameObject SettingsRestart, SettingsExit, RealSettingsExit, RealLogoutButton, LoliteInfoButton, LoliteInfoPanel, functionsButton;
+        private static GameObject SettingsRestart, SettingsExit, RealSettingsExit, RealLogoutButton, MintInfoButton, MintInfoPanel, functionsButton;
         private static GameObject Label4, Label1, Label2, Label3, Label5;
 
         private static GameObject CopiedFor1, CopiedFor2, CopiedFor3, CopiedFor4, CopiedFor5;
@@ -86,35 +87,35 @@ namespace MintMod.UserInterface.OldUI {
 			}
 
 			#region Mint Info
-			LoliteInfoButton = UnityEngine.Object.Instantiate<GameObject>(GameObject.Find("UserInterface/MenuContent/Screens/Settings/Button_AdvancedOptions"), GameObject.Find("UserInterface/MenuContent/Screens/Settings/Footer").transform);
-			LoliteInfoButton.name = "Mint_SettingsInfo";
-			LoliteInfoButton.GetComponentInChildren<Text>().text = "Mint Info";
-			//LoliteInfoButton.GetComponentInChildren<Text>().font = LoliteResources.Resources.BalooFont;
-			LoliteInfoButton.GetComponentInChildren<Text>().fontSize = 26;
-			LoliteInfoButton.GetComponent<RectTransform>().localPosition = new Vector2(-685, 375f);
-			LoliteInfoButton.GetComponent<RectTransform>().sizeDelta -= new Vector2(100.0f, 0.0f);
-			LoliteInfoButton.GetComponent<Image>().color = Color.white;
-			if (!Config.ColorGameMenu.Value) {
-				LoliteInfoButton.GetComponent<Button>().GetComponentInChildren<Image>().color = Minty;
-				LoliteInfoButton.GetComponentInChildren<Image>().color = Minty;
-			}
-			LoliteInfoButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
-			LoliteInfoButton.GetComponentInChildren<Button>().onClick.AddListener(new System.Action(() => {
-				if (LoliteInfoPanel.activeInHierarchy)
-					LoliteInfoPanel.SetActive(false);
+			MintInfoButton = UnityEngine.Object.Instantiate<GameObject>(GameObject.Find("UserInterface/MenuContent/Screens/Settings/Button_AdvancedOptions"), GameObject.Find("UserInterface/MenuContent/Screens/Settings/Footer").transform);
+			MintInfoButton.name = "Mint_SettingsInfo";
+			MintInfoButton.GetComponentInChildren<Text>().text = "Mint Info";
+			//MintInfoButton.GetComponentInChildren<Text>().font = LoliteResources.Resources.BalooFont;
+			MintInfoButton.GetComponentInChildren<Text>().fontSize = 26;
+			MintInfoButton.GetComponent<RectTransform>().localPosition = new Vector2(-685, 375f);
+			MintInfoButton.GetComponent<RectTransform>().sizeDelta -= new Vector2(100.0f, 0.0f);
+			MintInfoButton.GetComponent<Image>().color = Color.white;
+			//if (!Config.ColorGameMenu.Value) {
+				MintInfoButton.GetComponent<Button>().GetComponentInChildren<Image>().color = Minty;
+				MintInfoButton.GetComponentInChildren<Image>().color = Minty;
+			//}
+			MintInfoButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
+			MintInfoButton.GetComponentInChildren<Button>().onClick.AddListener(new System.Action(() => {
+				if (MintInfoPanel.activeInHierarchy)
+					MintInfoPanel.SetActive(false);
 				else
-					LoliteInfoPanel.SetActive(true);
+					MintInfoPanel.SetActive(true);
 			}));
 
-			LoliteInfoButton.SetActive(true);
+			MintInfoButton.SetActive(true);
 
-			LoliteInfoPanel = UnityEngine.Object.Instantiate<GameObject>(GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel"), GameObject.Find("UserInterface/MenuContent/Screens/Settings").transform);
-			LoliteInfoPanel.name = "Mint_SettingsInfoPanel";
-			string name = LoliteInfoPanel.name;
-			LoliteInfoPanel.GetComponent<RectTransform>().localPosition = new Vector2(-896, 410);
-			LoliteInfoPanel.GetComponent<RectTransform>().localScale = new Vector3(0.65f, 0.75f, 0.75f);
-			LoliteInfoPanel.GetComponent<RectTransform>().sizeDelta = new Vector2(400, 330);
-			LoliteInfoPanel.SetActive(false);
+			MintInfoPanel = UnityEngine.Object.Instantiate<GameObject>(GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel"), GameObject.Find("UserInterface/MenuContent/Screens/Settings").transform);
+			MintInfoPanel.name = "Mint_SettingsInfoPanel";
+			string name = MintInfoPanel.name;
+			MintInfoPanel.GetComponent<RectTransform>().localPosition = new Vector2(-896, 410);
+			MintInfoPanel.GetComponent<RectTransform>().localScale = new Vector3(0.65f, 0.75f, 0.75f);
+			MintInfoPanel.GetComponent<RectTransform>().sizeDelta = new Vector2(400, 330);
+			MintInfoPanel.SetActive(false);
 
 			GameObject Title = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/TitleText (1)");
 			Title.GetComponent<Text>().text = "Mint Info";
@@ -131,7 +132,7 @@ namespace MintMod.UserInterface.OldUI {
 
 			Label1 = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/Server/Label");
 			Label1.GetComponent<Text>().supportRichText = true;
-			Label1.GetComponent<Text>().text = "<color=#00ff00>Connected to Server</color>";
+			Label1.GetComponent<Text>().text = $"isAuthed -> <color={(ServerAuth.canLoadMod ? "#00ff00>true" : "red>false")}</color>";
 			#endregion
 
 			#region Comfort Turn => IsCute
@@ -144,7 +145,7 @@ namespace MintMod.UserInterface.OldUI {
 
 			Label2 = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/VPM/Label");
 			Label2.GetComponent<Text>().supportRichText = true;
-			Label2.GetComponent<Text>().text = "<color=#00ff00>isCute</color>";
+			Label2.GetComponent<Text>().text = "isCute -> <color=#00ff00>true</color>";
 			#endregion
 
 			#region PersonalSpace => Mod Build Type
@@ -157,7 +158,7 @@ namespace MintMod.UserInterface.OldUI {
 
 			Label3 = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/ReleaseType/Label");
 			Label3.GetComponent<Text>().supportRichText = true;
-			Label3.GetComponent<Text>().text = "<color=#82ffbe>MintMod Release</color>";
+			Label3.GetComponent<Text>().text = $"<color=#82ffbe>MintMod {(MintCore.isDebug ? "Debug" : "Release")}</color>";
 			#endregion
 
 			#region AllowUntrustedURLs => Supporters
@@ -170,7 +171,7 @@ namespace MintMod.UserInterface.OldUI {
 
 			Label4 = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/Supporters/Label");
 			Label4.GetComponent<Text>().supportRichText = true;
-			Label4.GetComponent<Text>().text = "<color=e180ff>$num</color> Supporters";// - <color=e180ff>$rnd</color> Connected";
+			Label4.GetComponent<Text>().text = " ";
 			#endregion
 
 			#region Desrtoy StreamerMode Toggle
@@ -188,7 +189,7 @@ namespace MintMod.UserInterface.OldUI {
 
 			Label5 = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/MintVersion/Label");
 			Label5.GetComponent<Text>().supportRichText = true;
-			Label5.GetComponent<Text>().text = "Mint: v<color=#82ffbe>" + MintCore.ModBuildInfo.Version.ToString() + "</color>";
+			Label5.GetComponent<Text>().text = $"MintMod: v<color=#82ffbe>{MintCore.ModBuildInfo.Version}</color>";
 			#endregion
 
 			#region Destroy other objects

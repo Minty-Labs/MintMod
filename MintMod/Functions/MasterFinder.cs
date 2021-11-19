@@ -19,7 +19,7 @@ namespace MintMod.Functions {
         public override string Name => "MasterFinder";
         public override string Description => "Shows a crown uptop the users's nameplate showing instance master.";
 
-        private GameObject MasterIcon;
+        public static GameObject MasterIcon;
 
         internal override void OnUserInterface() => MelonCoroutines.Start(Loop());
 

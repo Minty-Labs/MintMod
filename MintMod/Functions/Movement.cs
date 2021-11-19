@@ -3,6 +3,7 @@ using UnityEngine;
 using VRC.Animation;
 using VRC;
 using MelonLoader;
+using MintMod.UserInterface.QuickMenu;
 using UnityEngine.XR;
 
 namespace MintMod.Functions {
@@ -108,7 +109,15 @@ namespace MintMod.Functions {
 							motionState.field_Private_CharacterController_0.enabled = !NoclipEnabled;
 					}
 				}
+				if (MintUserInterface.MainQMNoClip != null)
+                    MintUserInterface.MainQMNoClip.Toggle(false);
+				if (MintUserInterface.MintQANoClip != null)
+                    MintUserInterface.MintQANoClip.Toggle(false);
 			}
+			if (MintUserInterface.MainQMFly != null)
+                MintUserInterface.MainQMFly.Toggle(toggle);
+			if (MintUserInterface.MintQAFly != null)
+                MintUserInterface.MintQAFly.Toggle(toggle);
 		}
 
 		public static void NoClip(bool toggle) {
@@ -118,11 +127,19 @@ namespace MintMod.Functions {
 				if (!FlightEnabled) {
 					FlightEnabled = true;
 					SpeedModified = true;
+                    if (MintUserInterface.MainQMFly != null)
+                        MintUserInterface.MainQMFly.Toggle(true);
+                    if (MintUserInterface.MintQAFly != null)
+                        MintUserInterface.MintQAFly.Toggle(true);
 				}
 			} else {
 				NoclipEnabled = false;
 				SpeedModified = false;
 			}
+            if (MintUserInterface.MainQMNoClip != null)
+                MintUserInterface.MainQMNoClip.Toggle(toggle);
+            if (MintUserInterface.MintQANoClip != null)
+                MintUserInterface.MintQANoClip.Toggle(toggle);
 		}
 
         private static float originalWalkSpeed, originalRunSpeed, originalStrafeSpeed;

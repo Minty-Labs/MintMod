@@ -12,16 +12,15 @@ using VRC.Core;
 namespace MintMod.Utils {
     class General : MintSubMod {
         public static readonly int setMaxFrameRate240 = 240;
-        private static int ConfigFramerate = Config.MaxFrameRate.Value;
 
         public static void SetFrameRate() {
             try {
-                if (ConfigFramerate >= 240)
+                if (Config.MaxFrameRate.Value >= 240)
                     UnityEngine.Application.targetFrameRate = setMaxFrameRate240;
-                else if (ConfigFramerate < 90)
+                else if (Config.MaxFrameRate.Value < 90)
                     UnityEngine.Application.targetFrameRate = 90;
                 else
-                    UnityEngine.Application.targetFrameRate = ConfigFramerate;
+                    UnityEngine.Application.targetFrameRate = Config.MaxFrameRate.Value;
             } catch { MelonLogger.Error("Failed to set a new FrameRate Lock"); }
         }
 
@@ -49,7 +48,7 @@ namespace MintMod.Utils {
         #region Throwback Welcome
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
-            if (Config.ShowWelcomeMessages.Value)
+            if (Config.ShowWelcomeMessages.Value && buildindex == -1)
                 StartWelcomeMessage();
         }
 

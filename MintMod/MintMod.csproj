@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\ILMerge.3.0.41\build\ILMerge.props" Condition="Exists('..\packages\ILMerge.3.0.41\build\ILMerge.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -13,12 +14,14 @@
     <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>C:\Users\dephi\Documents\_MintMod\.build\Debug (x64)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>C:\Users\dephi\Documents\_MintMod\.build\Release (x64)\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,8 +47,20 @@
     <Reference Include="Il2Cppmscorlib">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2Cppmscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="Il2CppSystem, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
-    <Reference Include="Il2CppSystem.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Il2CppSystem">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2CppSystem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Il2CppSystem.Core">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2CppSystem.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Il2CppSystem.Drawing">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2CppSystem.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppSystem.ValueTuple">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2CppSystem.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="MelonLoader">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
@@ -199,8 +214,10 @@
     <Compile Include="Functions\LoadingWorldAudio.cs" />
     <Compile Include="Functions\MasterFinder.cs" />
     <Compile Include="Functions\Movement.cs" />
+    <Compile Include="Functions\PhotonFreeze.cs" />
     <Compile Include="Functions\PlayerActions.cs" />
     <Compile Include="Functions\RankRecoloring.cs" />
+    <Compile Include="Functions\RiskyFuncAllower.cs" />
     <Compile Include="Functions\ServerAuth.cs" />
     <Compile Include="Functions\WorldActions.cs" />
     <Compile Include="Libraries\ColorConversion.cs" />
@@ -209,6 +226,7 @@
     <Compile Include="Managers\emmVRC_Config.cs" />
     <Compile Include="Managers\ESP.cs" />
     <Compile Include="Managers\Items.cs" />
+    <Compile Include="Managers\MintyNameplayerHelper.cs" />
     <Compile Include="Managers\Players.cs" />
     <Compile Include="MintCore.cs" />
     <Compile Include="ModuleLoader.cs" />
@@ -219,22 +237,30 @@
     <Compile Include="Reflections\VRCAPIObjects.cs" />
     <Compile Include="Reflections\VRCMenuButtonAPI.cs" />
     <Compile Include="Resources\MintyResources.cs" />
+    <Compile Include="UserInterface\ActionMenu.cs" />
     <Compile Include="UserInterface\AvatarFavs\AviFavLogic.cs" />
     <Compile Include="UserInterface\AvatarFavs\AviFavSetup.cs" />
+    <Compile Include="UserInterface\Nameplates.cs" />
     <Compile Include="UserInterface\OldUI\AvatarMenu.cs" />
     <Compile Include="UserInterface\OldUI\HudIcon.cs" />
     <Compile Include="UserInterface\OldUI\MenuContentBackdrop.cs" />
     <Compile Include="UserInterface\OldUI\ReColor.cs" />
     <Compile Include="UserInterface\OldUI\SettingsMenu.cs" />
     <Compile Include="UserInterface\OldUI\SocialMenu.cs" />
+    <Compile Include="UserInterface\QuickMenu\MintUserInterface.cs" />
+    <Compile Include="Utils\AssemblyLoader.cs" />
     <Compile Include="Utils\General.cs" />
     <Compile Include="Utils\Network.cs" />
     <Compile Include="Utils\VRCUiPopups.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="MintyLoader\MintyLoader.csproj">
+    <ProjectReference Include="..\MintyLoader\MintyLoader.csproj">
       <Project>{b6f1f37d-8a64-4473-8484-6906f2dcbd13}</Project>
       <Name>MintyLoader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReMod.Core\ReMod.Core.csproj">
+      <Project>{c87fe758-acb9-4fa2-af6f-10aa9aa0023c}</Project>
+      <Name>ReMod.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -242,7 +268,15 @@
     <EmbeddedResource Include="Resources\mintbundle" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="UserInterface\QuickMenu\" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\ILMerge.3.0.41\build\ILMerge.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.3.0.41\build\ILMerge.props'))" />
+    <Error Condition="!Exists('..\packages\ILMerge.MSBuild.Task.1.0.7\build\ILMerge.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.MSBuild.Task.1.0.7\build\ILMerge.MSBuild.Task.targets'))" />
+  </Target>
+  <Import Project="..\packages\ILMerge.MSBuild.Task.1.0.7\build\ILMerge.MSBuild.Task.targets" Condition="Exists('..\packages\ILMerge.MSBuild.Task.1.0.7\build\ILMerge.MSBuild.Task.targets')" />
 </Project>

@@ -151,6 +151,9 @@ namespace MintMod.Functions {
                             OriginalLayers = vrcMirrorReflection.m_ReflectLayers
                         });
                     }
+                    if (UIWrappers.GetWorld() != null && Config.AutoAddJump.Value &&
+                        VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.GetJumpImpulse() < 1)
+                        AddJump();
                     break;
             }
         }
@@ -176,6 +179,14 @@ namespace MintMod.Functions {
                 foreach (var originalMirror in originalMirrors) {
                     originalMirror.MirrorInParent.m_ReflectLayers = originalMirror.OriginalLayers;
                 }
+            }
+        }
+
+        public static void AddJump() {
+            try {
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.SetJumpImpulse(2.8f);
+            } catch (Exception ex) {
+                MelonLogger.Error($"Adding Jumping to current world has encountered an Error:\n{ex}");
             }
         }
     }

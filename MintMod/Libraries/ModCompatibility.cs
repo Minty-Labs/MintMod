@@ -15,7 +15,7 @@ namespace MintMod.Libraries {
     class ModCompatibility : MintSubMod {
         public override string Name => "ModCompatibility";
         public override string Description => "Find other mods and do things.";
-        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, TeleporterVR, SettingsRestart;
+        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, TeleporterVR, SettingsRestart, ProPlates, FriendsNotesInstalled;
         public static bool hasCNP_On, emmVRCPanicMode;
 
         internal override void OnStart() {
@@ -31,18 +31,13 @@ namespace MintMod.Libraries {
                 ReMod = true;
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "SettingsRestart") != -1)
                 SettingsRestart = true;
-            
+            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ProPlates") != -1)
+                ProPlates = true;
+            if (MelonHandler.Mods.FindIndex(m => m.Info.Name == "Friend Notes") != 1)
+                FriendsNotesInstalled = true;
+
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "UI Expansion Kit") != -1) {
                 UIX = true;
-
-                if (Config.LookForUiExpansionKitInstall.Value && Config.InfoHUDPosition.Value == "3")
-                    MelonPreferences.GetEntry<string>(Config.Menu.Identifier, Config.InfoHUDPosition.Identifier).Value = "4";
-
-                if (Config.ColorUiExpansionKit.Value && Config.ColorGameMenu.Value) {
-                    try {
-                        MelonHandler.Mods.First((MelonMod i) => i.Info.Name == "UI Expansion Kit").Assembly.GetType("UIExpansionKit.API.ExpansionKitApi").GetMethod("RegisterWaitConditionBeforeDecorating", BindingFlags.Static | BindingFlags.Public).Invoke(null, new object[] { ColorUIExpansionKit() });
-                    } catch (Exception e) { MelonLogger.Error($"{e}"); }
-                }
             }
 
             if ((MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRC") != -1) || MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRCLoader") != -1) {
@@ -72,7 +67,7 @@ namespace MintMod.Libraries {
                 emmVRCPanicMode = true;
         }
 
-        private static IEnumerator ColorUIExpansionKit() {
+        /*private static IEnumerator ColorUIExpansionKit() {
             yield return null;
             Color color = Config.ColorGameMenu.Value ? Colors.Minty : Colors.defaultMenuColor();
             ColorBlock colors = new ColorBlock {
@@ -103,5 +98,6 @@ namespace MintMod.Libraries {
                 tex.color = Color.white;
             yield break;
         }
+        */
     }
 }

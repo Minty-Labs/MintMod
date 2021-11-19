@@ -1,24 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
+using Il2CppSystem.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MelonLoader;
+using MintMod.Managers;
 using UnityEngine;
 using VRC.Core;
 using VRC;
 using VRC.SDKBase;
+using m_ReMod.Core.VRChat;
 
 namespace MintMod.Utils {
-    class Network : MintSubMod {
-        public override string Name => "NetworkHooks";
-        public override string Description => "Hooks into VRChat's network events.";
+    class Network {// : MintSubMod {
+        //public override string Name => "NetworkHooks";
+        //public override string Description => "Hooks into VRChat's network events.";
 
         private static bool IsInitialized, SeenFire, AFiredFirst;
         public static event Action<Player> OnJoin, OnLeave;
 
-        internal override IEnumerator OnYieldStart() {
+        internal static IEnumerator OnYieldStart() {
             if (IsInitialized) yield break;
             while (ReferenceEquals(NetworkManager.field_Internal_Static_NetworkManager_0, null)) yield return null;
 
@@ -71,11 +73,11 @@ namespace MintMod.Utils {
                     if (Config.EnablePlayerJoinLeave.Value)
                         MelonLogger.Msg($"[Moderator JOIN] {apiUser.displayName} has joined.");
                     try {
-                        VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowStandardPopup("Moderator Notice",
+                        VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowStandardPopupV2("Moderator Notice",
                             "A moderator of VRChat, has join the world you are in.\n" +
-                           $"VRChat Mod: {apiUser.displayName}\n" +
-                            "Would you like to go home?", "Yes, Go Home", () => Networking.GoToRoom(RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId),
-                            "No, Stay Here", () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
+                            $"VRChat Mod: {apiUser.displayName}\n" +
+                            "Would you like to go home?",
+                            "Yes, Go Home", () => Networking.GoToRoom(RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId));
                     }
                     catch (Exception j) {
                         MelonLogger.Error($"VRCUiPopupStandard did not show\n{j}");
@@ -97,8 +99,8 @@ namespace MintMod.Utils {
                         }
                     }
                 }
-                //if (plr != null) ESP.SetBubbleColor(plr.gameObject);
-                //if (ESP.isESPEnabled) MelonCoroutines.Start(ESP.Delay(plr));
+                if (plr != null) ESP.SetBubbleColor(plr.gameObject);
+                if (ESP.isESPEnabled) MelonCoroutines.Start(ESP.JoinDelay(plr));
             }
         }
 

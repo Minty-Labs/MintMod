@@ -28,8 +28,8 @@ namespace MintMod.Managers {
         public const string DubyaID = "usr_c6a7da53-dd52-4c57-97fd-69fdeb010fd7";
         public const string rakosiID = "usr_018360e9-eccc-421c-8d38-4a250769d144";
         public const string DaviID = "usr_fe9b2a3f-d2e7-41ec-910a-42f1329d8be0";
-
         public const string REDACTED = "usr_e1c908e4-31ce-4fdc-b4eb-56cb235459ed";
+        public const string Silent = "usr_08378cbe-dce1-4f98-a5a8-7cb215e4cda5";
 
         #region MILK NATION
         public const string SarahID = "usr_d8ffa870-e8c2-46cb-8a97-a1284dfc3d14";

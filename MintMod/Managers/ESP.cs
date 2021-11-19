@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MintMod.UserInterface.QuickMenu;
 using UnityEngine;
 using VRC;
 using static MintMod.Managers.Colors;
@@ -26,6 +27,9 @@ namespace MintMod.Managers {
             GameObject[] array = GameObject.FindGameObjectsWithTag("Player");
             foreach (var e in array)
                 HighlightBubble(e, false);
+            isESPEnabled = false;
+            if (MintUserInterface.PlayerESP != null)
+                MintUserInterface.PlayerESP.Toggle(false);
         }
 
         public static void SinglePlayerESP(Player ply, bool state) => HighlightBubble(ply.gameObject, state);
@@ -43,7 +47,11 @@ namespace MintMod.Managers {
             SetBubbleColor(bubbleRenderer);
         }
 
-        public static void SetItemESPToggle(bool state) => isPickupESPEnabled = state;
+        public static void SetItemESPToggle(bool state) {
+            if (MintUserInterface.ItemESP != null)
+                MintUserInterface.ItemESP.Toggle(state);
+            isPickupESPEnabled = state;
+        }
 
         internal override void OnUpdate() {
             if (!isPickupESPEnabled) return;
@@ -51,6 +59,13 @@ namespace MintMod.Managers {
                 Renderer b = vrcPickup.GetComponent<Renderer>();
                 if (b != null)
                     GetHighlightFX().Method_Public_Void_Renderer_Boolean_0(b, isPickupESPEnabled);
+            }
+        }
+
+        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+            if (buildindex == -1) {
+                SetItemESPToggle(false);
+                ClearAllPlayerESP();
             }
         }
 
@@ -74,6 +89,12 @@ namespace MintMod.Managers {
                 renderer.sharedMaterial.color = Minty;
                 renderer.material.color = Minty;
             }
+        }
+
+        public static void SetBubbleColor(GameObject player) {
+            Renderer bubbleRenderer = GetBubbleRenderer(player);
+            if (bubbleRenderer != null)
+                bubbleRenderer.sharedMaterial.color = Minty;
         }
 
         static Renderer GetBubbleRenderer(GameObject @object) {

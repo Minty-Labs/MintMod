@@ -19,26 +19,7 @@ namespace MintMod {
 
         internal virtual void OnUserInterface() {}
 
-        internal virtual void OnQuickMenu() {}
-
-        internal virtual void OnStart() {
-            new Thread(() => {
-                for (; ; ) {
-                    Thread.Sleep(1000);
-                    OnStart();
-                }
-            }) { IsBackground = true }.Start();
-        }
-
-        internal virtual IEnumerator OnYieldStart() {
-            new Thread(() => {
-                for (; ; ) {
-                    Thread.Sleep(1000);
-                    MelonCoroutines.Start(OnYieldStart());
-                }
-            }) { IsBackground = true }.Start();
-            yield break;
-        }
+        internal virtual void OnStart() {}
 
         internal virtual void OnUpdate() {}
 

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MelonLoader;
 using UnhollowerRuntimeLib;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MintMod.Resources {
     class MintyResources : MintSubMod {
@@ -34,7 +35,7 @@ namespace MintMod.Resources {
                 }
             }
 
-            using (var stream2 = Assembly.GetExecutingAssembly().GetManifestResourceStream("MintMod.Resources.mintactionmenu.mint‎")) {
+            using (var stream2 = Assembly.GetExecutingAssembly().GetManifestResourceStream("MintMod.Resources.mintactionmenu.mint")) {
                 using (var memoryStream2 = new MemoryStream((int)stream2.Length)) {
                     stream2.CopyTo(memoryStream2);
                     ActionMenuBundle = AssetBundle.LoadFromMemory_Internal(memoryStream2.ToArray(), 0);
@@ -54,47 +55,35 @@ namespace MintMod.Resources {
         private static Sprite LoadSprite(string sprite) {
             Sprite sprite2 = MintBundle.LoadAsset(sprite, Il2CppType.Of<Sprite>()).Cast<Sprite>();
             sprite2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            sprite2.hideFlags = HideFlags.HideAndDontSave;
+            //sprite2.hideFlags = HideFlags.HideAndDontSave;
             return sprite2;
         }
 
         private static Texture LoadTexture(string tex) {
             Texture sprite2 = MintBundle.LoadAsset(tex, Il2CppType.Of<Texture>()).Cast<Texture>();
             sprite2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            sprite2.hideFlags = HideFlags.HideAndDontSave;
+            //sprite2.hideFlags = HideFlags.HideAndDontSave;
             return sprite2;
         }
 
         private static Texture2D LoadTexture2D(string tex) {
             Texture2D tex2 = ActionMenuBundle.LoadAsset_Internal(tex, Il2CppType.Of<Texture2D>()).Cast<Texture2D>();
             tex2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            tex2.hideFlags = HideFlags.HideAndDontSave;
+            //tex2.hideFlags = HideFlags.HideAndDontSave;
             return tex2;
         }
-        /*
-        private static Font LoadFont(string assetToLoad) {
-            Font loadedFont = MintBundle.LoadAsset_Internal(assetToLoad, Il2CppType.Of<Font>()).Cast<Font>();
-            loadedFont.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            loadedFont.hideFlags = HideFlags.HideAndDontSave;
-            return loadedFont;
+
+        public static Texture2D ConvertToSprite(Sprite s) {
+            var croppedTexture = new Texture2D((int)s.rect.width, (int)s.rect.height);
+            var pixels = s.texture.GetPixels((int)s.textureRect.x,
+                (int)s.textureRect.y,
+                (int)s.textureRect.width,
+                (int)s.textureRect.height);
+            croppedTexture.SetPixels(pixels);
+            croppedTexture.Apply();
+            return croppedTexture;
         }
 
-        private static Material LoadMaterial(string assetToLoad) {
-            Material loadedMat = MintBundle.LoadAsset_Internal(assetToLoad, Il2CppType.Of<Material>()).Cast<Material>();
-            loadedMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            return loadedMat;
-        }
-
-        private static Shader LoadShader(string assetToLoad) {
-            Shader loadedMat = MintBundle.LoadAsset_Internal(assetToLoad, Il2CppType.Of<Shader>()).Cast<Shader>();
-            loadedMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            return loadedMat;
-        }
-        private static GameObject LoadPrefab(string assetToLoad) {
-            GameObject loadedMat = MintBundle.LoadAsset_Internal(assetToLoad, Il2CppType.Of<GameObject>()).Cast<GameObject>();
-            loadedMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            return loadedMat;
-        }
-        */
-	}
+        public static Sprite ConvertToTexture2D(Texture2D t) => Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector2.zero);
+    }
 }

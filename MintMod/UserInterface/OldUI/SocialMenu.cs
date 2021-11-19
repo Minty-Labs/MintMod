@@ -16,7 +16,7 @@ namespace MintMod.UserInterface.OldUI {
 
         internal override void OnUserInterface() {
             SocialMenu_AvatarBorder = GameObject.Find("/UserInterface/MenuContent/Screens/UserInfo/AvatarImage/AvatarBorder").gameObject;
-            SocialMenu_AvatarBorder.GetComponent<Image>().color = ColorConversion.HexToColor("#00FFAAw");
+            SocialMenu_AvatarBorder.GetComponent<Image>().color = ColorConversion.HexToColor("#00FFAA");
         }
     }
 }

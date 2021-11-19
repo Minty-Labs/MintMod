@@ -20,6 +20,7 @@ namespace MintMod.Functions {
         internal override void OnUserInterface() => MelonCoroutines.Start(Music());
 
         IEnumerator Music() {
+            if (!Config.UseCustomLoadingMusic.Value) yield break;
             if (MintCore.isDebug) MelonLogger.Msg("Processing custom menu music...");
             GameObject gameObject = GameObject.Find("LoadingBackground_TealGradient_Music/LoadingSound");
             GameObject gameObject2 = UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup/LoadingSound").gameObject;

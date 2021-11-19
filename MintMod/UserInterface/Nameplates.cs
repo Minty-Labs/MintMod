@@ -1,0 +1,355 @@
+﻿using MelonLoader;
+using MintMod.Libraries;
+using MintMod.Managers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using TMPro;
+using UnhollowerRuntimeLib;
+using UnityEngine;
+using UnityEngine.UI;
+using VRC;
+using VRC.Core;
+
+namespace MintMod.UserInterface {
+    class Nameplates : MintSubMod {
+        public override string Name => "MintyNameplates";
+        public override string Description => "Colors Nameplates for certain people.";
+        public static Regex methodMatchRegex = new Regex("Method_Public_Void_\\d", RegexOptions.Compiled);
+
+        public static Nameplates instance;
+
+        #region Colors
+        private static Color blue = ColorConversion.HexToColor("#0000ff");
+        private static Color red = ColorConversion.HexToColor("#ff0000");
+        private static Color green = ColorConversion.HexToColor("#00ff00");
+        private static Color orange = ColorConversion.HexToColor("#E67E22");
+        private static Color magenta = ColorConversion.HexToColor("#FF00FF");
+        private static Color black = ColorConversion.HexToColor("#000000");
+        private static Color white = ColorConversion.HexToColor("#ffffff");
+        private static Color purple = ColorConversion.HexToColor("#9e00ff");
+        private static Color cyan = ColorConversion.HexToColor("#00ffff");
+        private static Color teal = ColorConversion.HexToColor("#00ffaa");
+        private static Color trans = new Color32(0, 0, 0, 0);
+        private static Color LightPink = ColorConversion.HexToColor("#eecce0");
+        private static Color nitro = ColorConversion.HexToColor("F47FFF");
+        private static Color Mint = ColorConversion.HexToColor("82ffbe");
+        private static Color Lolite = ColorConversion.HexToColor("e180ff");
+        #endregion
+
+        internal override void OnStart() {
+            try { ClassInjector.RegisterTypeInIl2Cpp<MintyNameplateHelper>(); } catch (Exception e) {
+                MelonLogger.Error("Unable to Inject Nameplatehelper!\n" + e.ToString());
+            }
+        }
+
+        static bool ValidatePlayerAvatar(VRCPlayer player) {
+            return !(player == null ||
+                     player.isActiveAndEnabled == false ||
+                     player.field_Internal_Animator_0 == null ||
+                     player.field_Internal_GameObject_0 == null ||
+                     player.field_Internal_GameObject_0.name.IndexOf("Avatar_Utility_Base_") == 0);
+        }
+
+        static void OnAvatarIsReady(VRCPlayer vrcPlayer) {
+            if (!Config.EnableCustomNameplateReColoring.Value)
+                return;
+            if (ValidatePlayerAvatar(vrcPlayer)) {
+                Player player = vrcPlayer._player;
+
+                if (vrcPlayer.field_Public_PlayerNameplate_0 == null)
+                    return;
+
+                PlayerNameplate nameplate = vrcPlayer.field_Public_PlayerNameplate_0;
+                MintyNameplateHelper helper = nameplate.GetComponent<MintyNameplateHelper>();
+                if (helper == null) {
+                    helper = nameplate.gameObject.AddComponent<MintyNameplateHelper>();
+                    helper.SetNameplate(nameplate);
+                    //Logger.Debug("Fetching objects from heirarhcy");
+                    helper.uiIconBackground = nameplate.gameObject.transform.Find("Contents/Icon/Background").GetComponent<Image>();
+                    helper.uiUserImage = nameplate.gameObject.transform.Find("Contents/Icon/User Image").GetComponent<RawImage>();
+                    helper.uiUserImageContainer = nameplate.gameObject.transform.Find("Contents/Icon").gameObject;
+                    helper.uiNameBackground = nameplate.gameObject.transform.Find("Contents/Main/Background").GetComponent<ImageThreeSlice>();
+                    helper.uiQuickStatsBackground = nameplate.gameObject.transform.Find("Contents/Quick Stats").GetComponent<ImageThreeSlice>();
+                    helper.uiName = nameplate.gameObject.transform.Find("Contents/Main/Text Container/Name").GetComponent<TextMeshProUGUI>();
+                    //Logger.Debug("Created NameplateHelper on nameplate");
+                }
+
+                //resetNameplate(nameplate);
+                //Check if we should be showing quick stats
+                //helper.AlwaysShowQuickInfo = alwaysShowStatsLocal;
+
+                try { ApplyCustomNameplates(player.prop_APIUser_0.id, nameplate, helper); } catch (Exception n) { MelonLogger.Error("Could not apply nameplate color\n" + n.ToString()); }
+
+                helper.OnRebuild();
+            }
+        }
+
+        private static void ApplyFriendsRankColor(MintyNameplateHelper helper, Color? friendColor = null) {
+            if (helper == null)
+                return;
+            if (!Config.EnableCustomNameplateReColoring.Value)
+                return;
+
+            if (friendColor.HasValue) {
+                helper.SetNameColour(friendColor.Value);
+                helper.OnRebuild();
+            }
+        }
+
+        private static void ApplyNameplateColour(PlayerNameplate nameplate, MintyNameplateHelper helper,
+            bool bgRainbow = false,
+            Color? bgColor = null,
+            Color? bgColorLerp = null,
+            Color? textColor = null,
+            Color? textColorLerp = null,
+            bool changeLerpTime = false,
+            float lerpTime = 3f,
+            bool resetToDefaultMat = false,
+            string TagText = null,
+            Color? TagBGColour = null,
+            bool disableBGImage = false,
+            Color? TagFontColour = null,
+            bool removeBGImg = false,
+            string forceFakeName = "") {
+            if (helper == null)
+                return;
+            if (!Config.EnableCustomNameplateReColoring.Value)
+                return;
+
+            if (resetToDefaultMat) {
+                helper.uiNameBackground.material = null;
+                helper.uiQuickStatsBackground.material = null;
+                helper.uiIconBackground.material = null;
+            }
+
+            //Are we setting BGColor?
+            if (bgColor.HasValue && !bgColorLerp.HasValue) {
+                Color bgColorMain = bgColor.Value;
+                Color quickStatsBGColor = bgColor.Value;
+
+                helper.uiNameBackground.color = bgColorMain;
+                helper.uiQuickStatsBackground.color = quickStatsBGColor;
+
+                helper.uiIconBackground.color = bgColor.Value;
+
+                helper.SetBGColour(bgColor.Value);
+
+                if (removeBGImg)
+                    helper.uiNameBackground.enabled = false;
+                helper.OnRebuild();
+            }
+
+            // Check and do bgLerp
+            if (bgColor.HasValue && bgColorLerp.HasValue) {
+                if (bgRainbow)
+                    helper.SetBGRainbow();
+                else
+                    helper.SetBGColourLerp(bgColor.Value, bgColorLerp.Value);
+            }
+
+            //Check if we should set the text colour
+            if (textColor.HasValue && !textColorLerp.HasValue) {
+                helper.SetNameColour(textColor.Value);
+                helper.OnRebuild();
+            }
+
+            //Check if we should be doing a colour lerp
+            if (textColor.HasValue && textColorLerp.HasValue) {
+                if (changeLerpTime)
+                    helper.ChangeTranistionValue(lerpTime);
+                helper.SetColourLerp(textColor.Value, textColorLerp.Value);
+            }
+
+            if (!textColor.HasValue && Config.RecolorRanks.Value) {
+                if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id)) {
+                    helper.SetNameColour(ColorConversion.HexToColor(Config.MenuColorHEX.Value));
+                    helper.OnRebuild();
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(forceFakeName))
+                helper.SetName(forceFakeName);
+
+            // Create and set Extra Text
+            if (!string.IsNullOrWhiteSpace(TagText)) {
+                try {
+                    Transform transform = nameplate.transform.Find("Contents");
+                    Transform transform4 = transform.Find("Quick Stats");
+
+                    Transform transform5 = transform.Find("Mint_CustomTag");
+                    if (transform5 == null) {
+                        transform5 = UnityEngine.Object.Instantiate<Transform>(transform4, transform4.parent, false);
+                        transform5.name = "Mint_CustomTag";
+
+                        if (ModCompatibility.ProPlates)
+                            transform5.localPosition = new Vector3(0f, -90f, 0f);
+                        else
+                            transform5.localPosition = new Vector3(0f, -60f, 0f);
+                        TextMeshProUGUI component = transform5.Find("Trust Text").GetComponent<TextMeshProUGUI>();
+                        component.richText = true;
+                        component.text = TagText;
+
+                        component.color = TagFontColour.Value;
+
+                        if (disableBGImage)
+                            transform5.GetComponent<ImageThreeSlice>().enabled = false;
+                        else {
+                            if (TagBGColour.HasValue)
+                                transform5.GetComponent<ImageThreeSlice>().color = TagBGColour.Value;
+                            else
+                                transform5.GetComponent<ImageThreeSlice>().color = Color.white;
+                        }
+
+                        for (int i = transform5.childCount; i > 0; i--) {
+                            Transform child = transform5.GetChild(i - 1);
+                            if (!(child.name == "Trust Text"))
+                                UnityEngine.Object.Destroy(child.gameObject);
+                        }
+                    } else {
+                        /*try {
+                            if (transform5.gameObject != null) {
+                                if (FriendsNotesInstalled) {
+                                    Transform textContainer = nameplate.gameObject.transform.Find("Text Container");
+                                    Transform noteTransform = textContainer.transform.Find("Note");
+                                    Transform dateTransform = textContainer.transform.Find("Date");
+                                    if (noteTransform != null) transform5.localPosition -= new Vector3(0f, 15f, 0f);
+                                    if (dateTransform != null) transform5.localPosition -= new Vector3(0f, 15f, 0f);
+                                }
+                            }
+                        }
+                        catch (Exception e) {
+                            string time = DateTime.Now.ToString("HH:mm:ss.fff");
+                            Console.WriteLine($"[{time}] [MintMod : NameplateRedo] [ERROR] FriendsNotes Nameplate component(s) not found.\n{e}");
+                        }*/
+                        transform5.gameObject.SetActive(true);
+                    }
+
+                } catch (Exception e) { if (MintCore.isDebug) MelonLogger.Msg($"{e}"); }
+            }
+        }
+
+        //[Obfuscation(Exclude = false)]
+        static void ApplyCustomNameplates(string playerID, PlayerNameplate nameplate, MintyNameplateHelper helper) {
+            if (!Config.EnableCustomNameplateReColoring.Value)
+                return;
+            switch (playerID) {
+                case Players.LilyID:
+                    ApplyNameplateColour(nameplate, helper, false, purple, Mint, Mint, Lolite, true, 1f, false, "<color=#ff00ff>she/her</color> MintLily", Mint, true, Mint, false, "Lily");
+                    break;
+                case Players.ErinID:
+                    ApplyNameplateColour(nameplate, helper, false, black, purple, magenta, null, false, 0, false, "Cat", black, false, magenta);
+                    break;
+                case Players.KaylaID:
+                    ApplyNameplateColour(nameplate, helper, false, ColorConversion.HexToColor("#5bcefa"), ColorConversion.HexToColor("#f587c9"), null, null, false, 3, false, "she/her", LightPink, false, magenta);
+                    break;
+                case Players.PlaceholderID:
+                    ApplyNameplateColour(nameplate, helper, false, white, null, ColorConversion.HexToColor("049C97"), ColorConversion.HexToColor("8E2180"), true, 1, false, "DebugText", white, true, white, true);
+                    break;
+                case Players.BassID:
+                    ApplyNameplateColour(nameplate, helper, false, magenta, null, blue, null, false, 3, false, "Fucking Meme", black, false, magenta);
+                    break;
+                case Players.TechnoLogicID:
+                    ApplyNameplateColour(nameplate, helper, false, cyan, null, null, null, false, 3, false, "Cutie", cyan);
+                    break;
+                case Players.FarmerID:
+                    ApplyNameplateColour(nameplate, helper, false, magenta, purple, null, null, false, 3, false, "Undercover Trap", purple);
+                    break;
+                case Players.EmyID:
+                    if (APIUser.CurrentUser.id == Players.RiskiID)
+                        ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Bread", null, false, LightPink);
+                    else if (APIUser.CurrentUser.id == Players.LilyID)
+                        ApplyNameplateColour(nameplate, helper, false, null, null, LightPink, null, false, 3, false, "Adorable Floof", black, false, LightPink, false, "Emy");
+                    else
+                        ApplyNameplateColour(nameplate, helper, false, null, null, LightPink, null, false, 3, false, "Bread", null, false, LightPink, false, "Emy");
+                    break;
+                case Players.SarahID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Milk Nation", Color.red, false, ColorConversion.HexToColor("3E9DE8"));
+                    break;
+                case Players.HerpDerpID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Melon Man Himself", ColorConversion.HexToColor("FE3C6B"), false, ColorConversion.HexToColor("79F864"));
+                    break;
+                case Players.JanniID:
+                    if (APIUser.CurrentUser.id == Players.LilyID)
+                        ApplyNameplateColour(nameplate, helper, false, ColorConversion.HexToColor("FE3C6B"), null, ColorConversion.HexToColor("79F864"), null, false, 3, false,
+                        "Wonderful Melon Floof", ColorConversion.HexToColor("FE3C6B"), false, ColorConversion.HexToColor("79F864"), false, "Janni");
+                    else
+                        ApplyNameplateColour(nameplate, helper, false, ColorConversion.HexToColor("FE3C6B"), null, ColorConversion.HexToColor("79F864"), null, false, 3, false,
+                        "Melon Queen", ColorConversion.HexToColor("FE3C6B"), false, ColorConversion.HexToColor("79F864"));
+                    break;
+                case Players.RiskiID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Beat Saber Legacy", ColorConversion.HexToColor("4170C0"), false, ColorConversion.HexToColor("C04141"));
+                    break;
+                case Players.EmmyID:
+                    ApplyNameplateColour(nameplate, helper, false, ColorConversion.HexToColor("DAB5E1"), null, null, null, false, 3, false, "emmVRC Queen", ColorConversion.HexToColor("FC01A1"), false, white);
+                    break;
+                case Players.loukylorID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "KOS", black, false, Color.red);
+                    break;
+                case Players.DDAkebonoID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "BTK", purple, false, white);
+                    break;
+                case Players.HordiniID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Workaholic", purple, false, white);
+                    break;
+                case Players.BidlinkID:
+                    ApplyNameplateColour(nameplate, helper, false, cyan, magenta, null, null, false, 3, false, "House Cat", cyan, false, LightPink);
+                    break;
+                case Players.FuslID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Cutie~", cyan, false, white);
+                    break;
+                case Players.DubyaID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Life's Good", ColorConversion.HexToColor("C80651"), false, white);
+                    break;
+                case Players.rakosiID:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, null, null, true, null, false, "racoochie");
+                    break;
+                case Players.DaviID:
+                    ApplyNameplateColour(nameplate, helper, false, Mint, purple, null, null, true, 3, false, "Cutie", cyan, false, white, false, "Davivi");
+                    break;
+                case Players.REDACTED:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "REDACTED", null, true, white, false, "REDACTED");
+                    break;
+                case Players.Silent:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 0, false, null, null, false, null, false, "Elly");
+                    break;
+                #region MILK NATION
+                case Players.MN_1:
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Milk Nation", Color.red, false, ColorConversion.HexToColor("3E9DE8"));
+                    break;
+                #endregion
+                default:
+                    if (Config.RecolorRanks.Value)
+                        if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))
+                            ApplyFriendsRankColor(helper, ColorConversion.HexToColor(Config.MenuColorHEX.Value));
+                    break;
+            }
+        }
+
+        public static void OnRebuild(PlayerNameplate nameplate) {
+            if (nameplate == null || nameplate.gameObject == null) return;
+            MintyNameplateHelper helper = nameplate.gameObject.GetComponent<MintyNameplateHelper>();
+            if (helper != null)
+                helper.OnRebuild();
+            else {
+                //Nameplate doesn't have a helper, lets fix that
+                if (nameplate.field_Private_VRCPlayer_0 != null)
+                    if (nameplate.field_Private_VRCPlayer_0._player != null && nameplate.field_Private_VRCPlayer_0._player.prop_APIUser_0 != null)
+                        OnAvatarIsReady(nameplate.field_Private_VRCPlayer_0);
+            }
+        }
+
+        public static void OnVRCPlayerAwake(VRCPlayer _vrcPlayer) {
+            _vrcPlayer.Method_Public_add_Void_OnAvatarIsReady_0(new Action(() => {
+                if (_vrcPlayer != null) {
+                    if (_vrcPlayer._player != null)
+                        if (_vrcPlayer._player.prop_APIUser_0 != null)
+                            OnAvatarIsReady(_vrcPlayer);
+                }
+            }));
+        }
+    }
+}

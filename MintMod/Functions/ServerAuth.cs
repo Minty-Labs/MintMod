@@ -14,7 +14,7 @@ namespace MintMod.Functions {
         public override string Name => "Authentication";
         public override string Description => "Deals with authed used for Mint.";
 
-        internal static bool authed, canLoadMod;
+        internal static bool canLoadMod;
 
         internal static IEnumerator AuthUser() {
             yield return new WaitForSeconds(1);

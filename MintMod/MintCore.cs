@@ -14,10 +14,12 @@ using MintMod.Hooks;
 using MintMod.Libraries;
 using MintMod.Managers;
 using MintMod.Resources;
+using MintMod.UserInterface;
 using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.OldUI;
+using MintMod.UserInterface.QuickMenu;
 using MintMod.Utils;
-using SettingsMenu = MintMod.UserInterface.OldUI.SettingsMenu;
+using UnhollowerRuntimeLib;
 
 namespace MintMod {
 
@@ -29,12 +31,12 @@ namespace MintMod {
             public const string Company = "LilyMod";
             public const string Version = "2.0.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "11/4/2021";
-            public const string LoaderVer = "2.2.0";
+            public const string UpdatedDate = "11/19/2021";
+            public const string LoaderVer = "2.3.0";
             public static Version TargetMLVersion = new(0, 4, 3);
         }
 
-        internal static bool AviFavsErrored, isDebug;
+        internal static bool isDebug;
 
         internal static List<MintSubMod> mods = new();
 
@@ -55,12 +57,13 @@ namespace MintMod {
             }
 #endif
 
+            MelonLogger.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version}");
             mods.Add(new Config());
             mods.Add(new GetAssembly());
             mods.Add(new Patches());
             mods.Add(new MintyResources());
             mods.Add(new ServerAuth());
-            mods.Add(new Network());
+            //mods.Add(new Utils.Network());
             mods.Add(new ESP());
             mods.Add(new KeyBindings());
             mods.Add(new Items());
@@ -71,14 +74,22 @@ namespace MintMod {
             mods.Add(new Movement());
             mods.Add(new HudIcon());
             mods.Add(new ModCompatibility());
-            mods.Add(new ReColor());
+            //mods.Add(new ReColor());
             mods.Add(new AvatarMenu());
             mods.Add(new SocialMenu());
             mods.Add(new MenuContentBackdrop());
             mods.Add(new UserInterface.OldUI.SettingsMenu());
             mods.Add(new General());
             mods.Add(new WorldActions());
+            mods.Add(new RiskyFuncAllower());
+            mods.Add(new MintUserInterface());
+            mods.Add(new Nameplates());
+            mods.Add(new UserInterface.ActionMenu());
             //mods.Add(new );
+
+            MelonCoroutines.Start(Utils.Network.OnYieldStart());
+            ClassInjector.RegisterTypeInIl2Cpp<m_ReMod.Core.Unity.EnableDisableListener>();
+            ClassInjector.RegisterTypeInIl2Cpp<m_ReMod.Core.Unity.RenderObjectListener>();
 
             mods.ForEach(a => a.OnStart());
         }
@@ -86,6 +97,8 @@ namespace MintMod {
         public override void OnPreferencesSaved() => mods.ForEach(s => s.OnPrefSave());
 
         public override void OnUpdate() => mods.ForEach(u => u.OnUpdate());
+
+        public override void OnApplicationQuit() => MelonPreferences.Save();
     }
 
     class GetAssembly : MintSubMod {
@@ -120,6 +133,7 @@ namespace MintMod {
 
         internal static System.Collections.IEnumerator YieldUI() {
             MintCore.mods.ForEach(u => u.OnUserInterface());
+            MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
             yield break;
         }
     }

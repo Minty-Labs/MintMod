@@ -1,6 +1,7 @@
 ﻿using ExitGames.Client.Photon;
 using HarmonyLib;
 using MelonLoader;
+using MintMod.UserInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,6 @@ namespace MintMod.Hooks {
     class Patches : MintSubMod {
         public override string Name => "Patches";
         public override string Description => "";
-        
-        internal static bool useChairs;
 
         private static void applyPatches(Type type) {
             if (MintCore.isDebug)
@@ -35,6 +34,8 @@ namespace MintMod.Hooks {
             applyPatches(typeof(PingSpoof));
             applyPatches(typeof(FrameSpoof));
             applyPatches(typeof(VRC_Station));
+            applyPatches(typeof(NameplatePatches));
+            applyPatches(typeof(VRCPlayerPatches));
 
             if (Config.SpoofDeviceType.Value) {
                 applyPatches(typeof(PlatformSpoof));
@@ -48,12 +49,20 @@ namespace MintMod.Hooks {
     [HarmonyPatch]
     class NameplatePatches // OnRebuild
     {
-        /*static IEnumerable<MethodBase> TargetMethods() {
+        static IEnumerable<MethodBase> TargetMethods() {
             return typeof(PlayerNameplate).GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(x => 
-                NameplateRedo.methodMatchRegex.IsMatch(x.Name)).Cast<MethodBase>();
+                Nameplates.methodMatchRegex.IsMatch(x.Name)).Cast<MethodBase>();
         }
 
-        static void Postfix(PlayerNameplate __instance) => NameplateRedo.OnRebuild(__instance);*/
+        static void Postfix(PlayerNameplate __instance) => Nameplates.OnRebuild(__instance);
+    }
+
+    [HarmonyPatch(typeof(VRCPlayer))]
+    class VRCPlayerPatches // OnPlayerAwake
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch("Awake")]
+        static void OnVRCPlayerAwake(VRCPlayer __instance) => Nameplates.OnVRCPlayerAwake(__instance);
     }
 
     [HarmonyPatch(typeof(VRC_StationInternal))]
@@ -61,7 +70,7 @@ namespace MintMod.Hooks {
         [HarmonyPrefix]
         [HarmonyPatch("Method_Public_Boolean_Player_Boolean_0")]
         static bool PlayerCanUseStation(ref bool __result, VRC.Player __0, bool __1) {
-            if (__0 != null && __0 == VRCPlayer.field_Internal_Static_VRCPlayer_0._player && !Patches.useChairs) {
+            if (__0 != null && __0 == VRCPlayer.field_Internal_Static_VRCPlayer_0._player && !Config.CanSitInChairs.Value) {
                 __result = false;
                 return false;
             }
