@@ -27,7 +27,7 @@ namespace MintMod.Functions {
 		private static IEnumerator Flying() {
 			while (true) {
 				if (RoomManager.field_Internal_Static_ApiWorld_0 != null) {
-					if (!FlightEnabled) yield break;
+					//if (!FlightEnabled) yield break;
 					if (localPlayer == null && VRCPlayer.field_Internal_Static_VRCPlayer_0 != null &&
 						VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject != null)
 						localPlayer = VRCPlayer.field_Internal_Static_VRCPlayer_0.gameObject;
