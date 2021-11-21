@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC;
 using VRC.Core;
+using Random = System.Random;
 
 namespace MintMod.UserInterface {
     class Nameplates : MintSubMod {
@@ -39,6 +40,8 @@ namespace MintMod.UserInterface {
         private static Color nitro = ColorConversion.HexToColor("F47FFF");
         private static Color Mint = ColorConversion.HexToColor("82ffbe");
         private static Color Lolite = ColorConversion.HexToColor("e180ff");
+        private static Color HarlesPink = ColorConversion.HexToColor("FF7078");
+        private static Color HarlesBlue = ColorConversion.HexToColor("88AFD6");
         #endregion
 
         internal override void OnStart() {
@@ -312,9 +315,14 @@ namespace MintMod.UserInterface {
                 case Players.DaviID:
                     ApplyNameplateColour(nameplate, helper, false, Mint, purple, null, null, true, 3, false, "Cutie", cyan, false, white, false, "Davivi");
                     break;
-                case Players.REDACTED:
-                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "REDACTED", null, true, white, false, "REDACTED");
+                case Players.REDACTED: {
+                    Random rnd = new();
+                    int num = rnd.Next(0, 100);
+                    bool chance = num > 81;
+                    Con.Debug($"George's random chance was {num/100}% - Funny Shown -> {chance}", MintCore.isDebug);
+                    ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, chance ? "RETARDED" : "REDACTED", null, true, white, false, "REDACTED");
                     break;
+                }
                 case Players.Silent:
                     ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 0, false, null, null, false, null, false, "Elly");
                     break;
@@ -323,6 +331,10 @@ namespace MintMod.UserInterface {
                     ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Milk Nation", Color.red, false, ColorConversion.HexToColor("3E9DE8"));
                     break;
                 #endregion
+                case Players.HarlesBently:
+                    if (APIUser.CurrentUser.id == Players.LilyID)
+                        ApplyNameplateColour(nameplate, helper,false, HarlesPink, HarlesBlue, HarlesPink, null, false, 3, false, "Cute Floof", Color.black, false, HarlesBlue, false, "Harles");
+                    break;
                 default:
                     if (Config.RecolorRanks.Value)
                         if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))

@@ -30,6 +30,7 @@ namespace MintMod.Managers {
         public const string DaviID = "usr_fe9b2a3f-d2e7-41ec-910a-42f1329d8be0";
         public const string REDACTED = "usr_e1c908e4-31ce-4fdc-b4eb-56cb235459ed";
         public const string Silent = "usr_08378cbe-dce1-4f98-a5a8-7cb215e4cda5";
+        public const string HarlesBently = "usr_50f0a33f-190b-443f-ba36-e4256034ddac";
 
         #region MILK NATION
         public const string SarahID = "usr_d8ffa870-e8c2-46cb-8a97-a1284dfc3d14";
