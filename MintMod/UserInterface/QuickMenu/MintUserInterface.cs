@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Resources;
-using m_ReMod.Core.UI.QuickMenu;
+using ReMod.Core.UI.QuickMenu;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,8 +23,10 @@ using VRC.UI.Elements;
 using VRCSDK2;
 using Button = UnityEngine.UI.Button;
 using MintMod.Managers;
+using MintMod.Reflections;
 using MintMod.Utils;
-using m_ReMod.Core.VRChat;
+using MintyLoader;
+using ReMod.Core.VRChat;
 
 namespace MintMod.UserInterface.QuickMenu {
     class MintUserInterface : MintSubMod {
@@ -33,7 +35,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static GameObject MainMenuBackButton, TheMintMenuButton, ShittyAdverts, LaunchPadLayoutGroup;
 
-        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, MintQuickActionsCat;
+        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, MintQuickActionsCat, userSelectCategory;
 
         public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu;
 
@@ -49,8 +51,15 @@ namespace MintMod.UserInterface.QuickMenu {
 		internal static IEnumerator OnQuickMenu() {
             while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null)
                 yield return null;
-            m_ReMod.Core.Managers.UiManager.FixLaunchpadScrolling();
+            //ReMod.Core.Managers.UiManager.FixLaunchpadScrolling();
             MelonCoroutines.Start(BuildMint());
+        }
+
+        internal static IEnumerator OnUserSelectMenu() {
+            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.Menus.SelectedUserMenuQM>() == null)
+                yield return null;
+
+            UserSelMenu();
         }
 
         static IEnumerator BuildMint() {
@@ -88,11 +97,15 @@ namespace MintMod.UserInterface.QuickMenu {
                     MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
                 }
                 if (Config.KeepPhotonFreezesOnMainMenu.Value)
-                    MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", on => PhotonFreeze.ToggleFreeze());
+                    MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
             }
 
-            if (MintCore.isDebug)
-                MelonLogger.Msg(ConsoleColor.Cyan, "Done Setting up Menus");
+            if (MintQAFreeze != null)
+                MintQAFreeze.Interactable = false;
+            if (MainQMFreeze != null)
+                MainQMFreeze.Interactable = false;
+
+            Con.Debug("Done Setting up Menus", MintCore.isDebug);
             yield break;
         }
 
@@ -114,10 +127,9 @@ namespace MintMod.UserInterface.QuickMenu {
             MintQuickActionsCat = MintMenu.AddCategory("Quick Actions");
             MintQAFly = MintQuickActionsCat.AddToggle("Flight", "Toggle Flight", Movement.Fly);
             MintQANoClip = MintQuickActionsCat.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
-            MintQAFreeze = MintQuickActionsCat.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", on => PhotonFreeze.ToggleFreeze());
+            MintQAFreeze = MintQuickActionsCat.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
 
-            if (MintCore.isDebug)
-                MelonLogger.Msg(ConsoleColor.Cyan, "Done Creating QuickActions");
+            Con.Debug("Done Creating QuickActions", MintCore.isDebug);
         }
 
         #endregion
@@ -226,6 +238,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
                         int.TryParse(_, out int f);
                         MelonPreferences.GetEntry<float>(Config.mint.Identifier, Config.SpoofedFrameNumber.Identifier) .Value = f;
+                        Frame.Text = f.ToString();
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
             });
 
@@ -240,6 +253,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     InputField.InputType.Standard, true, "Set Ping", (_, __, ___) => {
                         int.TryParse(_, out int p);
                         MelonPreferences.GetEntry<float>(Config.mint.Identifier, Config.SpoofedPingNumber.Identifier).Value = p;
+                        Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{p}</color>";
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
             });
             bypassRiskyFunc = r.AddToggle("Bypass Risky Func", "Forces Mods with Risky Function Checks to work", 
@@ -248,5 +262,88 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         #endregion
+
+        #region UserSelect Menu
+
+        private static GameObject TheUserSelectMenu;
+        internal static void UserSelMenu() {
+            TheUserSelectMenu = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_SelectedUser_Local/ScrollRect/Viewport/VerticalLayoutGroup");
+
+            userSelectCategory = new ReMenuCategory("MintMod", TheUserSelectMenu.transform);
+
+            string u = "selected user";
+
+            userSelectCategory.AddButton("Download Avatar VRCA", $"Downloads {u}'s Avatar .VRCA", PlayerActions.AvatarDownload);
+            userSelectCategory.AddButton("Log Asset", $"Logs {u}'s information and put it into a text file", PlayerActions.LogAsset);
+            userSelectCategory.AddButton("Copy Avatar ID", $"Copies {u}'s avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerWrappers.GetSelectedAPIUser().avatarId);
+            userSelectCategory.AddButton("Clone Avatar", $"Clones {u}'s avatar if public", () => {
+                try {
+                    var v = PlayerActions.SelPAvatar();
+                    string clip = PlayerWrappers.GetSelectedAPIUser().avatarId;
+                    if (clip.Contains("avtr_") && !string.IsNullOrWhiteSpace(clip) && v.releaseStatus.ToLower().Contains("public")) {
+                        PageAvatar a = new() { field_Public_SimpleAvatarPedestal_0 = new() };
+                        new ApiAvatar { id = clip }.Get(new Action<ApiContainer>(x => {
+                            a.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0 = x.Model.Cast<ApiAvatar>();
+                            a.ChangeToSelectedAvatar();
+                        }));
+                    } else
+                        VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private", Color.white);
+                } catch (Exception c) {
+                    MelonLogger.Error(c);
+                }
+            });
+
+            if (Config.AviFavsEnabled.Value) {
+                userSelectCategory.AddButton("Silent Favorite", $"Silently favorites the avatar {u} is wearing if public.", () => {
+                    var v = PlayerActions.SelPAvatar();
+                    foreach (var f in AvatarFavs.AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
+                        if (!v.releaseStatus.ToLower().Contains("private"))
+                            AvatarFavs.AviFavLogic.FavoriteAvatar(v, f.ID);
+                        else {
+                            Con.Warn("Avatar is private, cannot favorite");
+                            VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private, cannot favorite", Color.white);
+                        }
+                    }
+                });
+            }
+
+            userSelectCategory.AddButton("Teleport to", $"Teleport to {u}", () => { });
+            userSelectCategory.AddButton("Teleport pickups to", $"Teleport all picktup objects to {u}", () => Items.TPToPlayer(PlayerWrappers.SelPlayer()));
+
+            if (APIUser.CurrentUser.id == Players.LilyID) {
+                userSelectCategory.AddButton("Mint Auth Check", $"Check to see if {u} can use MintMod", () => MelonCoroutines.Stop(ServerAuth.SimpleAuthCheck(PlayerWrappers.SelPlayer().field_Private_APIUser_0.id)));
+            }
+
+            Con.Debug("Finished Creating User Selected Menu", MintCore.isDebug);
+        }
+
+        #endregion
+
+        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+            if (buildindex == -1) {
+                //PhotonFreeze.ToggleFreeze(false);
+                if (MintQAFreeze != null)
+                    MintQAFreeze.Interactable = false;
+                if (MainQMFreeze != null)
+                    MainQMFreeze.Interactable = false;
+            }
+        }
+
+        internal override void OnPrefSave() {
+            if (DeviceType != null)
+                DeviceType.Toggle(Config.SpoofDeviceType.Value);
+            if (FrameSpoof != null)
+                FrameSpoof.Toggle(Config.SpoofFramerate.Value);
+            if (PingSpoof != null)
+                PingSpoof.Toggle(Config.SpoofPing.Value);
+            if (PingNegative != null)
+                PingNegative.Toggle(Config.SpoofedPingNegative.Value);
+            if (bypassRiskyFunc != null)
+                bypassRiskyFunc.Toggle(Config.bypassRiskyFunc.Value);
+            if (Frame != null)
+                Frame.Text = $"{Config.SpoofedFrameNumber.Value}";
+            if (Ping != null)
+                Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>";
+        }
     }
 }
