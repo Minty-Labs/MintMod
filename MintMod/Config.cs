@@ -185,7 +185,6 @@ namespace MintMod {
         internal override void OnPrefSave() {
             Utils.General.SetPriority();
             Utils.General.SetFrameRate();
-            MasterFinder.MasterIcon.SetActive(EnableMasterFinder.Value);
             //if ()
             if (AviFavsEnabled.Value) {
                 try {

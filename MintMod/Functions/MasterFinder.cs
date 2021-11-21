@@ -63,5 +63,9 @@ namespace MintMod.Functions {
                     MasterIcon.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 60f, 0f);
             }
         }
+
+        internal override void OnPrefSave() {
+            MasterIcon.SetActive(Config.EnableMasterFinder.Value);
+        }
     }
 }

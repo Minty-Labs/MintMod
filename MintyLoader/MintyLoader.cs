@@ -18,7 +18,7 @@ namespace MintyLoader
         public const string Name = "MintyLoader";
         public const string Author = "Lily & DDAkebono";
         public const string Company = "LilyMod";
-        public const string Version = "2.3.0";
+        public const string Version = "2.3.0.1";
         public const string DownloadLink = null;
     }
    
@@ -28,9 +28,8 @@ namespace MintyLoader
         static readonly DirectoryInfo MintDirectory = new DirectoryInfo($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}UserData{Path.DirectorySeparatorChar}MintMod");
         internal MelonMod MintMod;
         internal Assembly Local_mintAssembly;
-        static bool hasQuit, isDebug, _localLoadingFailed;
-        private string checkedVer, site, final_site, auth_folder, passwords;
-        private string[] site_split, splitsite_6;
+        internal static bool hasQuit, isDebug, _localLoadingFailed;
+        private string checkedVer, final_site;
         private readonly string modURL = "https://mintlily.lgbt/mod/MintMod.dll";
 
         public override void OnApplicationStart()
@@ -43,9 +42,6 @@ namespace MintyLoader
 
             MelonLogger.Msg(ConsoleColor.DarkCyan, $"Loader Build version: {BuildInfo.Version} :: Server pulled: {checkedVer}");
 
-            //RunAndConvert().NoAwait();
-            //while (!RunAndConvert().IsCompleted) Task.WaitAll();
-
             if (isDebug) {
                 MelonLogger.Msg(ConsoleColor.DarkRed, $"Final Site: {final_site}");
 
@@ -57,7 +53,6 @@ namespace MintyLoader
                 } catch (Exception e) {
                     _localLoadingFailed = true;
                     MelonLogger.Error($"{e}");
-                    ///*
                     if (Local_mintAssembly != null) Local_mintAssembly = null;
                     MelonLogger.Warning("Is not load Local Mod, loading MintMod from the server.");
                     if (!MintDirectory.Exists)
@@ -65,7 +60,6 @@ namespace MintyLoader
 
                     Assembly mintAssembly = getMintAssy();
                     if (mintAssembly != null) loadModuleCore(mintAssembly);
-                    //*/
                     return;
                 }
             }
@@ -82,18 +76,6 @@ namespace MintyLoader
         private void loadModuleCore(Assembly assy)
         {
             if (assy != null) {
-                /*try {
-                    if (isDebug)
-                        MelonLogger.Msg("Passing to MelonHandler");
-                    MelonHandler.LoadFromAssembly(assy);
-                    if (isDebug)
-                        MelonLogger.Msg("Passed to MelonHandler");
-                }
-                catch (Exception e) {
-                    MelonLogger.Error($"Unable to load MintMod -> If VRChat has been updated, MintMod likely needs to be updated as well.\n{e}");
-                }*/
-
-
                 foreach (Type componentType in ((IEnumerable<Type>)assy.GetTypes()).Where(t => t.IsSubclassOf(typeof(MelonMod)))) {
                     try {
                         MelonMod coreLoad = Activator.CreateInstance(componentType) as MelonMod;
