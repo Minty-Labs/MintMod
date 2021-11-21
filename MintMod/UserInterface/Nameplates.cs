@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MintyLoader;
 using TMPro;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -42,7 +43,7 @@ namespace MintMod.UserInterface {
 
         internal override void OnStart() {
             try { ClassInjector.RegisterTypeInIl2Cpp<MintyNameplateHelper>(); } catch (Exception e) {
-                MelonLogger.Error("Unable to Inject Nameplatehelper!\n" + e.ToString());
+                Con.Error("Unable to Inject Nameplatehelper!\n" + e.ToString());
             }
         }
 
@@ -82,7 +83,8 @@ namespace MintMod.UserInterface {
                 //Check if we should be showing quick stats
                 //helper.AlwaysShowQuickInfo = alwaysShowStatsLocal;
 
-                try { ApplyCustomNameplates(player.prop_APIUser_0.id, nameplate, helper); } catch (Exception n) { MelonLogger.Error("Could not apply nameplate color\n" + n.ToString()); }
+                try { ApplyCustomNameplates(player.prop_APIUser_0.id, nameplate, helper); } 
+                catch (Exception n) { Con.Error("Could not apply nameplate color\n" + n.ToString()); }
 
                 helper.OnRebuild();
             }

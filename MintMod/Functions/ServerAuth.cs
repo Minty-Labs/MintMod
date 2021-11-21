@@ -8,6 +8,7 @@ using MelonLoader;
 using UnityEngine;
 using VRC.Core;
 using System.Net;
+using MintyLoader;
 
 namespace MintMod.Functions {
     internal class ServerAuth : MintSubMod{
@@ -25,29 +26,25 @@ namespace MintMod.Functions {
 
             string UserID = APIUser.CurrentUser.id;
             string url = $"https://mintlily.lgbt/mod/auth/auth.php?userid={UserID}";
-            if (MintCore.isDebug)
-                MelonLogger.Msg(url);
+            Con.Debug(url, MintCore.isDebug);
             WebClient www = new WebClient();
-            if (MintCore.isDebug)
-                MelonLogger.Msg("www created");
+            Con.Debug("www created", MintCore.isDebug);
             while (www.IsBusy)
                 yield return null;
             string result = www?.DownloadString(url);
-            if (MintCore.isDebug)
-                MelonLogger.Msg($"Result: {result}");
+            Con.Debug($"Result: {result}", MintCore.isDebug);
 
             if (!string.IsNullOrWhiteSpace(result)) {
                 www.Dispose();
-                if (MintCore.isDebug)
-                    MelonLogger.Msg("www Disposed");
+                Con.Debug("www Disposed", MintCore.isDebug);
                 switch (result) {
                     case "isAuthedAndCanUseMod":
-                        MelonLogger.Msg("Authed for MintMod");
+                        Con.Msg(ConsoleColor.Green, "Authed for MintMod");
                         canLoadMod = true;
                         MelonCoroutines.Start(GetAssembly.YieldUI());
                         yield break;
                     case "canNotUseMod":
-                        MelonLogger.Warning("You are not authorized to use the mod, if you think this is a mistake, please Let Lily know.");
+                        Con.Warn("You are not authorized to use the mod, if you think this is a mistake, please Let Lily know.");
                         canLoadMod = false;
                         MelonCoroutines.Start(LoopNoAuth());
                         yield break;
@@ -57,13 +54,12 @@ namespace MintMod.Functions {
                         break;
                 }
             } else canLoadMod = false;
-            if (MintCore.isDebug)
-                MelonLogger.Msg("result was null or empty");
+            Con.Debug("result was null or empty", MintCore.isDebug);
         }
 
         static IEnumerator LoopNoAuth() {
             while (true) {
-                MelonLogger.Warning("You are not authorized to use this mod.");
+                Con.Warn("You are not authorized to use this mod.");
                 yield return new WaitForSeconds(60);
             }
         }
@@ -88,8 +84,7 @@ namespace MintMod.Functions {
                         yield break;
                 }
             }
-            if (MintCore.isDebug)
-                MelonLogger.Msg("result was null or empty");
+            Con.Debug("result was null or empty", MintCore.isDebug);
         }
     }
 }

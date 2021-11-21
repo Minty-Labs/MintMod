@@ -13,11 +13,11 @@ namespace MintMod.Functions {
     class PhotonFreeze {
         private static Transform CloneObj;
         private static FlatBufferNetworkSerializer Thing;
-        public static bool Freeze;
+        //public static bool Freeze;
         public static Vector3 TempPos;
         public static Quaternion TempRot;
 
-        public static void Clone(bool Toggle) {
+        static void Clone(bool Toggle) {
             if (Toggle) {
                 CloneObj = UnityEngine.Object.Instantiate<Transform>(PlayerWrappers.GetCurrentPlayer().prop_VRCAvatarManager_0.transform.Find("Avatar"), null, true);
                 CloneObj.name = "Cloned Frozen Avatar";
@@ -38,17 +38,17 @@ namespace MintMod.Functions {
             CloneObj.gameObject.Destroy();
         }
 
-        public static void ToggleFreeze() {
-            Freeze = !Freeze;
+        public static void ToggleFreeze(bool toggle) {
+            //Freeze = !Freeze;
             Thing = VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_VRCPlayerApi_0.gameObject.GetComponent<FlatBufferNetworkSerializer>();
-            Thing.enabled = !Freeze;
+            Thing.enabled = !toggle;
             TempPos = PlayerWrappers.GetCurrentPlayerPos();
             TempRot = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation;
-            Clone(Freeze);
+            Clone(toggle);
             if (MintUserInterface.MainQMFreeze != null)
-                MintUserInterface.MainQMFreeze.Toggle(Freeze);
+                MintUserInterface.MainQMFreeze.Toggle(toggle);
             if (MintUserInterface.MintQAFreeze != null)
-                MintUserInterface.MintQAFreeze.Toggle(Freeze);
+                MintUserInterface.MintQAFreeze.Toggle(toggle);
         }
     }
 }

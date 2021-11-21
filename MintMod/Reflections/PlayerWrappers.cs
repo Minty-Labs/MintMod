@@ -6,7 +6,11 @@ using UnityEngine;
 using VRC;
 using VRC.Core;
 using MintMod.Managers;
+using MintyLoader;
 using VRC.SDKBase;
+using VRC.UI.Elements.Menus;
+using VRC.DataModel.Core;
+using Object = UnityEngine.Object;
 
 namespace MintMod.Reflections {
     public static class PlayerWrappers {
@@ -61,6 +65,31 @@ namespace MintMod.Reflections {
             return p.prop_APIUser_0;
         }
 
+        public static Player getPlayerFromPlayerlist(string userID) {
+            foreach (var player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
+                if (player.prop_APIUser_0 != null) {
+                    if (player.prop_APIUser_0.id.Equals(userID))
+                        return player;
+                }
+            }
+
+            return null;
+        }
+
+        private static SelectedUserMenuQM _selectedUserMenuQM;
+        public static APIUser GetSelectedAPIUser() {
+            if (_selectedUserMenuQM == null)
+                _selectedUserMenuQM = Object.FindObjectOfType<SelectedUserMenuQM>();
+
+            if (_selectedUserMenuQM != null) {
+                DataModel<APIUser> user = _selectedUserMenuQM.field_Private_IUser_0.Cast<DataModel<APIUser>>();
+                return user.field_Protected_TYPE_0;
+            }
+
+            Con.Error("Unable to get SelectedUserMenuQM component!");
+            return null;
+        }
+
         public static Player GetPlayer(string id) {
             foreach (Player player in GetAllPlayers()) {
                 if (player == null)
@@ -94,6 +123,14 @@ namespace MintMod.Reflections {
             if (user.isUntrusted)
                 return Colors.VisitorNP;
             return Color.white;
+        }
+
+        public static Player SelPlayer() {
+            return PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer._player;
+        }
+
+        public static VRCPlayer SelVRCPlayer() {
+            return PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer;
         }
     }
 }

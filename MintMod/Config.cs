@@ -204,8 +204,6 @@ namespace MintMod {
                 }
                 catch (Exception d) { MelonLogger.Error($"{d}"); }
             }
-            if (MintUserInterface.DeviceType != null)
-                MintUserInterface.DeviceType.Toggle(SpoofDeviceType.Value);
         }
     }
 }

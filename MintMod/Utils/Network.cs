@@ -6,11 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using MelonLoader;
 using MintMod.Managers;
+using MintyLoader;
 using UnityEngine;
 using VRC.Core;
 using VRC;
 using VRC.SDKBase;
-using m_ReMod.Core.VRChat;
+using ReMod.Core.VRChat;
 
 namespace MintMod.Utils {
     class Network {// : MintSubMod {
@@ -43,8 +44,7 @@ namespace MintMod.Utils {
                 AFiredFirst = true;
                 SeenFire = true;
 
-                if (MintCore.isDebug)
-                    MelonLogger.Msg("[NetworkUtils] A fired first");
+                Con.Debug("[NetworkUtils] A fired first", MintCore.isDebug);
             }
 
             (AFiredFirst ? OnJoin : OnLeave)?.Invoke(player);
@@ -55,8 +55,7 @@ namespace MintMod.Utils {
                 AFiredFirst = false;
                 SeenFire = true;
 
-                if (MintCore.isDebug)
-                    MelonLogger.Msg("[NetworkUtils] B fired first");
+                Con.Debug("[NetworkUtils] B fired first", MintCore.isDebug);
             }
 
             (AFiredFirst ? OnLeave : OnJoin)?.Invoke(player);
@@ -71,7 +70,7 @@ namespace MintMod.Utils {
                 if ((plr.prop_VRCPlayerApi_0 != null && plr.prop_VRCPlayerApi_0.isModerator) ||
                     (plr.field_Private_VRCPlayerApi_0 != null && plr.field_Private_VRCPlayerApi_0.isModerator)) {
                     if (Config.EnablePlayerJoinLeave.Value)
-                        MelonLogger.Msg($"[Moderator JOIN] {apiUser.displayName} has joined.");
+                        Con.Msg($"[Moderator JOIN] {apiUser.displayName} has joined.");
                     try {
                         VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowStandardPopupV2("Moderator Notice",
                             "A moderator of VRChat, has join the world you are in.\n" +
@@ -80,19 +79,19 @@ namespace MintMod.Utils {
                             "Yes, Go Home", () => Networking.GoToRoom(RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId));
                     }
                     catch (Exception j) {
-                        MelonLogger.Error($"VRCUiPopupStandard did not show\n{j}");
+                        Con.Error($"VRCUiPopupStandard did not show\n{j}");
                     }
                 }
                 else {
                     if (Config.EnablePlayerJoinLeave.Value) {
                         if (Config.FriendsOnlyJoinLeave.Value && APIUser.CurrentUser.friendIDs.Contains(apiUser.id)) {
-                            MelonLogger.Msg($"[JOIN] {apiUser.displayName} has joined.");
+                            Con.Msg($"[JOIN] {apiUser.displayName} has joined.");
                             if (Config.HeadsUpDisplayNotifs.Value) {
                                 VRCUiManager.prop_VRCUiManager_0.InformHudText($"{apiUser.displayName} has joined.", Color.white);
                             }
                         }
                         else {
-                            MelonLogger.Msg($"[JOIN] {apiUser.displayName} has joined.");
+                            Con.Msg($"[JOIN] {apiUser.displayName} has joined.");
                             if (Config.HeadsUpDisplayNotifs.Value) {
                                 VRCUiManager.prop_VRCUiManager_0.InformHudText($"{apiUser.displayName} has joined.", Color.white);
                             }
@@ -112,19 +111,19 @@ namespace MintMod.Utils {
                 if ((plr.prop_VRCPlayerApi_0 != null && plr.prop_VRCPlayerApi_0.isModerator) ||
                     (plr.field_Private_VRCPlayerApi_0 != null && plr.field_Private_VRCPlayerApi_0.isModerator)) {
                     if (Config.EnablePlayerJoinLeave.Value)
-                        MelonLogger.Msg($"[Moderator LEFT] {apiUser.displayName} has joined.");
+                        Con.Msg($"[Moderator LEFT] {apiUser.displayName} has left.");
                 } else {
                     if (Config.EnablePlayerJoinLeave.Value) {
                         if (Config.FriendsOnlyJoinLeave.Value && APIUser.CurrentUser.friendIDs.Contains(apiUser.id)) {
-                            MelonLogger.Msg($"[LEFT] {apiUser.displayName} has joined.");
+                            Con.Msg($"[LEFT] {apiUser.displayName} has left.");
                             if (Config.HeadsUpDisplayNotifs.Value) {
                                 VRCUiManager.prop_VRCUiManager_0.InformHudText($"{apiUser.displayName} has left.", Color.white);
                             }
                         } else if (!Config.FriendsOnlyJoinLeave.Value) {
-                            MelonLogger.Msg($"[LEFT] {apiUser.displayName} has joined.");
+                            Con.Msg($"[LEFT] {apiUser.displayName} has left.");
                             if (Config.HeadsUpDisplayNotifs.Value)
                                 if (Config.EnablePlayerJoinLeave.Value)
-                                    MelonLogger.Msg($"[LEFT] {apiUser.displayName} has joined.");
+                                    Con.Msg($"[LEFT] {apiUser.displayName} has left.");
                         }
                     }
                 }

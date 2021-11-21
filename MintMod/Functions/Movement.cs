@@ -17,7 +17,7 @@ namespace MintMod.Functions {
         private static Player player;
         private static VRCMotionState motionState;
         private static InputStateController stateController;
-        public static float finalSpeed = 0.2f;
+        public static float finalSpeed = 1f;
 
 		internal override void OnUserInterface() {
             MelonCoroutines.Start(Flying());

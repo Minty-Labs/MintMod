@@ -9,6 +9,7 @@ using ActionMenuApi.Pedals;
 using MintMod.Functions;
 using MintMod.Reflections;
 using MintMod.Resources;
+using MintyLoader;
 
 namespace MintMod.UserInterface {
     class ActionMenu : MintSubMod {
@@ -19,23 +20,22 @@ namespace MintMod.UserInterface {
         private static bool ranOnce;
 
         internal override void OnUserInterface() {
-            if (!ranOnce) return;
+            if (ranOnce) return;
             if (MelonHandler.Mods.Any(m => m.Info.Name.Equals("ActionMenuApi"))) {
                 hasAMApiInstalled = true;
                 if (!Config.ActionMenuON.Value) return;
                 if (MelonHandler.Mods.Single(m => m.Info.Name.Equals("ActionMenuApi")).Info.Version.Equals(AMApiOutdatedVersions)) {
                     AMApiOutdated = true;
-                    MelonLogger.Warning("ActionMenuApi Outdated. Older verions are not supported, please update ActionMenuApi to v0.3.5 or above");
+                    Con.Warn("ActionMenuApi Outdated. Older verions are not supported, please update ActionMenuApi to v0.3.5 or above");
                     return;
-                }
-                BuildMenu();
+                } else BuildMenu();
                 ranOnce = true;
             }
         }
 
         private static void BuildMenu() {
             ActionMenuUtils.subMenu = VRCActionMenuPage.AddSubMenu(ActionMenuPage.Main, "<color=#82ffbe>MintMenu</color>", () => {
-                Freeze = CustomSubMenu.AddToggle("Freeze", false, on => PhotonFreeze.ToggleFreeze(), MintyResources.FreezeIcon);
+                //Freeze = CustomSubMenu.AddToggle("Freeze", false, PhotonFreeze.ToggleFreeze, MintyResources.FreezeIcon);
 
                 ESP = CustomSubMenu.AddToggle("ESP", false, Managers.ESP.PlayerESPState, MintyResources.JumpIcon);
 
@@ -47,7 +47,7 @@ namespace MintMod.UserInterface {
                     VRTP = CustomSubMenu.AddToggle("VR Teleport\nto Cursor", false, choice =>
                         TeleporterVR.Utils.VRUtils.active = choice, MintyResources.VRTPIcon);
 
-                CustomSubMenu.AddRadialPuppet("Fly Speed", f => Movement.finalSpeed = f, 0.2f);
+                CustomSubMenu.AddRadialPuppet("Fly Speed", f => Movement.finalSpeed = f * 2, 0f);
             }, MintyResources.MintIcon2D);
             hasStarted = true;
         }

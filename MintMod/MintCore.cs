@@ -19,7 +19,10 @@ using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.OldUI;
 using MintMod.UserInterface.QuickMenu;
 using MintMod.Utils;
+using MintyLoader;
 using UnhollowerRuntimeLib;
+using VRC.UI.Elements;
+using BuildInfo = MelonLoader.BuildInfo;
 
 namespace MintMod {
 
@@ -29,9 +32,9 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.0.0";
+            public const string Version = "2.1.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "11/19/2021";
+            public const string UpdatedDate = "11/21/2021";
             public const string LoaderVer = "2.3.0";
             public static Version TargetMLVersion = new(0, 4, 3);
         }
@@ -44,6 +47,8 @@ namespace MintMod {
 
         public override void OnApplicationStart() {
             Instance = this;
+            if (!Directory.Exists(MintDirectory.FullName))
+                Directory.CreateDirectory(MintDirectory.FullName);
 #if DEBUG
             isDebug = true;
 #endif
@@ -53,11 +58,11 @@ namespace MintMod {
             if (melonVersion != ModBuildInfo.TargetMLVersion) {
                 MessageBox.Show("Your MelonLoader is outdated.", "Outdated Mod Loader");
                 Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
-                MelonLogger.Warning("Your MelonLoader version is out of date, please update it.");
+                Con.Warn("Your MelonLoader version is out of date, please update it.");
             }
 #endif
 
-            MelonLogger.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version}");
+            Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version}");
             mods.Add(new Config());
             mods.Add(new GetAssembly());
             mods.Add(new Patches());
@@ -74,7 +79,7 @@ namespace MintMod {
             mods.Add(new Movement());
             mods.Add(new HudIcon());
             mods.Add(new ModCompatibility());
-            //mods.Add(new ReColor());
+            mods.Add(new ReColor());
             mods.Add(new AvatarMenu());
             mods.Add(new SocialMenu());
             mods.Add(new MenuContentBackdrop());
@@ -88,15 +93,29 @@ namespace MintMod {
             //mods.Add(new );
 
             MelonCoroutines.Start(Utils.Network.OnYieldStart());
-            ClassInjector.RegisterTypeInIl2Cpp<m_ReMod.Core.Unity.EnableDisableListener>();
-            ClassInjector.RegisterTypeInIl2Cpp<m_ReMod.Core.Unity.RenderObjectListener>();
+            ReMod.Core.Unity.EnableDisableListener.RegisterSafe();
+            ReMod.Core.Unity.RenderObjectListener.RegisterSafe();
 
-            mods.ForEach(a => a.OnStart());
+            mods.ForEach(a => {
+                try { a.OnStart(); }
+                catch (Exception e) { Con.Error($"{e}"); }
+            });
         }
 
-        public override void OnPreferencesSaved() => mods.ForEach(s => s.OnPrefSave());
+        public override void OnPreferencesSaved() => mods.ForEach(s => {
+            try { s.OnPrefSave(); }
+            catch (Exception e) { Con.Error($"{e}"); }
+        });
 
-        public override void OnUpdate() => mods.ForEach(u => u.OnUpdate());
+        public override void OnUpdate() => mods.ForEach(u => {
+            try { u.OnUpdate(); }
+            catch (Exception e) { Con.Error($"{e}"); }
+        });
+
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName) => mods.ForEach(s => {
+            try { s.OnLevelWasLoaded(buildIndex, sceneName); }
+            catch (Exception e) { Con.Error($"{e}"); }
+        });
 
         public override void OnApplicationQuit() => MelonPreferences.Save();
     }
@@ -132,8 +151,12 @@ namespace MintMod {
         }
 
         internal static System.Collections.IEnumerator YieldUI() {
-            MintCore.mods.ForEach(u => u.OnUserInterface());
+            MintCore.mods.ForEach(u => {
+                try { u.OnUserInterface(); }
+                catch (Exception e) { Con.Error($"{e}"); }
+            });
             MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
+            MelonCoroutines.Start(MintUserInterface.OnUserSelectMenu());
             yield break;
         }
     }

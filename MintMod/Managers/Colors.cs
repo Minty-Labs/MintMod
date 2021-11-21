@@ -1,6 +1,7 @@
 ﻿using MintMod.Libraries;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MintMod.Managers {
     class Colors {
@@ -16,7 +17,18 @@ namespace MintMod.Managers {
         public static Color VeteranNP = ColorConversion.HexToColor("#" + Config.VeteranRankHEX.Value);
         public static Color LegendNP = ColorConversion.HexToColor("#" + Config.LegendRankHEX.Value);
 
-        public static Color Lerp3(Color a, Color b, Color c, float t, float t1) {
+        public static ColorBlock ColorBlock(Color color) {
+            return new() {
+                colorMultiplier = 1f,
+                disabledColor = Color.grey,
+                highlightedColor = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f),
+                normalColor = color,
+                pressedColor = ColorConversion.HexToColor("#e180ff"),
+                fadeDuration = 0.1f
+            };
+        }
+
+		public static Color Lerp3(Color a, Color b, Color c, float t, float t1) {
             if (t < 1.5f)
                 return Color.Lerp(a, b, t / t1);
             return Color.Lerp(b, c, (t - t1) / t1);

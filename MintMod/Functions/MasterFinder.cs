@@ -57,10 +57,10 @@ namespace MintMod.Functions {
 
         internal override void OnUpdate() {
             if (MasterIcon != null && (ModCompatibility.NameplateStats || ModCompatibility.ReMod)) {
-                //if (Patches.IsQMOpen)
+                if (Patches.IsQMOpen)
                     MasterIcon.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 90f, 0f);
-                //else
-                //    MasterIcon.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 60f, 0f);
+                else
+                    MasterIcon.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 60f, 0f);
             }
         }
     }

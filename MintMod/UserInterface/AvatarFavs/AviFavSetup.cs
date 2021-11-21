@@ -1,4 +1,5 @@
-﻿using MintMod.Reflections.VRCAPI;
+﻿using System;
+using MintMod.Reflections.VRCAPI;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -28,19 +29,12 @@ namespace MintMod.UserInterface.AvatarFavs {
                 File.WriteAllText(final, contents);
             }
 
-            public static Favorites Load() {
-                if (!File.Exists(final)) {
+            public static void CreateAviFavJSONFile() {
+                if (!File.Exists(final))
                     File.WriteAllText(final, JsonConvert.SerializeObject(new Favorites(), Formatting.Indented));
-                    try {
-                        Get();
-                        File.WriteAllText(final, JsonConvert.SerializeObject(_Config, Formatting.Indented));
-                    } catch { }
-                }
-                return JsonConvert.DeserializeObject<Favorites>(File.ReadAllText(final));
-            }
 
-            private static FavoriteList _Config { get; set; }
-            public static FavoriteList Get() => JsonConvert.DeserializeObject<FavoriteList>(File.ReadAllText(final));
+                Instance = JsonConvert.DeserializeObject<Favorites>(File.ReadAllText(final));
+            }
 
             public static Favorites Instance;
         }

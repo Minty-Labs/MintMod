@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MelonLoader;
+using MintyLoader;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,17 +22,17 @@ namespace MintMod.Resources {
         public static Texture basicGradient;
 
         internal override void OnStart() {
-            MelonLogger.Msg("Loading AssetBundles");
+            Con.Msg("Loading AssetBundles");
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("MintMod.Resources.mintbundle")) {
                 using (var memoryStream = new MemoryStream((int)stream.Length)) {
                     stream.CopyTo(memoryStream);
                     MintBundle = AssetBundle.LoadFromMemory_Internal(memoryStream.ToArray(), 0);
                     MintBundle.hideFlags |= HideFlags.DontUnloadUnusedAsset;
 
-                    try { masterCrown = LoadSprite("masterCrown.png"); } catch { MelonLogger.Error("Resource masterCrown.png failed"); }
-                    try { MintIcon = LoadSprite("MintMod.png"); } catch { MelonLogger.Error("Resource MintMod.png failed"); }
-                    try { MintTabIcon = LoadSprite("MintMod_flat.png"); } catch { MelonLogger.Error("Resource MintMod_flat.png failed"); }
-                    try { basicGradient = LoadTexture("Gradient.png"); } catch { MelonLogger.Error("Resource Gradient.png failed"); }
+                    try { masterCrown = LoadSprite("masterCrown.png"); } catch { Con.Error("Resource masterCrown.png failed"); }
+                    try { MintIcon = LoadSprite("MintMod.png"); } catch { Con.Error("Resource MintMod.png failed"); }
+                    try { MintTabIcon = LoadSprite("MintMod_flat.png"); } catch { Con.Error("Resource MintMod_flat.png failed"); }
+                    try { basicGradient = LoadTexture("Gradient.png"); } catch { Con.Error("Resource Gradient.png failed"); }
                 }
             }
 
@@ -41,15 +42,15 @@ namespace MintMod.Resources {
                     ActionMenuBundle = AssetBundle.LoadFromMemory_Internal(memoryStream2.ToArray(), 0);
                     ActionMenuBundle.hideFlags |= HideFlags.DontUnloadUnusedAsset;
 
-                    try { MintIcon2D = LoadTexture2D("MintIcon.png"); } catch { MelonLogger.Error("Failed to load Texture: MintIcon.png"); }
-                    try { FreezeIcon = LoadTexture2D("FreezeIcon.png"); } catch { MelonLogger.Error("Failed to load Texture: FreezeIcon.png"); }
-                    try { JumpIcon = LoadTexture2D("JumpIcon.png"); } catch { MelonLogger.Error("Failed to load Texture: JumpIcon.png"); }
-                    try { ESPIcon = LoadTexture2D("ESPIcon.png"); } catch { MelonLogger.Error("Failed to load Texture: ESPIcon.png"); }
-                    try { FlyIcon = LoadTexture2D("FlyIcon.png"); } catch { MelonLogger.Error("Failed to load Texture: FlyIcon.png"); }
-                    try { VRTPIcon = LoadTexture2D("VRTPIcon.png"); } catch { MelonLogger.Error("Failed to load Texture: VRTPIcon.png"); }
+                    try { MintIcon2D = LoadTexture2D("MintIcon.png"); } catch { Con.Error("Failed to load Texture: MintIcon.png"); }
+                    try { FreezeIcon = LoadTexture2D("FreezeIcon.png"); } catch { Con.Error("Failed to load Texture: FreezeIcon.png"); }
+                    try { JumpIcon = LoadTexture2D("JumpIcon.png"); } catch { Con.Error("Failed to load Texture: JumpIcon.png"); }
+                    try { ESPIcon = LoadTexture2D("ESPIcon.png"); } catch { Con.Error("Failed to load Texture: ESPIcon.png"); }
+                    try { FlyIcon = LoadTexture2D("FlyIcon.png"); } catch { Con.Error("Failed to load Texture: FlyIcon.png"); }
+                    try { VRTPIcon = LoadTexture2D("VRTPIcon.png"); } catch { Con.Error("Failed to load Texture: VRTPIcon.png"); }
                 }
             }
-            MelonLogger.Msg("Done loading AssetBundles.");
+            Con.Msg("Done loading AssetBundles.");
         }
 
         private static Sprite LoadSprite(string sprite) {

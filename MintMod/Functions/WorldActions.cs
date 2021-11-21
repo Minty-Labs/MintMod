@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using MelonLoader;
 using MintMod.Reflections;
 using MintMod.Utils;
+using MintyLoader;
 using UnityEngine;
 using VRCSDK2;
 using VRC_MirrorReflection = VRC.SDKBase.VRC_MirrorReflection;
@@ -57,13 +58,13 @@ namespace MintMod.Functions {
                         }
                     }
 
-                    MelonLogger.Msg($"Downloaded VRCW for {grab_assetName_vrcw}\nLocated in {subdir}");
+                    Con.Msg($"Downloaded VRCW for {grab_assetName_vrcw}\nLocated in {subdir}");
                     VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCW for {grab_assetName_vrcw}", Color.white);
                 };
                 new Thread(DLVRCW).Start();
             }
             catch {
-                MelonLogger.Error("Failed to download VRCW");
+                Con.Error("Failed to download VRCW");
                 VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download VRCW", Color.white);
             }
         }
@@ -108,11 +109,11 @@ namespace MintMod.Functions {
                     swe.WriteLine("==================================================================");
                     swe.WriteLine("");
                 }
-                MelonLogger.Msg($"Logged World: {worldName}\nLocated in {final}");
+                Con.Msg($"Logged World: {worldName}\nLocated in {final}");
                 VRCUiManager.prop_VRCUiManager_0.InformHudText($"Logged world: {worldName}", Color.white);
             }
             catch (Exception w) {
-                MelonLogger.Error(w);
+                Con.Error($"{w}");
                 VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to log world", Color.white);
             }
         }

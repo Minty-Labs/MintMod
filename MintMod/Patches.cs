@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MintyLoader;
 using UnityEngine;
 using VRC;
 
@@ -16,19 +17,19 @@ namespace MintMod.Hooks {
         public override string Name => "Patches";
         public override string Description => "";
 
+        internal static bool IsQMOpen;
+
         private static void applyPatches(Type type) {
-            if (MintCore.isDebug)
-                MelonLogger.Msg(ConsoleColor.Cyan, $"Applying {type.Name} patches!");
+            Con.Debug($"Applying {type.Name} patches!", MintCore.isDebug);
             try {
                 HarmonyLib.Harmony.CreateAndPatchAll(type, "MintMod_Patches");
             } catch (Exception e) {
-                MelonLogger.Error($"Failed while patching {type.Name}!\n{e}");
+                Con.Error($"Failed while patching {type.Name}!\n{e}");
             }
         }
 
         internal override void OnStart() {
-            if (MintCore.isDebug)
-                MelonLogger.Msg(ConsoleColor.Cyan, "Setting up patches");
+            Con.Debug("Setting up patches", MintCore.isDebug);
 
             applyPatches(typeof(NameplatePatches));
             applyPatches(typeof(PingSpoof));
@@ -36,13 +37,28 @@ namespace MintMod.Hooks {
             applyPatches(typeof(VRC_Station));
             applyPatches(typeof(NameplatePatches));
             applyPatches(typeof(VRCPlayerPatches));
+            applyPatches(typeof(QuickMenuPatches));
 
             if (Config.SpoofDeviceType.Value) {
                 applyPatches(typeof(PlatformSpoof));
-                if (MintCore.isDebug)
-                    MelonLogger.Msg(ConsoleColor.Cyan, "Patched DeviceSpoof");
+                Con.Debug("Patched DeviceSpoof", MintCore.isDebug);
             }
-            MelonLogger.Msg($"Device Type: {(Config.SpoofDeviceType.Value ? "Quest" : "PC")}");
+            Con.Msg($"Device Type: {(Config.SpoofDeviceType.Value ? "Quest" : "PC")}");
+        }
+    }
+
+    [HarmonyPatch(typeof(VRC.UI.Elements.QuickMenu))]
+    class QuickMenuPatches {
+        [HarmonyPostfix]
+        [HarmonyPatch("OnEnable")]
+        private static void OnQuickMenuEnable() {
+            Patches.IsQMOpen = true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch("OnDisable")]
+        private static void OnQuickMenuDisable() {
+            Patches.IsQMOpen = false;
         }
     }
 

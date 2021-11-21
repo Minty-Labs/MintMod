@@ -28,7 +28,7 @@ namespace MintyLoader
         static readonly DirectoryInfo MintDirectory = new DirectoryInfo($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}UserData{Path.DirectorySeparatorChar}MintMod");
         internal MelonMod MintMod;
         internal Assembly Local_mintAssembly;
-        static bool hasQuit, isDebug;
+        static bool hasQuit, isDebug, _localLoadingFailed;
         private string checkedVer, site, final_site, auth_folder, passwords;
         private string[] site_split, splitsite_6;
         private readonly string modURL = "https://mintlily.lgbt/mod/MintMod.dll";
@@ -41,7 +41,7 @@ namespace MintyLoader
             WebClient checkVer = new WebClient();
             checkedVer = checkVer.DownloadString("https://mintlily.lgbt/mod/loader/version.txt");
 
-            MelonLogger.Msg(ConsoleColor.DarkCyan, "Loader Build version: " + BuildInfo.Version.ToString() + " :: Server pulled: " + checkedVer.ToString());
+            MelonLogger.Msg(ConsoleColor.DarkCyan, $"Loader Build version: {BuildInfo.Version} :: Server pulled: {checkedVer}");
 
             //RunAndConvert().NoAwait();
             //while (!RunAndConvert().IsCompleted) Task.WaitAll();
@@ -55,20 +55,21 @@ namespace MintyLoader
                     if (Local_mintAssembly != null) loadModuleCore(Local_mintAssembly);
                     return;
                 } catch (Exception e) {
+                    _localLoadingFailed = true;
                     MelonLogger.Error($"{e}");
-                    /*
+                    ///*
                     if (Local_mintAssembly != null) Local_mintAssembly = null;
-                    MelonLogger.Warning("Could not load Local Mod, loading MintMod from the server.");
+                    MelonLogger.Warning("Is not load Local Mod, loading MintMod from the server.");
                     if (!MintDirectory.Exists)
                         MintDirectory.Create();
 
                     Assembly mintAssembly = getMintAssy();
                     if (mintAssembly != null) loadModuleCore(mintAssembly);
-                    */
+                    //*/
                     return;
                 }
             }
-            if (checkedVer == BuildInfo.Version) {
+            if (checkedVer == BuildInfo.Version && !_localLoadingFailed) {
                 MelonLogger.Msg(ConsoleColor.Cyan, "Loader is up to date");
                 if (!MintDirectory.Exists)
                     MintDirectory.Create();
@@ -119,7 +120,7 @@ namespace MintyLoader
                     switch (message.StatusCode)
                     {
                         case HttpStatusCode.OK:
-                            MelonLogger.Msg("\u001b[0m[\u001b[34mAUTHENTICATOR\u001b[0m] \u001b[36mSuccessfully authenticated and retrieved MintMod assembly!\u001b[0m");
+                            MelonLogger.Msg("\u001b[0m[\u001b[34mAUTHENTICATOR\u001b[0m] \u001b[36mSuccessfully retrieved MintMod assembly!\u001b[0m");
                             Task<byte[]> MintyBytes = message.Content.ReadAsByteArrayAsync();
                             MintyBytes.Wait();
                             mintAssy = Assembly.Load(MintyBytes.Result);
@@ -200,8 +201,6 @@ namespace MintyLoader
 
         public override void OnSceneWasLoaded(int level, string name) { if (MintMod != null) MintMod.OnSceneWasLoaded(level, name); }
 
-        //public override void OnGUI() { if (MintMod != null) MintMod.OnGUI(); }
-
         public override void OnPreferencesSaved() { if (MintMod != null) MintMod.OnPreferencesSaved(); }
 
         public override void OnFixedUpdate() { if (MintMod != null) MintMod.OnFixedUpdate(); }
@@ -216,6 +215,9 @@ namespace MintyLoader
                 MelonLogger.Msg(ConsoleColor.Red, "MintyLoader is stopping...");
             }
         }
+
+        public override void OnGUI() { if (MintMod != null) MintMod.OnGUI(); }
+
         #endregion
     }
 }

@@ -37,7 +37,6 @@ namespace MintMod.UserInterface.OldUI {
             Color dimmerT = new Color(color.r / 0.75f, color.g / 0.75f, color.b / 0.75f, 0.9f);
             Color darker = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f);
             Color darkerT = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f, 0.9f);
-            Color pressed = ColorConversion.HexToColor("#e180ff");
 
             if (normalColorImage == null || normalColorImage.Count == 0) {
                 #region normalColorImage
@@ -97,6 +96,25 @@ namespace MintMod.UserInterface.OldUI {
                 #endregion
             }
 
+            if (dimmerColorImage == null || dimmerColorImage.Count == 0) {
+                #region dimmerColorImage
+
+                dimmerColorImage = new List<Image>();
+                GameObject quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
+                dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Custom/ON/TopPanel_SafetyLevel").GetComponent<Image>());
+                dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_None/ON/TopPanel_SafetyLevel").GetComponent<Image>());
+                dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Normal/ON/TopPanel_SafetyLevel").GetComponent<Image>());
+                dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Maxiumum/ON/TopPanel_SafetyLevel").GetComponent<Image>());
+                dimmerColorImage.Add(quickMenu.transform.Find("Popups/ChangeProfilePicPopup/Popup/BorderImage").GetComponent<Image>());
+                foreach (Transform obj in quickMenu.GetComponentsInChildren<Transform>(true).Where(x => x.name.Contains("Fill"))) {
+                    foreach (Image img in obj.GetComponentsInChildren<Image>())
+                        if (img.gameObject.name != "Checkmark")
+                            dimmerColorImage.Add(img);
+                }
+
+                #endregion
+            }
+
             if (darkerColorImage == null || darkerColorImage.Count == 0) {
                 #region darkerColorImage
 
@@ -131,22 +149,36 @@ namespace MintMod.UserInterface.OldUI {
             }
 
             if (normalColorText == null || normalColorText.Count == 0) {
+                #region normalColorText
+
                 normalColorText = new List<Text>();
                 GameObject quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
                 foreach (Text txt in quickMenu.transform.Find("Popups/InputPopup/Keyboard/Keys").GetComponentsInChildren<Text>(true))
                     normalColorText.Add(txt);
                 foreach (Text txt in quickMenu.transform.Find("Popups/InputKeypadPopup/Keyboard/Keys").GetComponentsInChildren<Text>(true))
                     normalColorText.Add(txt);
+                normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameWorld/Label").GetComponentInChildren<Text>(true));
+                normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameVoice/Label").GetComponentInChildren<Text>(true));
+                normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameAvatars/Label").GetComponentInChildren<Text>(true));
+                normalColorText.AddRange(quickMenu.transform.Find("Screens/Social/UserProfileAndStatusSection").GetComponentsInChildren<Text>(true));
+                normalColorText.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Loading Elements/txt_LOADING_Size").GetComponentInChildren<Text>(true));
+                normalColorText.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Loading Elements/txt_LOADING_Size").GetComponentInChildren<Text>(true));
+
+                #endregion
             }
             
             foreach (Image img in normalColorImage)
-                img.color = colorT;
+                if (img != null)
+                    img.color = colorT;
             foreach (Image img in dimmerColorImage)
-                img.color = dimmerT;
+                if (img != null)
+                    img.color = dimmerT;
             foreach (Image img in darkerColorImage)
-                img.color = darkerT;
+                if (img != null)
+                    img.color = darkerT;
             foreach (Text txt in normalColorText)
-                txt.color = color;
+                if (txt != null)
+                    txt.color = color;
 
             if (UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().Count != 0)
                 UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().FirstOrDefault().highlightColor = color;
@@ -168,6 +200,7 @@ namespace MintMod.UserInterface.OldUI {
                     MelonLogger.Error(ex.ToString());
                 }
             }
+            ColorLoadingScreenEnvironment(color);
             yield break;
         }
 
@@ -175,23 +208,15 @@ namespace MintMod.UserInterface.OldUI {
             if (Config.ColorLoadingScreen.Value && !(MelonHandler.Mods.Any(i => i.Info.Name == "BetterLoadingScreen"))) {
                 try {
                     GameObject quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
-                    GameObject loadingBackground = quickMenu.transform
-                        .Find("Popups/LoadingPopup/3DElements/LoadingBackground_TealGradient/SkyCube_Baked").gameObject;
-                    loadingBackground.GetComponent<MeshRenderer>().material
-                        .SetTexture("_Tex", MintyResources.basicGradient);
-                    loadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint",
-                        new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
-                    loadingBackground.GetComponent<MeshRenderer>().material
-                        .SetTexture("_Tex", MintyResources.basicGradient);
+                    GameObject loadingBackground = quickMenu.transform.Find("Popups/LoadingPopup/3DElements/LoadingBackground_TealGradient/SkyCube_Baked").gameObject;
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
 
-                    GameObject initialLoadingBackground =
-                        GameObject.Find("LoadingBackground_TealGradient_Music/SkyCube_Baked");
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material
-                        .SetTexture("_Tex", MintyResources.basicGradient);
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint",
-                        new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material
-                        .SetTexture("_Tex", MintyResources.basicGradient);
+                    GameObject initialLoadingBackground = GameObject.Find("LoadingBackground_TealGradient_Music/SkyCube_Baked");
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
                 } catch (Exception e) {
                     MelonLogger.Error(e.ToString());
                 }

@@ -9,6 +9,7 @@ using System.IO;
 using System.Collections;
 using MelonLoader;
 using MintMod.Reflections;
+using MintyLoader;
 
 namespace MintMod.Functions {
     class LoadingWorldAudio : MintSubMod {
@@ -21,7 +22,7 @@ namespace MintMod.Functions {
 
         IEnumerator Music() {
             if (!Config.UseCustomLoadingMusic.Value) yield break;
-            if (MintCore.isDebug) MelonLogger.Msg("Processing custom menu music...");
+            Con.Debug("Processing custom menu music...", MintCore.isDebug);
             GameObject gameObject = GameObject.Find("LoadingBackground_TealGradient_Music/LoadingSound");
             GameObject gameObject2 = UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup/LoadingSound").gameObject;
 
@@ -37,7 +38,7 @@ namespace MintMod.Functions {
                 yield return null;
             AudioClip a = null;
             if (audio.isHttpError)
-                MelonLogger.Error($"Error loading audio file: {audio.error}");
+                Con.Error($"Error loading audio file: {audio.error}");
             else
                 a = WebRequestWWW.InternalCreateAudioClipUsingDH(audio.downloadHandler, audio.url, false, false, AudioType.UNKNOWN);
 

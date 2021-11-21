@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MintMod.Utils;
+using MintyLoader;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC;
@@ -75,7 +76,7 @@ namespace MintMod.UserInterface.OldUI {
                                     try { webClientIMG.DownloadFile(grab_assetImage_Backup, Path.Combine(subdir + grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".png")); } catch (System.Exception b) { MelonLogger.Error($"First Error: \n{e}\n========================\nSecond Error: \n{b}"); }
                                 }
                             }
-                            MelonLogger.Msg("Downloaded VRCA for " + grab_assetName + ".\nLocated in /Documents/VRChat/LoliteUtilityMod/Assets/VRCA/");
+                            Con.Msg("Downloaded VRCA for " + grab_assetName + ".\nLocated in /Documents/VRChat/LoliteUtilityMod/Assets/VRCA/");
                             VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_assetName}", Color.white);
                         };
                         new Thread(DLVRCA).Start();
