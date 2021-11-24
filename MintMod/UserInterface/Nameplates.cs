@@ -22,26 +22,6 @@ namespace MintMod.UserInterface {
         public override string Description => "Colors Nameplates for certain people.";
         public static Regex methodMatchRegex = new("Method_Public_Void_\\d", RegexOptions.Compiled);
 
-        #region Colors
-        private static Color blue = ColorConversion.HexToColor("#0000ff");
-        private static Color red = ColorConversion.HexToColor("#ff0000");
-        private static Color green = ColorConversion.HexToColor("#00ff00");
-        private static Color orange = ColorConversion.HexToColor("#E67E22");
-        private static Color magenta = ColorConversion.HexToColor("#FF00FF");
-        private static Color black = ColorConversion.HexToColor("#000000");
-        private static Color white = ColorConversion.HexToColor("#ffffff");
-        private static Color purple = ColorConversion.HexToColor("#9e00ff");
-        private static Color cyan = ColorConversion.HexToColor("#00ffff");
-        private static Color teal = ColorConversion.HexToColor("#00ffaa");
-        private static Color trans = new Color32(0, 0, 0, 0);
-        private static Color LightPink = ColorConversion.HexToColor("#eecce0");
-        private static Color nitro = ColorConversion.HexToColor("F47FFF");
-        private static Color Mint = ColorConversion.HexToColor("82ffbe");
-        private static Color Lolite = ColorConversion.HexToColor("e180ff");
-        private static Color HarlesPink = ColorConversion.HexToColor("FF7078");
-        private static Color HarlesBlue = ColorConversion.HexToColor("88AFD6");
-        #endregion
-
         internal override void OnStart() {
             try { ClassInjector.RegisterTypeInIl2Cpp<MintyNameplateHelper>(); } catch (Exception e) {
                 Con.Error("Unable to Inject Nameplatehelper!\n" + e.ToString());
@@ -202,6 +182,12 @@ namespace MintMod.UserInterface {
             }
         }
 
+        static void ApplyFriendsRankColor(MintyNameplateHelper helper, Color RankColor) {
+            if (helper != null) {
+                helper.SetNameColour(RankColor);
+                helper.OnRebuild();
+            }
+        }
 
         static void ApplyNameplatesFromValues(PlayerNameplate nameplate, MintyNameplateHelper helper) {
             if (!Config.EnableCustomNameplateReColoring.Value)
@@ -221,7 +207,9 @@ namespace MintMod.UserInterface {
             if (Players.Storage.ContainsKey(npID)) {
                 var val = Players.Storage[npID];
                 ApplyNameplateColour(nameplate, helper, false, val.nameplateColor1, val.nameplateColor2, val.nameTextColor1, val.nameTextColor2, val.colorShiftLerpTime > 0, val.colorShiftLerpTime, false, val.extraTagText, val.extraTagColor, val.extraTagBackgroundHidden, val.extraTagTextColor, val.nameplateBGHidden, val.fakeName);
-            }
+            } else if (Config.RecolorRanks.Value)
+                if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))
+                    ApplyFriendsRankColor(helper, ColorConversion.HexToColor(Config.MenuColorHEX.Value));
         }
         
         /*
