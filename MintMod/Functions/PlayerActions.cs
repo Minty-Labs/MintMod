@@ -10,6 +10,7 @@ using MelonLoader;
 using MintMod.Reflections;
 using MintMod.Utils;
 using MintyLoader;
+using UnhollowerRuntimeLib.XrefScans;
 using UnityEngine;
 using VRC;
 using VRC.Core;
@@ -20,13 +21,7 @@ namespace MintMod.Functions {
             try {
                 ThreadStart DLVRCA = delegate () {
                     string subdir = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
-
-                    VRCPlayer p = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id)._vrcplayer;
-
-                    bool windows = p.field_Private_ApiAvatar_1.platform.ToLower().Contains("Windows");
-
-                    APIUser u = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id).field_Private_APIUser_0;
-                    ApiAvatar a = windows ? p.prop_ApiAvatar_1 : p.prop_ApiAvatar_0;
+                    ApiAvatar a = SelPAvatar();
 
                     string grab_assetUrl, grab_assetName, grab_assetImage, grab_assetPlatform;
                     int grab_assetVersion;
@@ -140,9 +135,9 @@ namespace MintMod.Functions {
 
         public static ApiAvatar SelPAvatar() {
             var a = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id)._vrcplayer;
-            if (a.prop_ApiAvatar_1.platform.ToLower().Contains("windows"))
-                return a.prop_ApiAvatar_1;
-            return a.prop_ApiAvatar_0;
+            if (a.field_Private_VRCAvatarManager_0.field_Private_AvatarKind_0 == VRCAvatarManager.AvatarKind.Custom)
+                return a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0;
+            return a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_1;
         }
 
         public static StreamWriter CreateOrAppendToFile(string final) {
@@ -156,13 +151,8 @@ namespace MintMod.Functions {
             if (!Directory.Exists(subdir))
                 Directory.CreateDirectory(subdir);
 
-
-            VRCPlayer p = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id)._vrcplayer;
-
-            bool windows = p.field_Private_ApiAvatar_1.platform.ToLower().Contains("Windows");
-
             APIUser u = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id).field_Private_APIUser_0;
-            ApiAvatar a = windows ? p.prop_ApiAvatar_1 : p.prop_ApiAvatar_0;
+            ApiAvatar a = SelPAvatar();
 
             string playerName, playerStatus, userID, avatarID, assetURL, avatarName, authorID, releaseStatus, playerBio;
             int version;
@@ -200,5 +190,7 @@ namespace MintMod.Functions {
             Con.Msg($"Logged {playerName}, Located in {subdir}\\SelectedUser_Logged.txt");
             VRCUiManager.prop_VRCUiManager_0.InformHudText($"Logged {playerName}", Color.white);
         }
+
+        public static void Teleport(VRCPlayer player) => PlayerWrappers.GetLocalVRCPlayer().transform.position = player.transform.position;
     }
 }

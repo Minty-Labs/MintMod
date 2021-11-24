@@ -275,11 +275,11 @@ namespace MintMod.UserInterface.QuickMenu {
 
             userSelectCategory.AddButton("Download Avatar VRCA", $"Downloads {u}'s Avatar .VRCA", PlayerActions.AvatarDownload);
             userSelectCategory.AddButton("Log Asset", $"Logs {u}'s information and put it into a text file", PlayerActions.LogAsset);
-            userSelectCategory.AddButton("Copy Avatar ID", $"Copies {u}'s avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerWrappers.GetSelectedAPIUser().avatarId);
+            userSelectCategory.AddButton("Copy Avatar ID", $"Copies {u}'s avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id);
             userSelectCategory.AddButton("Clone Avatar", $"Clones {u}'s avatar if public", () => {
                 try {
                     var v = PlayerActions.SelPAvatar();
-                    string clip = PlayerWrappers.GetSelectedAPIUser().avatarId;
+                    string clip = v.id;
                     if (clip.Contains("avtr_") && !string.IsNullOrWhiteSpace(clip) && v.releaseStatus.ToLower().Contains("public")) {
                         PageAvatar a = new() { field_Public_SimpleAvatarPedestal_0 = new() };
                         new ApiAvatar { id = clip }.Get(new Action<ApiContainer>(x => {
@@ -307,11 +307,11 @@ namespace MintMod.UserInterface.QuickMenu {
                 });
             }
 
-            userSelectCategory.AddButton("Teleport to", $"Teleport to {u}", () => { });
+            userSelectCategory.AddButton("Teleport to", $"Teleport to {u}", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); });
             userSelectCategory.AddButton("Teleport pickups to", $"Teleport all picktup objects to {u}", () => Items.TPToPlayer(PlayerWrappers.SelPlayer()));
 
             if (APIUser.CurrentUser.id == Players.LilyID) {
-                userSelectCategory.AddButton("Mint Auth Check", $"Check to see if {u} can use MintMod", () => MelonCoroutines.Stop(ServerAuth.SimpleAuthCheck(PlayerWrappers.SelPlayer().field_Private_APIUser_0.id)));
+                userSelectCategory.AddButton("Mint Auth Check", $"Check to see if {u} can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)));
             }
 
             Con.Debug("Finished Creating User Selected Menu", MintCore.isDebug);

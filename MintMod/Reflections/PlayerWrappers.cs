@@ -14,6 +14,8 @@ using Object = UnityEngine.Object;
 
 namespace MintMod.Reflections {
     public static class PlayerWrappers {
+        internal static VRCPlayer GetLocalVRCPlayer() => VRCPlayer.field_Internal_Static_VRCPlayer_0;
+
         public static VRCPlayer GetVRCPlayer(this Player player) => player._vrcplayer;
 
         public static VRCPlayerApi GetVRCPlayerApi(this Player player) => player.prop_VRCPlayerApi_0;

@@ -37,7 +37,7 @@ namespace MintMod.Functions {
                     ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
                     if (Physics.Raycast(ray, out RaycastHit raycastHit))
                         VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = raycastHit.point;
-                } else if ((APIUser.CurrentUser != null && APIUser.CurrentUser.id == Players.DaviID) && Input.GetKeyDown(KeyCode.Mouse4)) {
+                } else if ((APIUser.CurrentUser != null && APIUser.CurrentUser.id == "usr_fe9b2a3f-d2e7-41ec-910a-42f1329d8be0") && Input.GetKeyDown(KeyCode.Mouse4)) {
                     ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
                     if (Physics.Raycast(ray, out RaycastHit raycastHit))
                         VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = raycastHit.point;
