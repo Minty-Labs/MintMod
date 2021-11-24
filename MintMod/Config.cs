@@ -27,9 +27,9 @@ namespace MintMod {
 
         // Color
         public static MelonPreferences_Category Color;
-        public static MelonPreferences_Entry<bool> RecolorRanks, ColorGameMenu, ColorActionMenu, ColorMenuText, ColorHUDMuteIcon, ColorUiExpansionKit, EnableCustomNameplateReColoring, ColorLoadingScreen;
+        public static MelonPreferences_Entry<bool> RecolorRanks, ColorGameMenu, ColorActionMenu, ColorHUDMuteIcon, ColorUiExpansionKit, EnableCustomNameplateReColoring, ColorLoadingScreen;
         public static MelonPreferences_Entry<string> FriendRankHEX, LegendRankHEX, VeteranRankHEX, TrustedRankHEX, KnownRankHEX, UserRankHEX, NewUserRankKEX,
-            VisitorRankHEX, MenuColorHEX, QMTextColorHEX;
+            VisitorRankHEX, MenuColorHEX;
 
         // Menu
         public static MelonPreferences_Category Menu;
@@ -102,9 +102,9 @@ namespace MintMod {
             MenuColorHEX = Color.CreateEntry("MenuColorHEX", "00ffaa", "* HEX: Menu Color", "Menu Color");
             ColorActionMenu = Color.CreateEntry("ColorActionMenu", false, "* Color Action Menu", "* Color Action Menu");
             ColorHUDMuteIcon = Color.CreateEntry("ColorHUDMuteIcon", false, "* Color HUD Mute Icon", "* Color Mute HUD Icon");
-            ColorUiExpansionKit = Color.CreateEntry("ColorUiExpansionKit", true, "* Color UIX", "* Color Ui Expansion Kit");
-            ColorMenuText = Color.CreateEntry("ColorMenuText", false, "* Color QuickMenu Text", "* Toggle Quick Menu Text Color");
-            QMTextColorHEX = Color.CreateEntry("QMTextColorHEX", "ffff00", "HEX: QM Text", "Quick Menu Text Color");
+            ColorUiExpansionKit = Color.CreateEntry("ColorUiExpansionKit", false, "* Color UIX", "* Color Ui Expansion Kit");
+            //ColorMenuText = Color.CreateEntry("ColorMenuText", false, "* Color QuickMenu Text", "* Toggle Quick Menu Text Color");
+            //QMTextColorHEX = Color.CreateEntry("QMTextColorHEX", "ffff00", "HEX: QM Text", "Quick Menu Text Color");
             EnableCustomNameplateReColoring = Color.CreateEntry("EnableCustomNameplateReColoring", true, "Custom Mint Nameplate ReColor", "Custom Nameplate ReColoring");
             ColorLoadingScreen = Color.CreateEntry("ColorLoadingScreen", false, "* Color Loading Environment", "Colors the Loading Environment");
         }
