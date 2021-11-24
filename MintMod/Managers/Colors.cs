@@ -17,7 +17,25 @@ namespace MintMod.Managers {
         public static Color VeteranNP = ColorConversion.HexToColor("#" + Config.VeteranRankHEX.Value);
         public static Color LegendNP = ColorConversion.HexToColor("#" + Config.LegendRankHEX.Value);
 
-        public static ColorBlock ColorBlock(Color color) {
+        public static Color blue = ColorConversion.HexToColor("#0000ff");
+        public static Color red = ColorConversion.HexToColor("#ff0000");
+        public static Color green = ColorConversion.HexToColor("#00ff00");
+        public static Color orange = ColorConversion.HexToColor("#E67E22");
+        public static Color magenta = ColorConversion.HexToColor("#FF00FF");
+        public static Color black = ColorConversion.HexToColor("#000000");
+        public static Color white = ColorConversion.HexToColor("#ffffff");
+        public static Color purple = ColorConversion.HexToColor("#9e00ff");
+        public static Color cyan = ColorConversion.HexToColor("#00ffff");
+        public static Color teal = ColorConversion.HexToColor("#00ffaa");
+        public static Color trans = new Color32(0, 0, 0, 0);
+        public static Color LightPink = ColorConversion.HexToColor("#eecce0");
+        public static Color nitro = ColorConversion.HexToColor("F47FFF");
+        public static Color defaultMint = ColorConversion.HexToColor("82ffbe");
+        public static Color Lolite = ColorConversion.HexToColor("e180ff");
+        public static Color HarlesPink = ColorConversion.HexToColor("FF7078");
+        public static Color HarlesBlue = ColorConversion.HexToColor("88AFD6");
+
+		public static ColorBlock ColorBlock(Color color) {
             return new() {
                 colorMultiplier = 1f,
                 disabledColor = Color.grey,
@@ -34,6 +52,7 @@ namespace MintMod.Managers {
             return Color.Lerp(b, c, (t - t1) / t1);
         }
     }
+
 	[Serializable]
 	public struct HSBColor {
 		public float h;
