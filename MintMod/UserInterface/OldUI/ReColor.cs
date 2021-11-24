@@ -22,11 +22,14 @@ namespace MintMod.UserInterface.OldUI {
         private static GameObject loadingBackground, initialLoadingBackground;
 
         internal override void OnUserInterface() {
-            if (Config.ColorGameMenu.Value) {
-                string color = Config.MenuColorHEX.Value;
-                Color GameUI = Minty;
-                MelonCoroutines.Start(ColorMenu(color == null ? GameUI : defaultMenuColor()));
-            }
+            bool color = Config.ColorGameMenu.Value;
+            Color GameUI = Minty, _color = color ? GameUI : defaultMenuColor();
+            if (Config.ColorGameMenu.Value)
+                MelonCoroutines.Start(ColorMenu(_color));
+            if (Config.ColorActionMenu.Value)
+                ColorActionMenu(_color);
+            if (Config.ColorLoadingScreen.Value)
+                ColorLoadingScreenEnvironment(_color);
         }
 
         IEnumerator ColorMenu(Color color) {
@@ -200,8 +203,12 @@ namespace MintMod.UserInterface.OldUI {
                     MelonLogger.Error(ex.ToString());
                 }
             }
-            ColorLoadingScreenEnvironment(color);
             yield break;
+        }
+
+        internal static void ColorActionMenu(Color color) {
+            foreach (PedalGraphic grph in UnityEngine.Resources.FindObjectsOfTypeAll<PedalGraphic>())
+                grph.color = color;
         }
 
         internal static void ColorLoadingScreenEnvironment(Color color) {

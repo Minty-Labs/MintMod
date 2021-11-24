@@ -4,11 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections;
 using System.Windows.Forms;
 using MelonLoader;
-using MelonLoader.TinyJSON;
 using MintMod.Functions;
 using MintMod.Hooks;
 using MintMod.Libraries;
@@ -20,8 +18,6 @@ using MintMod.UserInterface.OldUI;
 using MintMod.UserInterface.QuickMenu;
 using MintMod.Utils;
 using MintyLoader;
-using UnhollowerRuntimeLib;
-using VRC.UI.Elements;
 using BuildInfo = MelonLoader.BuildInfo;
 
 namespace MintMod {
@@ -32,25 +28,36 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.1.0";
+            public const string Version = "2.1.1";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "11/21/2021";
-            public const string LoaderVer = "2.3.0";
+            public const string UpdatedDate = "11/23/2021";
+#if !DEBUG
+            public const string LoaderVer = "2.3.0.1";
             public static Version TargetMLVersion = new(0, 4, 3);
+#endif
         }
 
-        internal static bool isDebug;
+        internal static bool isDebug, canelLoad;
 
         internal static List<MintSubMod> mods = new();
 
         internal static readonly DirectoryInfo MintDirectory = new($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}UserData{Path.DirectorySeparatorChar}MintMod");
 
         public override void OnApplicationStart() {
+#if !DEBUG
+            var s = MelonHandler.Mods.Single(m => m.Info.Name.Equals("MintyLoader")).Info.Version;
+            if (s != "2.3.0" || s != ModBuildInfo.LoaderVer) {
+                canelLoad = true;
+                return;
+            }
+#endif
             Instance = this;
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);
 #if DEBUG
             isDebug = true;
+            if (Environment.CommandLine.Contains("--MintyDev"))
+                isDebug = true;
 #endif
 #if !DEBUG
             if (Environment.CommandLine.Contains("--MintyDev")) isDebug = true;
@@ -62,13 +69,14 @@ namespace MintMod {
             }
 #endif
 
+            Players.LoadData();
+
             Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version}");
             mods.Add(new Config());
             mods.Add(new GetAssembly());
             mods.Add(new Patches());
             mods.Add(new MintyResources());
             mods.Add(new ServerAuth());
-            //mods.Add(new Utils.Network());
             mods.Add(new ESP());
             mods.Add(new KeyBindings());
             mods.Add(new Items());
@@ -100,22 +108,35 @@ namespace MintMod {
                 try { a.OnStart(); }
                 catch (Exception e) { Con.Error($"{e}"); }
             });
+            Con.Debug($"Loaded {mods.Count} SubMods", isDebug);
         }
 
-        public override void OnPreferencesSaved() => mods.ForEach(s => {
-            try { s.OnPrefSave(); }
-            catch (Exception e) { Con.Error($"{e}"); }
-        });
+        public override void OnPreferencesSaved() {
+#if !DEBUG
+            if (canelLoad) return;
+#endif
+            mods.ForEach(s => {
+                try { s.OnPrefSave(); } catch (Exception e) { Con.Error($"{e}"); }
+            });
+        }
 
-        public override void OnUpdate() => mods.ForEach(u => {
-            try { u.OnUpdate(); }
-            catch (Exception e) { Con.Error($"{e}"); }
-        });
+        public override void OnUpdate() {
+#if !DEBUG
+            if (canelLoad) return;
+#endif
+            mods.ForEach(u => {
+                try { u.OnUpdate(); } catch (Exception e) { Con.Error($"{e}"); }
+            });
+        }
 
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName) => mods.ForEach(s => {
-            try { s.OnLevelWasLoaded(buildIndex, sceneName); }
-            catch (Exception e) { Con.Error($"{e}"); }
-        });
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
+#if !DEBUG
+            if (canelLoad) return;
+#endif
+            mods.ForEach(s => {
+                try { s.OnLevelWasLoaded(buildIndex, sceneName); } catch (Exception e) { Con.Error($"{e}"); }
+            });
+        }
 
         public override void OnApplicationQuit() => MelonPreferences.Save();
     }
@@ -126,7 +147,7 @@ namespace MintMod {
 
         internal override void OnStart() => MelonCoroutines.Start(GetVRCAssembly());
 
-        private System.Collections.IEnumerator GetVRCAssembly() {
+        private IEnumerator GetVRCAssembly() {
             Assembly assemblyCSharp = null;
             while (true) {
                 assemblyCSharp = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(assembly => assembly.GetName().Name == "Assembly-CSharp");
@@ -139,7 +160,7 @@ namespace MintMod {
             MelonCoroutines.Start(WaitForUiManagerInit(assemblyCSharp));
         }
 
-        private System.Collections.IEnumerator WaitForUiManagerInit(Assembly assemblyCSharp) {
+        private IEnumerator WaitForUiManagerInit(Assembly assemblyCSharp) {
             Type vrcUiManager = assemblyCSharp.GetType("VRCUiManager");
             PropertyInfo uiManagerSingleton = vrcUiManager.GetProperties().First(pi => pi.PropertyType == vrcUiManager);
 
@@ -147,10 +168,13 @@ namespace MintMod {
                 yield return null;
 
             //ModCompatibility.RunIgnoreYieldedUI();
-            MelonCoroutines.Start(Functions.ServerAuth.AuthUser());
+            MelonCoroutines.Start(ServerAuth.AuthUser());
         }
 
-        internal static System.Collections.IEnumerator YieldUI() {
+        internal static IEnumerator YieldUI() {
+#if !DEBUG
+            if (MintCore.canelLoad) yield break;
+#endif
             MintCore.mods.ForEach(u => {
                 try { u.OnUserInterface(); }
                 catch (Exception e) { Con.Error($"{e}"); }
