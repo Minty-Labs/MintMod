@@ -46,7 +46,7 @@ namespace MintMod {
         public override void OnApplicationStart() {
 #if !DEBUG
             var s = MelonHandler.Mods.Single(m => m.Info.Name.Equals("MintyLoader")).Info.Version;
-            if (s != "2.3.0" || s != ModBuildInfo.LoaderVer) {
+            if (s != "2.3.0.1" || s != ModBuildInfo.LoaderVer) {
                 canelLoad = true;
                 return;
             }
