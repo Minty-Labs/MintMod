@@ -28,7 +28,7 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.1.1";
+            public const string Version = "2.1.1.1";
             public const string DownloadLink = null;
             public const string UpdatedDate = "11/23/2021";
 #if !DEBUG
@@ -101,8 +101,9 @@ namespace MintMod {
             //mods.Add(new );
 
             MelonCoroutines.Start(Utils.Network.OnYieldStart());
-            ReMod.Core.Unity.EnableDisableListener.RegisterSafe();
-            ReMod.Core.Unity.RenderObjectListener.RegisterSafe();
+
+            ReMod.Core.Unity.EnableDisableListener_2.RegisterSafe();
+            //ReMod.Core.Unity.RenderObjectListener.RegisterSafe();
 
             mods.ForEach(a => {
                 try { a.OnStart(); }
