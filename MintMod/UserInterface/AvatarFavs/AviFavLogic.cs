@@ -76,6 +76,28 @@ namespace MintMod.UserInterface.AvatarFavs {
             } catch { }
         }
 
+        internal override void OnPrefSave() {
+            if (Config.AviFavsEnabled.Value) {
+                try {
+                    if (!ranOnce)
+                        Intance.OnUserInterface();
+                } catch (Exception a) { MelonLogger.Error($"After game start, Avatar Favorites Start Error\n{a}"); }
+
+                try {
+                    MelonCoroutines.Start(RefreshMenu(1f));
+                } catch (Exception r) {
+                    MelonLogger.Error($"{r}");
+                }
+            } else {
+                try {
+                    if (ranOnce) {
+                        DestroyList();
+                        ranOnce = false;
+                    }
+                } catch (Exception d) { MelonLogger.Error($"{d}"); }
+            }
+        }
+
         //private static int ListAvatarCount;
 
         public static IEnumerator RefreshMenu(float v) {

@@ -185,24 +185,6 @@ namespace MintMod {
         internal override void OnPrefSave() {
             Utils.General.SetPriority();
             Utils.General.SetFrameRate();
-            //if ()
-            if (AviFavsEnabled.Value) {
-                try {
-                    AviFavLogic.Intance.OnUserInterface();
-                } catch (Exception a) { MelonLogger.Error($"After game start, Avatar Favorites Start Error\n{a}"); }
-
-                try {
-                    MelonCoroutines.Start(AviFavLogic.RefreshMenu(1f));
-                }
-                catch (Exception r) {
-                    MelonLogger.Error($"{r}");
-                }
-            } else {
-                try {
-                    AviFavLogic.DestroyList();
-                }
-                catch (Exception d) { MelonLogger.Error($"{d}"); }
-            }
         }
     }
 }

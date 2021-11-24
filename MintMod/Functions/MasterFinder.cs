@@ -65,7 +65,9 @@ namespace MintMod.Functions {
         }
 
         internal override void OnPrefSave() {
-            MasterIcon.SetActive(Config.EnableMasterFinder.Value);
+            if (MasterIcon != null)
+                MasterIcon.SetActive(Config.EnableMasterFinder.Value);
+            //try{ MasterIcon.SetActive(Config.EnableMasterFinder.Value); }catch{}
         }
     }
 }

@@ -9,6 +9,7 @@ using UnityEngine;
 using VRC.Core;
 using System.Net;
 using MintyLoader;
+using MintMod.Utils;
 
 namespace MintMod.Functions {
     internal class ServerAuth : MintSubMod{
@@ -74,13 +75,16 @@ namespace MintMod.Functions {
                 www.Dispose();
                 switch (result) {
                     case "isAuthedAndCanUseMod":
-                        MelonLogger.Msg("Player is authed for Mint");
+                        Con.Msg("Player is authed for Mint");
+                        VRCUiManager.prop_VRCUiManager_0.InformHudText("Player is authed for Mint", Color.white);
                         yield break;
                     case "canNotUseMod":
-                        MelonLogger.Msg("Player has no auth for Mint");
+                        Con.Msg("Player has no auth for Mint");
+                        VRCUiManager.prop_VRCUiManager_0.InformHudText("Player has no auth for Mint", Color.yellow);
                         yield break;
                     case "illegalUseOfMod":
-                        MelonLogger.Msg("Player is banned from Mint");
+                        Con.Msg("Player is banned from Mint");
+                        VRCUiManager.prop_VRCUiManager_0.InformHudText("Player is banned from Mint", Color.red);
                         yield break;
                 }
             }
