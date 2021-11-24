@@ -4,6 +4,20 @@ using System.Globalization;
 
 namespace MintMod.Libraries {
     class ColorConversion {
+        public static Color? HexToColorNullable(string hexColor, bool hasTransparency = false, float transparcenyLevel = 1) {
+            if (hexColor == null || string.IsNullOrWhiteSpace(hexColor)) return null;
+            if (hexColor.IndexOf('#') != -1)
+                hexColor = hexColor.Replace("#", "");
+            double num1 = int.Parse(hexColor.Substring(0, 2), NumberStyles.AllowHexSpecifier) / (double)byte.MaxValue;
+            float num2 = int.Parse(hexColor.Substring(2, 2), NumberStyles.AllowHexSpecifier) / (float)byte.MaxValue;
+            float num3 = int.Parse(hexColor.Substring(4, 2), NumberStyles.AllowHexSpecifier) / (float)byte.MaxValue;
+            double num4 = num2;
+            double num5 = num3;
+            if (hasTransparency)
+                return new Color((float)num1, (float)num4, (float)num5, (float)transparcenyLevel);
+            return new Color((float)num1, (float)num4, (float)num5);
+        }
+
         public static Color HexToColor(string hexColor, bool hasTransparency = false, float transparcenyLevel = 1) {
             if (hexColor.IndexOf('#') != -1)
                 hexColor = hexColor.Replace("#", "");
@@ -14,8 +28,7 @@ namespace MintMod.Libraries {
             double num5 = num3;
             if (hasTransparency)
                 return new Color((float)num1, (float)num4, (float)num5, (float)transparcenyLevel);
-            else
-                return new Color((float)num1, (float)num4, (float)num5);
+            return new Color((float)num1, (float)num4, (float)num5);
         }
 
         public static string ColorToHex(Color baseColor, bool hash = false) {

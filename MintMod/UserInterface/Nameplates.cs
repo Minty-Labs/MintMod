@@ -20,9 +20,7 @@ namespace MintMod.UserInterface {
     class Nameplates : MintSubMod {
         public override string Name => "MintyNameplates";
         public override string Description => "Colors Nameplates for certain people.";
-        public static Regex methodMatchRegex = new Regex("Method_Public_Void_\\d", RegexOptions.Compiled);
-
-        public static Nameplates instance;
+        public static Regex methodMatchRegex = new("Method_Public_Void_\\d", RegexOptions.Compiled);
 
         #region Colors
         private static Color blue = ColorConversion.HexToColor("#0000ff");
@@ -82,25 +80,9 @@ namespace MintMod.UserInterface {
                     //Logger.Debug("Created NameplateHelper on nameplate");
                 }
 
-                //resetNameplate(nameplate);
-                //Check if we should be showing quick stats
-                //helper.AlwaysShowQuickInfo = alwaysShowStatsLocal;
-
-                try { ApplyCustomNameplates(player.prop_APIUser_0.id, nameplate, helper); } 
+                try { ApplyNameplatesFromValues(nameplate, helper); } 
                 catch (Exception n) { Con.Error("Could not apply nameplate color\n" + n.ToString()); }
 
-                helper.OnRebuild();
-            }
-        }
-
-        private static void ApplyFriendsRankColor(MintyNameplateHelper helper, Color? friendColor = null) {
-            if (helper == null)
-                return;
-            if (!Config.EnableCustomNameplateReColoring.Value)
-                return;
-
-            if (friendColor.HasValue) {
-                helper.SetNameColour(friendColor.Value);
                 helper.OnRebuild();
             }
         }
@@ -211,33 +193,38 @@ namespace MintMod.UserInterface {
 
                         for (int i = transform5.childCount; i > 0; i--) {
                             Transform child = transform5.GetChild(i - 1);
-                            if (!(child.name == "Trust Text"))
+                            if (child.name != "Trust Text")
                                 UnityEngine.Object.Destroy(child.gameObject);
                         }
-                    } else {
-                        /*try {
-                            if (transform5.gameObject != null) {
-                                if (FriendsNotesInstalled) {
-                                    Transform textContainer = nameplate.gameObject.transform.Find("Text Container");
-                                    Transform noteTransform = textContainer.transform.Find("Note");
-                                    Transform dateTransform = textContainer.transform.Find("Date");
-                                    if (noteTransform != null) transform5.localPosition -= new Vector3(0f, 15f, 0f);
-                                    if (dateTransform != null) transform5.localPosition -= new Vector3(0f, 15f, 0f);
-                                }
-                            }
-                        }
-                        catch (Exception e) {
-                            string time = DateTime.Now.ToString("HH:mm:ss.fff");
-                            Console.WriteLine($"[{time}] [MintMod : NameplateRedo] [ERROR] FriendsNotes Nameplate component(s) not found.\n{e}");
-                        }*/
-                        transform5.gameObject.SetActive(true);
-                    }
+                    } else transform5.gameObject.SetActive(true);
 
-                } catch (Exception e) { if (MintCore.isDebug) MelonLogger.Msg($"{e}"); }
+                } catch (Exception e) { Con.Debug($"{e}", MintCore.isDebug); }
             }
         }
 
-        //[Obfuscation(Exclude = false)]
+
+        static void ApplyNameplatesFromValues(PlayerNameplate nameplate, MintyNameplateHelper helper) {
+            if (!Config.EnableCustomNameplateReColoring.Value)
+                return;
+            string npID = nameplate.field_Private_VRCPlayer_0._player.field_Private_APIUser_0.id;
+
+            if (Players.Storage.ContainsKey($"{npID}-{APIUser.CurrentUser.id}"))
+                npID = $"{npID}-{APIUser.CurrentUser.id}"; // User's Nameplate - target for only user to see
+
+            if (npID == "usr_e1c908e4-31ce-4fdc-b4eb-56cb235459ed") {
+                Random rnd = new();
+                int num = rnd.Next(0, 100);
+                bool chance = num > 80;
+                if (chance) npID += "-retarded";
+                Con.Debug($"George's random funny shown -> {chance}", MintCore.isDebug);
+            }
+            if (Players.Storage.ContainsKey(npID)) {
+                var val = Players.Storage[npID];
+                ApplyNameplateColour(nameplate, helper, false, val.nameplateColor1, val.nameplateColor2, val.nameTextColor1, val.nameTextColor2, val.colorShiftLerpTime > 0, val.colorShiftLerpTime, false, val.extraTagText, val.extraTagColor, val.extraTagBackgroundHidden, val.extraTagTextColor, val.nameplateBGHidden, val.fakeName);
+            }
+        }
+        
+        /*
         static void ApplyCustomNameplates(string playerID, PlayerNameplate nameplate, MintyNameplateHelper helper) {
             if (!Config.EnableCustomNameplateReColoring.Value)
                 return;
@@ -280,7 +267,7 @@ namespace MintMod.UserInterface {
                 case Players.JanniID:
                     if (APIUser.CurrentUser.id == Players.LilyID)
                         ApplyNameplateColour(nameplate, helper, false, ColorConversion.HexToColor("FE3C6B"), null, ColorConversion.HexToColor("79F864"), null, false, 3, false,
-                        "Wonderful Melon Floof", ColorConversion.HexToColor("FE3C6B"), false, ColorConversion.HexToColor("79F864"), false, "Janni");
+                        "Melon Floof", ColorConversion.HexToColor("FE3C6B"), false, ColorConversion.HexToColor("79F864"), false, "Janni");
                     else
                         ApplyNameplateColour(nameplate, helper, false, ColorConversion.HexToColor("FE3C6B"), null, ColorConversion.HexToColor("79F864"), null, false, 3, false,
                         "Melon Queen", ColorConversion.HexToColor("FE3C6B"), false, ColorConversion.HexToColor("79F864"));
@@ -318,23 +305,23 @@ namespace MintMod.UserInterface {
                 case Players.REDACTED: {
                     Random rnd = new();
                     int num = rnd.Next(0, 100);
-                    bool chance = num > 81;
-                    Con.Debug($"George's random chance was {num/100}% - Funny Shown -> {chance}", MintCore.isDebug);
+                    bool chance = num > 80;
+                    Con.Debug($"George's random funny shown -> {chance}", MintCore.isDebug);
                     ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, chance ? "RETARDED" : "REDACTED", null, true, white, false, "REDACTED");
                     break;
                 }
                 case Players.Silent:
                     ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 0, false, null, null, false, null, false, "Elly");
                     break;
+                case Players.HarlesBently:
+                    if (APIUser.CurrentUser.id == Players.LilyID)
+                        ApplyNameplateColour(nameplate, helper,false, HarlesPink, HarlesBlue, HarlesPink, null, false, 3, false, "Cute Floof", Color.black, false, HarlesBlue, false, "Harles");
+                    break;
                 #region MILK NATION
                 case Players.MN_1:
                     ApplyNameplateColour(nameplate, helper, false, null, null, null, null, false, 3, false, "Milk Nation", Color.red, false, ColorConversion.HexToColor("3E9DE8"));
                     break;
                 #endregion
-                case Players.HarlesBently:
-                    if (APIUser.CurrentUser.id == Players.LilyID)
-                        ApplyNameplateColour(nameplate, helper,false, HarlesPink, HarlesBlue, HarlesPink, null, false, 3, false, "Cute Floof", Color.black, false, HarlesBlue, false, "Harles");
-                    break;
                 default:
                     if (Config.RecolorRanks.Value)
                         if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))
@@ -342,6 +329,7 @@ namespace MintMod.UserInterface {
                     break;
             }
         }
+        */
 
         public static void OnRebuild(PlayerNameplate nameplate) {
             if (nameplate == null || nameplate.gameObject == null) return;
