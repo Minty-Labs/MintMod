@@ -28,7 +28,7 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.2.0";
+            public const string Version = "2.2.1";
             public const string DownloadLink = null;
             public const string UpdatedDate = "11/28/2021";
 #if !DEBUG
