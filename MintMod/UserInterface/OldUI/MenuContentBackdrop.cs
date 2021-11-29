@@ -12,6 +12,7 @@ namespace MintMod.UserInterface.OldUI {
     class MenuContentBackdrop : MintSubMod {
         private GameObject BackDropHiddenText;
         private bool canRun;
+        private Text t;
 
         internal override void OnUserInterface() => MelonCoroutines.Start(Wait());
 
@@ -28,6 +29,7 @@ namespace MintMod.UserInterface.OldUI {
                 BackDropHiddenText.GetComponent<Text>().supportRichText = true;
                 BackDropHiddenText.GetComponent<Text>().alignment = TextAnchor.MiddleLeft;
                 BackDropHiddenText.GetComponent<Text>().fontSize = 44;
+                t = BackDropHiddenText.GetComponent<Text>();
                 //BackDropHiddenText.GetComponent<Text>().text = _backDropText;
 
                 GameObject Image = GameObject.Find("UserInterface/MenuContent/Backdrop/Backdrop/Image");
@@ -42,7 +44,7 @@ namespace MintMod.UserInterface.OldUI {
 
         internal override void OnUpdate() {
             if (canRun)
-                BackDropHiddenText.GetComponent<Text>().text = _backDropText;
+                t.text = _backDropText;
         }
     }
 }

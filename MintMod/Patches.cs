@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MintMod.Functions;
 using MintyLoader;
 using UnityEngine;
 using VRC;
@@ -78,7 +79,10 @@ namespace MintMod.Hooks {
     {
         [HarmonyPostfix]
         [HarmonyPatch("Awake")]
-        static void OnVRCPlayerAwake(VRCPlayer __instance) => Nameplates.OnVRCPlayerAwake(__instance);
+        static void OnVRCPlayerAwake(VRCPlayer __instance) {
+            Nameplates.OnVRCPlayerAwake(__instance);
+            MasterFinder.OnAvatarIsReady(__instance);
+        }
     }
 
     [HarmonyPatch(typeof(VRC_StationInternal))]

@@ -28,7 +28,7 @@ namespace MintMod.UserInterface {
             }
         }
 
-        static bool ValidatePlayerAvatar(VRCPlayer player) {
+        public static bool ValidatePlayerAvatar(VRCPlayer player) {
             return !(player == null ||
                      player.isActiveAndEnabled == false ||
                      player.field_Internal_Animator_0 == null ||
@@ -133,7 +133,7 @@ namespace MintMod.UserInterface {
 
             if (!textColor.HasValue && Config.RecolorRanks.Value) {
                 if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id)) {
-                    helper.SetNameColour(ColorConversion.HexToColor(Config.MenuColorHEX.Value));
+                    helper.SetNameColour(ColorConversion.HexToColor(Config.FriendRankHEX.Value));
                     helper.OnRebuild();
                 }
             }
@@ -209,7 +209,7 @@ namespace MintMod.UserInterface {
                 ApplyNameplateColour(nameplate, helper, false, val.nameplateColor1, val.nameplateColor2, val.nameTextColor1, val.nameTextColor2, val.colorShiftLerpTime > 0, val.colorShiftLerpTime, false, val.extraTagText, val.extraTagColor, val.extraTagBackgroundHidden, val.extraTagTextColor, val.nameplateBGHidden, val.fakeName);
             } else if (Config.RecolorRanks.Value)
                 if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))
-                    ApplyFriendsRankColor(helper, ColorConversion.HexToColor(Config.MenuColorHEX.Value));
+                    ApplyFriendsRankColor(helper, ColorConversion.HexToColor(Config.FriendRankHEX.Value));
         }
         
         /*

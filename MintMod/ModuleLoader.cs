@@ -15,7 +15,10 @@ namespace MintMod {
         public virtual string Name => "MOD_NAME";
         public virtual string Description => "MOD_DESCRIPTION";
 
-        internal MintSubMod() => Con.Msg($"{Name} has Loaded. {Description}");
+        internal MintSubMod() {
+            if (Name == "MOD_NAME" || Description == "MOD_DESCRIPTION") return;
+            Con.Msg($"{Name} has Loaded. {Description}");
+        }
 
         internal virtual void OnUserInterface() {}
 

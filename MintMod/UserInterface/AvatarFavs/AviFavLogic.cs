@@ -73,7 +73,10 @@ namespace MintMod.UserInterface.AvatarFavs {
 
                 if (!avatarPage.activeSelf && JustOpened)
                     JustOpened = false;
-            } catch { }
+            }
+            catch {
+                // Yeet
+            }
         }
 
         internal override void OnPrefSave() {
