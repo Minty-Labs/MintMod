@@ -35,13 +35,13 @@ namespace MintMod.UserInterface {
 
         private static void BuildMenu() {
             ActionMenuUtils.subMenu = VRCActionMenuPage.AddSubMenu(ActionMenuPage.Main, "<color=#82ffbe>MintMenu</color>", () => {
-                //Freeze = CustomSubMenu.AddToggle("Freeze", false, PhotonFreeze.ToggleFreeze, MintyResources.FreezeIcon);
+                Freeze = CustomSubMenu.AddToggle("Freeze", false, PhotonFreeze.ToggleFreeze, MintyResources.FreezeIcon);
 
                 ESP = CustomSubMenu.AddToggle("ESP", false, Managers.ESP.PlayerESPState, MintyResources.JumpIcon);
 
                 Jump = CustomSubMenu.AddButton("Jump", WorldActions.AddJump, MintyResources.JumpIcon);
 
-                Fly = CustomSubMenu.AddToggle("Fly", false, Movement.Fly, MintyResources.FlyIcon);
+                Fly = CustomSubMenu.AddToggle("Fly", false, Movement.NoClip, MintyResources.FlyIcon);
 
                 if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "TeleporterVR") != -1)
                     VRTP = CustomSubMenu.AddToggle("VR Teleport\nto Cursor", false, choice =>

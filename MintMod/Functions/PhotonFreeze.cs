@@ -40,6 +40,7 @@ namespace MintMod.Functions {
 
         public static void ToggleFreeze(bool toggle) {
             //Freeze = !Freeze;
+            if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;
             Thing = VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_VRCPlayerApi_0.gameObject.GetComponent<FlatBufferNetworkSerializer>();
             Thing.enabled = !toggle;
             TempPos = PlayerWrappers.GetCurrentPlayerPos();

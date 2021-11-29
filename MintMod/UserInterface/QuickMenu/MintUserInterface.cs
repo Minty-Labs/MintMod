@@ -113,11 +113,6 @@ namespace MintMod.UserInterface.QuickMenu {
                     MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
             }
 
-            if (MintQAFreeze != null)
-                MintQAFreeze.Interactable = false;
-            if (MainQMFreeze != null)
-                MainQMFreeze.Interactable = false;
-
             Con.Debug("Done Setting up Menus", MintCore.isDebug);
             yield break;
         }
@@ -249,7 +244,7 @@ namespace MintMod.UserInterface.QuickMenu {
             Frame = r.AddButton($"{Config.SpoofedFrameNumber.Value}", "This is the number of your spoofed framerate.", () => {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Framerate", "",
                     InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
-                        int.TryParse(_, out int f);
+                        float.TryParse(_, out float f);
                         MelonPreferences.GetEntry<float>(Config.mint.Identifier, Config.SpoofedFrameNumber.Identifier) .Value = f;
                         Frame.Text = f.ToString();
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
@@ -264,7 +259,7 @@ namespace MintMod.UserInterface.QuickMenu {
             Ping = r.AddButton($"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>", "This is the number of your spoofed ping.", () => {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Ping", "",
                     InputField.InputType.Standard, true, "Set Ping", (_, __, ___) => {
-                        int.TryParse(_, out int p);
+                        float.TryParse(_, out float p);
                         MelonPreferences.GetEntry<float>(Config.mint.Identifier, Config.SpoofedPingNumber.Identifier).Value = p;
                         Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{p}</color>";
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
@@ -284,7 +279,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
             userSelectCategory = new ReMenuCategory("MintMod", TheUserSelectMenu.transform);
 
-            string u = "selected user";
+            string u = PlayerWrappers.SelPlayer()._vrcplayer.field_Private_VRCPlayerApi_0.displayName;//"selected user";
 
             userSelectCategory.AddButton("Download Avatar VRCA", $"Downloads {u}'s Avatar .VRCA", PlayerActions.AvatarDownload);
             userSelectCategory.AddButton("Log Asset", $"Logs {u}'s information and put it into a text file", PlayerActions.LogAsset);
@@ -334,11 +329,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
             if (buildindex == -1) {
-                //PhotonFreeze.ToggleFreeze(false);
-                if (MintQAFreeze != null)
-                    MintQAFreeze.Interactable = false;
-                if (MainQMFreeze != null)
-                    MainQMFreeze.Interactable = false;
+                PhotonFreeze.ToggleFreeze(false);
             }
         }
 
