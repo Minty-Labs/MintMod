@@ -19,16 +19,16 @@ using MintMod.UserInterface.QuickMenu;
 using MintMod.Utils;
 using MintyLoader;
 using BuildInfo = MelonLoader.BuildInfo;
+using MintMod.Functions.Authentication;
 
 namespace MintMod {
-
     public class MintCore : MelonMod {
         internal MelonMod Instance;
         public static class ModBuildInfo {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.1.2";
+            public const string Version = "2.2.0";
             public const string DownloadLink = null;
             public const string UpdatedDate = "11/24/2021";
 #if !DEBUG
@@ -69,8 +69,6 @@ namespace MintMod {
             }
 #endif
 
-            Players.LoadData();
-
             Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version}");
             mods.Add(new Config());
             mods.Add(new GetAssembly());
@@ -98,6 +96,7 @@ namespace MintMod {
             mods.Add(new MintUserInterface());
             mods.Add(new Nameplates());
             mods.Add(new UserInterface.ActionMenu());
+            mods.Add(new Players());
             //mods.Add(new );
 
             MelonCoroutines.Start(Utils.Network.OnYieldStart());
