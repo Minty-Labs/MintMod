@@ -12,6 +12,7 @@ using MintMod.Reflections;
 using static MintMod.Managers.Colors;
 using System.Diagnostics;
 using MintMod.Functions;
+using MintMod.Functions.Authentication;
 using MintMod.Managers;
 
 namespace MintMod.UserInterface.OldUI {

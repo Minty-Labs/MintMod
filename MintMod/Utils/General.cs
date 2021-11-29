@@ -6,8 +6,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MintMod.Functions.Authentication;
 using UnityEngine;
 using VRC.Core;
+using MintyLoader;
 
 namespace MintMod.Utils {
     class General : MintSubMod {
@@ -62,15 +64,8 @@ namespace MintMod.Utils {
 
         private static IEnumerator Welcome() {
             yield return new WaitForSeconds(10);
-            string user;
-            if (APIUser.CurrentUser.displayName == "KortyBoi" || APIUser.CurrentUser.displayName == "Ｋ")
-                user = "Lily";
-            else if (APIUser.CurrentUser.displayName == "jettsd")
-                user = "Emy";
-            else
-                user = APIUser.CurrentUser.displayName;
-            MelonLogger.Msg($"Welcome back, {user}");
-            VRCUiManager.prop_VRCUiManager_0.InformHudText($"Welcome back, {user}", Color.white);
+            Con.Msg($"Welcome back, {ServerAuth.MintyData.Name}");
+            VRCUiManager.prop_VRCUiManager_0.InformHudText($"Welcome back, {ServerAuth.MintyData.Name}", Color.white);
         }
         #endregion
     }

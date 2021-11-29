@@ -27,13 +27,14 @@ using MintMod.Reflections;
 using MintMod.Utils;
 using MintyLoader;
 using ReMod.Core.VRChat;
+using MintMod.Functions.Authentication;
 
 namespace MintMod.UserInterface.QuickMenu {
     class MintUserInterface : MintSubMod {
         public override string Name => "Mint UI";
         public override string Description => "Builds all of the Mod's menu.";
 
-        private static GameObject MainMenuBackButton, TheMintMenuButton, ShittyAdverts, LaunchPadLayoutGroup;
+        private static GameObject MainMenuBackButton, TheMintMenuButton, ShittyAdverts, ShittyAdverts_2, LaunchPadLayoutGroup;
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, MintQuickActionsCat, userSelectCategory;
 
@@ -64,8 +65,20 @@ namespace MintMod.UserInterface.QuickMenu {
 
         static IEnumerator BuildMint() {
             MainMenuBackButton = GameObject.Find("/UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/Header_H1/LeftItemContainer/Button_Back");
-            ShittyAdverts = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup/Carousel_Banners");
-            ShittyAdverts.SetActive(false);
+            try {
+                if (MelonHandler.Mods.Any((i) => i.Info.Name != "AdBlocker")) {
+                    ShittyAdverts =
+                        GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup/Carousel_Banners");
+                    ShittyAdverts.SetActive(false);
+                    ShittyAdverts_2 =
+                        GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup/VRC+_Banners");
+                    ShittyAdverts_2.SetActive(false);
+                }
+            }
+            catch {
+                Con.Error("Action from AdBlocker failed. Ignoring");
+            }
+
             MintMenu = new ReCategoryPage($"MintMenu - v<color=#9fffe3>{MintCore.ModBuildInfo.Version}</color>");
             MintMenu.GameObject.SetActive(false);
             TheMintMenuButton = UnityEngine.Object.Instantiate(MainMenuBackButton, MainMenuBackButton.transform.parent);

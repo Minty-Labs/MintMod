@@ -8,22 +8,24 @@ using MintMod.Libraries;
 using MintyLoader;
 using Newtonsoft.Json;
 using UnityEngine;
+using VRC.Core;
 
 namespace MintMod.Managers {
-    internal class Players {
+    internal class Players : MintSubMod {
+        public override string Name => "Player Manager";
+        public override string Description => "Find and get player info.";
+
         #region Players
 
         public const string LilyID = "usr_6d71d3be-1465-4ae9-a97c-1b304ffab93b";
 
         #endregion
 
-
-        internal static string data = string.Empty;
-
-        internal static void LoadData() {
+        internal override void OnUserInterface() {
             try {
                 WebClient w = new();
-                data = w?.DownloadString("https://api.potato.moe/api/nameplates");
+                w.Headers.Add("X-AUTH-TOKEN", APIUser.CurrentUser.id);
+                string data = w?.DownloadString("https://api.potato.moe/api-mint/nameplates");
                 w.Dispose();
                 Storage = new();
                 List<CustomPlayerObjects> c = JsonConvert.DeserializeObject<List<CustomPlayerObjects>>(data);
