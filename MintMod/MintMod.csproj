@@ -211,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Functions\Authentication\AuthConstructor.cs" />
     <Compile Include="Functions\KeyBindings.cs" />
     <Compile Include="Functions\LoadingWorldAudio.cs" />
     <Compile Include="Functions\MasterFinder.cs" />
@@ -219,7 +220,7 @@
     <Compile Include="Functions\PlayerActions.cs" />
     <Compile Include="Functions\RankRecoloring.cs" />
     <Compile Include="Functions\RiskyFuncAllower.cs" />
-    <Compile Include="Functions\ServerAuth.cs" />
+    <Compile Include="Functions\Authentication\ServerAuth.cs" />
     <Compile Include="Functions\WorldActions.cs" />
     <Compile Include="Libraries\ColorConversion.cs" />
     <Compile Include="Libraries\ModCompatibility.cs" />
@@ -271,6 +272,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
