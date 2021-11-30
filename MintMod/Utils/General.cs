@@ -59,24 +59,14 @@ namespace MintMod.Utils {
 
         public static void StartWelcomeMessage() {
             if (!LoadedOneTime) return;
-            HttpClient e = new();
-            e.DefaultRequestHeaders.Add("X-AUTH-TOKEN", APIUser.CurrentUser.id);
-            var task = e.GetStringAsync(ServerAuth.MintAuthJSONURL);
-            task.Wait();
-            e.Dispose();
-
-            if (!task.IsCompleted || task.Result.Contains("message")) return;
-
-            var d = Newtonsoft.Json.JsonConvert.DeserializeObject<MintyUser>(task.Result);
-
-            MelonCoroutines.Start(Welcome(d.Name));
+            MelonCoroutines.Start(Welcome());
             LoadedOneTime = false;
         }
 
-        private static IEnumerator Welcome(string name) {
+        private static IEnumerator Welcome() {
             yield return new WaitForSeconds(10);
-            Con.Msg($"Welcome back, {name}");
-            VRCUiManager.prop_VRCUiManager_0.InformHudText($"Welcome back, {name}", Color.white);
+            Con.Msg($"Welcome back, {ServerAuth.MintyData.Name}");
+            VRCUiManager.prop_VRCUiManager_0.InformHudText($"Welcome back, {ServerAuth.MintyData.Name}", Color.white);
         }
 
         #endregion

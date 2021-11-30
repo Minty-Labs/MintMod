@@ -11,11 +11,11 @@ using VRC.Core;
 
 namespace MintMod.Functions.Authentication {
     public class MintyUser {
-        public string Name { get; }
+        public string Name;
         //public string DiscordID { get; }
-        public string UserID { get; }
+        public string UserID;
         //public string VoucherName { get; }
-        public string[] AltAccounts { get; }
-        public bool isBanned { get; }
+        public string[] AltAccounts;
+        public bool isBanned;
     }
 }
