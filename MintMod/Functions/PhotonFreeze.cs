@@ -12,8 +12,8 @@ using VRC.Networking;
 namespace MintMod.Functions {
     class PhotonFreeze {
         private static Transform CloneObj;
-        private static FlatBufferNetworkSerializer Thing;
-        //public static bool Freeze;
+        internal static FlatBufferNetworkSerializer Thing;
+        //internal static bool Freeze;
         public static Vector3 TempPos;
         public static Quaternion TempRot;
 
@@ -33,9 +33,7 @@ namespace MintMod.Functions {
                     if (!(component2 is Transform))
                         UnityEngine.Object.Destroy(component2);
                 Tools.SetLayerRecursively(CloneObj.gameObject, LayerMask.NameToLayer("Player"), 0);
-                return;
-            }
-            CloneObj.gameObject.Destroy();
+            } else CloneObj.gameObject.Destroy();
         }
 
         public static void ToggleFreeze(bool toggle) {
@@ -46,10 +44,21 @@ namespace MintMod.Functions {
             TempPos = PlayerWrappers.GetCurrentPlayerPos();
             TempRot = VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.rotation;
             Clone(toggle);
-            if (MintUserInterface.MainQMFreeze != null)
-                MintUserInterface.MainQMFreeze.Toggle(toggle);
-            if (MintUserInterface.MintQAFreeze != null)
-                MintUserInterface.MintQAFreeze.Toggle(toggle);
+            //if (MintUserInterface.MainQMFreeze != null)
+            //    MintUserInterface.MainQMFreeze.Toggle(toggle);
+            //if (MintUserInterface.MintQAFreeze != null)
+            //    MintUserInterface.MintQAFreeze.Toggle(toggle);
         }
+
+        /*
+        public static void FreezeOff() {
+            Freeze = false;
+            Clone(false);
+            if (MintUserInterface.MainQMFreeze != null)
+                MintUserInterface.MainQMFreeze.Toggle(false);
+            if (MintUserInterface.MintQAFreeze != null)
+                MintUserInterface.MintQAFreeze.Toggle(false);
+        }
+        */
     }
 }
