@@ -41,6 +41,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
         public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu;
 
+        private static QMSlider FlightSpeedSlider; 
+
         public static ReMenuToggle 
             MainQMFly, MainQMNoClip, MainQMFreeze,
             MintQAFly, MintQANoClip, MintQAFreeze;
@@ -138,6 +140,15 @@ namespace MintMod.UserInterface.QuickMenu {
             MintQAFly = MintQuickActionsCat.AddToggle("Flight", "Toggle Flight", Movement.Fly);
             MintQANoClip = MintQuickActionsCat.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
             MintQAFreeze = MintQuickActionsCat.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
+
+            MintQuickActionsCat.AddSpacer();
+            string tempver = MintCore.ModBuildInfo.Version;
+            string text = $"MintMenuv{tempver.Replace(".", "")}";
+            string parent = $"UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_ReMod{text}/ScrollRect/Viewport/VerticalLayoutGroup/";
+            FlightSpeedSlider = new(parent, f => Movement.finalSpeed = f, "FlightSpeed", "Control Flight Speed", "500%", 5f, 
+                "Flight Speed > 0% - 500%", 0f, 1f);
+            //if (FlightSpeedSlider != null)
+            //    MintMenu.OnOpen += () => FlightSpeedSlider.Value = Movement.finalSpeed;
 
             Con.Debug("Done Creating QuickActions", MintCore.isDebug);
         }
@@ -247,7 +258,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Framerate", "",
                     InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
                         float.TryParse(_, out float f);
-                        MelonPreferences.GetEntry<float>(Config.mint.Identifier, Config.SpoofedFrameNumber.Identifier) .Value = f;
+                        MelonPreferences.GetEntry<float>(Config.mint.Identifier, Config.SpoofedFrameNumber.Identifier).Value = f;
                         Frame.Text = f.ToString();
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
             });
@@ -394,10 +405,8 @@ namespace MintMod.UserInterface.QuickMenu {
             
             
             PlayerListMenu.OnOpen += () => {
-                foreach (var button in PlayerButtons) {
-                    if (button != null)
-                        button.Destroy();
-                }
+                foreach (var button in PlayerButtons)
+                    button.Destroy();
                 PlayerButtons.Clear();
                 var enumerator2 = PlayerWrappers.GetAllPlayers().GetEnumerator();
 
@@ -451,6 +460,7 @@ namespace MintMod.UserInterface.QuickMenu {
                                     break;
                             }
                         });
+                    PlayerButtons.Add(SinglePlayerButton);
                 }
             };
         }
