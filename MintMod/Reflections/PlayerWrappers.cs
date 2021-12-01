@@ -32,13 +32,13 @@ namespace MintMod.Reflections {
 
         public static List<Player> GetAllPlayers(this PlayerManager instance) => instance.field_Private_List_1_Player_0;
 
-        public static APIUser GetAPIUser(this Player player) => player.prop_APIUser_0;
+        public static APIUser GetAPIUser_alt(this Player player) => player.prop_APIUser_0;
 
         public static Player GetPlayer(this PlayerManager instance, string UserID) {
             List<Player> allPlayers = instance.GetAllPlayers();
             Player result = null;
             foreach (Player all in allPlayers)
-                if (all.GetAPIUser().id == UserID)
+                if (all.GetAPIUser_alt().id == UserID)
                     result = all;
             return result;
         }
@@ -64,7 +64,7 @@ namespace MintMod.Reflections {
         }
 
         public static APIUser GetpAPI(this Player p) {
-            return p.prop_APIUser_0;
+            return p.field_Private_APIUser_0;
         }
 
         public static Player getPlayerFromPlayerlist(string userID) {
@@ -134,5 +134,7 @@ namespace MintMod.Reflections {
         public static VRCPlayer SelVRCPlayer() {
             return PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer;
         }
+        
+        public static bool isFriend(Player p) => APIUser.IsFriendsWith(p.field_Private_APIUser_0.id);
     }
 }

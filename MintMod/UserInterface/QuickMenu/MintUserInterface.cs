@@ -28,6 +28,7 @@ using MintMod.Utils;
 using MintyLoader;
 using ReMod.Core.VRChat;
 using MintMod.Functions.Authentication;
+using MintMod.Libraries;
 
 namespace MintMod.UserInterface.QuickMenu {
     class MintUserInterface : MintSubMod {
@@ -36,9 +37,9 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static GameObject MainMenuBackButton, TheMintMenuButton, ShittyAdverts, ShittyAdverts_2, LaunchPadLayoutGroup;
 
-        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, MintQuickActionsCat, userSelectCategory;
+        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, MintQuickActionsCat, userSelectCategory, playerListCategory;
 
-        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu;
+        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu;
 
         public static ReMenuToggle 
             MainQMFly, MainQMNoClip, MainQMFreeze,
@@ -97,6 +98,7 @@ namespace MintMod.UserInterface.QuickMenu {
             Player();
             World();
             RandomStuff();
+            PlayerListMenuSetup();
 
             LaunchPadLayoutGroup = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup");
             MintCategoryOnLaunchPad = new("MintMod", LaunchPadLayoutGroup.transform);
@@ -327,9 +329,138 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #endregion
 
+        #region PlayerList Menu
+
+        private static List<ReMenuButton> PlayerButtons = new();
+        private static ReMenuButton SinglePlayerButton;
+
+        private enum PlayerListActions {
+            None,
+            Teleport,
+            OpenQm,
+            Esp,
+            TeleportObjs,
+            OrbitObjs,
+            OrbitPlayer
+        }
+
+        private static PlayerListActions GetSelectedAction(int type) {
+            return type switch {
+                1 => PlayerListActions.Teleport,
+                2 => PlayerListActions.OpenQm,
+                3 => PlayerListActions.Esp,
+                4 => PlayerListActions.TeleportObjs,
+                5 => PlayerListActions.OrbitObjs,
+                6 => PlayerListActions.OrbitPlayer,
+                _ => PlayerListActions.None
+            };
+        }
+
+        private static int SelectedActionNum = 0;
+        
+        internal static void PlayerListMenuSetup() {
+            PlayerListMenu = BaseActions.AddCategoryPage("Player List Menu", "Actions to do individually on a player.");
+            var p = PlayerListMenu.AddCategory("Actions");
+            var l = PlayerListMenu.AddCategory("Player List (In Current Room)");
+            p.AddButton("Teleport", "Teleport to player", () => {
+                SelectedActionNum = 1;
+                l.Title = "Player List (In Current Room) > Teleport";
+            });
+            var _1 = p.AddButton("OpenQM", "Open player in Quick Menu", () => {
+                SelectedActionNum = 2;
+                l.Title = "Player List (In Current Room) > OpenQM";
+            });
+            p.AddButton("ESP", "Draw a bubble around player", () => {
+                SelectedActionNum = 3;
+                l.Title = "Player List (In Current Room) > ESP";
+            });
+            p.AddButton("Teleport\nPickups to", "Teleport all pickups to player", () => {
+                SelectedActionNum = 4;
+                l.Title = "Player List (In Current Room) > Teleport Pickups";
+            });
+            var _2 = p.AddButton("Orbit\nPickups", "Orbit pickups around player", () => {
+                SelectedActionNum = 5;
+                l.Title = "Player List (In Current Room) > Orbit Pickups";
+            });
+            var _3 = p.AddButton("Orbit\nPlayer", "Orbit around player", () => {
+                SelectedActionNum = 6;
+                l.Title = "Player List (In Current Room) > Orbit Player";
+            });
+            // These button are disabled until I add the functions for them
+            _1.Interactable = false;
+            _2.Interactable = false;
+            _3.Interactable = false;
+            p.AddButton("Clear ESPs", "Clears any and all ESP bubbles around players", ESP.ClearAllPlayerESP);
+            
+            
+            PlayerListMenu.OnOpen += () => {
+                foreach (var button in PlayerButtons) {
+                    if (button != null)
+                        button.Destroy();
+                }
+                PlayerButtons.Clear();
+                var enumerator2 = PlayerWrappers.GetAllPlayers().GetEnumerator();
+
+                while (enumerator2.MoveNext()) {
+                    var player = enumerator2.current;
+                    var n = player.field_Private_APIUser_0.displayName;
+                    
+                    string tempName = String.Empty;
+                    if (PlayerWrappers.isFriend(player)) {
+                        if (player.field_Private_APIUser_0.id == Players.LilyID)
+                            tempName = "<color=#9fffe3>Lily</color>";
+                        else
+                            tempName = $"<color=#{Config.FriendRankHEX.Value}>{n}</color>";
+                    }
+                    else {
+                        if (player.field_Private_APIUser_0.id == Players.LilyID)
+                            tempName = "<color=#9fffe3>Lily</color>";
+                        else
+                            tempName = $"<color=#{ColorConversion.ColorToHex(VRCPlayer.Method_Public_Static_Color_APIUser_0(player.GetAPIUser()))}>{n}</color>";
+                    }
+                    
+                    SinglePlayerButton = l.AddButton($"{tempName}", "Click to do selected action",
+                        () => {
+                            switch (GetSelectedAction(SelectedActionNum)) {
+                                case PlayerListActions.Teleport:
+                                    if (player != PlayerWrappers.GetCurrentPlayer())
+                                        PlayerActions.Teleport(player._vrcplayer);
+                                    break;
+                                case PlayerListActions.OpenQm:
+                                    // Action Not Yet Setup
+                                    break;
+                                case PlayerListActions.Esp:
+                                    if (ESP.isESPEnabled)
+                                        Con.Warn("Main ESP is already active");
+                                    else
+                                        if (player != PlayerWrappers.GetCurrentPlayer())
+                                            ESP.SinglePlayerESP(player, true);
+                                    break;
+                                case PlayerListActions.TeleportObjs:
+                                    Items.TPToPlayer(player);
+                                    break;
+                                case PlayerListActions.OrbitObjs:
+                                    // Action Not Yet Setup
+                                    break;
+                                case PlayerListActions.OrbitPlayer:
+                                    // Action Not Yet Setup
+                                    break;
+                                default:
+                                    Con.Warn("Nothing is selected.");
+                                    VRCUiManager.prop_VRCUiManager_0.InformHudText("Nothing is selected", Color.yellow);
+                                    break;
+                            }
+                        });
+                }
+            };
+        }
+
+        #endregion
+
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
             if (buildindex == -1) {
                 PhotonFreeze.ToggleFreeze(false);
+                ESP.ClearAllPlayerESP();
             }
         }
 
