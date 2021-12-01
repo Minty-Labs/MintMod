@@ -30,7 +30,7 @@ namespace MintMod {
             public const string Company = "LilyMod";
             public const string Version = "2.3.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "11/30/2021";
+            public const string UpdatedDate = "12/1/2021";
 #if !DEBUG
             public const string LoaderVer = "2.3.0.1";
             public static Version TargetMLVersion = new(0, 4, 3);
