@@ -47,7 +47,7 @@ namespace MintMod.UserInterface {
                     VRTP = CustomSubMenu.AddToggle("VR Teleport\nto Cursor", false, choice =>
                         TeleporterVR.Utils.VRUtils.active = choice, MintyResources.VRTPIcon);
 
-                CustomSubMenu.AddRadialPuppet("Fly Speed", f => Movement.finalSpeed = f * 2, 0f);
+                CustomSubMenu.AddRadialPuppet("Fly Speed", f => Movement.finalSpeed = f * 5, 0.2f);
             }, MintyResources.MintIcon2D);
             hasStarted = true;
         }
