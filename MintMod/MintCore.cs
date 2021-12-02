@@ -28,9 +28,9 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.3.0";
+            public const string Version = "2.3.0.1";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "12/1/2021";
+            public const string UpdatedDate = "2 Dec 2021";
 #if !DEBUG
             public const string LoaderVer = "2.3.0.1";
             public static Version TargetMLVersion = new(0, 4, 3);
@@ -38,7 +38,7 @@ namespace MintMod {
 #endif
         }
 
-        internal static bool isDebug, canelLoad;
+        internal static bool isDebug, cancelLoad;
 
         internal static List<MintSubMod> mods = new();
 
@@ -49,7 +49,7 @@ namespace MintMod {
 #if !DEBUG
             var s = MelonHandler.Mods.Single(m => m.Info.Name.Equals("MintyLoader")).Info.Version;
             if (s != "2.3.0.1" || s != ModBuildInfo.LoaderVer) {
-                canelLoad = true;
+                cancelLoad = true;
                 return;
             }
 #endif
@@ -115,7 +115,7 @@ namespace MintMod {
 
         public override void OnPreferencesSaved() {
 #if !DEBUG
-            if (canelLoad) return;
+            if (cancelLoad) return;
 #endif
             mods.ForEach(s => {
                 try { s.OnPrefSave(); } catch (Exception e) { Con.Error($"{e}"); }
@@ -124,7 +124,7 @@ namespace MintMod {
 
         public override void OnUpdate() {
 #if !DEBUG
-            if (canelLoad) return;
+            if (cancelLoad) return;
 #endif
             mods.ForEach(u => {
                 try { u.OnUpdate(); } catch (Exception e) { Con.Error($"{e}"); }
@@ -133,7 +133,7 @@ namespace MintMod {
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
 #if !DEBUG
-            if (canelLoad) return;
+            if (cancelLoad) return;
 #endif
             mods.ForEach(s => {
                 try { s.OnLevelWasLoaded(buildIndex, sceneName); } catch (Exception e) { Con.Error($"{e}"); }
@@ -175,7 +175,7 @@ namespace MintMod {
 
         internal static IEnumerator YieldUI() {
 #if !DEBUG
-            if (MintCore.canelLoad) yield break;
+            if (MintCore.cancelLoad) yield break;
 #endif
             MintCore.mods.ForEach(u => {
                 try { u.OnUserInterface(); }
