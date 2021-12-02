@@ -292,7 +292,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
             userSelectCategory = new ReMenuCategory("MintMod", TheUserSelectMenu.transform);
 
-            string u = PlayerWrappers.SelPlayer()._vrcplayer.field_Private_VRCPlayerApi_0.displayName;//"selected user";
+            string u = "selected user";
 
             userSelectCategory.AddButton("Download Avatar VRCA", $"Downloads {u}'s Avatar .VRCA", PlayerActions.AvatarDownload);
             userSelectCategory.AddButton("Log Asset", $"Logs {u}'s information and put it into a text file", PlayerActions.LogAsset);
@@ -310,7 +310,16 @@ namespace MintMod.UserInterface.QuickMenu {
                     } else
                         VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private", Color.white);
                 } catch (Exception c) {
-                    MelonLogger.Error(c);
+                    Con.Error($"{c}");
+                    Con.Warn("Attempting fallback method");
+                    try {
+                        var v = PlayerActions.SelPAvatar();
+                        PlayerManager.field_Private_Static_PlayerManager_0.field_Private_Player_0._vrcplayer
+                            .ChangeToAvatar(v.id);
+                    }
+                    catch (Exception f) {
+                        Con.Error($"{f}");
+                    }
                 }
             });
 
@@ -329,7 +338,7 @@ namespace MintMod.UserInterface.QuickMenu {
             }
 
             userSelectCategory.AddButton("Teleport to", $"Teleport to {u}", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); });
-            userSelectCategory.AddButton("Teleport pickups to", $"Teleport all picktup objects to {u}", () => Items.TPToPlayer(PlayerWrappers.SelPlayer()));
+            userSelectCategory.AddButton("Teleport pickups to", $"Teleport all pickup objects to {u}", () => Items.TPToPlayer(PlayerWrappers.SelPlayer()));
 
             if (APIUser.CurrentUser.id == Players.LilyID) {
                 userSelectCategory.AddButton("Mint Auth Check", $"Check to see if {u} can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)));
