@@ -15,9 +15,9 @@ namespace MintMod.Resources {
     class MintyResources : MintSubMod {
         public override string Name => "MintyResources";
         public override string Description => "Contains images in asset bundles.";
-        private static AssetBundle MintBundle, ActionMenuBundle;
+        private static AssetBundle MintBundle;
 
-        public static Sprite masterCrown, MintIcon, MintTabIcon;
+        public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent;
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
 
@@ -33,15 +33,7 @@ namespace MintMod.Resources {
                     try { MintIcon = LoadSprite("MintMod.png"); } catch { Con.Error("Resource MintMod.png failed"); }
                     try { MintTabIcon = LoadSprite("MintMod_flat.png"); } catch { Con.Error("Resource MintMod_flat.png failed"); }
                     try { basicGradient = LoadTexture("Gradient.png"); } catch { Con.Error("Resource Gradient.png failed"); }
-                }
-            }
-
-            using (var stream2 = Assembly.GetExecutingAssembly().GetManifestResourceStream("MintMod.Resources.mintactionmenu.mint")) {
-                using (var memoryStream2 = new MemoryStream((int)stream2.Length)) {
-                    stream2.CopyTo(memoryStream2);
-                    ActionMenuBundle = AssetBundle.LoadFromMemory_Internal(memoryStream2.ToArray(), 0);
-                    ActionMenuBundle.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-
+                    try { Transparent = LoadSprite("transparent.png"); } catch { Con.Error("Resource transparent.png failed"); }
                     try { MintIcon2D = LoadTexture2D("MintIcon.png"); } catch { Con.Error("Failed to load Texture: MintIcon.png"); }
                     try { FreezeIcon = LoadTexture2D("FreezeIcon.png"); } catch { Con.Error("Failed to load Texture: FreezeIcon.png"); }
                     try { JumpIcon = LoadTexture2D("JumpIcon.png"); } catch { Con.Error("Failed to load Texture: JumpIcon.png"); }
@@ -68,7 +60,7 @@ namespace MintMod.Resources {
         }
 
         private static Texture2D LoadTexture2D(string tex) {
-            Texture2D tex2 = ActionMenuBundle.LoadAsset_Internal(tex, Il2CppType.Of<Texture2D>()).Cast<Texture2D>();
+            Texture2D tex2 = MintBundle.LoadAsset_Internal(tex, Il2CppType.Of<Texture2D>()).Cast<Texture2D>();
             tex2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             //tex2.hideFlags = HideFlags.HideAndDontSave;
             return tex2;
