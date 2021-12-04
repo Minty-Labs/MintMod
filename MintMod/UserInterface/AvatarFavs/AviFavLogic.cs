@@ -19,7 +19,7 @@ namespace MintMod.UserInterface.AvatarFavs {
         public override string Name => "MintyFavorties";
         public override string Description => "Avatar Favorites.";
         internal static Dictionary<int, VRCList> FavlistDictonary = new Dictionary<int, VRCList>();
-        private static bool JustOpened, ranOnce;
+        internal static bool JustOpened, ranOnce;
         private static GameObject avatarPage;
         public static PageAvatar currPageAvatar;
         private static GameObject PublicAvatarList;

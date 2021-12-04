@@ -14,6 +14,7 @@ using MintMod.Hooks;
 using MelonLoader;
 using MintMod.Libraries;
 using MintMod.UserInterface;
+using MintMod.UserInterface.QuickMenu;
 
 namespace MintMod.Functions {
     class MasterFinder : MintSubMod {
@@ -24,6 +25,7 @@ namespace MintMod.Functions {
         private static RectTransform r;
 
         internal static void OnAvatarIsReady(VRCPlayer vrcPlayer) {
+            if (MintUserInterface.isOnStreamerMode) return;
             if (Nameplates.ValidatePlayerAvatar(vrcPlayer)) {
                 if (RoomManager.field_Internal_Static_ApiWorld_0 != null && Config.EnableMasterFinder.Value && MasterIcon == null) {
                     if (PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count > 1) {
@@ -49,7 +51,7 @@ namespace MintMod.Functions {
         }
 
         internal override void OnUpdate() {
-            if (MasterIcon != null && (ModCompatibility.NameplateStats || ModCompatibility.ReMod) && r != null) {
+            if (MasterIcon != null && (ModCompatibility.NameplateStats || ModCompatibility.ReMod) && r != null && !MintUserInterface.isOnStreamerMode) {
                 if (Patches.IsQMOpen)
                     r.anchoredPosition = new Vector3(0f, 90f, 0f);
                 else
@@ -58,7 +60,7 @@ namespace MintMod.Functions {
         }
 
         internal override void OnPrefSave() {
-            if (MasterIcon != null)
+            if (MasterIcon != null && !MintUserInterface.isOnStreamerMode)
                 MasterIcon.SetActive(Config.EnableMasterFinder.Value);
             //try{ MasterIcon.SetActive(Config.EnableMasterFinder.Value); }catch{}
         }

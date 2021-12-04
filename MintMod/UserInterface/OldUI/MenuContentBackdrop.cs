@@ -10,8 +10,8 @@ using UnityEngine.UI;
 
 namespace MintMod.UserInterface.OldUI {
     class MenuContentBackdrop : MintSubMod {
-        private GameObject BackDropHiddenText;
-        private bool canRun;
+        private static GameObject BackDropHiddenText, Image;
+        private static bool canRun;
         private Text t;
 
         internal override void OnUserInterface() => MelonCoroutines.Start(Wait());
@@ -32,9 +32,8 @@ namespace MintMod.UserInterface.OldUI {
                 t = BackDropHiddenText.GetComponent<Text>();
                 //BackDropHiddenText.GetComponent<Text>().text = _backDropText;
 
-                GameObject Image = GameObject.Find("UserInterface/MenuContent/Backdrop/Backdrop/Image");
+                Image = GameObject.Find("UserInterface/MenuContent/Backdrop/Backdrop/Image");
                 Image.GetComponent<Image>().color = Color.red;
-                Image.GetComponentInChildren<Image>().color = Color.red;
                 canRun = true;
             }
             catch (Exception e) {
@@ -45,6 +44,12 @@ namespace MintMod.UserInterface.OldUI {
         internal override void OnUpdate() {
             if (canRun)
                 t.text = _backDropText;
+        }
+
+        internal static void UpdateForStreamerMode(bool o) {
+            canRun = !o;
+            if (Image != null) Image.GetComponent<Image>().color = o ? Color.yellow : Color.red;
+            BackDropHiddenText?.gameObject.SetActive(!o);
         }
     }
 }

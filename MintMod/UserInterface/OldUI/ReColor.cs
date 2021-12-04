@@ -10,16 +10,21 @@ using MintMod.Reflections;
 using UnityEngine;
 using static MintMod.Managers.Colors;
 using MintMod.Libraries;
+using MintMod.UserInterface.QuickMenu;
+using MintyLoader;
 using UnityEngine.UI;
 
 namespace MintMod.UserInterface.OldUI {
     class ReColor : MintSubMod {
         public override string Name => "OldUiRecolor";
         public override string Description => "Colors the User Interface (Not the QuickMenu)";
+        internal static ReColor Intstance;
 
         private static List<Image> normalColorImage, dimmerColorImage, darkerColorImage;
         private static List<Text> normalColorText;
         private static GameObject loadingBackground, initialLoadingBackground;
+
+        internal override void OnStart() => Intstance = this;
 
         internal override void OnUserInterface() {
             bool color = Config.ColorGameMenu.Value;
@@ -28,8 +33,16 @@ namespace MintMod.UserInterface.OldUI {
                 MelonCoroutines.Start(ColorMenu(_color));
             if (Config.ColorActionMenu.Value)
                 ColorActionMenu(_color);
-            if (Config.ColorLoadingScreen.Value)
-                ColorLoadingScreenEnvironment(_color);
+            if (Config.ColorLoadingScreen.Value) {
+                try {
+                    ColorLoadingScreenEnvironment(_color);
+                }
+                catch (Exception e) {
+                    if (!MintUserInterface.isOnStreamerMode)
+                        Con.Error($"{e}");
+                }
+            }
+            
         }
 
         IEnumerator ColorMenu(Color color) {

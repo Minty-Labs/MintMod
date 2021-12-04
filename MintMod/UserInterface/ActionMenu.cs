@@ -37,7 +37,7 @@ namespace MintMod.UserInterface {
             ActionMenuUtils.subMenu = VRCActionMenuPage.AddSubMenu(ActionMenuPage.Main, "<color=#82ffbe>MintMenu</color>", () => {
                 Freeze = CustomSubMenu.AddToggle("Freeze", false, PhotonFreeze.ToggleFreeze, MintyResources.FreezeIcon);
 
-                ESP = CustomSubMenu.AddToggle("ESP", false, Managers.ESP.PlayerESPState, MintyResources.JumpIcon);
+                ESP = CustomSubMenu.AddToggle("ESP", false, Managers.ESP.PlayerESPState, MintyResources.ESPIcon);
 
                 Jump = CustomSubMenu.AddButton("Jump", WorldActions.AddJump, MintyResources.JumpIcon);
 

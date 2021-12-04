@@ -14,13 +14,15 @@ using System.Diagnostics;
 using MintMod.Functions;
 using MintMod.Functions.Authentication;
 using MintMod.Managers;
+using MintMod.UserInterface.QuickMenu;
+using UnityEngine.Events;
 
 namespace MintMod.UserInterface.OldUI {
     class SettingsMenu : MintSubMod {
         public override string Name => "Settings Menu";
         public override string Description => "Edits on the Settings Menu";
 
-        private static GameObject SettingsRestart, SettingsExit, RealSettingsExit, RealLogoutButton, MintInfoButton, MintInfoPanel, functionsButton;
+        private static GameObject SettingsRestart, SettingsExit, RealSettingsExit, RealLogoutButton, MintInfoButton, MintInfoPanel, functionsButton, StreammerModeToggle;
         private static GameObject Label4, Label1, Label2, Label3, Label5;
 
         private static GameObject CopiedFor1, CopiedFor2, CopiedFor3, CopiedFor4, CopiedFor5;
@@ -84,6 +86,43 @@ namespace MintMod.UserInterface.OldUI {
 					}
 					RealSettingsExit.GetComponent<Button>().onClick.Invoke();
 				}));
+				#endregion
+
+				#region StreamerModeToggle
+
+				var StreammerModeToggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle");
+				var e = StreammerModeToggle.GetComponent<Toggle>().onValueChanged;
+				e.AddListener(new Action<bool>((isOn) => {
+					MintUserInterface.isOnStreamerMode = isOn;
+					if (isOn) {
+						MintInfoButton?.SetActive(false);
+						RealSettingsExit?.SetActive(true);
+						SettingsExit?.SetActive(false);
+						SettingsRestart?.SetActive(false);
+						functionsButton?.SetActive(false);
+						MintInfoPanel?.SetActive(false);
+
+						if (AvatarFavs.AviFavLogic.ranOnce) {
+							AvatarFavs.AviFavLogic.DestroyList();
+							AvatarFavs.AviFavLogic.ranOnce = false;
+							MelonCoroutines.Start(AvatarFavs.AviFavLogic.RefreshMenu(1f));
+						}
+					} else {
+						MintInfoButton?.SetActive(true);
+						RealSettingsExit?.SetActive(false);
+						SettingsExit?.SetActive(true);
+						SettingsRestart?.SetActive(true);
+						functionsButton?.SetActive(true);
+
+						if (!AvatarFavs.AviFavLogic.ranOnce)
+							AvatarFavs.AviFavLogic.Intance.OnUserInterface();
+					}
+					MintUserInterface.UpdateMintIconForStreamerMode(isOn);
+					MenuContentBackdrop.UpdateForStreamerMode(isOn);
+					HudIcon.UpdateForStreamerMode(isOn);
+					ReColor.Intstance.OnUserInterface();
+				}));
+
 				#endregion
 			}
 
@@ -235,6 +274,14 @@ namespace MintMod.UserInterface.OldUI {
                     yield return new WaitForSeconds(2f);
                     RealSettingsExit.SetActive(false);
                 }
+            }
+            
+            if (MintUserInterface.isOnStreamerMode) {
+	            MintInfoButton.SetActive(false);
+	            RealSettingsExit.SetActive(true);
+	            SettingsExit.SetActive(false);
+	            SettingsRestart.SetActive(false);
+	            functionsButton.SetActive(false);
             }
             yield break;
         }

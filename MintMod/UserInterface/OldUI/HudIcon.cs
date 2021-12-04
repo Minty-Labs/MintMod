@@ -33,5 +33,17 @@ namespace MintMod.UserInterface.OldUI {
                 }
             }
         }
+
+        internal static void UpdateForStreamerMode(bool o) {
+            Color c = o ? Color.red : Minty;
+            if (HudVoiceIndicator.field_Private_Image_0 != null)
+                HudVoiceIndicator.field_Private_Image_0.color = c;
+            if (HudVoiceIndicator.field_Private_Image_0 != null)
+                HudVoiceIndicator.field_Private_Image_1.color = c;
+            if (HudVoiceIndicator.field_Private_GameObject_0 != null)
+                HudVoiceIndicator.field_Private_GameObject_0.GetComponent<Image>().color = c;
+            if (HudVoiceIndicator.field_Private_GameObject_1 != null)
+                HudVoiceIndicator.field_Private_GameObject_1.GetComponent<Image>().color = c;
+        }
     }
 }

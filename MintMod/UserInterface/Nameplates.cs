@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
 using TMPro;
 using UnhollowerRuntimeLib;
@@ -37,6 +38,7 @@ namespace MintMod.UserInterface {
         }
 
         static void OnAvatarIsReady(VRCPlayer vrcPlayer) {
+            if (MintUserInterface.isOnStreamerMode) return;
             if (!Config.EnableCustomNameplateReColoring.Value)
                 return;
             if (ValidatePlayerAvatar(vrcPlayer)) {

@@ -52,18 +52,32 @@ namespace MintMod.UserInterface.QuickMenu {
         public static ReMenuToggle ItemESP, PlayerESP, DeviceType, FrameSpoof, PingSpoof, PingNegative, bypassRiskyFunc;
         public static ReMenuButton Frame, Ping;
 
+        internal static Image MintIcon;
+
+        internal static bool isOnStreamerMode;
+
 		internal static IEnumerator OnQuickMenu() {
             while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null)
                 yield return null;
-            //ReMod.Core.Managers.UiManager.FixLaunchpadScrolling();
             MelonCoroutines.Start(BuildMint());
         }
 
         internal static IEnumerator OnUserSelectMenu() {
             while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.Menus.SelectedUserMenuQM>() == null)
                 yield return null;
+            if (!isOnStreamerMode)
+                UserSelMenu();
+        }
 
-            UserSelMenu();
+        internal static IEnumerator OnSettingsPageInit() {
+            while (GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle") == null)
+                yield return null;
+            
+            var toggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle").GetComponent<UiSettingConfig>();
+            isOnStreamerMode = toggle.Method_Private_Boolean_0();
+
+            yield return new WaitForSeconds(15);
+            UpdateMintIconForStreamerMode(isOnStreamerMode);
         }
 
         static IEnumerator BuildMint() {
@@ -124,7 +138,7 @@ namespace MintMod.UserInterface.QuickMenu {
         private static IEnumerator SetTheFuckingSprite() {
             yield return new WaitForFixedUpdate();
             UnityEngine.Object.DestroyImmediate(TheMintMenuButton.transform.Find("Icon").GetComponent<StyleElement>());
-            Image MintIcon = TheMintMenuButton.transform.Find("Icon").GetComponent<Image>();
+            MintIcon = TheMintMenuButton.transform.Find("Icon").GetComponent<Image>();
             MintIcon.sprite = MintyResources.MintIcon;
             MintIcon.color = Color.white;
             StyleElement _styleElement = TheMintMenuButton.GetComponent<StyleElement>();
@@ -247,13 +261,17 @@ namespace MintMod.UserInterface.QuickMenu {
         internal static void RandomStuff() {
             RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions");
             var r = RandomMenu.AddCategory("General Actions");
+            
             DeviceType = r.AddToggle("Spoof as Quest", "Spoof your VRChat login as Quest.",
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofDeviceType.Identifier).Value = on);
             DeviceType.Toggle(Config.SpoofDeviceType.Value);
+            
             r.AddSpacer();
+            
             FrameSpoof = r.AddToggle("Spoof Frames", "Spoof your framerate for the monkes.",
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofFramerate.Identifier).Value = on);
             FrameSpoof.Toggle(Config.SpoofFramerate.Value);
+            
             Frame = r.AddButton($"{Config.SpoofedFrameNumber.Value}", "This is the number of your spoofed framerate.", () => {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Framerate", "",
                     InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
@@ -266,17 +284,20 @@ namespace MintMod.UserInterface.QuickMenu {
             PingSpoof = r.AddToggle("Spoof Ping", "Spoof your ping for the monkes.",
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofPing.Identifier).Value = on);
             PingSpoof.Toggle(Config.SpoofPing.Value);
+            
             PingNegative = r.AddToggle("Negative Ping", "Make your spoofed ping nagative.",
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofedPingNegative.Identifier).Value = on);
             PingNegative.Toggle(Config.SpoofedPingNegative.Value);
+            
             Ping = r.AddButton($"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>", "This is the number of your spoofed ping.", () => {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Ping", "",
                     InputField.InputType.Standard, true, "Set Ping", (_, __, ___) => {
-                        float.TryParse(_, out float p);
-                        MelonPreferences.GetEntry<float>(Config.mint.Identifier, Config.SpoofedPingNumber.Identifier).Value = p;
-                        Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{p}</color>";
+                        int.TryParse(_, out int p);
+                        MelonPreferences.GetEntry<int>(Config.mint.Identifier, Config.SpoofedPingNumber.Identifier).Value = p;
+                        Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{p.ToString()}</color>";
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
             });
+            
             bypassRiskyFunc = r.AddToggle("Bypass Risky Func", "Forces Mods with Risky Function Checks to work", 
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.bypassRiskyFunc.Identifier).Value = on);
             bypassRiskyFunc.Toggle(Config.bypassRiskyFunc.Value);
@@ -498,6 +519,30 @@ namespace MintMod.UserInterface.QuickMenu {
                 Frame.Text = $"{Config.SpoofedFrameNumber.Value}";
             if (Ping != null)
                 Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>";
+        }
+
+        internal static void UpdateMintIconForStreamerMode(bool o) {
+            if (MintIcon != null) {
+                MintIcon.sprite = o ? MintyResources.Transparent : MintyResources.MintIcon;
+                MintIcon.color = Color.white;
+            }
+
+            if (userSelectCategory != null) {
+                userSelectCategory.RectTransform.gameObject.SetActive(!o);
+                userSelectCategory.Active = !o;
+                userSelectCategory.Title = o ? "" : "MintMod";
+            }
+
+            if (MintCategoryOnLaunchPad != null) {
+                MintCategoryOnLaunchPad.RectTransform.gameObject.SetActive(!o);
+                MintCategoryOnLaunchPad.Active = !o;
+                MintCategoryOnLaunchPad.Title = o ? "" : "MintMod";
+            }
+            
+            if (Config.SpoofFramerate.Value)
+                MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofFramerate.Identifier).Value = false;
+            if (Config.SpoofPing.Value)
+                MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofPing.Identifier).Value = false;
         }
     }
 }
