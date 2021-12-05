@@ -16,13 +16,13 @@ namespace MintMod.Utils {
         
         internal static void BlacklistedModCheck() {
             if (MelonHandler.Mods.Any(m => m.Info.Name.Contains("RipperStore")) ||
-                MelonHandler.Mods.Any(m => m.Info.Author.Contains("RinLovesYou")) ||
-                MelonHandler.Mods.Any(m => m.Info.Author.Contains("xAstroBoy")) ||
-                MelonHandler.Mods.Any(m => m.Info.Author.Contains("PatchedPlus")) ||
-                MelonHandler.Mods.Any(m => m.Info.Name.Contains("Unchained")) ||
-                MelonHandler.Mods.Any(m => m.Info.Name.Contains("Late Night")) ||
-                MelonHandler.Mods.Any(m => m.Info.Author.Contains("LargestBoi")) ||
-                MelonHandler.Mods.Any(m => m.Info.Name.Contains("A.R.E.S")))
+                (MelonHandler.Mods.Any(m => m.Info.Author.Contains("RinLovesYou") && !MelonHandler.Mods.Any(m => m.Info.Name.Contains("PepsiLib")))) ||
+                 MelonHandler.Mods.Any(m => m.Info.Author.Contains("xAstroBoy")) ||
+                 MelonHandler.Mods.Any(m => m.Info.Author.Contains("PatchedPlus")) ||
+                 MelonHandler.Mods.Any(m => m.Info.Name.Contains("Unchained")) ||
+                 MelonHandler.Mods.Any(m => m.Info.Name.Contains("Late Night")) ||
+                 MelonHandler.Mods.Any(m => m.Info.Author.Contains("LargestBoi")) ||
+                 MelonHandler.Mods.Any(m => m.Info.Name.Contains("A.R.E.S")))
             {
                 try {
                     NativeImports.TerminateProcess(Process.GetCurrentProcess().Handle, 0);
