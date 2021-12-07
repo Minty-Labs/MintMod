@@ -33,8 +33,8 @@ namespace MintMod.Managers {
         internal static void TPToPlayer(Player p) {
             foreach (var vrcPickup in cached) {
                 if (vrcPickup != null || cached != null) {
-                    if (!Networking.IsOwner(p.prop_VRCPlayerApi_0, vrcPickup.gameObject))
-                        Networking.SetOwner(p.prop_VRCPlayerApi_0, vrcPickup.gameObject);
+                    if (!Networking.IsOwner(Player.prop_Player_0.prop_VRCPlayerApi_0, vrcPickup.gameObject))
+                        Networking.SetOwner(Player.prop_Player_0.prop_VRCPlayerApi_0, vrcPickup.gameObject);
                     vrcPickup.gameObject.transform.position = p.gameObject.transform.localPosition + new Vector3(0f, 0.1f, 0f);
                 }
             }
