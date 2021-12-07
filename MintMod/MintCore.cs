@@ -29,9 +29,9 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.4.1";
+            public const string Version = "2.4.2";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "4 Dec 2021";
+            public const string UpdatedDate = "6 Dec 2021";
 #if !DEBUG
             public const string LoaderVer = "2.3.0.1";
             public static Version TargetMLVersion = new(0, 4, 3);
@@ -95,7 +95,7 @@ namespace MintMod {
             mods.Add(new AvatarMenu());
             mods.Add(new SocialMenu());
             mods.Add(new MenuContentBackdrop());
-            mods.Add(new UserInterface.OldUI.SettingsMenu());
+            mods.Add(new SettingsMenu());
             mods.Add(new General());
             mods.Add(new WorldActions());
             mods.Add(new RiskyFuncAllower());
