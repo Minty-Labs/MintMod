@@ -165,6 +165,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region Player Menu
 
+        private static ReMenuToggle InfJump;
+        
         internal static void Player() {
             PlayerMenu = BaseActions.AddCategoryPage("Player Menu", "Actions involving players.");
             var p = PlayerMenu.AddCategory("General Actions");
@@ -191,12 +193,13 @@ namespace MintMod.UserInterface.QuickMenu {
                         }));
                     }
                     else
-                        VRCUiManager.prop_VRCUiManager_0.InformHudText("No avatar ID in clipboard", Color.white);
+                        VRCUiManager.field_Private_Static_VRCUiManager_0.InformHudText("No avatar ID in clipboard", Color.white);
                 }
                 catch (Exception c) {
                     MelonLogger.Error(c);
                 }
             });
+            InfJump = p.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content", onToggle => PlayerActions.InfinteJump = onToggle);
             //var h = PlayerMenu.AddCategory("Head Lamp");
         }
 
@@ -241,6 +244,11 @@ namespace MintMod.UserInterface.QuickMenu {
             });
             w.AddSpacer();
             w.AddButton("Log World", "Logs world info (of various data points) in a text file.", WorldActions.LogWorld);
+            
+            w.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
+            w.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
+            w.AddButton("Bueatify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
+            w.AddSpacer();
 
             var e = WorldMenu.AddCategory("Item Manipulation");
             e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
@@ -495,8 +503,11 @@ namespace MintMod.UserInterface.QuickMenu {
             if (buildindex == -1) {
                 PhotonFreeze.ToggleFreeze(false);
                 ESP.ClearAllPlayerESP();
+                if (InfJump != null) InfJump.Toggle(false, true, true);
             }
         }
+
+        internal override void OnUpdate() => PlayerActions.UpdateJump();
 
         internal override void OnPrefSave() {
             if (DeviceType != null)
