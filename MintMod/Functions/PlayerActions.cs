@@ -14,6 +14,7 @@ using UnhollowerRuntimeLib.XrefScans;
 using UnityEngine;
 using VRC;
 using VRC.Core;
+using VRC.SDKBase;
 
 namespace MintMod.Functions {
     class PlayerActions {
@@ -192,5 +193,27 @@ namespace MintMod.Functions {
         }
 
         public static void Teleport(VRCPlayer player) => PlayerWrappers.GetLocalVRCPlayer().transform.position = player.transform.position;
+
+        #region Jump Manager
+
+        internal static bool InfinteJump;
+        public static void JumpyJump() {
+            if (InfinteJump && VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").prop_Boolean_0 &&
+                !Networking.LocalPlayer.IsPlayerGrounded()) {
+                Vector3 velocity = Networking.LocalPlayer.GetVelocity();
+                velocity.y = Networking.LocalPlayer.GetJumpImpulse() + 1f;
+                Networking.LocalPlayer.SetVelocity(velocity);
+            }
+        }
+
+        private static void GravityChange(bool state) {
+            Networking.LocalPlayer.SetGravityStrength(state ? 0 : 1);
+        }
+
+        public static void UpdateJump() {
+            if (InfinteJump) JumpyJump();
+        }
+
+        #endregion
     }
 }
