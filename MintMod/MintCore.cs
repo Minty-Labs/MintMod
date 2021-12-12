@@ -29,9 +29,9 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.5.1";
+            public const string Version = "2.5.1.1";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "11 Dec 2021";
+            public const string UpdatedDate = "12 Dec 2021";
 #if !DEBUG
             public const string LoaderVer = "2.3.0.1";
             public static Version TargetMLVersion = new(0, 5, 2);
@@ -63,12 +63,14 @@ namespace MintMod {
 #endif
 #if !DEBUG
             if (Environment.CommandLine.Contains("--MintyDev")) isDebug = true;
+            /*
             var melonVersion = new Version(BuildInfo.Version);
             if (melonVersion != ModBuildInfo.TargetMLVersion) {
                 MessageBox.Show("Your MelonLoader is outdated.", "Outdated Mod Loader");
                 Process.Start("https://github.com/HerpDerpinstine/MelonLoader/releases/latest");
                 Con.Warn("Your MelonLoader version is out of date, please update it.");
             }
+            */
 #endif
 
             Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version}");
