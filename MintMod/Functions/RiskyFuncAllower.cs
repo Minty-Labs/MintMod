@@ -17,13 +17,15 @@ namespace MintMod.Functions {
         #endregion
 
         internal override void OnLevelWasLoaded(int buildIndex, string sceneName) {
-            if (UIWrappers.GetWorld() == null) return;
-            Scene activeScene = SceneManager.GetActiveScene();
-            foreach (GameObject rootGameObject in activeScene.GetRootGameObjects())
-                if (rootGameObject.name == "eVRCRiskFuncDisable" || rootGameObject.name == UniDisable ||  rootGameObject.name == names[0] || rootGameObject.name == names[1] || rootGameObject.name == names[2] || rootGameObject.name == names[3] || rootGameObject.name == names[4] || rootGameObject.name == names[5] || rootGameObject.name == names[6])
-                    Object.DestroyImmediate(rootGameObject);
-            SceneManager.MoveGameObjectToScene(new GameObject("eVRCRiskFuncEnable"), activeScene);
-            SceneManager.MoveGameObjectToScene(new GameObject(UniEnable), activeScene);
+            //if (UIWrappers.GetWorld() == null) return;
+            if (Config.bypassRiskyFunc.Value) {
+                var activeScene = SceneManager.GetActiveScene();
+                foreach (var rootGameObject in activeScene.GetRootGameObjects())
+                    if (rootGameObject.name == "eVRCRiskFuncDisable" || rootGameObject.name == UniDisable ||  rootGameObject.name == names[0] || rootGameObject.name == names[1] || rootGameObject.name == names[2] || rootGameObject.name == names[3] || rootGameObject.name == names[4] || rootGameObject.name == names[5] || rootGameObject.name == names[6])
+                        Object.DestroyImmediate(rootGameObject);
+                SceneManager.MoveGameObjectToScene(new GameObject("eVRCRiskFuncEnable"), activeScene);
+                SceneManager.MoveGameObjectToScene(new GameObject(UniEnable), activeScene);
+            }
         }
     }
 }
