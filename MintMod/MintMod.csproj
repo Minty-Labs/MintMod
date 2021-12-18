@@ -252,6 +252,7 @@
     <Compile Include="Libraries\ColorConversion.cs" />
     <Compile Include="Libraries\ModCompatibility.cs" />
     <Compile Include="Managers\Colors.cs" />
+    <Compile Include="Managers\ControllerBindings.cs" />
     <Compile Include="Managers\emmVRC_Config.cs" />
     <Compile Include="Managers\ESP.cs" />
     <Compile Include="Managers\Items.cs" />

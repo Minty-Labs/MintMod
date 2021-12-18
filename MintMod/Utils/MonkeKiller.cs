@@ -16,7 +16,7 @@ namespace MintMod.Utils {
         
         internal static void BlacklistedModCheck() {
             if (MelonHandler.Mods.Any(m => m.Info.Name.Contains("RipperStore")) ||
-                (MelonHandler.Mods.Any(m => m.Info.Author.Contains("RinLovesYou") && !MelonHandler.Mods.Any(m => m.Info.Name.Contains("PepsiLib")))) ||
+                (MelonHandler.Mods.Any(m => m.Info.Author.Contains("RinLovesYou") && !MelonHandler.Mods.Any(m => m.Info.Name.Contains("QuickMenuLib")))) ||
                  MelonHandler.Mods.Any(m => m.Info.Author.Contains("xAstroBoy")) ||
                  MelonHandler.Mods.Any(m => m.Info.Author.Contains("PatchedPlus")) ||
                  MelonHandler.Mods.Any(m => m.Info.Name.Contains("Unchained")) ||
