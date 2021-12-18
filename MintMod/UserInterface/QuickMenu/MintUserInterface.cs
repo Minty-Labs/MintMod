@@ -4,6 +4,7 @@ using System.Windows.Forms;
 //using Il2CppSystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms.VisualStyles;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Resources;
@@ -400,40 +401,82 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         private static int SelectedActionNum = 0;
+
+        private static QMSlider ItemSlider, PlayerSlider;
+        
+        #region Orbit Sliders
+        
+        private static void CreateSliders() {
+            try {
+                // TODO: Make Double Slider
+                ItemSlider = new QMSlider("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_ReModPlayerListMenu/ScrollRect/Viewport/VerticalLayoutGroup/",
+                    f => Items.SpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
+                    f2 => Items.Distance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
+                ItemSlider.Enabled = false;
+                
+                PlayerSlider = new QMSlider("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_ReModPlayerListMenu/ScrollRect/Viewport/VerticalLayoutGroup/",
+                    f => Players.SelfSpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
+                    f2 => Players.SelfDistance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
+                PlayerSlider.Enabled = false;
+            }
+            catch (Exception e) {
+                Con.Error($"{e}");
+            }
+        }
+
+        #endregion
         
         internal static void PlayerListMenuSetup() {
             PlayerListMenu = BaseActions.AddCategoryPage("Player List Menu", "Actions to do individually on a player.");
             var p = PlayerListMenu.AddCategory("Actions");
+            CreateSliders();
             var l = PlayerListMenu.AddCategory("Player List (In Current Room)");
             p.AddButton("Teleport", "Teleport to player", () => {
                 SelectedActionNum = 1;
                 l.Title = "Player List (In Current Room) > Teleport";
+                PlayerSlider.Enabled = false;
+                ItemSlider.Enabled = false;
             });
             var _1 = p.AddButton("OpenQM", "Open player in Quick Menu", () => {
                 SelectedActionNum = 2;
                 l.Title = "Player List (In Current Room) > OpenQM";
+                PlayerSlider.Enabled = false;
+                ItemSlider.Enabled = false;
             });
             p.AddButton("ESP", "Draw a bubble around player", () => {
                 SelectedActionNum = 3;
                 l.Title = "Player List (In Current Room) > ESP";
+                PlayerSlider.Enabled = false;
+                ItemSlider.Enabled = false;
             });
             p.AddButton("Teleport\nPickups to", "Teleport all pickups to player", () => {
                 SelectedActionNum = 4;
                 l.Title = "Player List (In Current Room) > Teleport Pickups";
+                PlayerSlider.Enabled = false;
+                ItemSlider.Enabled = false;
             });
             var _2 = p.AddButton("Orbit\nPickups", "Orbit pickups around player", () => {
                 SelectedActionNum = 5;
                 l.Title = "Player List (In Current Room) > Orbit Pickups";
+                ItemSlider.Enabled = true;
+                PlayerSlider.Enabled = false;
             });
             var _3 = p.AddButton("Orbit\nPlayer", "Orbit around player", () => {
                 SelectedActionNum = 6;
                 l.Title = "Player List (In Current Room) > Orbit Player";
+                PlayerSlider.Enabled = true;
+                ItemSlider.Enabled = false;
             });
             // These button are disabled until I add the functions for them
             _1.Interactable = false;
-            _2.Interactable = false;
-            _3.Interactable = false;
-            p.AddButton("Clear ESPs", "Clears any and all ESP bubbles around players", ESP.ClearAllPlayerESP);
+            //_2.Interactable = false;
+            //_3.Interactable = false;
+            p.AddButton("<color=#FF96AA>Clear ESPs</color>", "Clears any and all ESP bubbles around players", ESP.ClearAllPlayerESP);
+            p.AddButton("<color=#FF96AA>Clear Orbits</color>", "Clear any type of orbiting", () => {
+                if (SelectedActionNum == 5) Items.ClearRotating();
+                else if (SelectedActionNum == 6) Players.ClearRotating();
+                else Con.Warn("Nothing to cancel orbit.");
+            });
             
             
             PlayerListMenu.OnOpen += () => {
@@ -481,10 +524,10 @@ namespace MintMod.UserInterface.QuickMenu {
                                     Items.TPToPlayer(player);
                                     break;
                                 case PlayerListActions.OrbitObjs:
-                                    // Action Not Yet Setup
+                                    Items.Toggle(player, !Items.Rotate);
                                     break;
                                 case PlayerListActions.OrbitPlayer:
-                                    // Action Not Yet Setup
+                                    Players.Toggle(player, !Players.Rotate);
                                     break;
                                 default:
                                     Con.Warn("Nothing is selected.");

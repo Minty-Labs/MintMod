@@ -4,10 +4,14 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using MintMod.Functions;
 using MintMod.Libraries;
+using MintMod.Reflections;
+using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
 using Newtonsoft.Json;
 using UnityEngine;
+using VRC;
 using VRC.Core;
 
 namespace MintMod.Managers {
@@ -15,12 +19,70 @@ namespace MintMod.Managers {
         public override string Name => "Player Manager";
         public override string Description => "Find and get player info.";
 
+        #region Ro-tat-e
+
+        private static Player _target;
+        internal static bool Rotate;
+        internal static float SelfSpinSpeed = 1, SelfDistance = 1;
+
+        internal static void Toggle(Player target, bool state) {
+            _target = target;
+            Rotate = state;
+            Movement.FlightEnabled = state;
+            Movement.NoclipEnabled = state;
+        }
+
+        internal static void ClearRotating() {
+            Rotate = false;
+            Movement.FlightEnabled = true;
+            Movement.NoclipEnabled = true;
+            Movement.FlightEnabled = false;
+            Movement.NoclipEnabled = false;
+            if (MintUserInterface.MainQMFly != null)
+                MintUserInterface.MainQMFly.Toggle(false);
+            if (MintUserInterface.MintQAFly != null)
+                MintUserInterface.MintQAFly.Toggle(false);
+            if (MintUserInterface.MainQMNoClip != null)
+                MintUserInterface.MainQMNoClip.Toggle(false);
+            if (MintUserInterface.MintQANoClip != null)
+                MintUserInterface.MintQANoClip.Toggle(false);
+        }
+
+        internal override void OnUpdate() {
+            if (Rotate && VRCPlayer.field_Internal_Static_VRCPlayer_0 != null) {
+                if (Input.GetKey(KeyCode.P) || _target == null) {
+                    ClearRotating();
+                    return;
+                }
+                if (Input.GetAxis(ControllerBindings.LeftTrigger) == 1f && Input.GetAxis(ControllerBindings.RightTrigger) == 1f) {
+                    ClearRotating();
+                    return;
+                }
+
+                var g = new GameObject();
+                var loc = _target.transform.position;
+                g.transform.position = loc;
+                
+                //Movement.FlightEnabled = true;
+                //Movement.NoclipEnabled = true;
+                
+                g.transform.Rotate(new Vector3(0f, 1f, 0f), Time.time * SelfSpinSpeed * 90f);
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = 
+                    g.transform.position + g.transform.forward * SelfDistance;
+                g.Destroy();
+            }
+        }
+
+        #endregion
+
         #region Players
 
         public const string LilyID = "usr_6d71d3be-1465-4ae9-a97c-1b304ffab93b";
 
         #endregion
 
+        #region Mint Authentication pt.1
+        
         internal override void OnUserInterface() {
             try {
                 WebClient w = new();
@@ -41,8 +103,12 @@ namespace MintMod.Managers {
         }
 
         internal static Dictionary<string, CustomPlayerObjects> Storage;
+        
+        #endregion
     }
-
+    
+    #region Mint Authentication pt.2
+    
     public class CustomPlayerObjects {
         public string userID { get; set; }
         public string fakeName { get; set; }
@@ -73,4 +139,6 @@ namespace MintMod.Managers {
             this.extraTagTextColor = ColorConversion.HexToColorNullable(extraTagTextColor);
         }
     }
+    
+    #endregion
 }

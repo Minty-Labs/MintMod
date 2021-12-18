@@ -16,7 +16,9 @@ namespace MintMod.Managers {
 
         public static VRC_Pickup[] cached;
 
-        internal override void OnLevelWasLoaded(int level, string sceneName) {
+        internal override void OnLevelWasLoaded(int level, string sceneName) => CacheObjects();
+
+        private static void CacheObjects() {
             cached = UnityEngine.Object.FindObjectsOfType<VRC_Pickup>();
         }
 
@@ -71,5 +73,42 @@ namespace MintMod.Managers {
                 }
             }
         }
+
+        #region Ro-tat-e
+
+        internal static bool Rotate;
+        private static Player _target;
+        internal static float SpinSpeed, Distance = 1f;
+
+        internal static void Toggle(Player target, bool state) {
+            if (cached == null) CacheObjects();
+            _target = target;
+            Rotate = state;
+        }
+
+        internal static void ClearRotating() => Rotate = false;
+
+        internal override void OnUpdate() {
+            if (Rotate && VRCPlayer.field_Internal_Static_VRCPlayer_0 != null) {
+                if (_target == null) {
+                    ClearRotating();
+                    return;
+                }
+
+                var g = new GameObject();
+                var tr = g.transform;
+                tr.position = (_target != null ? _target.transform.position : VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position) + new Vector3(0f, 0.2f, 0f);
+                g.transform.Rotate(new Vector3(0f, 360f * Time.time * SpinSpeed, 0f));
+                foreach (var vrcPickup in cached) {
+                    if (Networking.GetOwner(vrcPickup.gameObject) != Networking.LocalPlayer)
+                        Networking.SetOwner(Networking.LocalPlayer, vrcPickup.gameObject);
+                    vrcPickup.transform.position = g.transform.position + g.transform.forward * Distance;
+                    g.transform.Rotate(new Vector3(0f, cached == null ? 25 : 360 / cached.Length, 0f));
+                }
+                g.Destroy();
+            }
+        }
+
+        #endregion
     }
 }
