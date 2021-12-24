@@ -281,7 +281,6 @@
     <Compile Include="UserInterface\QuickMenu\QMSlider.cs" />
     <Compile Include="Utils\AssemblyLoader.cs" />
     <Compile Include="Utils\General.cs" />
-    <Compile Include="Utils\MonkeKiller.cs" />
     <Compile Include="Utils\Network.cs" />
     <Compile Include="Utils\VRCUiPopups.cs" />
   </ItemGroup>

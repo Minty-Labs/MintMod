@@ -29,11 +29,11 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.6.0";
+            public const string Version = "2.8.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "18 Dec 2021";
+            public const string UpdatedDate = "24 Dec 2021";
 #if !DEBUG
-            public const string LoaderVer = "2.3.0.1";
+            public const string LoaderVer = "2.4.0";
             //public static Version TargetMLVersion = new(0, 5, 2);
 #endif
         }
@@ -45,10 +45,9 @@ namespace MintMod {
         internal static readonly DirectoryInfo MintDirectory = new($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}UserData{Path.DirectorySeparatorChar}MintMod");
 
         public override void OnApplicationStart() {
-            MonkeKiller.BlacklistedModCheck();
 #if !DEBUG
             var s = MelonHandler.Mods.Single(m => m.Info.Name.Equals("MintyLoader")).Info.Version;
-            if (s != "2.3.0.1" || s != ModBuildInfo.LoaderVer) {
+            if (s != "2.4.0" || s != ModBuildInfo.LoaderVer || MelonHandler.Mods.FindIndex(i => i.Info.Name == "MintyLoader") == -1) {
                 cancelLoad = true;
                 return;
             }
