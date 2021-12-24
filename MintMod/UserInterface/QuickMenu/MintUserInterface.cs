@@ -304,6 +304,23 @@ namespace MintMod.UserInterface.QuickMenu {
             bypassRiskyFunc = r.AddToggle("Bypass Risky Func", "Forces Mods with Risky Function Checks to work", 
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.bypassRiskyFunc.Identifier).Value = on);
             bypassRiskyFunc.Toggle(Config.bypassRiskyFunc.Value);
+
+            r.AddButton("Reset Portal Timers", "Sets portal timers to 9999999", () => {
+                if (UnityEngine.Object.FindObjectsOfType<PortalInternal>() != null) {
+                    try {
+                        var t = Config.ResetTimerAmount.Value;
+                        var final = t < 30 ? 30 : t;
+                        RPC.Destination targetClients = RPC.Destination.AllBufferOne;
+                        foreach (var objectInternal in UnityEngine.Object.FindObjectsOfType<PortalInternal>()) {
+                            Networking.RPC(targetClients, objectInternal.gameObject, "SetTimerRPC", new[] { new Il2CppSystem.Single
+                                { m_value = -final }.BoxIl2CppObject() });
+                        }
+                    }
+                    catch (Exception ResetTimer) {
+                        Con.Error($"Failed to reset portal timer\n{ResetTimer}");
+                    }
+                }
+            });
         }
 
         #endregion
