@@ -1,0 +1,7 @@
+{
+    "General": {
+        "InputAssemblies": [
+		  "$(TargetDir)\\Pastel.dll"
+        ]
+    }
+}

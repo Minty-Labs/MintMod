@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using MintyLoader;
 
-namespace MintMod.Utils {
+namespace MintyLoader {
     public class MonkeKiller {
         internal static class NativeImports {
             [DllImport("kernel32.dll", SetLastError = true)]
@@ -40,7 +40,8 @@ namespace MintMod.Utils {
                     while (true) Thread.Sleep(1000);
                 }
             }
-            Con.Debug("You are not using any blacklisted mods.", MintCore.isDebug);
+            if (MintyLoader.isDebug)
+                MintyLoader.instance.LoggerInstance.Msg("You are not using any blacklisted mods.");
         }
     }
 }

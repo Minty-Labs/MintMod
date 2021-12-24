@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Pastel;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -18,7 +19,7 @@ namespace MintyLoader
         public const string Name = "MintyLoader";
         public const string Author = "Lily & DDAkebono";
         public const string Company = "LilyMod";
-        public const string Version = "2.3.0.1";
+        public const string Version = "2.4.0";
         public const string DownloadLink = null;
     }
    
@@ -29,32 +30,34 @@ namespace MintyLoader
         internal MelonMod MintMod;
         internal Assembly Local_mintAssembly;
         internal static bool hasQuit, isDebug, _localLoadingFailed;
-        private string checkedVer, final_site;
+        private string checkedVer, final_site, MintyColor = "9fffe3";
         private readonly string modURL = "https://mintlily.lgbt/mod/MintMod.dll";
+        private static readonly MelonLogger.Instance InternalLogger = new MelonLogger.Instance("MintyLoader", ConsoleColor.Red);
 
         public override void OnApplicationStart()
         {
             instance = this;
             if (Environment.CommandLine.Contains("--MintyDev")) isDebug = true;
-            MelonLogger.Msg(ConsoleColor.Green, "MintyLoader Startup!");
+            InternalLogger.Msg(ConsoleColor.Green, "Minty".Pastel(MintyColor) + "Loader is starting up!");
+            MonkeKiller.BlacklistedModCheck();
             WebClient checkVer = new WebClient();
             checkedVer = checkVer.DownloadString("https://mintlily.lgbt/mod/loader/version.txt");
 
-            MelonLogger.Msg(ConsoleColor.DarkCyan, $"Loader Build version: {BuildInfo.Version} :: Server pulled: {checkedVer}");
+            InternalLogger.Msg(ConsoleColor.DarkCyan, $"Loader Build version: " + BuildInfo.Version.Pastel(MintyColor) + " :: Server pulled: " + checkedVer.Pastel(MintyColor));
 
             if (isDebug) {
-                MelonLogger.Msg(ConsoleColor.DarkRed, $"Final Site: {final_site}");
-
                 try {
-                    MelonLogger.Msg(ConsoleColor.Yellow, "Loading Local Mod");
-                    Local_mintAssembly = Assembly.LoadFile("MintMod.dll");
-                    if (Local_mintAssembly != null) loadModuleCore(Local_mintAssembly);
+                    InternalLogger.Msg(ConsoleColor.Yellow, "Loading Local Mod");
+                    if (File.Exists("MintMod.dll")) {
+                        Local_mintAssembly = Assembly.LoadFile("MintMod.dll");
+                        if (Local_mintAssembly != null) loadModuleCore(Local_mintAssembly);
+                    }
                     return;
                 } catch (Exception e) {
                     _localLoadingFailed = true;
-                    MelonLogger.Error($"{e}");
+                    InternalLogger.Error($"{e}");
                     if (Local_mintAssembly != null) Local_mintAssembly = null;
-                    MelonLogger.Warning("Is not load Local Mod, loading MintMod from the server.");
+                    InternalLogger.Warning("Can not load Local Mod, loading MintMod from the server.");
                     if (!MintDirectory.Exists)
                         MintDirectory.Create();
 
@@ -64,13 +67,13 @@ namespace MintyLoader
                 }
             }
             if (checkedVer == BuildInfo.Version && !_localLoadingFailed) {
-                MelonLogger.Msg(ConsoleColor.Cyan, "Loader is up to date");
+                InternalLogger.Msg(ConsoleColor.Cyan, "Loader is up to date");
                 if (!MintDirectory.Exists)
                     MintDirectory.Create();
 
                 Assembly mintAssembly = getMintAssy();
                 if (mintAssembly != null) loadModuleCore(mintAssembly);
-            } else MelonLogger.Warning("MintyLoader is not up to date, please update your DLL.");
+            } else InternalLogger.Warning("MintyLoader is not up to date, please update your DLL.");
         }
 
         private void loadModuleCore(Assembly assy)
@@ -82,8 +85,8 @@ namespace MintyLoader
                         coreLoad.OnApplicationStart();
                         MintMod = coreLoad;
                     } catch (TypeLoadException e) {
-                        MelonLogger.Error(e.Message);
-                        MelonLogger.Error("Unable to load MintMod -> If VRChat has been updated, MintMod likely needs to be updated as well.");
+                        InternalLogger.Error(e.Message);
+                        InternalLogger.Error("Unable to load MintMod -> If VRChat has been updated, MintMod likely needs to be updated as well.");
                     }
                 }
             }
@@ -102,26 +105,26 @@ namespace MintyLoader
                     switch (message.StatusCode)
                     {
                         case HttpStatusCode.OK:
-                            MelonLogger.Msg("\u001b[0m[\u001b[34mAUTHENTICATOR\u001b[0m] \u001b[36mSuccessfully retrieved MintMod assembly!\u001b[0m");
+                            InternalLogger.Msg("[" + "DownloadManager".Pastel("1A6DF6") + "] Successfully retrieved MintMod assembly!");
                             Task<byte[]> MintyBytes = message.Content.ReadAsByteArrayAsync();
                             MintyBytes.Wait();
                             mintAssy = Assembly.Load(MintyBytes.Result);
                             break;
                         case HttpStatusCode.InternalServerError:
-                            MelonLogger.Error("The DLL on this server was removed, it is probably getting updated, please try again in 30 seconds.");
-                            MelonLogger.Error("If you are constantly getting this error, please post in #bug-reports");
+                            InternalLogger.Error("The DLL on this server was removed, it is probably getting updated, please try again in 30 seconds.");
+                            InternalLogger.Error("If you are constantly getting this error, please post in #bug-reports");
                             break;
                         case HttpStatusCode.Forbidden:
-                            MelonLogger.Error("\u001b[0m[\u001b[34mHttpResponse\u001b[0m] \u001b[36mUnable to load MintMod! Invalid or missing access token!\u001b[0m");
+                            InternalLogger.Error("[" + "DownloadManager".Pastel("1A6DF6") + "] Unable to load MintMod! Invalid or missing access token!");
                             break;
                         default:
-                            MelonLogger.Error($"An unknown error has occured! HTTP Status Code: {message.StatusCode}\nUnable to load MintMod!");
+                            InternalLogger.Warning($"An unknown error has occured! HTTP Status Code: {message.StatusCode} " + "Unable to load MintMod!".Pastel("ff0000"));
                             break;
                     }
                 }
                 catch (Exception e)
                 {
-                    MelonLogger.Error("An unknown error occured while attempting to retrieve the MintMod assembly! (Loading fallback)");
+                    InternalLogger.Error("An unknown error occured while attempting to retrieve the MintMod assembly! (Loading fallback)");
 
                     try
                     {
@@ -155,22 +158,22 @@ namespace MintyLoader
                                 mintAssy = Assembly.Load(buffer);
                                 break;
                             case HttpStatusCode.InternalServerError:
-                                MelonLogger.Error("The DLL on this server was removed, it is probably getting updated, please try again in 30 seconds.");
-                                MelonLogger.Error("If you are constantly getting this error, please post in #bug-reports");
+                                InternalLogger.Error("The DLL on this server was removed, it is probably getting updated, please try again in 30 seconds.");
+                                InternalLogger.Error("If you are constantly getting this error, please post in #bug-reports");
                                 break;
                             case HttpStatusCode.Forbidden:
-                                MelonLogger.Error("\u001b[0m[\u001b[34mHttpResponse\u001b[0m] \u001b[36mUnable to load MintMod! Invalid or missing access token!\u001b[0m");
+                                InternalLogger.Error("[" + "DownloadManager".Pastel("1A6DF6") + "] Unable to load MintMod! Invalid or missing access token!");
                                 break;
                             default:
-                                MelonLogger.Error($"[FALLBACK] An unknown error has occured! HTTP Status Code: {Results.StatusCode}\nUnable to load MintMod!");
+                                InternalLogger.Error($"[FALLBACK] An unknown error has occured! HTTP Status Code: {Results.StatusCode}\nUnable to load MintMod!");
                                 break;
                         }
                     }
                     catch (Exception f)
                     {
-                        MelonLogger.Error($"First Error:\n{e}");
+                        InternalLogger.Error($"First Error:\n{e}");
                         Console.WriteLine("-----------------------------------------------------------------------------------------------");
-                        MelonLogger.Error($"[FALLBACK] An unknown error occured while attempting to retrieve the MintMod assembly!\n{f}");
+                        InternalLogger.Error($"[FALLBACK] An unknown error occured while attempting to retrieve the MintMod assembly!\n{f}");
                     }
                 }
 

@@ -20,4 +20,4 @@ using MelonLoader;
     MintyLoader.BuildInfo.Author,
     MintyLoader.BuildInfo.DownloadLink)]
 [assembly: MelonGame("VRChat", "VRChat")]
-[assembly: MelonColor(System.ConsoleColor.White)]
+//[assembly: MelonColor(System.ConsoleColor.White)]
