@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MintMod.Functions;
+using UnhollowerBaseLib;
 using UnityEngine;
 using VRC;
 using VRC.SDK3.Components;
@@ -15,6 +17,8 @@ namespace MintMod.Managers {
         public override string Description => "";
 
         public static VRC_Pickup[] cached;
+        public static Il2CppArrayBase<VRCObjectSync> ObjSyncSDK3;
+        public static Il2CppArrayBase<VRCSDK2.VRC_ObjectSync> ObjSyncSDK2;
 
         internal override void OnLevelWasLoaded(int level, string sceneName) => CacheObjects();
 
@@ -53,9 +57,9 @@ namespace MintMod.Managers {
         }
 
         internal static void Respawn() {
-            if (UIWrappers.GetWorld() != null && UnityEngine.Resources.FindObjectsOfTypeAll<VRCSceneDescriptor>().Count > 0) {
-                var VRCSDK3PickupsSync = UnityEngine.Object.FindObjectsOfType<VRCObjectSync>();
-                foreach (VRCObjectSync vrcobjectSync in VRCSDK3PickupsSync) {
+            if (UIWrappers.GetWorld() != null && WorldActions.isWorldSDK3()) {
+                ObjSyncSDK3 = UnityEngine.Object.FindObjectsOfType<VRCObjectSync>();
+                foreach (VRCObjectSync vrcobjectSync in ObjSyncSDK3) {
                     if (vrcobjectSync != null) {
                         if (!Networking.IsOwner(Player.prop_Player_0.prop_VRCPlayerApi_0, vrcobjectSync.gameObject))
                             Networking.SetOwner(Player.prop_Player_0.prop_VRCPlayerApi_0, vrcobjectSync.gameObject);
@@ -64,8 +68,8 @@ namespace MintMod.Managers {
                 }
                 return;
             }
-            var PickupsSync = UnityEngine.Object.FindObjectsOfType<VRCSDK2.VRC_ObjectSync>();
-            foreach (var vrc_ObjectSync in PickupsSync) {
+            ObjSyncSDK2 = UnityEngine.Object.FindObjectsOfType<VRCSDK2.VRC_ObjectSync>();
+            foreach (var vrc_ObjectSync in ObjSyncSDK2) {
                 if (vrc_ObjectSync != null) {
                     if (!Networking.IsOwner(Player.prop_Player_0.prop_VRCPlayerApi_0, vrc_ObjectSync.gameObject))
                         Networking.SetOwner(Player.prop_Player_0.prop_VRCPlayerApi_0, vrc_ObjectSync.gameObject);

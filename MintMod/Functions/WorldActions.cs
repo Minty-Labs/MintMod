@@ -124,7 +124,7 @@ namespace MintMod.Functions {
             return UIWrappers.SDKType.SDK2;
         }
 
-        static bool isWorldSDK3() {
+        public static bool isWorldSDK3() {
             if (GetWorldTypeSDK() == UIWrappers.SDKType.SDK2 || GetWorldTypeSDK() == UIWrappers.SDKType.NONE)
                 return false;
             return true;
@@ -196,11 +196,5 @@ namespace MintMod.Functions {
         public VRC_MirrorReflection MirrorInParent;
 
         public LayerMask OriginalLayers;
-    }
-
-    public class OriginalPedestal {
-        public GameObject PedestalInParent;
-
-        public bool originalStatus;
     }
 }

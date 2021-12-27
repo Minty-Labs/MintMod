@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using MintMod.Functions;
 using MintMod.Libraries;
 using MintMod.Reflections;
@@ -25,37 +26,30 @@ namespace MintMod.Managers {
         internal static bool Rotate;
         internal static float SelfSpinSpeed = 1, SelfDistance = 1;
 
-        internal static void Toggle(Player target, bool state) {
-            _target = target;
+        internal static void Toggle(bool state, Player target = null) {
+            if (target != null)
+                _target = target;
             Rotate = state;
             Movement.FlightEnabled = state;
             Movement.NoclipEnabled = state;
-        }
-
-        internal static void ClearRotating() {
-            Rotate = false;
-            Movement.FlightEnabled = true;
-            Movement.NoclipEnabled = true;
-            Movement.FlightEnabled = false;
-            Movement.NoclipEnabled = false;
             if (MintUserInterface.MainQMFly != null)
-                MintUserInterface.MainQMFly.Toggle(false);
+                MintUserInterface.MainQMFly.Toggle(state);
             if (MintUserInterface.MintQAFly != null)
-                MintUserInterface.MintQAFly.Toggle(false);
+                MintUserInterface.MintQAFly.Toggle(state);
             if (MintUserInterface.MainQMNoClip != null)
-                MintUserInterface.MainQMNoClip.Toggle(false);
+                MintUserInterface.MainQMNoClip.Toggle(state);
             if (MintUserInterface.MintQANoClip != null)
-                MintUserInterface.MintQANoClip.Toggle(false);
+                MintUserInterface.MintQANoClip.Toggle(state);
         }
 
         internal override void OnUpdate() {
             if (Rotate && VRCPlayer.field_Internal_Static_VRCPlayer_0 != null) {
                 if (Input.GetKey(KeyCode.P) || _target == null) {
-                    ClearRotating();
+                    Toggle(false);
                     return;
                 }
                 if (Input.GetAxis(ControllerBindings.LeftTrigger) == 1f && Input.GetAxis(ControllerBindings.RightTrigger) == 1f) {
-                    ClearRotating();
+                    Toggle(false);
                     return;
                 }
 
