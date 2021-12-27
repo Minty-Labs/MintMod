@@ -29,9 +29,9 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.8.0";
+            public const string Version = "2.9.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "24 Dec 2021";
+            public const string UpdatedDate = "27 Dec 2021";
 #if !DEBUG
             public const string LoaderVer = "2.4.0";
             //public static Version TargetMLVersion = new(0, 5, 2);
@@ -100,6 +100,7 @@ namespace MintMod {
             mods.Add(new Nameplates());
             mods.Add(new UserInterface.ActionMenu());
             mods.Add(new Players());
+            mods.Add(new Components());
             //mods.Add(new );
 
             MelonCoroutines.Start(Utils.Network.OnYieldStart());
