@@ -177,7 +177,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     Clipboard.SetText(APIUser.CurrentUser.avatarId);
                 }
                 catch (Exception c) {
-                    MelonLogger.Error(c);
+                    Con.Error($"{c}");
                 }
             });
             p.AddButton("Go into Avi by ID", "Takes an Avatar ID from your clipboard and changes into that avatar.", () => {
@@ -197,7 +197,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         VRCUiManager.field_Private_Static_VRCUiManager_0.InformHudText("No avatar ID in clipboard", Color.white);
                 }
                 catch (Exception c) {
-                    MelonLogger.Error(c);
+                    Con.Error($"{c}");
                 }
             });
             InfJump = p.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content", onToggle => PlayerActions.InfinteJump = onToggle);
@@ -227,7 +227,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         faulted = true;
                     }
 
-                    MelonLogger.Msg(faulted ? "Failed to copy intance ID" : $"Got ID: {world}");
+                    Con.Msg(faulted ? "Failed to copy instance ID" : $"Got ID: {world}");
                 });
             w.AddButton("Join Instance by ID", "Join the room of the instance ID", () => {
                 try {
@@ -235,26 +235,31 @@ namespace MintMod.UserInterface.QuickMenu {
                     try { clip = GUIUtility.systemCopyBuffer; } catch { clip = Clipboard.GetText(); }
 
                     if (clip.Contains("launch?")) {
-                        MelonLogger.Warning("Invalid Join ID, please do not use web links");
+                        Con.Warn("Invalid Join ID, please do not use web links");
                     }
                     else if ((clip.Contains("~hidden(") || clip.Contains("~friends(") || clip.Contains("~public(") || clip.Contains("~private(")) && clip.Contains("launch?")) {
                         Networking.GoToRoom(clip);
                     }
                 }
-                catch (Exception j) { MelonLogger.Error(j); }
+                catch (Exception j) {
+                    Con.Error($"{j}");
+                }
             });
             w.AddSpacer();
             w.AddButton("Log World", "Logs world info (of various data points) in a text file.", WorldActions.LogWorld);
             
             w.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
             w.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
-            w.AddButton("Bueatify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
+            w.AddButton("Beautify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
             w.AddSpacer();
 
             var e = WorldMenu.AddCategory("Item Manipulation");
             e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
             e.AddButton("Respawn Items", "Respawns All pickups to their original location.", Items.Respawn);
             e.AddButton("Teleport Items Out of World", "Teleports all Pickups an XYZ coord of 1 million", Items.TPToOutWorld);
+            
+            var c = WorldMenu.AddCategory("Component Toggle");
+            Components.ComponentToggle(c);
         }
 
         #endregion
@@ -425,7 +430,6 @@ namespace MintMod.UserInterface.QuickMenu {
         
         private static void CreateSliders() {
             try {
-                // TODO: Make Double Slider
                 ItemSlider = new QMSlider("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_ReModPlayerListMenu/ScrollRect/Viewport/VerticalLayoutGroup/",
                     f => Items.SpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
                     f2 => Items.Distance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
@@ -486,12 +490,10 @@ namespace MintMod.UserInterface.QuickMenu {
             });
             // These button are disabled until I add the functions for them
             _1.Interactable = false;
-            //_2.Interactable = false;
-            //_3.Interactable = false;
             p.AddButton("<color=#FF96AA>Clear ESPs</color>", "Clears any and all ESP bubbles around players", ESP.ClearAllPlayerESP);
             p.AddButton("<color=#FF96AA>Clear Orbits</color>", "Clear any type of orbiting", () => {
                 if (SelectedActionNum == 5) Items.ClearRotating();
-                else if (SelectedActionNum == 6) Players.ClearRotating();
+                else if (SelectedActionNum == 6) Players.Toggle(false);
                 else Con.Warn("Nothing to cancel orbit.");
             });
             
@@ -544,7 +546,7 @@ namespace MintMod.UserInterface.QuickMenu {
                                     Items.Toggle(player, !Items.Rotate);
                                     break;
                                 case PlayerListActions.OrbitPlayer:
-                                    Players.Toggle(player, !Players.Rotate);
+                                    Players.Toggle(!Players.Rotate, player);
                                     break;
                                 default:
                                     Con.Warn("Nothing is selected.");
