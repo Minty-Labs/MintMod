@@ -29,11 +29,11 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.9.0";
+            public const string Version = "2.10.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "27 Dec 2021";
+            public const string UpdatedDate = "29 Dec 2021";
 #if !DEBUG
-            public const string LoaderVer = "2.4.0";
+            public const string LoaderVer = "2.4.1";
             //public static Version TargetMLVersion = new(0, 5, 2);
 #endif
         }
@@ -47,7 +47,7 @@ namespace MintMod {
         public override void OnApplicationStart() {
 #if !DEBUG
             var s = MelonHandler.Mods.Single(m => m.Info.Name.Equals("MintyLoader")).Info.Version;
-            if (s != "2.4.0" || s != ModBuildInfo.LoaderVer || MelonHandler.Mods.FindIndex(i => i.Info.Name == "MintyLoader") == -1) {
+            if (s != ModBuildInfo.LoaderVer || MelonHandler.Mods.FindIndex(i => i.Info.Name == "MintyLoader") == -1) {
                 cancelLoad = true;
                 return;
             }
@@ -110,7 +110,7 @@ namespace MintMod {
 
             mods.ForEach(a => {
                 try { a.OnStart(); }
-                catch (Exception e) { Con.Error($"{e}"); }
+                catch (Exception e) { Con.Error(e); }
             });
             Con.Debug($"Loaded {mods.Count} SubMods", isDebug);
         }
@@ -120,7 +120,7 @@ namespace MintMod {
             if (cancelLoad) return;
 #endif
             mods.ForEach(s => {
-                try { s.OnPrefSave(); } catch (Exception e) { Con.Error($"{e}"); }
+                try { s.OnPrefSave(); } catch (Exception e) { Con.Error(e); }
             });
         }
 
@@ -129,7 +129,7 @@ namespace MintMod {
             if (cancelLoad) return;
 #endif
             mods.ForEach(u => {
-                try { u.OnUpdate(); } catch (Exception e) { Con.Error($"{e}"); }
+                try { u.OnUpdate(); } catch (Exception e) { Con.Error(e); }
             });
         }
 
@@ -138,7 +138,7 @@ namespace MintMod {
             if (cancelLoad) return;
 #endif
             mods.ForEach(s => {
-                try { s.OnLevelWasLoaded(buildIndex, sceneName); } catch (Exception e) { Con.Error($"{e}"); }
+                try { s.OnLevelWasLoaded(buildIndex, sceneName); } catch (Exception e) { Con.Error(e); }
             });
         }
 
@@ -181,7 +181,7 @@ namespace MintMod {
 #endif
             MintCore.mods.ForEach(u => {
                 try { u.OnUserInterface(); }
-                catch (Exception e) { Con.Error($"{e}"); }
+                catch (Exception e) { Con.Error(e); }
             });
             MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
             MelonCoroutines.Start(MintUserInterface.OnUserSelectMenu());
