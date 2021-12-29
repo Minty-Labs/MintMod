@@ -4,7 +4,9 @@ using System.Windows.Forms;
 //using Il2CppSystem;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Resources;
@@ -32,22 +34,22 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static GameObject MainMenuBackButton, TheMintMenuButton, ShittyAdverts, ShittyAdverts_2, LaunchPadLayoutGroup;
 
-        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, MintQuickActionsCat, userSelectCategory, playerListCategory;
+        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
 
         public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu;
 
         private static QMSlider FlightSpeedSlider; 
 
-        public static ReMenuToggle 
+        internal static ReMenuToggle 
             MainQMFly, MainQMNoClip, MainQMFreeze,
             MintQAFly, MintQANoClip, MintQAFreeze;
 
         //private static Sprite WorldIcon, PlayerIcon;
 
-        public static ReMenuToggle ItemESP, PlayerESP, DeviceType, FrameSpoof, PingSpoof, PingNegative, bypassRiskyFunc;
+        internal static ReMenuToggle ItemESP, PlayerESP, DeviceType, FrameSpoof, PingSpoof, PingNegative, bypassRiskyFunc;
         public static ReMenuButton Frame, Ping;
 
-        internal static Image MintIcon;
+        private static Image MintIcon;
 
         internal static bool isOnStreamerMode;
 
@@ -91,7 +93,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 Con.Error("Action from AdBlocker failed. Ignoring");
             }
 
-            MintMenu = new ReCategoryPage($"MintMenu - v<color=#9fffe3>{MintCore.ModBuildInfo.Version}</color>");
+            MintMenu = new ReCategoryPage("MintMenu");
             MintMenu.GameObject.SetActive(false);
             TheMintMenuButton = UnityEngine.Object.Instantiate(MainMenuBackButton, MainMenuBackButton.transform.parent);
             TheMintMenuButton.transform.SetAsLastSibling();
@@ -136,29 +138,25 @@ namespace MintMod.UserInterface.QuickMenu {
             MintIcon = TheMintMenuButton.transform.Find("Icon").GetComponent<Image>();
             MintIcon.sprite = MintyResources.MintIcon;
             MintIcon.color = Color.white;
-            StyleElement _styleElement = TheMintMenuButton.GetComponent<StyleElement>();
-            if (_styleElement.field_Public_String_0 == "Back") // Ignore Style Changes
-                _styleElement.field_Public_String_0 = "MintMenuButton";
-            else _styleElement.field_Public_String_1 = "MintMenuButton";
+            var styleElement = TheMintMenuButton.GetComponent<StyleElement>();
+            if (styleElement.field_Public_String_0 == "Back") // Ignore Style Changes
+                styleElement.field_Public_String_0 = "MintMenuButton";
+            else styleElement.field_Public_String_1 = "MintMenuButton";
         }
 
         #region Quick Actions
 
-        internal static void MintQuickActions() {
-            MintQuickActionsCat = MintMenu.AddCategory("Quick Actions");
-            MintQAFly = MintQuickActionsCat.AddToggle("Flight", "Toggle Flight", Movement.Fly);
-            MintQANoClip = MintQuickActionsCat.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
-            MintQAFreeze = MintQuickActionsCat.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
-
-            MintQuickActionsCat.AddSpacer();
-            string tempver = MintCore.ModBuildInfo.Version;
-            string text = $"MintMenuv{tempver.Replace(".", "")}";
-            string parent = $"UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_ReMod{text}/ScrollRect/Viewport/VerticalLayoutGroup/";
+        private static void MintQuickActions() {
+            var qf = MintMenu.AddCategory("Quick Functions");
+            MintQAFly = qf.AddToggle("Flight", "Toggle Flight", Movement.Fly);
+            MintQANoClip = qf.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
+            MintQAFreeze = qf.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
+            qf.AddSpacer();
+            
+            string parent = $"UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_MintMenu/ScrollRect/Viewport/VerticalLayoutGroup/";
             FlightSpeedSlider = new(parent, f => Movement.finalSpeed = f, "FlightSpeed", "Control Flight Speed", "500%", 5f, 
                 "Flight Speed > 0% - 500%", 0f, 1f);
-            //if (FlightSpeedSlider != null)
-            //    MintMenu.OnOpen += () => FlightSpeedSlider.Value = Movement.finalSpeed;
-
+            
             Con.Debug("Done Creating QuickActions", MintCore.isDebug);
         }
 
@@ -168,7 +166,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static ReMenuToggle InfJump;
         
-        internal static void Player() {
+        private static void Player() {
             PlayerMenu = BaseActions.AddCategoryPage("Player Menu", "Actions involving players.");
             var p = PlayerMenu.AddCategory("General Actions");
             PlayerESP = p.AddToggle("Player ESP", "Puts a bubble around each player, and is visible through walls.", ESP.PlayerESPState);
@@ -177,7 +175,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     Clipboard.SetText(APIUser.CurrentUser.avatarId);
                 }
                 catch (Exception c) {
-                    Con.Error($"{c}");
+                    Con.Error(c);
                 }
             });
             p.AddButton("Go into Avi by ID", "Takes an Avatar ID from your clipboard and changes into that avatar.", () => {
@@ -197,7 +195,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         VRCUiManager.field_Private_Static_VRCUiManager_0.InformHudText("No avatar ID in clipboard", Color.white);
                 }
                 catch (Exception c) {
-                    Con.Error($"{c}");
+                    Con.Error(c);
                 }
             });
             InfJump = p.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content", onToggle => PlayerActions.InfinteJump = onToggle);
@@ -208,7 +206,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region World Menu
 
-        internal static void World() {
+        private static void World() {
             WorldMenu = BaseActions.AddCategoryPage("World Menu", "Actions involving the world.");
             var w = WorldMenu.AddCategory("General Actions");
             ItemESP = w.AddToggle("Item ESP", "Puts a bubble around all Pickups, can be seen through walls", ESP.SetItemESPToggle);
@@ -242,7 +240,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     }
                 }
                 catch (Exception j) {
-                    Con.Error($"{j}");
+                    Con.Error(j);
                 }
             });
             w.AddSpacer();
@@ -266,8 +264,9 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region Funny Dev Random Shit
 
-        internal static void RandomStuff() {
+        private static void RandomStuff() {
             RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions");
+            RandomMenu.AddCategory($"MintMod - v<color=#9fffe3>{MintCore.ModBuildInfo.Version}</color>");
             var r = RandomMenu.AddCategory("General Actions");
             
             DeviceType = r.AddToggle("Spoof as Quest", "Spoof your VRChat login as Quest.",
@@ -333,7 +332,7 @@ namespace MintMod.UserInterface.QuickMenu {
         #region UserSelect Menu
 
         private static GameObject TheUserSelectMenu;
-        internal static void UserSelMenu() {
+        private static void UserSelMenu() {
             TheUserSelectMenu = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_SelectedUser_Local/ScrollRect/Viewport/VerticalLayoutGroup");
 
             userSelectCategory = new ReMenuCategory("MintMod", TheUserSelectMenu.transform);
@@ -356,7 +355,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     } else
                         VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private", Color.white);
                 } catch (Exception c) {
-                    Con.Error($"{c}");
+                    Con.Error(c);
                     Con.Warn("Attempting fallback method");
                     try {
                         var v = PlayerActions.SelPAvatar();
@@ -364,7 +363,7 @@ namespace MintMod.UserInterface.QuickMenu {
                             .ChangeToAvatar(v.id);
                     }
                     catch (Exception f) {
-                        Con.Error($"{f}");
+                        Con.Error(f);
                     }
                 }
             });
@@ -429,62 +428,63 @@ namespace MintMod.UserInterface.QuickMenu {
         #region Orbit Sliders
         
         private static void CreateSliders() {
+            var parent = "UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_PlayerListMenu/ScrollRect/Viewport/VerticalLayoutGroup/";
             try {
-                ItemSlider = new QMSlider("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_ReModPlayerListMenu/ScrollRect/Viewport/VerticalLayoutGroup/",
+                ItemSlider = new QMSlider(parent,
                     f => Items.SpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
                     f2 => Items.Distance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
                 ItemSlider.Enabled = false;
                 
-                PlayerSlider = new QMSlider("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_ReModPlayerListMenu/ScrollRect/Viewport/VerticalLayoutGroup/",
+                PlayerSlider = new QMSlider(parent,
                     f => Players.SelfSpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
                     f2 => Players.SelfDistance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
                 PlayerSlider.Enabled = false;
             }
             catch (Exception e) {
-                Con.Error($"{e}");
+                Con.Error(e);
             }
         }
 
         #endregion
         
-        internal static void PlayerListMenuSetup() {
+        private static void PlayerListMenuSetup() {
             PlayerListMenu = BaseActions.AddCategoryPage("Player List Menu", "Actions to do individually on a player.");
             var p = PlayerListMenu.AddCategory("Actions");
             CreateSliders();
-            var l = PlayerListMenu.AddCategory("Player List (In Current Room)");
+            var l = PlayerListMenu.AddCategory("Player List (Select an Action)");
             p.AddButton("Teleport", "Teleport to player", () => {
                 SelectedActionNum = 1;
-                l.Title = "Player List (In Current Room) > Teleport";
+                l.Title = "Player List > Teleport";
                 PlayerSlider.Enabled = false;
                 ItemSlider.Enabled = false;
             });
             var _1 = p.AddButton("OpenQM", "Open player in Quick Menu", () => {
                 SelectedActionNum = 2;
-                l.Title = "Player List (In Current Room) > OpenQM";
+                l.Title = "Player List > OpenQM";
                 PlayerSlider.Enabled = false;
                 ItemSlider.Enabled = false;
             });
             p.AddButton("ESP", "Draw a bubble around player", () => {
                 SelectedActionNum = 3;
-                l.Title = "Player List (In Current Room) > ESP";
+                l.Title = "Player List > ESP";
                 PlayerSlider.Enabled = false;
                 ItemSlider.Enabled = false;
             });
             p.AddButton("Teleport\nPickups to", "Teleport all pickups to player", () => {
                 SelectedActionNum = 4;
-                l.Title = "Player List (In Current Room) > Teleport Pickups";
+                l.Title = "Player List > Teleport Pickups";
                 PlayerSlider.Enabled = false;
                 ItemSlider.Enabled = false;
             });
             var _2 = p.AddButton("Orbit\nPickups", "Orbit pickups around player", () => {
                 SelectedActionNum = 5;
-                l.Title = "Player List (In Current Room) > Orbit Pickups";
+                l.Title = "Player List > Orbit Pickups";
                 ItemSlider.Enabled = true;
                 PlayerSlider.Enabled = false;
             });
             var _3 = p.AddButton("Orbit\nPlayer", "Orbit around player", () => {
                 SelectedActionNum = 6;
-                l.Title = "Player List (In Current Room) > Orbit Player";
+                l.Title = "Player List > Orbit Player";
                 PlayerSlider.Enabled = true;
                 ItemSlider.Enabled = false;
             });
@@ -496,7 +496,6 @@ namespace MintMod.UserInterface.QuickMenu {
                 else if (SelectedActionNum == 6) Players.Toggle(false);
                 else Con.Warn("Nothing to cancel orbit.");
             });
-            
             
             PlayerListMenu.OnOpen += () => {
                 foreach (var button in PlayerButtons)
