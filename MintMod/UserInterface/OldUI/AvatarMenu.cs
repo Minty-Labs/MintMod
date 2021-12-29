@@ -80,7 +80,7 @@ namespace MintMod.UserInterface.OldUI {
                             VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_assetName}", Color.white);
                         };
                         new Thread(DLVRCA).Start();
-                    } catch (System.Exception e) { MelonLogger.Error(e.ToString()); }
+                    } catch (Exception e) { Con.Error(e); }
                 }
             }));
             #endregion

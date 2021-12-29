@@ -16,6 +16,7 @@ using MintMod.Functions.Authentication;
 using MintMod.Managers;
 using MintMod.UserInterface.QuickMenu;
 using UnityEngine.Events;
+using MintyLoader;
 
 namespace MintMod.UserInterface.OldUI {
     class SettingsMenu : MintSubMod {
@@ -81,8 +82,8 @@ namespace MintMod.UserInterface.OldUI {
 					//MintMod.Functions.Managers.RestartRestore.GetPosRotWorld();
 					try {
 						Process.Start(System.Environment.CurrentDirectory + "\\VRChat.exe", System.Environment.CommandLine.ToString());
-					} catch (System.Exception) {
-						new System.Exception();
+					} catch (Exception ex) {
+						Con.Error(ex);
 					}
 					RealSettingsExit.GetComponent<Button>().onClick.Invoke();
 				}));

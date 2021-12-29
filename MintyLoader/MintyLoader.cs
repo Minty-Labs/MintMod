@@ -19,7 +19,7 @@ namespace MintyLoader
         public const string Name = "MintyLoader";
         public const string Author = "Lily & DDAkebono";
         public const string Company = "LilyMod";
-        public const string Version = "2.4.0";
+        public const string Version = "2.4.1";
         public const string DownloadLink = null;
     }
    
@@ -43,7 +43,7 @@ namespace MintyLoader
             WebClient checkVer = new WebClient();
             checkedVer = checkVer.DownloadString("https://mintlily.lgbt/mod/loader/version.txt");
 
-            InternalLogger.Msg(ConsoleColor.DarkCyan, $"Loader Build version: " + BuildInfo.Version.Pastel(MintyColor) + " :: Server pulled: " + checkedVer.Pastel(MintyColor));
+            InternalLogger.Msg($"Loader Build version: ".Pastel("008B8B") + BuildInfo.Version.Pastel(MintyColor) + " :: Server pulled: ".Pastel("008B8B") + checkedVer.Pastel(MintyColor));
 
             if (isDebug) {
                 try {
@@ -51,6 +51,10 @@ namespace MintyLoader
                     if (File.Exists("MintMod.dll")) {
                         Local_mintAssembly = Assembly.LoadFile("MintMod.dll");
                         if (Local_mintAssembly != null) loadModuleCore(Local_mintAssembly);
+                    }
+                    else {
+                        var mintAssembly = getMintAssy();
+                        if (mintAssembly != null) loadModuleCore(mintAssembly);
                     }
                     return;
                 } catch (Exception e) {

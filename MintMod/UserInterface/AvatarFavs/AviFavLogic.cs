@@ -84,12 +84,12 @@ namespace MintMod.UserInterface.AvatarFavs {
                 try {
                     if (!ranOnce)
                         Intance.OnUserInterface();
-                } catch (Exception a) { MelonLogger.Error($"After game start, Avatar Favorites Start Error\n{a}"); }
+                } catch (Exception a) { Con.Error($"After game start, Avatar Favorites Start Error\n{a}"); }
 
                 try {
                     MelonCoroutines.Start(RefreshMenu(1f));
-                } catch (Exception r) {
-                    MelonLogger.Error($"{r}");
+                } catch (Exception e) {
+                    Con.Error(e);
                 }
             } else {
                 try {
@@ -97,7 +97,9 @@ namespace MintMod.UserInterface.AvatarFavs {
                         DestroyList();
                         ranOnce = false;
                     }
-                } catch (Exception d) { MelonLogger.Error($"{d}"); }
+                } catch (Exception e) {
+                    Con.Error(e);
+                }
             }
         }
 

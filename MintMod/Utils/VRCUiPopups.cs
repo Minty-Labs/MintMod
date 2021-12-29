@@ -1,12 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Il2CppSystem.Collections.Generic;
-using UnhollowerBaseLib.Attributes;
-using UnhollowerRuntimeLib.XrefScans;
+﻿using MintyLoader;
 using UnityEngine;
-using UnityEngine.UI;
-using MelonLoader;
 
 namespace MintMod.Utils {
     public static class VRCUiPopups {
@@ -22,7 +15,7 @@ namespace MintMod.Utils {
                 uiManager.field_Private_Single_2 = delay; // DelayBeforeHudMessage
                 uiManager.field_Private_List_1_String_0.Add("[MintMod]\n" + message);
                 uiManager.field_Public_Text_0.color = Color.white;
-            } catch { MelonLogger.Error($"Could not display Popup HUD Message => {message}"); }
+            } catch { Con.Error($"Could not display Popup HUD Message => {message}"); }
         }
     }
 }

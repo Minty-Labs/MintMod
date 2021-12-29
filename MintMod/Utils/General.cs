@@ -30,8 +30,8 @@ namespace MintMod.Utils {
         internal static void RestartGame() {
             try {
                 Process.Start(Environment.CurrentDirectory + "\\VRChat.exe", Environment.CommandLine.ToString());
-            } catch (Exception) {
-                new Exception();
+            } catch (Exception e) {
+                Con.Error(e);
             }
             QuitGame();
 		}

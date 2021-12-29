@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.UI;
+using MintyLoader;
 
 namespace MintMod.UserInterface.OldUI {
     class MenuContentBackdrop : MintSubMod {
@@ -37,7 +38,7 @@ namespace MintMod.UserInterface.OldUI {
                 canRun = true;
             }
             catch (Exception e) {
-                MelonLogger.Error(e);
+                Con.Error(e);
             }
         }
 

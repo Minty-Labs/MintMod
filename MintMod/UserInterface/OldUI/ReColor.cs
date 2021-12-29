@@ -39,7 +39,7 @@ namespace MintMod.UserInterface.OldUI {
                 }
                 catch (Exception e) {
                     if (!MintUserInterface.isOnStreamerMode)
-                        Con.Error($"{e}");
+                        Con.Error(e);
                 }
             }
             
@@ -106,7 +106,7 @@ namespace MintMod.UserInterface.OldUI {
                     normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Decoration_Left").GetComponent<Image>());
                     normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Decoration_Right").GetComponent<Image>());
                 } catch (Exception ex) {
-                    ex = new Exception();
+                    Con.Error(ex.ToString());
                 }
 
                 #endregion
@@ -213,7 +213,7 @@ namespace MintMod.UserInterface.OldUI {
                     holder.Find("SearchTitle").GetComponent<Text>().color = color;
                     holder.Find("InputField").GetComponent<Image>().color = color;
                 } catch (Exception ex) {
-                    MelonLogger.Error(ex.ToString());
+                    Con.Error(ex);
                 }
             }
             yield break;
@@ -238,7 +238,7 @@ namespace MintMod.UserInterface.OldUI {
                     initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
                     initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
                 } catch (Exception e) {
-                    MelonLogger.Error(e.ToString());
+                    Con.Error(e);
                 }
             }
         }

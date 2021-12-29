@@ -1,15 +1,7 @@
 ﻿using MelonLoader;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
+using MintyLoader;
 using MintMod.Managers;
-using MintMod.Reflections;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace MintMod.Libraries {
     class ModCompatibility : MintSubMod {
@@ -47,13 +39,13 @@ namespace MintMod.Libraries {
                     try {
                         Read_emmVRCConfig();
                     } catch (Exception read) {
-                        MelonLogger.Error(read.ToString());
+                        Con.Error(read);
                     }
                     try {
                         if (hasCNP_On)
                             MelonPreferences.GetEntry<bool>(Config.Color.Identifier, Config.RecolorRanks.Identifier).Value = false;
                     } catch (Exception apply) {
-                        MelonLogger.Error(apply.ToString());
+                        Con.Error(apply);
                     }
                 }
             }
