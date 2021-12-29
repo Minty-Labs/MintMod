@@ -199,13 +199,24 @@ namespace MintMod.UserInterface {
             if (Players.Storage.ContainsKey($"{npID}-{APIUser.CurrentUser.id}"))
                 npID = $"{npID}-{APIUser.CurrentUser.id}"; // User's Nameplate - target for only user to see
 
-            if (npID == "usr_e1c908e4-31ce-4fdc-b4eb-56cb235459ed") {
+            if (npID.Contains("usr_e1c908e4")) {
                 Random rnd = new();
-                int num = rnd.Next(0, 100);
-                bool chance = num > 80;
+                int num = rnd.Next(0, 10);
+                bool chance = num > 8;
                 if (chance) npID += "-retarded";
                 Con.Debug($"George's random funny shown -> {chance}", MintCore.isDebug);
             }
+            
+            // Insert Elly's Special Nameplates for Lily
+            if (npID.Contains($"{npID}-usr_6d71d3be") && APIUser.CurrentUser.id.Contains("usr_6d71d3be")) {
+                Random rnd2 = new();
+                int num2 = rnd2.Next(1, 4);
+                if (num2 == 4) npID += "-4";
+                else if (num2 == 3) npID += "-3";
+                else if (num2 == 2) npID += "-2";
+                else if (num2 == 1) npID += "-1";
+            }
+            
             if (Players.Storage.ContainsKey(npID)) {
                 var val = Players.Storage[npID];
                 ApplyNameplateColour(nameplate, helper, false, val.nameplateColor1, val.nameplateColor2, val.nameTextColor1, val.nameTextColor2, val.colorShiftLerpTime > 0, val.colorShiftLerpTime, false, val.extraTagText, val.extraTagColor, val.extraTagBackgroundHidden, val.extraTagTextColor, val.nameplateBGHidden, val.fakeName);
