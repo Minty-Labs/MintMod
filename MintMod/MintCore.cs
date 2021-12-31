@@ -29,9 +29,9 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "LilyMod";
-            public const string Version = "2.10.0";
+            public const string Version = "2.11.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "29 Dec 2021";
+            public const string UpdatedDate = "31 Dec 2021";
 #if !DEBUG
             public const string LoaderVer = "2.4.1";
             //public static Version TargetMLVersion = new(0, 5, 2);
@@ -184,7 +184,6 @@ namespace MintMod {
                 catch (Exception e) { Con.Error(e); }
             });
             MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
-            MelonCoroutines.Start(MintUserInterface.OnUserSelectMenu());
             MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
 
             //yield return new WaitForSeconds(5f);

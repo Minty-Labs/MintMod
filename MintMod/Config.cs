@@ -33,7 +33,7 @@ namespace MintMod {
 
         // Menu
         public static MelonPreferences_Category Menu;
-        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu;
+        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu;
         public static MelonPreferences_Entry<string> InfoHUDPosition;
 
         // Portal
@@ -120,6 +120,7 @@ namespace MintMod {
             //UIExpansionKit.API.ExpansionKitApi.RegisterSettingAsStringEnum(Menu.Identifier, InfoHUDPosition.Identifier,
             //    new[] { ("off", "Don't Show"), ("1", "Left"), ("2", "Top"), ("3", "Bottom"), ("4", "Right") });
             KeepPhotonFreezesOnMainMenu = Menu.CreateEntry("KeepPhotonFreezeOnMainMenu", false, "* Puts a photon freeze toggle on QM");
+            KeepInfJumpOnMainMenu = Menu.CreateEntry("KeepInfJumpOnMainMenu", false, "* Puts Infinite Jump Toggle on QM");
         }
 
         static void _Portal() {

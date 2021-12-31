@@ -4,9 +4,7 @@ using System.Windows.Forms;
 //using Il2CppSystem;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Resources;
@@ -26,6 +24,7 @@ using MintyLoader;
 using ReMod.Core.VRChat;
 using MintMod.Functions.Authentication;
 using MintMod.Libraries;
+using VRC.UI.Core;
 
 namespace MintMod.UserInterface.QuickMenu {
     class MintUserInterface : MintSubMod {
@@ -41,7 +40,7 @@ namespace MintMod.UserInterface.QuickMenu {
         private static QMSlider FlightSpeedSlider; 
 
         internal static ReMenuToggle 
-            MainQMFly, MainQMNoClip, MainQMFreeze,
+            MainQMFly, MainQMNoClip, MainQMFreeze, MainQMInfJump,
             MintQAFly, MintQANoClip, MintQAFreeze;
 
         //private static Sprite WorldIcon, PlayerIcon;
@@ -51,19 +50,14 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static Image MintIcon;
 
-        internal static bool isOnStreamerMode;
+        internal static bool isStreamerModeOn;
 
 		internal static IEnumerator OnQuickMenu() {
-            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null)
-                yield return null;
-            MelonCoroutines.Start(BuildMint());
-        }
-
-        internal static IEnumerator OnUserSelectMenu() {
-            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.Menus.SelectedUserMenuQM>() == null)
-                yield return null;
-            if (!isOnStreamerMode)
-                UserSelMenu();
+            while (UIManager.prop_UIManager_0 == null) yield return null;
+            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
+            
+            BuildMint();
+            if (!isStreamerModeOn) UserSelMenu();
         }
 
         internal static IEnumerator OnSettingsPageInit() {
@@ -71,13 +65,13 @@ namespace MintMod.UserInterface.QuickMenu {
                 yield return null;
             
             var toggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle").GetComponent<UiSettingConfig>();
-            isOnStreamerMode = toggle.Method_Private_Boolean_0();
+            isStreamerModeOn = toggle.Method_Private_Boolean_0();
 
             yield return new WaitForSeconds(15);
-            UpdateMintIconForStreamerMode(isOnStreamerMode);
+            UpdateMintIconForStreamerMode(isStreamerModeOn);
         }
 
-        static IEnumerator BuildMint() {
+        static void BuildMint() {
             MainMenuBackButton = GameObject.Find("/UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/Header_H1/LeftItemContainer/Button_Back");
             try {
                 if (MelonHandler.Mods.Any((i) => i.Info.Name != "AdBlocker")) {
@@ -116,20 +110,31 @@ namespace MintMod.UserInterface.QuickMenu {
             LaunchPadLayoutGroup = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup");
             MintCategoryOnLaunchPad = new("MintMod", LaunchPadLayoutGroup.transform);
             MintCategoryOnLaunchPad.Active = false;
-
-            if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value)
+            
+            if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value || ModCompatibility.TeleporterVR) 
                 MintCategoryOnLaunchPad.Active = true;
+            
             if (LaunchPadLayoutGroup != null) {
                 if (Config.KeepFlightBTNsOnMainMenu.Value) {
                     MainQMFly = MintCategoryOnLaunchPad.AddToggle("Flight", "Toggle Flight", Movement.Fly);
                     MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
                 }
+                
                 if (Config.KeepPhotonFreezesOnMainMenu.Value)
                     MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
+                
+                if (Config.KeepInfJumpOnMainMenu.Value)
+                    MainQMInfJump = MintCategoryOnLaunchPad.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
+                        onToggle => PlayerActions.InfinteJump = onToggle);
+                
+                if (ModCompatibility.TeleporterVR) {
+                    MelonPreferences.GetEntry<bool>(TeleporterVR.Main.melon.Identifier, TeleporterVR.Main.UIXTPVR.Identifier).Value = false;
+                    MintCategoryOnLaunchPad.AddToggle("TeleporterVR", "Toggle TeleporterVR\'s TPVR function.", 
+                        t => TeleporterVR.Utils.VRUtils.active = t);
+                }
             }
 
             Con.Debug("Done Setting up Menus", MintCore.isDebug);
-            yield break;
         }
 
         private static IEnumerator SetTheFuckingSprite() {
