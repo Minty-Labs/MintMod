@@ -38,11 +38,11 @@ namespace MintMod.UserInterface {
         }
 
         static void OnAvatarIsReady(VRCPlayer vrcPlayer) {
-            if (MintUserInterface.isOnStreamerMode) return;
+            if (MintUserInterface.isStreamerModeOn) return;
             if (!Config.EnableCustomNameplateReColoring.Value)
                 return;
             if (ValidatePlayerAvatar(vrcPlayer)) {
-                Player player = vrcPlayer._player;
+                //Player player = vrcPlayer._player;
 
                 if (vrcPlayer.field_Public_PlayerNameplate_0 == null)
                     return;
@@ -208,13 +208,14 @@ namespace MintMod.UserInterface {
             }
             
             // Insert Elly's Special Nameplates for Lily
-            if (npID.Contains($"{npID}-usr_6d71d3be") && APIUser.CurrentUser.id.Contains("usr_6d71d3be")) {
+            if (npID.Contains($"{npID}-usr_6d71d3be")) {
                 Random rnd2 = new();
                 int num2 = rnd2.Next(1, 4);
                 if (num2 == 4) npID += "-4";
                 else if (num2 == 3) npID += "-3";
                 else if (num2 == 2) npID += "-2";
                 else if (num2 == 1) npID += "-1";
+                Con.Debug($"Elly's Number of Special Nameplate -> {num2}", MintCore.isDebug);
             }
             
             if (Players.Storage.ContainsKey(npID)) {

@@ -38,7 +38,7 @@ namespace MintMod.UserInterface.OldUI {
                     ColorLoadingScreenEnvironment(_color);
                 }
                 catch (Exception e) {
-                    if (!MintUserInterface.isOnStreamerMode)
+                    if (!MintUserInterface.isStreamerModeOn)
                         Con.Error(e);
                 }
             }

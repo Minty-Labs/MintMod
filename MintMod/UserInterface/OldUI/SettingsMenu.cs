@@ -94,7 +94,7 @@ namespace MintMod.UserInterface.OldUI {
 				var StreammerModeToggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle");
 				var e = StreammerModeToggle.GetComponent<Toggle>().onValueChanged;
 				e.AddListener(new Action<bool>((isOn) => {
-					MintUserInterface.isOnStreamerMode = isOn;
+					MintUserInterface.isStreamerModeOn = isOn;
 					if (isOn) {
 						MintInfoButton?.SetActive(false);
 						RealSettingsExit?.SetActive(true);
@@ -277,7 +277,7 @@ namespace MintMod.UserInterface.OldUI {
                 }
             }
             
-            if (MintUserInterface.isOnStreamerMode) {
+            if (MintUserInterface.isStreamerModeOn) {
 	            MintInfoButton.SetActive(false);
 	            RealSettingsExit.SetActive(true);
 	            SettingsExit.SetActive(false);
