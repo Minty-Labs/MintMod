@@ -16,19 +16,11 @@ namespace MintMod.Reflections {
     public static class PlayerWrappers {
         internal static VRCPlayer GetLocalVRCPlayer() => VRCPlayer.field_Internal_Static_VRCPlayer_0;
 
-        public static VRCPlayer GetVRCPlayer(this Player player) => player._vrcplayer;
-
-        public static VRCPlayerApi GetVRCPlayerApi(this Player player) => player.prop_VRCPlayerApi_0;
-
         public static VRCPlayer GetCurrentPlayer() => VRCPlayer.field_Internal_Static_VRCPlayer_0;
 
         public static Vector3 GetCurrentPlayerPos() => VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_VRCPlayerApi_0.GetPosition();
 
         public static Quaternion GetCurrentPlayerRot() => VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_VRCPlayerApi_0.GetRotation();
-
-        public static PlayerManager GetPlayerManager() => PlayerManager.field_Private_Static_PlayerManager_0;
-
-        public static Player[] GetAllPlayersArray(this PlayerManager instance) => instance.prop_ArrayOf_Player_0;
 
         public static List<Player> GetAllPlayers(this PlayerManager instance) => instance.field_Private_List_1_Player_0;
 
@@ -41,20 +33,6 @@ namespace MintMod.Reflections {
                 if (all.GetAPIUser_alt().id == UserID)
                     result = all;
             return result;
-        }
-
-        public static Player GetSelectedPlayer(this QuickMenu instance) {
-            APIUser api = instance.prop_APIUser_0;
-            if (instance.prop_APIUser_0 == null)
-                api = instance.field_Private_APIUser_0;
-            return GetPlayerManager().GetPlayer(api.id);
-        }
-
-        private static Action<Player> requestedAction;
-        public static void GetEachPlayer(Action<Player> act) {
-            requestedAction = act;
-            foreach (Player obj in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
-                requestedAction(obj);
         }
 
         public static Il2CppSystem.Collections.Generic.List<Player> GetAllPlayers() {
