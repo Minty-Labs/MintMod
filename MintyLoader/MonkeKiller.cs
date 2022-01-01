@@ -41,7 +41,7 @@ namespace MintyLoader {
                 }
             }
             if (MintyLoader.isDebug)
-                MintyLoader.instance.LoggerInstance.Msg("You are not using any blacklisted mods.");
+                MintyLoader.Instance.LoggerInstance.Msg("You are not using any blacklisted mods.");
         }
     }
 }
