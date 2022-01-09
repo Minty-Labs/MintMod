@@ -22,7 +22,7 @@ namespace MintMod {
         // Base
         public static MelonPreferences_Category Base;
         public static MelonPreferences_Entry<bool> KeepPriorityHighEnabled, ShowWelcomeMessages, UseCustomLoadingMusic, EnableMasterFinder, AutoAddJump,
-            EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, MintConsoleTitle, CanSitInChairs;
+            EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, MintConsoleTitle, CanSitInChairs, UseOldHudMessages;
         public static MelonPreferences_Entry<int> MaxFrameRate;
 
         // Color
@@ -83,6 +83,7 @@ namespace MintMod {
             HeadsUpDisplayNotifs = Base.CreateEntry("HeadsUpDisplayNotifs", false, "J/L HUD Messages", "Player/Friend Join/Leave HUD messages");
             //MintConsoleTitle = Base.CreateEntry("MintConsoleTitle", true, "* Mint Console Title", "*Use Custom Console Title");
             CanSitInChairs = Base.CreateEntry("CanSitInChairs", true, "Can Sit In Chairs");
+            UseOldHudMessages = Base.CreateEntry("UseOldHudMessages", false, "Use Old Hud Messages");
         }
 
         static void _Color() {
@@ -119,8 +120,8 @@ namespace MintMod {
             //InfoHUDPosition = Menu.CreateEntry("InfoHUDPosition", "3", "Quick Menu Player List Location", "");
             //UIExpansionKit.API.ExpansionKitApi.RegisterSettingAsStringEnum(Menu.Identifier, InfoHUDPosition.Identifier,
             //    new[] { ("off", "Don't Show"), ("1", "Left"), ("2", "Top"), ("3", "Bottom"), ("4", "Right") });
-            KeepPhotonFreezesOnMainMenu = Menu.CreateEntry("KeepPhotonFreezeOnMainMenu", false, "* Puts a photon freeze toggle on QM");
-            KeepInfJumpOnMainMenu = Menu.CreateEntry("KeepInfJumpOnMainMenu", false, "* Puts Infinite Jump Toggle on QM");
+            KeepPhotonFreezesOnMainMenu = Menu.CreateEntry("KeepPhotonFreezeOnMainMenu", false, "Puts a photon freeze toggle on QM");
+            KeepInfJumpOnMainMenu = Menu.CreateEntry("KeepInfJumpOnMainMenu", false, "Puts Infinite Jump Toggle on QM");
         }
 
         static void _Portal() {

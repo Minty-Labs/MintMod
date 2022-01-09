@@ -9,6 +9,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MintMod.Functions;
+using MintMod.Libraries;
+using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
 using UnityEngine;
 using VRC;
@@ -19,6 +21,7 @@ namespace MintMod.Hooks {
         public override string Description => "";
 
         internal static bool IsQMOpen;
+        public static Action OnWorldJoin, OnWorldLeave;
 
         private static void applyPatches(Type type) {
             Con.Debug($"Applying {type.Name} patches!", MintCore.isDebug);
@@ -39,6 +42,9 @@ namespace MintMod.Hooks {
             applyPatches(typeof(NameplatePatches));
             applyPatches(typeof(VRCPlayerPatches));
             applyPatches(typeof(QuickMenuPatches));
+            if (ModCompatibility.TeleporterVR && MintCore.isDebug)
+                applyPatches(typeof(TPVRInput));
+            applyPatches(typeof(LeftRoomPatches));
 
             if (Config.SpoofDeviceType.Value) {
                 applyPatches(typeof(PlatformSpoof));
@@ -47,6 +53,18 @@ namespace MintMod.Hooks {
             Con.Msg($"Device Type: {(Config.SpoofDeviceType.Value ? "Quest" : "PC")}");
         }
     }
+
+    
+    [HarmonyPatch]
+    class TPVRInput {
+        static IEnumerable<MethodBase> TargetMethods() {
+            return typeof(TeleporterVR.Utils.VRUtils).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Where(x => x.Name == "active").Cast<MethodBase>();
+        }
+
+        static void Postfix(bool __instance) => MintUserInterface.TPVR_active = __instance;
+    }
+    
 
     [HarmonyPatch(typeof(VRC.UI.Elements.QuickMenu))]
     class QuickMenuPatches {
@@ -81,7 +99,7 @@ namespace MintMod.Hooks {
         [HarmonyPatch("Awake")]
         static void OnVRCPlayerAwake(VRCPlayer __instance) {
             Nameplates.OnVRCPlayerAwake(__instance);
-            MasterFinder.OnAvatarIsReady(__instance);
+            //MasterFinder.OnAvatarIsReady(__instance);
         }
     }
 
@@ -133,5 +151,16 @@ namespace MintMod.Hooks {
                 Tools._platform = __result;
             } catch { }
         }
+    }
+    
+    [HarmonyPatch(typeof(NetworkManager))]
+    class LeftRoomPatches {
+        [HarmonyPostfix]
+        [HarmonyPatch("OnLeftRoom")]
+        static void Yeet() => Patches.OnWorldLeave?.Invoke();
+
+        [HarmonyPostfix]
+        [HarmonyPatch("OnJoinedRoom")]
+        static void JoinedRoom() => Patches.OnWorldJoin?.Invoke();
     }
 }
