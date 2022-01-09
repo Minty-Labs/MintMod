@@ -15,14 +15,14 @@ namespace MintMod.Functions {
         public override string Description => "Keyboard controls for simple commands.";
 
         private static bool loaded;
-        public static Ray ray;
+        private static Ray ray;
 
         internal override void OnUserInterface() => loaded = true;
 
         internal override void OnUpdate() {
             if (Config.EnableAllKeybindings.Value && loaded) {
                 /*if (!XRDevice.isPresent) {
-                    if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.H)) {
+                     {
                         if (MintFunc.FunStuff.HeadFlip.IsHeadflipEnabled == false) {
                             MintFunc.FunStuff.HeadFlip.IsHeadflipEnabled = true;
                             ConsoleLogger.Log("[KeyBind] Head flipper ON");

@@ -208,7 +208,7 @@ namespace MintMod.UserInterface {
             }
             
             // Insert Elly's Special Nameplates for Lily
-            if (npID.Contains($"{npID}-usr_6d71d3be")) {
+            if (npID.Contains($"usr_08378cbe") && npID.Contains("usr_6d71d3be") && npID.IndexOf("-", StringComparison.Ordinal) == 10) {
                 Random rnd2 = new();
                 int num2 = rnd2.Next(1, 4);
                 if (num2 == 4) npID += "-4";
@@ -346,12 +346,12 @@ namespace MintMod.UserInterface {
             }
         }
 
-        public static void OnVRCPlayerAwake(VRCPlayer _vrcPlayer) {
-            _vrcPlayer.Method_Public_add_Void_OnAvatarIsReady_0(new Action(() => {
-                if (_vrcPlayer != null) {
-                    if (_vrcPlayer._player != null)
-                        if (_vrcPlayer._player.prop_APIUser_0 != null)
-                            OnAvatarIsReady(_vrcPlayer);
+        public static void OnVRCPlayerAwake(VRCPlayer vrcPlayer) {
+            vrcPlayer.Method_Public_add_Void_OnAvatarIsReady_0(new Action(() => {
+                if (vrcPlayer != null) {
+                    if (vrcPlayer._player != null)
+                        if (vrcPlayer._player.prop_APIUser_0 != null)
+                            OnAvatarIsReady(vrcPlayer);
                 }
             }));
         }

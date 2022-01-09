@@ -30,16 +30,19 @@ namespace MintMod.Managers {
             if (target != null)
                 _target = target;
             Rotate = state;
+            Physics.gravity = new(0, state ? 0 : -9.81f, 0);
+            /*
             Movement.FlightEnabled = state;
             Movement.NoclipEnabled = state;
             if (MintUserInterface.MainQMFly != null)
-                MintUserInterface.MainQMFly.Toggle(state);
+                MintUserInterface.MainQMFly.Interactable = !state;
             if (MintUserInterface.MintQAFly != null)
-                MintUserInterface.MintQAFly.Toggle(state);
+                MintUserInterface.MintQAFly.Interactable = !state;
             if (MintUserInterface.MainQMNoClip != null)
-                MintUserInterface.MainQMNoClip.Toggle(state);
+                MintUserInterface.MainQMNoClip.Interactable = !state;
             if (MintUserInterface.MintQANoClip != null)
-                MintUserInterface.MintQANoClip.Toggle(state);
+                MintUserInterface.MintQANoClip.Interactable = !state;
+            */
         }
 
         internal override void OnUpdate() {

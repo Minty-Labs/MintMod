@@ -57,7 +57,7 @@ namespace MintMod.Managers {
         }
 
         internal static void Respawn() {
-            if (UIWrappers.GetWorld() != null && WorldActions.isWorldSDK3()) {
+            if (WorldReflect.GetWorld() != null && WorldActions.isWorldSDK3()) {
                 ObjSyncSDK3 = UnityEngine.Object.FindObjectsOfType<VRCObjectSync>();
                 foreach (VRCObjectSync vrcobjectSync in ObjSyncSDK3) {
                     if (vrcobjectSync != null) {
