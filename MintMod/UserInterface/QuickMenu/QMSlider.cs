@@ -40,10 +40,10 @@ namespace MintMod.UserInterface.QuickMenu {
             set => _slider.SetActive(value);
         }
 
-        public QMSlider(string parentPath, Action<float> onValueChanged, string name, string tooltip, string maxText, float maxVal, string minTextHeader,
+        public QMSlider(Transform parentPath, Action<float> onValueChanged, string name, string tooltip, string maxText, float maxVal, string minTextHeader,
             float minVal = 0f, float defaultValue = 1f) {
             var g = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_AudioSettings/Content/Audio/");
-            _slider = GameObject.Instantiate(g, GameObject.Find(parentPath).transform);
+            _slider = GameObject.Instantiate(g, parentPath);
             _slider.transform.Find("VolumeSlider_World").gameObject.DestroyImmediate();
             _slider.transform.Find("VolumeSlider_Voices").gameObject.DestroyImmediate();
             _slider.transform.Find("VolumeSlider_Avatars").gameObject.DestroyImmediate();
@@ -78,11 +78,11 @@ namespace MintMod.UserInterface.QuickMenu {
             _slider.GetComponent<RectTransform>().anchoredPosition = new(0, -525);
         }
         
-        public QMSlider(string parentPath,
+        public QMSlider(Transform parentPath,
             Action<float> onValueChanged,  string name,  string tooltip,  float maxVal,    float minVal,    float defaultValue,
             Action<float> onValue2Changed, string name2, string tooltip2, float maxValue2, float minValue2, float defaultValue2) {
             var g = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_AudioSettings/Content/Audio/");
-            _slider = GameObject.Instantiate(g, GameObject.Find(parentPath).transform);
+            _slider = GameObject.Instantiate(g, parentPath);
             _slider.transform.Find("VolumeSlider_Avatars").gameObject.DestroyImmediate();
             _slider.transform.Find("VolumeSlider_Master").gameObject.DestroyImmediate();
 
@@ -119,12 +119,12 @@ namespace MintMod.UserInterface.QuickMenu {
             _slider.GetComponent<RectTransform>().anchoredPosition = new(0, -525);
         }
         
-        public QMSlider(string parentPath,
+        public QMSlider(Transform parentPath,
             Action<float> onValueChanged,  string name,  string tooltip,  float maxVal,    float minVal,    float defaultValue, 
             Action<float> onValue2Changed, string name2, string tooltip2, float maxValue2, float minValue2, float defaultValue2,
             Action<float> onValue3Changed, string name3, string tooltip3, float maxValue3, float minValue3, float defaultValue3) {
             var g = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_AudioSettings/Content/Audio/");
-            _slider = GameObject.Instantiate(g, GameObject.Find(parentPath).transform);
+            _slider = GameObject.Instantiate(g, parentPath);
             _slider.transform.Find("VolumeSlider_Master").gameObject.DestroyImmediate();
 
             var g1 = _slider.transform.Find("VolumeSlider_World").gameObject;

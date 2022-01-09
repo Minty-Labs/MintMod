@@ -24,7 +24,9 @@ using MintyLoader;
 using ReMod.Core.VRChat;
 using MintMod.Functions.Authentication;
 using MintMod.Libraries;
+using MintMod.Managers.Notification;
 using VRC.UI.Core;
+using Main = TeleporterVR.Main;
 
 namespace MintMod.UserInterface.QuickMenu {
     class MintUserInterface : MintSubMod {
@@ -52,11 +54,18 @@ namespace MintMod.UserInterface.QuickMenu {
 
         internal static bool isStreamerModeOn;
 
+        #region Temp TPVR Values
+
+        public static MelonPreferences_Category melon;
+        public static bool TPVR_active;
+
+        #endregion
+
 		internal static IEnumerator OnQuickMenu() {
             while (UIManager.prop_UIManager_0 == null) yield return null;
             while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
             
-            BuildMint();
+            MelonCoroutines.Start(BuildMint());
             if (!isStreamerModeOn) UserSelMenu();
         }
 
@@ -71,7 +80,7 @@ namespace MintMod.UserInterface.QuickMenu {
             UpdateMintIconForStreamerMode(isStreamerModeOn);
         }
 
-        static void BuildMint() {
+        static IEnumerator BuildMint() {
             MainMenuBackButton = GameObject.Find("/UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/Header_H1/LeftItemContainer/Button_Back");
             try {
                 if (MelonHandler.Mods.Any((i) => i.Info.Name != "AdBlocker")) {
@@ -115,26 +124,28 @@ namespace MintMod.UserInterface.QuickMenu {
                 MintCategoryOnLaunchPad.Active = true;
             
             if (LaunchPadLayoutGroup != null) {
-                if (Config.KeepFlightBTNsOnMainMenu.Value) {
-                    MainQMFly = MintCategoryOnLaunchPad.AddToggle("Flight", "Toggle Flight", Movement.Fly);
-                    MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
-                }
+                MainQMFly = MintCategoryOnLaunchPad.AddToggle("Flight", "Toggle Flight", Movement.Fly);
+                MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
+                MainQMFly.Active = Config.KeepFlightBTNsOnMainMenu.Value;
+                MainQMNoClip.Active = Config.KeepFlightBTNsOnMainMenu.Value;
                 
-                if (Config.KeepPhotonFreezesOnMainMenu.Value)
-                    MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
+                MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
+                MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
                 
-                if (Config.KeepInfJumpOnMainMenu.Value)
-                    MainQMInfJump = MintCategoryOnLaunchPad.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
-                        onToggle => PlayerActions.InfinteJump = onToggle);
+                MainQMInfJump = MintCategoryOnLaunchPad.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
+                    onToggle => PlayerActions.InfinteJump = onToggle);
+                MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
                 
-                if (ModCompatibility.TeleporterVR) {
-                    MelonPreferences.GetEntry<bool>(TeleporterVR.Main.melon.Identifier, TeleporterVR.Main.UIXTPVR.Identifier).Value = false;
-                    MintCategoryOnLaunchPad.AddToggle("TeleporterVR", "Toggle TeleporterVR\'s TPVR function.", 
-                        t => TeleporterVR.Utils.VRUtils.active = t);
+                if (ModCompatibility.TeleporterVR && MintCore.isDebug) {
+                    melon = MelonPreferences.CreateCategory("TeleporterVR", "TeleporterVR");
+                    try { MelonPreferences.GetEntry<bool>(melon.Identifier, "ShowUIXTPVRButton").Value = false; }
+                    catch (Exception t) { Con.Debug($"Could not set value:\n{t}", MintCore.isDebug); }
+                    MintCategoryOnLaunchPad.AddToggle("TeleporterVR", "Toggle TeleporterVR\'s TPVR function.", t => TPVR_active = t);
                 }
             }
 
             Con.Debug("Done Setting up Menus", MintCore.isDebug);
+            yield break;
         }
 
         private static IEnumerator SetTheFuckingSprite() {
@@ -158,8 +169,8 @@ namespace MintMod.UserInterface.QuickMenu {
             MintQAFreeze = qf.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
             qf.AddSpacer();
             
-            string parent = $"UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_MintMenu/ScrollRect/Viewport/VerticalLayoutGroup/";
-            FlightSpeedSlider = new(parent, f => Movement.finalSpeed = f, "FlightSpeed", "Control Flight Speed", "500%", 5f, 
+            var categoryLayoutGroup = MintMenu.GameObject.transform.Find("ScrollRect/Viewport/VerticalLayoutGroup");
+            FlightSpeedSlider = new(categoryLayoutGroup, f => Movement.finalSpeed = f, "FlightSpeed", "Control Flight Speed", "500%", 5f, 
                 "Flight Speed > 0% - 500%", 0f, 1f);
             
             Con.Debug("Done Creating QuickActions", MintCore.isDebug);
@@ -196,8 +207,10 @@ namespace MintMod.UserInterface.QuickMenu {
                                 a.ChangeToSelectedAvatar();
                         }));
                     }
-                    else
-                        VRCUiManager.field_Private_Static_VRCUiManager_0.InformHudText("No avatar ID in clipboard", Color.white);
+                    else {
+                        VRCUiPopups.Notify("No Avatar ID in clipboard", NotificationSystem.Alert);
+                        //VRCUiManager.field_Private_Static_VRCUiManager_0.InformHudText("No avatar ID in clipboard", Color.white);
+                    }
                 }
                 catch (Exception c) {
                     Con.Error(c);
@@ -357,8 +370,10 @@ namespace MintMod.UserInterface.QuickMenu {
                             a.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0 = x.Model.Cast<ApiAvatar>();
                             a.ChangeToSelectedAvatar();
                         }));
-                    } else
-                        VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private", Color.white);
+                    } else {
+                        VRCUiPopups.Notify("Avatar is private", NotificationSystem.Alert);
+                        //VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private", Color.white);
+                    }
                 } catch (Exception c) {
                     Con.Error(c);
                     Con.Warn("Attempting fallback method");
@@ -381,7 +396,8 @@ namespace MintMod.UserInterface.QuickMenu {
                             AvatarFavs.AviFavLogic.FavoriteAvatar(v, f.ID);
                         else {
                             Con.Warn("Avatar is private, cannot favorite");
-                            VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private, cannot favorite", Color.white);
+                            VRCUiPopups.Notify("Avatar is private, cannot favorite", NotificationSystem.Alert);
+                            //VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private, cannot favorite", Color.white);
                         }
                     }
                 });
@@ -433,14 +449,14 @@ namespace MintMod.UserInterface.QuickMenu {
         #region Orbit Sliders
         
         private static void CreateSliders() {
-            var parent = "UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_PlayerListMenu/ScrollRect/Viewport/VerticalLayoutGroup/";
+            var categoryLayoutGroup = PlayerListMenu.GameObject.transform.Find("ScrollRect/Viewport/VerticalLayoutGroup");
             try {
-                ItemSlider = new QMSlider(parent,
+                ItemSlider = new QMSlider(categoryLayoutGroup,
                     f => Items.SpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
                     f2 => Items.Distance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
                 ItemSlider.Enabled = false;
                 
-                PlayerSlider = new QMSlider(parent,
+                PlayerSlider = new QMSlider(categoryLayoutGroup,
                     f => Players.SelfSpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
                     f2 => Players.SelfDistance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
                 PlayerSlider.Enabled = false;
@@ -554,7 +570,8 @@ namespace MintMod.UserInterface.QuickMenu {
                                     break;
                                 default:
                                     Con.Warn("Nothing is selected.");
-                                    VRCUiManager.prop_VRCUiManager_0.InformHudText("Nothing is selected", Color.yellow);
+                                    VRCUiPopups.Notify("Noting is selected", NotificationSystem.Alert);
+                                    //VRCUiManager.prop_VRCUiManager_0.InformHudText("Nothing is selected", Color.yellow);
                                     break;
                             }
                         });
@@ -590,6 +607,15 @@ namespace MintMod.UserInterface.QuickMenu {
                 Frame.Text = $"{Config.SpoofedFrameNumber.Value}";
             if (Ping != null)
                 Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>";
+            
+            if (MainQMFly != null && MainQMNoClip != null) {
+                MainQMFly.Active = Config.KeepFlightBTNsOnMainMenu.Value;
+                MainQMNoClip.Active = Config.KeepFlightBTNsOnMainMenu.Value;
+            }
+            if (MainQMFreeze != null)
+                MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
+            if (MainQMInfJump != null)
+                MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
         }
 
         internal static void UpdateMintIconForStreamerMode(bool o) {
