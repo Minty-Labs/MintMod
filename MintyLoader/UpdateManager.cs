@@ -8,15 +8,15 @@ using MelonLoader.TinyJSON;
 using Pastel;
 
 namespace MintyLoader {
-    public class UpdateManager {
+    internal class UpdateManager {
         private static HttpClient Updater, VersionChecker;
         private static string checkedVer;
         public static bool LoaderIsUpToDate;
 
-        internal static async Task CheckVersion() {
+        internal static /*async Task*/ void CheckVersion() {
             VersionChecker = new HttpClient();
             VersionChecker.DefaultRequestHeaders.Add("User-Agent", BuildInfo.Name);
-            checkedVer = await VersionChecker.GetStringAsync("https://mintlily.lgbt/mod/loader/version.txt");
+            checkedVer = VersionChecker.GetStringAsync("https://mintlily.lgbt/mod/loader/version.txt").GetAwaiter().GetResult();
 
             if (checkedVer != BuildInfo.Version) {
                 LoaderIsUpToDate = false;
@@ -24,7 +24,7 @@ namespace MintyLoader {
                 MintyLoader.InternalLogger.Msg("Downloading");
                 Updater = new HttpClient();
                 Updater.DefaultRequestHeaders.Add("User-Agent", BuildInfo.Name);
-                var bytes = await Updater.GetByteArrayAsync(BuildInfo.DownloadLink);
+                var bytes = Updater.GetByteArrayAsync(BuildInfo.DownloadLink).GetAwaiter().GetResult();
                 MintyLoader.InternalLogger.Msg("Writing Changes");
                 bool good = false;
                 try {
@@ -53,6 +53,10 @@ namespace MintyLoader {
                 LoaderIsUpToDate = true;
                 MintyLoader.InternalLogger.Msg($"Loader Build version: ".Pastel("008B8B") + BuildInfo.Version.Pastel("9fffe3") + 
                                                " :: Server pulled: ".Pastel("008B8B") + checkedVer.Pastel("9fffe3"));
+                if (MintyLoader.isDebug)
+                    LoadManager.LoadLocal();
+                else
+                    LoadManager.LoadWebhost();
             }
         }
     }

@@ -8,7 +8,7 @@ using MelonLoader;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(MintyLoader.BuildInfo.Company)]
 [assembly: AssemblyProduct(MintyLoader.BuildInfo.Name)]
-[assembly: AssemblyCopyright("Copyright © 2021")]
+[assembly: AssemblyCopyright("Copyright © " + BuildInfo.Company + " 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
