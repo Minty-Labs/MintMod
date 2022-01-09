@@ -24,29 +24,27 @@ namespace MintMod.Functions {
         public static GameObject MasterIcon, oriFriendMarker;
         private static RectTransform r;
 
-        internal static void OnAvatarIsReady(VRCPlayer vrcPlayer) {
+        internal static void OnPlayerJoinLeave() {
             if (MintUserInterface.isStreamerModeOn) return;
-            if (Nameplates.ValidatePlayerAvatar(vrcPlayer)) {
-                if (RoomManager.field_Internal_Static_ApiWorld_0 != null && Config.EnableMasterFinder.Value && MasterIcon == null) {
-                    if (PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count > 1) {
-                        foreach (var obj in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
-                            if (vrcPlayer.field_Public_PlayerNameplate_0 != null && vrcPlayer.field_Private_VRCPlayerApi_0.isMaster) {
-                                var nameplate = vrcPlayer.field_Public_PlayerNameplate_0;
-                                oriFriendMarker = nameplate.transform.Find("Contents/Friend Marker").gameObject;
-                                MasterIcon = UnityEngine.Object.Instantiate(oriFriendMarker, oriFriendMarker.transform.parent);
-                                r = MasterIcon.GetComponent<RectTransform>();
-                                MasterIcon.GetComponent<Image>().sprite = MintyResources.masterCrown;
-                                MasterIcon.gameObject.name = "Mint_MasterIcon";
-                                MasterIcon.SetActive(Config.EnableMasterFinder.Value);
-                            }
+            if (RoomManager.field_Internal_Static_ApiWorld_0 != null && Config.EnableMasterFinder.Value && MasterIcon == null) {
+                if (PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count > 1) {
+                    foreach (var obj in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
+                        if (obj._vrcplayer.field_Public_PlayerNameplate_0 != null && obj._vrcplayer.field_Private_VRCPlayerApi_0.isMaster) {
+                            var nameplate = obj._vrcplayer.field_Public_PlayerNameplate_0;
+                            oriFriendMarker = nameplate.transform.Find("Contents/Friend Marker").gameObject;
+                            MasterIcon = UnityEngine.Object.Instantiate(oriFriendMarker, oriFriendMarker.transform.parent);
+                            r = MasterIcon.GetComponent<RectTransform>();
+                            MasterIcon.GetComponent<Image>().sprite = MintyResources.masterCrown;
+                            MasterIcon.gameObject.name = "Mint_MasterIcon";
+                            MasterIcon.SetActive(Config.EnableMasterFinder.Value);
                         }
-                    } else {
-                        MasterIcon.Destroy();
-                        MasterIcon = null;
                     }
-                } else if (MasterIcon != null && !Config.EnableMasterFinder.Value)
+                } else {
                     MasterIcon.Destroy();
-            }
+                    MasterIcon = null;
+                }
+            } else if (MasterIcon != null && !Config.EnableMasterFinder.Value)
+                MasterIcon.Destroy();
         }
 
         internal override void OnUpdate() {

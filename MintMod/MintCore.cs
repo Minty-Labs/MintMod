@@ -20,6 +20,7 @@ using MintMod.Utils;
 using MintyLoader;
 using BuildInfo = MelonLoader.BuildInfo;
 using MintMod.Functions.Authentication;
+using MintMod.Managers.Notification;
 using UnityEngine;
 
 namespace MintMod {
@@ -28,12 +29,12 @@ namespace MintMod {
         public static class ModBuildInfo {
             public const string Name = "MintMod";
             public const string Author = "Lily";
-            public const string Company = "LilyMod";
-            public const string Version = "2.11.0";
+            public const string Company = "Minty Labs";
+            public const string Version = "2.12.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "31 Dec 2021";
+            public const string UpdatedDate = "9 Jan 2022";
 #if !DEBUG
-            public const string LoaderVer = "2.4.1";
+            public const string LoaderVer = "2.5.2";
             //public static Version TargetMLVersion = new(0, 5, 2);
 #endif
         }
@@ -44,9 +45,12 @@ namespace MintMod {
 
         internal static readonly DirectoryInfo MintDirectory = new($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}UserData{Path.DirectorySeparatorChar}MintMod");
 
+        private static int _scenesLoaded = 0;
+
         public override void OnApplicationStart() {
 #if !DEBUG
             var s = MelonHandler.Mods.Single(m => m.Info.Name.Equals("MintyLoader")).Info.Version;
+            //Con.Msg($"Loader Version is: {s}");
             if (s != ModBuildInfo.LoaderVer || MelonHandler.Mods.FindIndex(i => i.Info.Name == "MintyLoader") == -1) {
                 cancelLoad = true;
                 return;
@@ -74,7 +78,6 @@ namespace MintMod {
 
             Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version}");
             mods.Add(new Config());
-            mods.Add(new GetAssembly());
             mods.Add(new Patches());
             mods.Add(new MintyResources());
             mods.Add(new ServerAuth());
@@ -101,6 +104,8 @@ namespace MintMod {
             mods.Add(new UserInterface.ActionMenu());
             mods.Add(new Players());
             mods.Add(new Components());
+            mods.Add(new NotificationSystem());
+            mods.Add(new HeadFlip());
             //mods.Add(new );
 
             MelonCoroutines.Start(Utils.Network.OnYieldStart());
@@ -109,7 +114,7 @@ namespace MintMod {
             //ReMod.Core.Unity.RenderObjectListener.RegisterSafe();
 
             mods.ForEach(a => {
-                try { a.OnStart(); }
+                try { /*Con.Debug($"---- Loading {a.Name}", isDebug);*/ a.OnStart(); }
                 catch (Exception e) { Con.Error(e); }
             });
             Con.Debug($"Loaded {mods.Count} SubMods", isDebug);
@@ -137,59 +142,17 @@ namespace MintMod {
 #if !DEBUG
             if (cancelLoad) return;
 #endif
+            if (_scenesLoaded <= 2) {
+                _scenesLoaded++;
+                if (_scenesLoaded == 2)
+                    MelonCoroutines.Start(ServerAuth.AuthUser());
+            }
+            
             mods.ForEach(s => {
                 try { s.OnLevelWasLoaded(buildIndex, sceneName); } catch (Exception e) { Con.Error(e); }
             });
         }
 
         public override void OnApplicationQuit() => MelonPreferences.Save();
-    }
-
-    class GetAssembly : MintSubMod {
-        public override string Name => "Yield Assembly";
-        public override string Description => "Waits for VRCUiManager to be called.";
-
-        internal override void OnStart() => MelonCoroutines.Start(GetVRCAssembly());
-
-        private IEnumerator GetVRCAssembly() {
-            Assembly assemblyCSharp = null;
-            while (true) {
-                assemblyCSharp = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(assembly => assembly.GetName().Name == "Assembly-CSharp");
-                if (assemblyCSharp == null)
-                    yield return null;
-                else
-                    break;
-            }
-
-            MelonCoroutines.Start(WaitForUiManagerInit(assemblyCSharp));
-        }
-
-        private IEnumerator WaitForUiManagerInit(Assembly assemblyCSharp) {
-            Type vrcUiManager = assemblyCSharp.GetType("VRCUiManager");
-            PropertyInfo uiManagerSingleton = vrcUiManager.GetProperties().First(pi => pi.PropertyType == vrcUiManager);
-
-            while (uiManagerSingleton.GetValue(null) == null)
-                yield return null;
-
-            //ModCompatibility.RunIgnoreYieldedUI();
-            MelonCoroutines.Start(ServerAuth.AuthUser());
-        }
-
-        internal static IEnumerator YieldUI() {
-#if !DEBUG
-            if (MintCore.cancelLoad) yield break;
-#endif
-            MintCore.mods.ForEach(u => {
-                try { u.OnUserInterface(); }
-                catch (Exception e) { Con.Error(e); }
-            });
-            MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
-            MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
-
-            //yield return new WaitForSeconds(5f);
-            //if (Config.MintConsoleTitle.Value)
-            //    Console.Title += string.Format($" - {BuildInfo.Name} v{BuildInfo.Version}");
-            yield break;
-        }
     }
 }
