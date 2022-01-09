@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(MintMod.MintCore.ModBuildInfo.Company)]
 [assembly: AssemblyProduct(MintMod.MintCore.ModBuildInfo.Name)]
-[assembly: AssemblyCopyright("Created by " + MintMod.MintCore.ModBuildInfo.Author)]
+[assembly: AssemblyCopyright("Copyright © " + MintMod.MintCore.ModBuildInfo.Company + " 2022")]
 [assembly: AssemblyTrademark(MintMod.MintCore.ModBuildInfo.Company)]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: MelonInfo(typeof(MintMod.MintCore), MintMod.MintCore.ModBuildInfo.Name,
     MintMod.MintCore.ModBuildInfo.Version, MintMod.MintCore.ModBuildInfo.Author,
     MintMod.MintCore.ModBuildInfo.DownloadLink)]
-[assembly: MelonOptionalDependencies("UI Expansion Kit", "ComponentToggle", "TeleporterVR", "MintyLoader", "ActionMenuApi")]
+[assembly: MelonOptionalDependencies("UI Expansion Kit", "ComponentToggle", "TeleporterVR", "ActionMenuApi")]
 [assembly: MelonColor(System.ConsoleColor.White)]
 [assembly: HarmonyDontPatchAll]
 [assembly: MelonGame("VRChat", "VRChat")]

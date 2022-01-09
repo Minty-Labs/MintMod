@@ -32,18 +32,6 @@ namespace MintMod.Reflections {
         public static void Destroy(this GameObject go) => GameObject.Destroy(go);
 
         public static void DestroyImmediate(this GameObject go) => GameObject.DestroyImmediate(go);
-        
-        public static bool IsInWorld() => GetWorld() != null || GetWorldInstance() != null;
-
-        public static ApiWorld GetWorld() => RoomManager.field_Internal_Static_ApiWorld_0;
-
-        public static ApiWorldInstance GetWorldInstance() => RoomManager.field_Internal_Static_ApiWorldInstance_0;
-
-        public enum SDKType {
-            NONE,
-            SDK2,
-            SDK3
-        }
     }
 }
 

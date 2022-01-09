@@ -11,6 +11,7 @@ using UnityEngine;
 using VRC.Core;
 using MintyLoader;
 using System.Net.Http;
+using MintMod.Managers.Notification;
 
 namespace MintMod.Utils {
     class General : MintSubMod {
@@ -66,7 +67,8 @@ namespace MintMod.Utils {
         private static IEnumerator Welcome() {
             yield return new WaitForSeconds(10);
             Con.Msg($"Welcome back, {ServerAuth.MintyData.Name}");
-            VRCUiManager.prop_VRCUiManager_0.InformHudText($"Welcome back, {ServerAuth.MintyData.Name}", Color.white);
+            VRCUiPopups.Notify($"Welcome back, {ServerAuth.MintyData.Name}", NotificationSystem.Key);
+            //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Welcome back, {ServerAuth.MintyData.Name}", Color.white);
         }
 
         #endregion

@@ -77,7 +77,8 @@ namespace MintMod.UserInterface.OldUI {
                                 }
                             }
                             Con.Msg("Downloaded VRCA for " + grab_assetName + ".\nLocated in /Documents/VRChat/LoliteUtilityMod/Assets/VRCA/");
-                            VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_assetName}", Color.white);
+                            VRCUiPopups.Notify($"Downloaded VRCA for {grab_assetName}");
+                            //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_assetName}", Color.white);
                         };
                         new Thread(DLVRCA).Start();
                     } catch (Exception e) { Con.Error(e); }

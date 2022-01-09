@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MelonLoader;
+using MintMod.Managers.Notification;
 using MintMod.Reflections;
 using MintMod.Utils;
 using MintyLoader;
@@ -59,13 +60,15 @@ namespace MintMod.Functions {
                     }
 
                     Con.Msg($"Downloaded VRCW for {grab_assetName_vrcw}\nLocated in {subdir}");
-                    VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCW for {grab_assetName_vrcw}", Color.white);
+                    VRCUiPopups.Notify($"Downloaded VRCW for {grab_assetName_vrcw}");
+                    //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCW for {grab_assetName_vrcw}", Color.white);
                 };
                 new Thread(DLVRCW).Start();
             }
             catch {
                 Con.Error("Failed to download VRCW");
-                VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download VRCW", Color.white);
+                VRCUiPopups.Notify("Failed to download VRCW", NotificationSystem.Alert);
+                //VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download VRCW", Color.white);
             }
         }
 
@@ -110,22 +113,24 @@ namespace MintMod.Functions {
                     swe.WriteLine("");
                 }
                 Con.Msg($"Logged World: {worldName}\nLocated in {final}");
-                VRCUiManager.prop_VRCUiManager_0.InformHudText($"Logged world: {worldName}", Color.white);
+                VRCUiPopups.Notify($"Logged world: {worldName}");
+                //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Logged world: {worldName}", Color.white);
             }
             catch (Exception w) {
                 Con.Error($"{w}");
-                VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to log world", Color.white);
+                VRCUiPopups.Notify("Failed to log world", NotificationSystem.Alert);
+                //VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to log world", Color.white);
             }
         }
 
-        public static UIWrappers.SDKType GetWorldTypeSDK() {
-            if (UIWrappers.GetWorld() != null && UnityEngine.Resources.FindObjectsOfTypeAll<VRC.SDK3.Components.VRCSceneDescriptor>().Count > 0)
-                return UIWrappers.SDKType.SDK3;
-            return UIWrappers.SDKType.SDK2;
+        public static WorldReflect.SDKType GetWorldTypeSDK() {
+            if (WorldReflect.GetWorld() != null && UnityEngine.Resources.FindObjectsOfTypeAll<VRC.SDK3.Components.VRCSceneDescriptor>().Count > 0)
+                return WorldReflect.SDKType.SDK3;
+            return WorldReflect.SDKType.SDK2;
         }
 
         public static bool isWorldSDK3() {
-            if (GetWorldTypeSDK() == UIWrappers.SDKType.SDK2 || GetWorldTypeSDK() == UIWrappers.SDKType.NONE)
+            if (GetWorldTypeSDK() == WorldReflect.SDKType.SDK2 || GetWorldTypeSDK() == WorldReflect.SDKType.NONE)
                 return false;
             return true;
         }
@@ -152,7 +157,7 @@ namespace MintMod.Functions {
                             OriginalLayers = vrcMirrorReflection.m_ReflectLayers
                         });
                     }
-                    if (UIWrappers.GetWorld() != null && Config.AutoAddJump.Value &&
+                    if (WorldReflect.GetWorld() != null && Config.AutoAddJump.Value &&
                         VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.GetJumpImpulse() < 1)
                         AddJump();
                     break;

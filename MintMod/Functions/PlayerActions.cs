@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MelonLoader;
+using MintMod.Managers.Notification;
 using MintMod.Reflections;
 using MintMod.Utils;
 using MintyLoader;
@@ -60,12 +61,14 @@ namespace MintMod.Functions {
 
                     //Process.Start(grab_assetUrl);
                     Con.Msg($"Downloaded VRCA for {grab_assetName}.\nLocated in {subdir}");
-                    VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_assetName}", Color.white);
+                    VRCUiPopups.Notify($"Downloaded VRCA for {grab_assetName}");
+                    //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_assetName}", Color.white);
                 };
                 new Thread(DLVRCA).Start();
             } catch {
                 Con.Error("Failed to download VRCA");
-                VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download VRCA", Color.white);
+                VRCUiPopups.Notify("Failed to Download VRCA", NotificationSystem.Alert);
+                //VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download VRCA", Color.white);
             }
         }
 
@@ -124,13 +127,15 @@ namespace MintMod.Functions {
 
                     //Process.Start(grab_assetUrl);
                     Con.Msg($"Downloaded VRCA for {grab_SELF_assetName}");
-                    VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_SELF_assetName}", Color.white);
+                    VRCUiPopups.Notify($"Downloaded VRCA fro {grab_SELF_assetName}");
+                    //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_SELF_assetName}", Color.white);
                 };
                 new Thread(DLSELF_VRCA).Start();
             }
             catch {
                 Con.Error("Failed to download VRCA");
-                VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download own VRCA", Color.white);
+                VRCUiPopups.Notify("Failed to download VRCA", NotificationSystem.Alert);
+                //VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download own VRCA", Color.white);
             }
         }
 
@@ -189,7 +194,8 @@ namespace MintMod.Functions {
             }
 
             Con.Msg($"Logged {playerName}, Located in {subdir}\\SelectedUser_Logged.txt");
-            VRCUiManager.prop_VRCUiManager_0.InformHudText($"Logged {playerName}", Color.white);
+            VRCUiPopups.Notify($"Logged {playerName}");
+            //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Logged {playerName}", Color.white);
         }
 
         public static void Teleport(VRCPlayer player) => PlayerWrappers.GetLocalVRCPlayer().transform.position = player.transform.position;

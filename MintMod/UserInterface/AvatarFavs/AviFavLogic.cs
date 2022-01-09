@@ -64,7 +64,7 @@ namespace MintMod.UserInterface.AvatarFavs {
         internal override void OnUpdate() {
             if (AviFavsErrored) return;
             if (!Config.AviFavsEnabled.Value) return;
-            if (!UIWrappers.IsInWorld()) return;
+            if (!WorldReflect.IsInWorld()) return;
             try {
                 if (avatarPage.activeSelf && !JustOpened) {
                     JustOpened = true;
