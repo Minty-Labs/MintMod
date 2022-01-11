@@ -126,14 +126,15 @@ namespace MintMod.UserInterface.QuickMenu {
             if (LaunchPadLayoutGroup != null) {
                 MainQMFly = MintCategoryOnLaunchPad.AddToggle("Flight", "Toggle Flight", Movement.Fly);
                 MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
-                MainQMFly.Active = Config.KeepFlightBTNsOnMainMenu.Value;
-                MainQMNoClip.Active = Config.KeepFlightBTNsOnMainMenu.Value;
                 
                 MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
-                MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
                 
                 MainQMInfJump = MintCategoryOnLaunchPad.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
                     onToggle => PlayerActions.InfinteJump = onToggle);
+                
+                MainQMFly.Active = Config.KeepFlightBTNsOnMainMenu.Value;
+                MainQMNoClip.Active = Config.KeepFlightBTNsOnMainMenu.Value;
+                MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
                 MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
                 
                 if (ModCompatibility.TeleporterVR && MintCore.isDebug) {
@@ -586,23 +587,18 @@ namespace MintMod.UserInterface.QuickMenu {
             if (buildindex == -1) {
                 PhotonFreeze.ToggleFreeze(false);
                 ESP.ClearAllPlayerESP();
-                if (InfJump != null) InfJump.Toggle(false, true, true);
+                InfJump?.Toggle(false, true, true);
             }
         }
 
         internal override void OnUpdate() => PlayerActions.UpdateJump();
 
         internal override void OnPrefSave() {
-            if (DeviceType != null)
-                DeviceType.Toggle(Config.SpoofDeviceType.Value);
-            if (FrameSpoof != null)
-                FrameSpoof.Toggle(Config.SpoofFramerate.Value);
-            if (PingSpoof != null)
-                PingSpoof.Toggle(Config.SpoofPing.Value);
-            if (PingNegative != null)
-                PingNegative.Toggle(Config.SpoofedPingNegative.Value);
-            if (bypassRiskyFunc != null)
-                bypassRiskyFunc.Toggle(Config.bypassRiskyFunc.Value);
+            DeviceType?.Toggle(Config.SpoofDeviceType.Value);
+            FrameSpoof?.Toggle(Config.SpoofFramerate.Value);
+            PingSpoof?.Toggle(Config.SpoofPing.Value);
+            PingNegative?.Toggle(Config.SpoofedPingNegative.Value);
+            bypassRiskyFunc?.Toggle(Config.bypassRiskyFunc.Value);
             if (Frame != null)
                 Frame.Text = $"{Config.SpoofedFrameNumber.Value}";
             if (Ping != null)
