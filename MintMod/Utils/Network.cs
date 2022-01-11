@@ -67,8 +67,7 @@ namespace MintMod.Utils {
             if (plr == null) return;
             var apiUser = plr?.prop_APIUser_0;
             if (apiUser == null) return;
-
-            MasterFinder.OnPlayerJoinLeave();
+            
             if (apiUser.id != APIUser.CurrentUser.id) {
                 if ((plr.prop_VRCPlayerApi_0 != null && plr.prop_VRCPlayerApi_0.isModerator) ||
                     (plr.field_Private_VRCPlayerApi_0 != null && plr.field_Private_VRCPlayerApi_0.isModerator)) {
@@ -113,7 +112,7 @@ namespace MintMod.Utils {
             var apiUser = plr?.prop_APIUser_0;
             if (apiUser == null) return;
             if (apiUser.id != APIUser.CurrentUser.id) {
-                MasterFinder.OnPlayerJoinLeave();
+                MasterFinder.OnPlayerLeft();
                 if ((plr.prop_VRCPlayerApi_0 != null && plr.prop_VRCPlayerApi_0.isModerator) ||
                     (plr.field_Private_VRCPlayerApi_0 != null && plr.field_Private_VRCPlayerApi_0.isModerator)) {
                     if (Config.EnablePlayerJoinLeave.Value)
