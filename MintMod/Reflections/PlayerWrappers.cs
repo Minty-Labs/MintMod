@@ -114,5 +114,12 @@ namespace MintMod.Reflections {
         }
         
         public static bool isFriend(Player p) => APIUser.IsFriendsWith(p.field_Private_APIUser_0.id);
+        
+        private static Action<Player> _requestedAction;
+        public static void GetEachPlayer(Action<Player> act) {
+            _requestedAction = act;
+            foreach (var plr in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
+                _requestedAction.Invoke(plr);
+        }
     }
 }

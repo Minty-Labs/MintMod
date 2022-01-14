@@ -67,18 +67,20 @@ namespace MintMod.Utils {
             if (plr == null) return;
             var apiUser = plr?.prop_APIUser_0;
             if (apiUser == null) return;
-            
+
             if (apiUser.id != APIUser.CurrentUser.id) {
                 if ((plr.prop_VRCPlayerApi_0 != null && plr.prop_VRCPlayerApi_0.isModerator) ||
                     (plr.field_Private_VRCPlayerApi_0 != null && plr.field_Private_VRCPlayerApi_0.isModerator)) {
                     if (Config.EnablePlayerJoinLeave.Value)
                         Con.Msg($"[Moderator JOIN] {apiUser.displayName} has joined.");
                     try {
-                        VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowStandardPopupV2("Moderator Notice",
+                        VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowStandardPopupV2(
+                            "Moderator Notice",
                             "A moderator of VRChat, has join the world you are in.\n" +
                             $"VRChat Mod: {apiUser.displayName}\n" +
                             "Would you like to go home?",
-                            "Yes, Go Home", () => Networking.GoToRoom(RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId));
+                            "Yes, Go Home",
+                            () => Networking.GoToRoom(RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId));
                     }
                     catch (Exception j) {
                         Con.Error($"VRCUiPopupStandard did not show\n{j}");
@@ -102,9 +104,12 @@ namespace MintMod.Utils {
                         }
                     }
                 }
+
                 if (plr != null) ESP.SetBubbleColor(plr.gameObject);
                 if (ESP.isESPEnabled) MelonCoroutines.Start(ESP.JoinDelay(plr));
             }
+            else
+                MasterFinder.OnSelfJoin();
         }
 
         static void OnPlayerLeft(Player plr) {

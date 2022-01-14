@@ -268,6 +268,7 @@
     <Compile Include="Managers\Notification\NotificationController.cs" />
     <Compile Include="Managers\Notification\NotificationObject.cs" />
     <Compile Include="Managers\Notification\NotificationSystem.cs" />
+    <Compile Include="Managers\OtherMods\GetRubyConfig.cs" />
     <Compile Include="Managers\Players.cs" />
     <Compile Include="MintCore.cs" />
     <Compile Include="ModuleLoader.cs" />
