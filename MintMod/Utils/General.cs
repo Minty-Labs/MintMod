@@ -25,7 +25,7 @@ namespace MintMod.Utils {
                     UnityEngine.Application.targetFrameRate = 90;
                 else
                     UnityEngine.Application.targetFrameRate = Config.MaxFrameRate.Value;
-            } catch { MelonLogger.Error("Failed to set a new FrameRate Lock"); }
+            } catch { Con.Error("Failed to set a new FrameRate Lock"); }
         }
 
         internal static void RestartGame() {

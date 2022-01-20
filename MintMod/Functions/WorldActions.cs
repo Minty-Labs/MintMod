@@ -192,7 +192,7 @@ namespace MintMod.Functions {
             try {
                 VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.SetJumpImpulse(2.8f);
             } catch (Exception ex) {
-                MelonLogger.Error($"Adding Jumping to current world has encountered an Error:\n{ex}");
+                Con.Error($"Adding Jumping to current world has encountered an Error:\n{ex}");
             }
         }
     }

@@ -9,6 +9,7 @@ using UnityEngine;
 using MelonLoader;
 using System.Reflection;
 using MintMod.Libraries;
+using MintyLoader;
 
 namespace MintMod.Functions {
     class RankRecoloring : MintSubMod {
@@ -37,7 +38,7 @@ namespace MintMod.Functions {
                         OG().GetField("_trustedUserColor", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, TrustedNP);
                         OG().GetField("_veteranUserColor", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, VeteranNP);
                         OG().GetField("_legendaryUserColor", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, LegendNP);
-                    } catch (Exception ex) { MelonLogger.Error(ex); }
+                    } catch (Exception ex) { Con.Error(ex); }
                 }
                 coloredNameplates = false;
             } else if (!coloredNameplates && ModCompatibility.hasCNP_On && !ModCompatibility.emmVRCPanicMode)

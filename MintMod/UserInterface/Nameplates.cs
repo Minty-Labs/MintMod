@@ -207,17 +207,6 @@ namespace MintMod.UserInterface {
                 Con.Debug($"George's random funny shown -> {chance}", MintCore.isDebug);
             }
             
-            // Insert Elly's Special Nameplates for Lily
-            if (npID.Contains($"usr_08378cbe") && npID.Contains("usr_6d71d3be") && npID.IndexOf("-", StringComparison.Ordinal) == 10) {
-                Random rnd2 = new();
-                int num2 = rnd2.Next(1, 4);
-                if (num2 == 4) npID += "-4";
-                else if (num2 == 3) npID += "-3";
-                else if (num2 == 2) npID += "-2";
-                else if (num2 == 1) npID += "-1";
-                Con.Debug($"Elly's Number of Special Nameplate -> {num2}", MintCore.isDebug);
-            }
-            
             if (Players.Storage.ContainsKey(npID)) {
                 var val = Players.Storage[npID];
                 ApplyNameplateColour(nameplate, helper, false, val.nameplateColor1, val.nameplateColor2, val.nameTextColor1, val.nameTextColor2, val.colorShiftLerpTime > 0, val.colorShiftLerpTime, false, val.extraTagText, val.extraTagColor, val.extraTagBackgroundHidden, val.extraTagTextColor, val.nameplateBGHidden, val.fakeName);

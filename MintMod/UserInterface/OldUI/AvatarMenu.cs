@@ -62,7 +62,8 @@ namespace MintMod.UserInterface.OldUI {
                                             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0"
                                     }
                                 };
-                                try { webClientVRCA.DownloadFile(grab_assetUrl, Path.Combine(subdir + grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".vrca")); } catch (System.Exception e) { MelonLogger.Error(e.ToString()); }
+                                try { webClientVRCA.DownloadFile(grab_assetUrl, Path.Combine(subdir + grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".vrca")); } 
+                                catch (System.Exception e) { Con.Error(e); }
                             }
                             if (!File.Exists(Path.Combine(subdir, grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".png"))) {
                                 using WebClient webClientIMG = new WebClient {
@@ -73,7 +74,8 @@ namespace MintMod.UserInterface.OldUI {
                                     }
                                 };
                                 try { webClientIMG.DownloadFile(grab_assetImage, Path.Combine(subdir + grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".png")); } catch (System.Exception e) {
-                                    try { webClientIMG.DownloadFile(grab_assetImage_Backup, Path.Combine(subdir + grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".png")); } catch (System.Exception b) { MelonLogger.Error($"First Error: \n{e}\n========================\nSecond Error: \n{b}"); }
+                                    try { webClientIMG.DownloadFile(grab_assetImage_Backup, Path.Combine(subdir + grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".png")); } 
+                                    catch (System.Exception b) { Con.Error($"First Error: \n{e}\n========================\nSecond Error: \n{b}"); }
                                 }
                             }
                             Con.Msg("Downloaded VRCA for " + grab_assetName + ".\nLocated in /Documents/VRChat/LoliteUtilityMod/Assets/VRCA/");
