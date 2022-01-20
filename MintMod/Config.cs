@@ -15,7 +15,7 @@ namespace MintMod {
         public override string Description => "Mint's Config system.";
 
         public static MelonPreferences_Category mint;
-        public static MelonPreferences_Entry<bool> SpoofDeviceType, QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc;
+        public static MelonPreferences_Entry<bool> SpoofDeviceType, QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc, ModJoinPopup;
         public static MelonPreferences_Entry<int> SpoofedPingNumber;
         public static MelonPreferences_Entry<float> SpoofedFrameNumber;
 
@@ -53,7 +53,9 @@ namespace MintMod {
 
         // Extras
         public static MelonPreferences_Category Extras;
-        public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
+
+        public static MelonPreferences_Entry<bool> HideTooltipControllers;
+        //public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
 
         internal override void OnStart() {
             // Info
@@ -176,17 +178,28 @@ namespace MintMod {
             SpoofFramerate = mint.CreateEntry("SpoofFramerate", true, "Spoof Framerate", "");
             SpoofedFrameNumber = mint.CreateEntry("SpoofedFrameNumber", 0f, "Spoofed Frame Number", "");
             bypassRiskyFunc = mint.CreateEntry("bypassRiskyFunc", false, "Bypasses Mods' Risky Func Checks");
+            ModJoinPopup = mint.CreateEntry("ModJoinPopup", true, "Toggle the Mod Join Popup");
         }
 
         static void _Extra() {
             // Extras
             Extras = MelonPreferences.CreateCategory("MintMod_Extras", "MintMod - Extras");
-            BTKLead = Extras.CreateEntry("UseBTKLead", false, "* Use BTKLead", "");
+            HideTooltipControllers = Extras.CreateEntry("HideTooltipControllers", false, "Hides the controller ghost when hovering over a button", "");
+            //BTKLead = Extras.CreateEntry("UseBTKLead", false, "* Use BTKLead", "");
         }
 
         internal override void OnPrefSave() {
             Utils.General.SetPriority();
             Utils.General.SetFrameRate();
         }
+
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<bool> @bool, bool value)
+            => MelonPreferences.GetEntry<bool>(cat.Identifier, @bool.Identifier).Value = value;
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<string> @string, string value)
+            => MelonPreferences.GetEntry<string>(cat.Identifier, @string.Identifier).Value = value;
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<float> @float, float value)
+            => MelonPreferences.GetEntry<float>(cat.Identifier, @float.Identifier).Value = value;
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<int> @int, int value)
+            => MelonPreferences.GetEntry<int>(cat.Identifier, @int.Identifier).Value = value;
     }
 }

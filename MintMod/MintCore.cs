@@ -30,9 +30,9 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
-            public const string Version = "2.13.2";
+            public const string Version = "2.15.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "13 Jan 2022";
+            public const string UpdatedDate = "15 Jan 2022";
 #if !DEBUG
             public const string LoaderVer = "2.5.2";
             //public static Version TargetMLVersion = new(0, 5, 2);
@@ -107,6 +107,7 @@ namespace MintMod {
             mods.Add(new NotificationSystem());
             //mods.Add(new HeadFlip());
             mods.Add(new GetRubyConfig());
+            mods.Add(new TooltipController());
             //mods.Add(new );
 
             MelonCoroutines.Start(Utils.Network.OnYieldStart());
@@ -156,6 +157,7 @@ namespace MintMod {
 
         public override void OnApplicationQuit() {
             MelonPreferences.Save();
+#if !DEBUG
             if (GetRubyConfig.HasRubyActive && MelonHandler.Mods.FindIndex(i => i.Info.Name.ToLower().Contains("aiko")) == -1) {
                 try {
                     Process.Start("cmd", "taskkill /f /im WMC.exe");
@@ -175,6 +177,7 @@ namespace MintMod {
                     if (isDebug) Con.Error(e);
                 }
             }
+#endif
         }
     }
 }

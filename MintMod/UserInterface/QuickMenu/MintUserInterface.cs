@@ -283,6 +283,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region Utility Menu
 
+        public static ReMenuToggle ControllerToolTip;
+
         private static void RandomStuff() {
             RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions");
             RandomMenu.AddCategory($"MintMod - v<color=#9fffe3>{MintCore.ModBuildInfo.Version}</color>");
@@ -301,7 +303,7 @@ namespace MintMod.UserInterface.QuickMenu {
             Frame = r.AddButton($"{Config.SpoofedFrameNumber.Value}", "This is the number of your spoofed framerate.", () => {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Framerate", "",
                     InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
-                        float.TryParse(_, out float f);
+                        float.TryParse(_, out var f);
                         Config.SavePrefValue(Config.mint, Config.SpoofedFrameNumber, f);
                         Frame.Text = f.ToString();
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
@@ -318,7 +320,7 @@ namespace MintMod.UserInterface.QuickMenu {
             Ping = r.AddButton($"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>", "This is the number of your spoofed ping.", () => {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Ping", "",
                     InputField.InputType.Standard, true, "Set Ping", (_, __, ___) => {
-                        int.TryParse(_, out int p);
+                        int.TryParse(_, out var p);
                         Config.SavePrefValue(Config.mint, Config.SpoofedPingNumber, p);
                         Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{p.ToString()}</color>";
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
@@ -348,6 +350,10 @@ namespace MintMod.UserInterface.QuickMenu {
             r.AddButton("Refetch and Refresh Nameplates",
                 "Reloads Mint's custom nameplate addons in case more were added while you're playing",
                 () => Players.FetchCustomPlayerObjects(true));
+            
+            ControllerToolTip = r.AddToggle("Controller Tooltip Mesh", "Toggles the tooltip controller mesh when hovering over a button in a world.",
+                t => TooltipController.Instance.Toggle(t));
+            ControllerToolTip.Toggle(!Config.HideTooltipControllers.Value);
         }
 
         #endregion
