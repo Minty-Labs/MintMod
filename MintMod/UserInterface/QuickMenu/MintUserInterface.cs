@@ -281,7 +281,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #endregion
 
-        #region Funny Dev Random Shit
+        #region Utility Menu
 
         private static void RandomStuff() {
             RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions");
@@ -302,7 +302,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Framerate", "",
                     InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
                         float.TryParse(_, out float f);
-                        MelonPreferences.GetEntry<float>(Config.mint.Identifier, Config.SpoofedFrameNumber.Identifier).Value = f;
+                        Config.SavePrefValue(Config.mint, Config.SpoofedFrameNumber, f);
                         Frame.Text = f.ToString();
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
             });
@@ -311,7 +311,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofPing.Identifier).Value = on);
             PingSpoof.Toggle(Config.SpoofPing.Value);
             
-            PingNegative = r.AddToggle("Negative Ping", "Make your spoofed ping nagative.",
+            PingNegative = r.AddToggle("Negative Ping", "Make your spoofed ping negative.",
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofedPingNegative.Identifier).Value = on);
             PingNegative.Toggle(Config.SpoofedPingNegative.Value);
             
@@ -319,7 +319,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Ping", "",
                     InputField.InputType.Standard, true, "Set Ping", (_, __, ___) => {
                         int.TryParse(_, out int p);
-                        MelonPreferences.GetEntry<int>(Config.mint.Identifier, Config.SpoofedPingNumber.Identifier).Value = p;
+                        Config.SavePrefValue(Config.mint, Config.SpoofedPingNumber, p);
                         Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{p.ToString()}</color>";
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
             });
@@ -328,22 +328,26 @@ namespace MintMod.UserInterface.QuickMenu {
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.bypassRiskyFunc.Identifier).Value = on);
             bypassRiskyFunc.Toggle(Config.bypassRiskyFunc.Value);
 
-            r.AddButton("Reset Portal Timers", "Sets portal timers to 9999999", () => {
+            r.AddButton("Reset Portal Timers", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
                 if (UnityEngine.Object.FindObjectsOfType<PortalInternal>() != null) {
                     try {
                         var t = Config.ResetTimerAmount.Value;
                         var final = t < 30 ? 30 : t;
-                        RPC.Destination targetClients = RPC.Destination.AllBufferOne;
+                        var destination = RPC.Destination.AllBufferOne;
                         foreach (var objectInternal in UnityEngine.Object.FindObjectsOfType<PortalInternal>()) {
-                            Networking.RPC(targetClients, objectInternal.gameObject, "SetTimerRPC", new[] { new Il2CppSystem.Single
+                            Networking.RPC(destination, objectInternal.gameObject, "SetTimerRPC", new[] { new Il2CppSystem.Single
                                 { m_value = -final }.BoxIl2CppObject() });
                         }
                     }
-                    catch (Exception ResetTimer) {
-                        Con.Error($"Failed to reset portal timer\n{ResetTimer}");
+                    catch (Exception _) {
+                        Con.Error($"Failed to reset portal timer\n{_}");
                     }
                 }
             });
+
+            r.AddButton("Refetch and Refresh Nameplates",
+                "Reloads Mint's custom nameplate addons in case more were added while you're playing",
+                () => Players.FetchCustomPlayerObjects(true));
         }
 
         #endregion
@@ -633,9 +637,9 @@ namespace MintMod.UserInterface.QuickMenu {
             }
             
             if (Config.SpoofFramerate.Value)
-                MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofFramerate.Identifier).Value = false;
+                Config.SavePrefValue(Config.mint, Config.SpoofFramerate, false);
             if (Config.SpoofPing.Value)
-                MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofPing.Identifier).Value = false;
+                Config.SavePrefValue(Config.mint, Config.SpoofPing, false);
         }
     }
 }

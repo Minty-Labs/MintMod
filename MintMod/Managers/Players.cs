@@ -79,23 +79,31 @@ namespace MintMod.Managers {
         #endregion
 
         #region Mint Authentication pt.1
-        
-        internal override void OnUserInterface() {
+
+        internal override void OnUserInterface() => FetchCustomPlayerObjects();
+
+        public static void FetchCustomPlayerObjects(bool refreshed = false) {
+            try {
+                if (Storage != null && refreshed) Storage.Clear();
+            } catch (Exception w) {
+                Con.Error(w);
+            }
+            
             try {
                 WebClient w = new();
                 w.Headers.Add("X-AUTH-TOKEN", APIUser.CurrentUser.id);
-                string data = w?.DownloadString("https://api.potato.moe/api-mint/nameplates");
+                var data = w?.DownloadString("https://api.potato.moe/api-mint/nameplates");
                 w.Dispose();
                 Storage = new();
-                List<CustomPlayerObjects> c = JsonConvert.DeserializeObject<List<CustomPlayerObjects>>(data);
+                var c = JsonConvert.DeserializeObject<List<CustomPlayerObjects>>(data);
                 foreach (var d in c) {
-                    Con.Debug($"Adding {d.userID}", MintCore.isDebug);
+                    if (!refreshed) Con.Debug($"Adding {d.userID}", MintCore.isDebug);
                     if (!Storage.ContainsKey(d.userID))
                         Storage.Add(d.userID, d);
                 }
                 Con.Debug($"Counted {Storage.Count} for custom nameplates", MintCore.isDebug);
             } catch (Exception w) {
-                Con.Error($"{w}");
+                Con.Error(w);
             }
         }
 
