@@ -15,9 +15,9 @@ using UnityEngine.Networking;
 namespace MintyLoader {
     public static class BuildInfo {
         public const string Name = "MintyLoader";
-        public const string Author = "Lily & DDAkebono";
+        public const string Author = "Lily";
         public const string Company = "Minty Labs";
-        public const string Version = "2.5.2";
+        public const string Version = "2.5.3";
         public const string DownloadLink = "https://mintlily.lgbt/mod/loader/MintyLoader.dll";
     }
    
@@ -31,6 +31,8 @@ namespace MintyLoader {
             Instance = this;
             InternalLogger.Msg("Minty".Pastel("9fffe3") + "Loader is starting up!");
             
+            LoadManager.ApplyModURL();
+            
             isDebug = Environment.CommandLine.Contains("--MintyDev"); // Check if running as Debug
             
             MonkeKiller.BlacklistedModCheck(); // Check if running blacklisted mod(s)
@@ -38,7 +40,7 @@ namespace MintyLoader {
             UpdateManager.CheckVersion(); // Check Loader Version and update if needed
         }
 
-        #region CompanionCore pass through
+        #region MintyCore pass through
 
         public override void OnLateUpdate() => LoadManager.MintMod?.OnLateUpdate();
 

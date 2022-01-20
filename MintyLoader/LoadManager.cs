@@ -11,9 +11,14 @@ using Pastel;
 namespace MintyLoader {
     internal class LoadManager {
         internal static MelonMod MintMod;
-        private static readonly string modURL = "https://mintlily.lgbt/mod/MintMod.dll";
+        private static string modURL = "https://mintlily.lgbt/mod/MintMod.dll";
         private static Assembly _localMintAssembly;
         private static bool localLoadingFailed;
+
+        internal static void ApplyModURL() {
+            if (Environment.CommandLine.Contains("--MintModBeta"))
+                modURL = "https://mintlily.lgbt/mod/MintModBeta.dll";
+        }
 
         internal static void LoadLocal() {
             try {
