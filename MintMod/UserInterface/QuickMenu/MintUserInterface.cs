@@ -283,8 +283,6 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region Utility Menu
 
-        public static ReMenuToggle ControllerToolTip;
-
         private static void RandomStuff() {
             RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions");
             RandomMenu.AddCategory($"MintMod - v<color=#9fffe3>{MintCore.ModBuildInfo.Version}</color>");
@@ -350,10 +348,6 @@ namespace MintMod.UserInterface.QuickMenu {
             r.AddButton("Refetch and Refresh Nameplates",
                 "Reloads Mint's custom nameplate addons in case more were added while you're playing",
                 () => Players.FetchCustomPlayerObjects(true));
-            
-            ControllerToolTip = r.AddToggle("Controller Tooltip Mesh", "Toggles the tooltip controller mesh when hovering over a button in a world.",
-                t => TooltipController.Instance.Toggle(t));
-            ControllerToolTip.Toggle(!Config.HideTooltipControllers.Value);
         }
 
         #endregion
