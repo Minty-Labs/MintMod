@@ -183,24 +183,35 @@ namespace MintMod.UserInterface.OldUI {
                 #endregion
             }
             
-            foreach (Image img in normalColorImage)
+            foreach (var img in normalColorImage)
                 if (img != null)
                     img.color = colorT;
-            foreach (Image img in dimmerColorImage)
+            foreach (var img in dimmerColorImage)
                 if (img != null)
                     img.color = dimmerT;
-            foreach (Image img in darkerColorImage)
+            foreach (var img in darkerColorImage)
                 if (img != null)
                     img.color = darkerT;
-            foreach (Text txt in normalColorText)
+            foreach (var txt in normalColorText)
                 if (txt != null)
                     txt.color = color;
+            
+            var buttonTheme = new ColorBlock {
+                colorMultiplier = 1f,
+                disabledColor = Color.grey,
+                highlightedColor = color * 1.5f,
+                normalColor = color / 1.5f,
+                pressedColor = new Color(1f, 1f, 1f, 1f),
+                fadeDuration = 0.1f,
+                selectedColor = color / 1.5f
+            };
+            color.a = 0.9f;
 
             if (UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().Count != 0)
                 UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().FirstOrDefault().highlightColor = color;
 
             if (UIWrappers.GetVRCUiMInstance().menuContent() != null) {
-                GameObject quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
+                var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
                 try {
                     var inputHolder = quickMenu.transform.Find("Popups/InputPopup");
                     darker.a = 0.8f;
@@ -212,6 +223,63 @@ namespace MintMod.UserInterface.OldUI {
                     var holder = quickMenu.transform.Find("Backdrop/Header/Tabs/ViewPort/Content/Search");
                     holder.Find("SearchTitle").GetComponent<Text>().color = color;
                     holder.Find("InputField").GetComponent<Image>().color = color;
+                } catch (Exception ex) {
+                    Con.Error(ex);
+                }
+
+                try {
+                    var theme = new ColorBlock {
+                        colorMultiplier = 1f,
+                        disabledColor = Color.grey,
+                        highlightedColor = darker,
+                        normalColor = color,
+                        pressedColor = Color.gray,
+                        fadeDuration = 0.1f
+                    };
+                    quickMenu.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "Row:4 Column:0").GetComponent<Button>().colors = buttonTheme;
+                    color.a = 0.5f;
+                    darker.a = 1f;
+                    theme.normalColor = darker;
+                    foreach (var sldr in quickMenu.GetComponentsInChildren<Slider>(true))
+                        sldr.colors = theme;
+                    darker.a = 0.5f;
+                    theme.normalColor = color;
+                    foreach (var btn in quickMenu.GetComponentsInChildren<Button>(true))
+                        if (btn.gameObject.name != "SubscribeToAddPhotosButton" && btn.gameObject.name != "SupporterButton" && btn.gameObject.name != "ModerateButton" && (btn.gameObject.name != "ReportButton" || btn.transform.parent.name.Contains("WorldInfo")))
+                            btn.colors = buttonTheme;
+                    try {
+                        var quickMenu22 = GameObject.Find("QuickMenu");
+                        foreach (var btn in quickMenu22.GetComponentsInChildren<Button>(true)) {
+                            if (btn.gameObject.name != "rColorButton" && btn.gameObject.name != "gColorButton" &&
+                                btn.gameObject.name != "bColorButton" &&
+                                btn.gameObject.name != "ColorPickPreviewButton" &&
+                                btn.transform.parent.name != "SocialNotifications" &&
+                                btn.transform.parent.parent.name != "EmojiMenu" &&
+                                !btn.transform.parent.name.Contains("NotificationUiPrefab"))
+                                btn.colors = buttonTheme;
+                        }
+                    }
+                    catch { Console.Write(""); }
+
+                    foreach (var tglbtn in quickMenu.GetComponentsInChildren<UiToggleButton>(true)) {
+                        foreach (var img in tglbtn.GetComponentsInChildren<Image>(true)) 
+                            img.color = color;
+                    }
+                    foreach (var sldr in quickMenu.GetComponentsInChildren<Slider>(true)) {
+                        sldr.colors = theme;
+                        foreach (var img in sldr.GetComponentsInChildren<Image>(true))
+                            img.color = color;
+                    }
+                    foreach (var tgle in quickMenu.GetComponentsInChildren<Toggle>(true)) {
+                        tgle.colors = theme;
+                        foreach (var img in tgle.GetComponentsInChildren<Image>(true))
+                            img.color = color;
+                    }
+                    var NotificationRoot = GameObject.Find("UserInterface/QuickMenu/QuickModeMenus/QuickModeNotificationsMenu/ScrollRect");
+                    foreach (var img in NotificationRoot.GetComponentsInChildren<Image>(true)) {
+                        if (img.transform.name == "Background")
+                            img.color = color;
+                    }
                 } catch (Exception ex) {
                     Con.Error(ex);
                 }
