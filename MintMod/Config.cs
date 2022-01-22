@@ -54,7 +54,8 @@ namespace MintMod {
         // Extras
         public static MelonPreferences_Category Extras;
 
-        public static MelonPreferences_Entry<bool> HideTooltipControllers;
+        public static MelonPreferences_Entry<bool> useFakeName;
+        public static MelonPreferences_Entry<string> FakeName;
         //public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
 
         internal override void OnStart() {
@@ -184,7 +185,8 @@ namespace MintMod {
         static void _Extra() {
             // Extras
             Extras = MelonPreferences.CreateCategory("MintMod_Extras", "MintMod - Extras");
-            HideTooltipControllers = Extras.CreateEntry("HideTooltipControllers", false, "Hides the controller ghost when hovering over a button", "");
+            useFakeName = Extras.CreateEntry("useFakeName", false, "Use a fake name", "");
+            FakeName = Extras.CreateEntry("FakeName_string", "Cutie!~", "Set your fake name", "");
             //BTKLead = Extras.CreateEntry("UseBTKLead", false, "* Use BTKLead", "");
         }
 

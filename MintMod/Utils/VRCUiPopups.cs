@@ -1,13 +1,17 @@
-﻿using MintMod.Managers.Notification;
+﻿using System.IO.Packaging;
+using MintMod.Managers.Notification;
 using MintyLoader;
 using UnityEngine;
+using VRC.Core;
 
 namespace MintMod.Utils {
     public static class VRCUiPopups {
         public static void Notify(string message, Sprite sprite = null, string title = "MintMod", float time = 3f) {
-            NotificationController_Mint.Instance.EnqueueNotification(new NotificationObject(title, message, sprite == null ? NotificationSystem.Megaphone : sprite, time));
+            string temp = Config.useFakeName.Value ? Config.FakeName.Value : null;
+            string final = Config.useFakeName.Value && Config.ShowWelcomeMessages.Value ? message.Replace(APIUser.CurrentUser.displayName, temp) : message;
+            NotificationController_Mint.Instance.EnqueueNotification(new NotificationObject(title, final, sprite == null ? NotificationSystem.Megaphone : sprite, time));
         }
-        
+        /*
         public static void _InformHudText(this VRCUiManager uiManager, string message, Color color, float duration = 5f, float delay = 0f) {
             uiManager = VRCUiManager.prop_VRCUiManager_0;
             if (uiManager == null) return;
@@ -22,5 +26,6 @@ namespace MintMod.Utils {
                 uiManager.field_Public_Text_0.color = Color.white;
             } catch { Con.Error($"Could not display Popup HUD Message => {message}"); }
         }
+        */
     }
 }

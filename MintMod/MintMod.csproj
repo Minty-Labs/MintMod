@@ -264,7 +264,6 @@
     <Compile Include="Functions\RankRecoloring.cs" />
     <Compile Include="Functions\RiskyFuncAllower.cs" />
     <Compile Include="Functions\Authentication\ServerAuth.cs" />
-    <Compile Include="Functions\TooltipController.cs" />
     <Compile Include="Functions\WorldActions.cs" />
     <Compile Include="Libraries\ColorConversion.cs" />
     <Compile Include="Libraries\ModCompatibility.cs" />
