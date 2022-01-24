@@ -16,6 +16,7 @@ namespace MintMod.Functions {
         //internal static bool Freeze;
         public static Vector3 TempPos;
         public static Quaternion TempRot;
+        public static bool isCurrentlyFreezing;
 
         static void Clone(bool Toggle) {
             if (Toggle) {
@@ -38,6 +39,7 @@ namespace MintMod.Functions {
 
         public static void ToggleFreeze(bool toggle) {
             //Freeze = !Freeze;
+            isCurrentlyFreezing = toggle;
             if (VRCPlayer.field_Internal_Static_VRCPlayer_0 == null) return;
             Thing = VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_VRCPlayerApi_0.gameObject.GetComponent<FlatBufferNetworkSerializer>();
             Thing.enabled = !toggle;
