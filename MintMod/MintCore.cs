@@ -30,9 +30,9 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
-            public const string Version = "2.15.0";
+            public const string Version = "2.16.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "22 Jan 2022";
+            public const string UpdatedDate = "24 Jan 2022";
 #if !DEBUG
             public const string LoaderVer = "2.5.2";
             //public static Version TargetMLVersion = new(0, 5, 2);
@@ -167,14 +167,12 @@ namespace MintMod {
             }
 
             if (MelonHandler.Mods.FindIndex(i => i.Info.Name == "BTKCompanionLoader") != -1) {
-                try {
-                    Process.Start("cmd", "/C taskkill /f /im BTKV2X.exe");
-                    Process.Start("cmd", "/C taskkill /f /im BTKV2.exe");
-                    //Process.Start("cmd", "/C taskkill /f /im BTKV3.exe");
-                }
-                catch (Exception e) {
-                    if (isDebug) Con.Error(e);
-                }
+                try { Process.Start("cmd", "/C taskkill /f /im BTKV2X.exe"); }
+                catch (Exception e) { if (isDebug) Con.Error(e); }
+                try { Process.Start("cmd", "/C taskkill /f /im BTKV2.exe"); }
+                catch (Exception e) { if (isDebug) Con.Error(e); }
+                //try { Process.Start("cmd", "/C taskkill /f /im BTKV3.exe"); }
+                //catch (Exception e) { if (isDebug) Con.Error(e); }
             }
 #endif
         }
