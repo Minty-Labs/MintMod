@@ -245,15 +245,13 @@ namespace MintMod.UserInterface.OldUI {
                     darker.a = 0.5f;
                     theme.normalColor = color;
                     foreach (var btn in quickMenu.GetComponentsInChildren<Button>(true))
-                        if (btn.gameObject.name != "SubscribeToAddPhotosButton" && btn.gameObject.name != "SupporterButton" && btn.gameObject.name != "ModerateButton" && (btn.gameObject.name != "ReportButton" || btn.transform.parent.name.Contains("WorldInfo")))
+                        if (btn.gameObject.name != "SubscribeToAddPhotosButton" && btn.gameObject.name != "SupporterButton" && 
+                            btn.gameObject.name != "ModerateButton" && (btn.gameObject.name != "ReportButton" || btn.transform.parent.name.Contains("WorldInfo")))
                             btn.colors = buttonTheme;
                     try {
                         var quickMenu22 = GameObject.Find("QuickMenu");
                         foreach (var btn in quickMenu22.GetComponentsInChildren<Button>(true)) {
-                            if (btn.gameObject.name != "rColorButton" && btn.gameObject.name != "gColorButton" &&
-                                btn.gameObject.name != "bColorButton" &&
-                                btn.gameObject.name != "ColorPickPreviewButton" &&
-                                btn.transform.parent.name != "SocialNotifications" &&
+                            if (btn.transform.parent.name != "SocialNotifications" &&
                                 btn.transform.parent.parent.name != "EmojiMenu" &&
                                 !btn.transform.parent.name.Contains("NotificationUiPrefab"))
                                 btn.colors = buttonTheme;
@@ -275,11 +273,13 @@ namespace MintMod.UserInterface.OldUI {
                         foreach (var img in tgle.GetComponentsInChildren<Image>(true))
                             img.color = color;
                     }
+                    /*
                     var NotificationRoot = GameObject.Find("UserInterface/QuickMenu/QuickModeMenus/QuickModeNotificationsMenu/ScrollRect");
                     foreach (var img in NotificationRoot.GetComponentsInChildren<Image>(true)) {
                         if (img.transform.name == "Background")
                             img.color = color;
                     }
+                    */
                 } catch (Exception ex) {
                     Con.Error(ex);
                 }
