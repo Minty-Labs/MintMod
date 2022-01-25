@@ -32,6 +32,13 @@ namespace MintMod.Reflections {
         public static void Destroy(this GameObject go) => GameObject.Destroy(go);
 
         public static void DestroyImmediate(this GameObject go) => GameObject.DestroyImmediate(go);
+        
+        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component {
+            T component = gameObject.GetComponent<T>();
+            if (component == null)
+                return gameObject.AddComponent<T>();
+            return component;
+        }
     }
 }
 

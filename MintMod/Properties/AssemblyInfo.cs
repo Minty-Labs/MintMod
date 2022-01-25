@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: MelonInfo(typeof(MintMod.MintCore), MintMod.MintCore.ModBuildInfo.Name,
     MintMod.MintCore.ModBuildInfo.Version, MintMod.MintCore.ModBuildInfo.Author,
     MintMod.MintCore.ModBuildInfo.DownloadLink)]
-[assembly: MelonOptionalDependencies("UI Expansion Kit", "ComponentToggle", "TeleporterVR", "ActionMenuApi")]
+[assembly: MelonOptionalDependencies("UI Expansion Kit", "ComponentToggle", "TeleporterVR", "ActionMenuApi", "PortableMirrorMod")]
 [assembly: MelonColor(System.ConsoleColor.White)]
 [assembly: HarmonyDontPatchAll]
 [assembly: MelonGame("VRChat", "VRChat")]

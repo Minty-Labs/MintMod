@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MelonLoader;
+using MintMod.Functions;
 using MintyLoader;
 using UnhollowerRuntimeLib;
 using UnityEngine;
