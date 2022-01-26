@@ -34,7 +34,14 @@ namespace MintMod.UserInterface {
                 Con.Warn("ActionMenuApi Outdated. Older versions are not supported, please update ActionMenuApi to v0.3.5 or above");
                 return;
             }
-            BuildMenu();
+
+            try {
+                BuildMenu();
+            }
+            catch (Exception d) {
+                Con.Error(d);
+            }
+
             ranOnce = true;
         }
 
@@ -46,11 +53,12 @@ namespace MintMod.UserInterface {
 
                 CustomSubMenu.AddButton("Jump", WorldActions.AddJump, MintyResources.JumpIcon);
 
-                CustomSubMenu.AddToggle("Fly", Movement.FlightEnabled, Movement.NoClip, MintyResources.FlyIcon);
+                CustomSubMenu.AddToggle("Fly", Movement.FlightEnabled, Movement.Fly, MintyResources.FlyIcon);
 
-                if (MelonHandler.Mods.FindIndex((i) => i.Info.Name == "TeleporterVR") != -1)
-                    CustomSubMenu.AddToggle("VR Teleport\nto Cursor", TeleporterVR.Utils.VRUtils.active, choice =>
-                        TeleporterVR.Utils.VRUtils.active = choice, MintyResources.VRTPIcon);
+                //if (MelonHandler.Mods.FindIndex(i => i.Info.Name == "TeleporterVR") != -1) {
+                //    CustomSubMenu.AddToggle("VR Teleport\nto Cursor", TeleporterVR.Utils.VRUtils.active, choice =>
+                //        TeleporterVR.Utils.VRUtils.active = choice, MintyResources.VRTPIcon);
+                //}
 
                 //CustomSubMenu.AddRadialPuppet("Fly Speed", f => Movement.finalSpeed = f * 5, 0.2f);
             }, MintyResources.MintIcon2D);
