@@ -81,9 +81,11 @@ namespace MintMod.Hooks {
         }
         
         private static void CalibratePrefix(MethodBase __originalMethod) {
-            Con.Debug("Called calibrate from " + __originalMethod);
-            //CalibrationMirror.IsCalibrated = false;
-            PortableMirror.Main.ToggleMirror();
+            if (Config.CalibrationMirror.Value) {
+                Con.Debug("Called calibrate from " + __originalMethod);
+                //CalibrationMirror.IsCalibrated = false;
+                PortableMirror.Main.ToggleMirror();
+            }
         }
 
         private delegate byte FbbIkInit(IntPtr a, IntPtr b, IntPtr c, IntPtr d, byte e, IntPtr n);
@@ -138,9 +140,11 @@ namespace MintMod.Hooks {
         }
 
         private static async Task ApplyStoredCalibration(GameObject avatarRoot, string avatarId) {
-            //CalibrationMirror.IsCalibrated = true;
-            PortableMirror.Main.ToggleMirror();
-            //return Task.CompletedTask;
+            if (Config.CalibrationMirror.Value) {
+                //CalibrationMirror.IsCalibrated = true;
+                PortableMirror.Main.ToggleMirror();
+                //return Task.CompletedTask;
+            }
         }
         
         private static bool IsCalibratedForAvatarPrefix(ref bool __result) => !__result;
