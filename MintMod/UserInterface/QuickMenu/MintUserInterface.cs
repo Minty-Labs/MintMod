@@ -39,7 +39,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu;
 
-        private static QMSlider FlightSpeedSlider; 
+        private static ReMenuSlider FlightSpeedSlider; 
 
         internal static ReMenuToggle 
             MainQMFly, MainQMNoClip, MainQMFreeze, MainQMInfJump,
@@ -137,12 +137,17 @@ namespace MintMod.UserInterface.QuickMenu {
                 MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
                 MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
                 
-                if (ModCompatibility.TeleporterVR && MintCore.isDebug) {
-                    melon = MelonPreferences.CreateCategory("TeleporterVR", "TeleporterVR");
-                    try { MelonPreferences.GetEntry<bool>(melon.Identifier, "ShowUIXTPVRButton").Value = false; }
-                    catch (Exception t) { Con.Debug($"Could not set value:\n{t}", MintCore.isDebug); }
-                    MintCategoryOnLaunchPad.AddToggle("TeleporterVR", "Toggle TeleporterVR\'s TPVR function.", t => TPVR_active = t);
+                /*if (ModCompatibility.TeleporterVR) {
+                    var ver = MelonHandler.Mods.Single(m => m.Info.Name.Equals("TeleporterVR")).Info.Version;
+                    var p = new Version(ver);
+                    if (p >= new Version("4.9.0")) {
+                        melon = MelonPreferences.CreateCategory("TeleporterVR", "TeleporterVR");
+                        try { MelonPreferences.GetEntry<bool>(melon.Identifier, "ShowUIXTPVRButton").Value = false; }
+                        catch (Exception t) { Con.Debug($"Could not set value:\n{t}", MintCore.isDebug); }
+                        MintCategoryOnLaunchPad.AddToggle("TeleporterVR", "Toggle TeleporterVR\'s TPVR function.", t => TPVR_active = t);
+                    }
                 }
+                */
             }
 
             Con.Debug("Done Setting up Menus", MintCore.isDebug);
@@ -170,9 +175,12 @@ namespace MintMod.UserInterface.QuickMenu {
             MintQAFreeze = qf.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
             qf.AddSpacer();
             
-            var categoryLayoutGroup = MintMenu.GameObject.transform.Find("ScrollRect/Viewport/VerticalLayoutGroup");
-            FlightSpeedSlider = new(categoryLayoutGroup, f => Movement.finalSpeed = f, "FlightSpeed", "Control Flight Speed", "500%", 5f, 
-                "Flight Speed > 0% - 500%", 0f, 1f);
+            //var categoryLayoutGroup = MintMenu.GameObject.transform.Find("ScrollRect/Viewport/VerticalLayoutGroup");
+            //FlightSpeedSlider = new(categoryLayoutGroup, f => Movement.finalSpeed = f, "FlightSpeed", "Control Flight Speed", "500%", 5f, 
+            //    "Flight Speed > 0% - 500%", 0f, 1f);
+            var sc = MintMenu.AddSliderCategory("Flight Speed");
+            FlightSpeedSlider = sc.AddSlider("Flight Speed", "Control Flight Speed", f => Movement.finalSpeed = f,
+                1f, 0.5f, 5f);
             
             Con.Debug("Done Creating QuickActions", MintCore.isDebug);
         }
