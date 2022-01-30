@@ -269,9 +269,12 @@ namespace MintMod.UserInterface.OldUI {
                             img.color = color;
                     }
                     foreach (var tgle in quickMenu.GetComponentsInChildren<Toggle>(true)) {
-                        tgle.colors = theme;
-                        foreach (var img in tgle.GetComponentsInChildren<Image>(true))
-                            img.color = color;
+                        if (tgle.name != "Button_Visitor" && tgle.name != "Button_New" && tgle.name != "Button_User" &&
+                            tgle.name != "Button_Trusted" && tgle.name != "Button_Advanced" && tgle.name != "Button_Friends") {
+                            tgle.colors = theme;
+                            foreach (var img in tgle.GetComponentsInChildren<Image>(true))
+                                img.color = color;
+                        }
                     }
                     /*
                     var NotificationRoot = GameObject.Find("UserInterface/QuickMenu/QuickModeMenus/QuickModeNotificationsMenu/ScrollRect");
