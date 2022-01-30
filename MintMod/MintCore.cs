@@ -32,9 +32,9 @@ namespace MintMod {
             public const string Company = "Minty Labs";
             public const string Version = "2.17.4";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "26 Jan 2022";
+            public const string UpdatedDate = "30 Jan 2022";
 #if !DEBUG
-            public const string LoaderVer = "2.5.2";
+            public const string LoaderVer = "2.5.3";
             //public static Version TargetMLVersion = new(0, 5, 2);
 #endif
         }
