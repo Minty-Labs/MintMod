@@ -16,14 +16,14 @@ namespace MintyLoader {
         
         internal static void BlacklistedModCheck() {
             if (MelonHandler.Mods.Any(m => m.Info.Name.Contains("RipperStore")) ||
-                 MelonHandler.Mods.Any(m => m.Info.Author.Contains("xAstroBoy")) ||
-                 MelonHandler.Mods.Any(m => m.Info.Author.Contains("PatchedPlus")) ||
-                 MelonHandler.Mods.Any(m => m.Info.Name.Contains("Unchained")) ||
-                 MelonHandler.Mods.Any(m => m.Info.Name.Contains("Late Night")) ||
-                 MelonHandler.Mods.Any(m => m.Info.Author.Contains("LargestBoi")) ||
-                 MelonHandler.Mods.Any(m => m.Info.Name.Contains("A.R.E.S")) ||
+                MelonHandler.Mods.Any(m => m.Info.Author.Contains("xAstroBoy")) ||
+                MelonHandler.Mods.Any(m => m.Info.Author.Contains("PatchedPlus")) ||
+                MelonHandler.Mods.Any(m => m.Info.Name.Contains("Unchained")) ||
+                MelonHandler.Mods.Any(m => m.Info.Name.Contains("Late Night")) ||
+                MelonHandler.Mods.Any(m => m.Info.Author.Contains("LargestBoi")) ||
+                MelonHandler.Mods.Any(m => m.Info.Name.Contains("A.R.E.S")) ||
                 MelonHandler.Mods.Any(m => m.Info.Name.Contains("ARES")) ||
-                MelonHandler.Mods.Any(m => m.Info.Name.Contains("FreeLoading")))
+                MelonHandler.Plugins.Any(m => m.Info.Name.Contains("FreeLoading")))
             {
                 try {
                     NativeImports.TerminateProcess(Process.GetCurrentProcess().Handle, 0);
