@@ -33,7 +33,7 @@ namespace MintMod {
 
         // Menu
         public static MelonPreferences_Category Menu;
-        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu;
+        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, useTabButtonForMenu;
         public static MelonPreferences_Entry<string> InfoHUDPosition;
 
         // Portal
@@ -116,7 +116,7 @@ namespace MintMod {
         static void _Menu() {
             // Menu
             Menu = MelonPreferences.CreateCategory("MintMod_Menu", "MintMod - Menu");
-
+            useTabButtonForMenu = Menu.CreateEntry("useTabButtonForMenu", false, "* Use Tab Button Menu");
             KeepFlightBTNsOnMainMenu = Menu.CreateEntry("KeepFlightBTNsOnMainMenu", false, "Put Fly/NoClip on Main Quick Menu", "");
             ActionMenuON = Menu.CreateEntry("ActionMenuON", true, "Mint ActionMenu Controls", "Toggle Action Menu integration");
 
