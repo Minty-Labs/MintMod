@@ -19,6 +19,7 @@ namespace MintMod.Resources {
         private static AssetBundle MintBundle;
 
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent;
+        public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list;
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
 
@@ -40,7 +41,23 @@ namespace MintMod.Resources {
                     try { JumpIcon = LoadTexture2D("JumpIcon.png"); } catch { Con.Error("Failed to load Texture: JumpIcon.png"); }
                     try { ESPIcon = LoadTexture2D("ESPIcon.png"); } catch { Con.Error("Failed to load Texture: ESPIcon.png"); }
                     try { FlyIcon = LoadTexture2D("FlyIcon.png"); } catch { Con.Error("Failed to load Texture: FlyIcon.png"); }
-                    try { VRTPIcon = LoadTexture2D("VRTPIcon.png"); } catch { Con.Error("Failed to load Texture: VRTPIcon.png"); }
+                    //try { VRTPIcon = LoadTexture2D("VRTPIcon.png"); } catch { Con.Error("Failed to load Texture: VRTPIcon.png"); }
+                    
+                    try { address_book = LoadSprite("address-book-solid.png"); } catch { Con.Error("Failed to load Texture: address-book-solid.png"); }
+                    try { checkered = LoadSprite("chess-board-solid.png"); } catch { Con.Error("Resource chess-board-solid.png failed"); }
+                    try { clipboard = LoadSprite("clipboard-list-solid.png"); } catch { Con.Error("Resource clipboard-list-solid.png failed"); }
+                    try { cog = LoadSprite("cog-solid.png"); } catch { Con.Error("Resource cog-solid.png failed"); }
+                    try { extlink = LoadSprite("external-link-alt-solid.png"); } catch { Con.Error("Resource external-link-alt-solid.png failed"); }
+                    try { globe = LoadSprite("globe-americas-solid.png"); } catch { Con.Error("Resource globe-americas-solid.png failed"); }
+                    try { history = LoadSprite("history-solid.png"); } catch { Con.Error("Resource history-solid.png failed"); }
+                    try { sync = LoadSprite("sync-alt-solid.png"); } catch { Con.Error("Resource sync-alt-solid.png failed"); }
+                    try { tv = LoadSprite("tv-solid.png"); } catch { Con.Error("Resource tv-solid.png failed"); }
+                    try { user = LoadSprite("user-solid.png"); } catch { Con.Error("Resource user-solid.png failed"); }
+                    try { wifi = LoadSprite("wifi-solid.png"); } catch { Con.Error("Resource wifi-solid.png failed"); }
+                    try { jump = LoadSprite("JumpIcon_2.png"); } catch { Con.Error("Resource JumpIcon_2.png failed"); }
+                    try { dl = LoadSprite("cloud-download-alt-solid.png"); } catch { Con.Error("Resource cloud-download-alt-solid.png failed"); }
+                    try { list = LoadSprite("list-solid.png"); } catch { Con.Error("Resource list-solid.png failed"); }
+                    
                 }
             }
             Con.Msg("Done loading AssetBundles.");

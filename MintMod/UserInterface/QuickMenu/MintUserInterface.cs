@@ -202,7 +202,7 @@ namespace MintMod.UserInterface.QuickMenu {
         private static ReMenuToggle InfJump;
         
         private static void Player() {
-            PlayerMenu = BaseActions.AddCategoryPage("Player Menu", "Actions involving players.");
+            PlayerMenu = BaseActions.AddCategoryPage("Player", "Actions involving players.", MintyResources.user);
             var c = PlayerMenu.AddCategory("General Actions", false);
             PlayerESP = c.AddToggle("Player ESP", "Puts a bubble around each player, and is visible through walls.", ESP.PlayerESPState);
             c.AddButton("Copy Current Avi ID", "Copys your current Avatar ID into your clipboard", () => {
@@ -212,7 +212,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 catch (Exception c) {
                     Con.Error(c);
                 }
-            });
+            }, MintyResources.clipboard);
             c.AddButton("Go into Avi by ID", "Takes an Avatar ID from your clipboard and changes into that avatar.", () => {
                 try {
                     string clip = string.Empty;
@@ -234,7 +234,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 catch (Exception c) {
                     Con.Error(c);
                 }
-            });
+            }, MintyResources.checkered);
             InfJump = c.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content", onToggle => PlayerActions.InfinteJump = onToggle);
             //var h = PlayerMenu.AddCategory("Head Lamp");
         }
@@ -244,44 +244,47 @@ namespace MintMod.UserInterface.QuickMenu {
         #region World Menu
 
         private static void World() {
-            WorldMenu = BaseActions.AddCategoryPage("World Menu", "Actions involving the world.");
+            WorldMenu = BaseActions.AddCategoryPage("World", "Actions involving the world.", MintyResources.globe);
             var w = WorldMenu.AddCategory("General Actions");
             ItemESP = w.AddToggle("Item ESP", "Puts a bubble around all Pickups, can be seen through walls", ESP.SetItemESPToggle);
-            w.AddButton("Add Jump", "Allows you to jump in the world", WorldActions.AddJump);//, MintyResources.ConvertToTexture2D(MintyResources.JumpIcon));
-            w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world", Networking.LocalPlayer.UseLegacyLocomotion);
-            w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", WorldActions.WorldDownload);
+            w.AddButton("Add Jump", "Allows you to jump in the world", WorldActions.AddJump, MintyResources.jump);
+            w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world", Networking.LocalPlayer.UseLegacyLocomotion, MintyResources.history);
+            w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", WorldActions.WorldDownload, MintyResources.dl);
 
-            w.AddButton("Copy Instance ID", "Copies current instance ID and places it in your system's clipboard.", () => {
-                    string world = RoomManager.field_Internal_Static_ApiWorld_0.id + ":" + RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
+            w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
+                    string id = RoomManager.field_Internal_Static_ApiWorld_0.id;
+                    string instance = RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
                     bool faulted = false;
                     try {
-                        GUIUtility.systemCopyBuffer = world;
+                        GUIUtility.systemCopyBuffer = $"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}";
                     }
                     catch {
-                        Clipboard.SetText(world);
+                        Clipboard.SetText($"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}");
                         faulted = true;
                     }
 
-                    Con.Msg(faulted ? "Failed to copy instance ID" : $"Got ID: {world}");
-                });
+                    Con.Msg(faulted ? "Failed to copy instance ID" : $"Got ID: {RoomManager.field_Internal_Static_ApiWorldInstance_0.id}");
+                }, MintyResources.clipboard);
             w.AddButton("Join Instance by ID", "Join the room of the instance ID", () => {
                 try {
                     string clip = string.Empty;
                     try { clip = GUIUtility.systemCopyBuffer; } catch { clip = Clipboard.GetText(); }
-
+                    
                     if (clip.Contains("launch?")) {
-                        Con.Warn("Invalid Join ID, please do not use web links");
-                    }
-                    else if ((clip.Contains("~hidden(") || clip.Contains("~friends(") || clip.Contains("~public(") || clip.Contains("~private(")) && clip.Contains("launch?")) {
+                        Networking.GoToRoom(clip
+                            .Replace("https://vrchat.com/home/launch?worldId=", "")
+                            .Replace("&instanceId=", ":"));
+                    } else if (clip.Contains("wrld_")) {
                         Networking.GoToRoom(clip);
                     }
+                    else Con.Warn("Clipboard text is probably not a valid join link.");
                 }
                 catch (Exception j) {
                     Con.Error(j);
                 }
-            });
+            }, MintyResources.globe);
             w.AddSpacer();
-            w.AddButton("Log World", "Logs world info (of various data points) in a text file.", WorldActions.LogWorld);
+            w.AddButton("Log World", "Logs world info (of various data points) in a text file.", WorldActions.LogWorld, MintyResources.list);
             
             w.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
             w.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
@@ -302,8 +305,7 @@ namespace MintMod.UserInterface.QuickMenu {
         #region Utility Menu
 
         private static void RandomStuff() {
-            RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions");
-            RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions");
+            RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions", MintyResources.cog);
             RandomMenu.AddCategory($"MintMod - v<color=#9fffe3>{MintCore.ModBuildInfo.Version}</color>", false);
             var r = RandomMenu.AddCategory("General Actions", false);
             
@@ -324,7 +326,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         Config.SavePrefValue(Config.mint, Config.SpoofedFrameNumber, f);
                         Frame.Text = f.ToString();
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
-            });
+            }, MintyResources.tv);
 
             PingSpoof = r.AddToggle("Spoof Ping", "Spoof your ping for the monkes.",
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofPing.Identifier).Value = on);
@@ -341,13 +343,13 @@ namespace MintMod.UserInterface.QuickMenu {
                         Config.SavePrefValue(Config.mint, Config.SpoofedPingNumber, p);
                         Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{p.ToString()}</color>";
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
-            });
+            }, MintyResources.wifi);
             
             bypassRiskyFunc = r.AddToggle("Bypass Risky Func", "Forces Mods with Risky Function Checks to work", 
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.bypassRiskyFunc.Identifier).Value = on);
             bypassRiskyFunc.Toggle(Config.bypassRiskyFunc.Value);
 
-            r.AddButton("Reset Portal Timers", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
+            r.AddButton("Reset Portal", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
                 if (UnityEngine.Object.FindObjectsOfType<PortalInternal>() != null) {
                     try {
                         var t = Config.ResetTimerAmount.Value;
@@ -362,11 +364,11 @@ namespace MintMod.UserInterface.QuickMenu {
                         Con.Error($"Failed to reset portal timer\n{_}");
                     }
                 }
-            });
+            }, MintyResources.history);
 
-            r.AddButton("Refetch and Refresh Nameplates",
+            r.AddButton("Refetch Nameplates",
                 "Reloads Mint's custom nameplate addons in case more were added while you're playing",
-                () => Players.FetchCustomPlayerObjects(true));
+                () => Players.FetchCustomPlayerObjects(true), MintyResources.extlink);
         }
 
         #endregion
@@ -381,9 +383,9 @@ namespace MintMod.UserInterface.QuickMenu {
 
             string u = "selected user";
 
-            userSelectCategory.AddButton("Download Avatar VRCA", $"Downloads {u}'s Avatar .VRCA", PlayerActions.AvatarDownload);
-            userSelectCategory.AddButton("Log Asset", $"Logs {u}'s information and put it into a text file", PlayerActions.LogAsset);
-            userSelectCategory.AddButton("Copy Avatar ID", $"Copies {u}'s avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id);
+            userSelectCategory.AddButton("Download Avatar VRCA", $"Downloads {u}'s Avatar .VRCA", PlayerActions.AvatarDownload, MintyResources.dl);
+            userSelectCategory.AddButton("Log Asset", $"Logs {u}'s information and put it into a text file", PlayerActions.LogAsset, MintyResources.list);
+            userSelectCategory.AddButton("Copy Avatar ID", $"Copies {u}'s avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id, MintyResources.clipboard);
             userSelectCategory.AddButton("Clone Avatar", $"Clones {u}'s avatar if public", () => {
                 try {
                     var v = PlayerActions.SelPAvatar();
@@ -493,7 +495,7 @@ namespace MintMod.UserInterface.QuickMenu {
         #endregion
         
         private static void PlayerListMenuSetup() {
-            PlayerListMenu = BaseActions.AddCategoryPage("Player List Menu", "Actions to do individually on a player.");
+            PlayerListMenu = BaseActions.AddCategoryPage("Player List", "Actions to do individually on a player.", MintyResources.address_book);
             var p = PlayerListMenu.AddCategory("Actions");
             CreateSliders();
             var l = PlayerListMenu.AddCategory("Player List (Select an Action)");
