@@ -30,12 +30,11 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
-            public const string Version = "2.19.0";
+            public const string Version = "2.20.0";
             public const string DownloadLink = null;
-            public const string UpdatedDate = "3 Feb 2022";
+            public const string UpdatedDate = "7 Feb 2022";
 #if !DEBUG
             public const string LoaderVer = "2.5.3";
-            //public static Version TargetMLVersion = new(0, 5, 2);
 #endif
         }
 
@@ -76,7 +75,7 @@ namespace MintMod {
             */
 #endif
 
-            Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version}");
+            Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version} - Built on {ModBuildInfo.UpdatedDate}");
             mods.Add(new Config());
             mods.Add(new Patches());
             mods.Add(new MintyResources());
@@ -106,9 +105,8 @@ namespace MintMod {
             mods.Add(new Components());
             mods.Add(new NotificationSystem());
             mods.Add(new GetRubyConfig());
+            mods.Add(new NetworkEvents());
             //mods.Add(new );
-
-            MelonCoroutines.Start(Utils.Network.OnYieldStart());
 
             ReMod.Core.Unity.EnableDisableListener_Mint.RegisterSafe();
             //ReMod.Core.Unity.RenderObjectListener.RegisterSafe();

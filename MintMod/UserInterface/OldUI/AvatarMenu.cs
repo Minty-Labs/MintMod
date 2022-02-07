@@ -1,6 +1,5 @@
 ﻿using MelonLoader;
 using MintMod.Reflections;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -15,15 +14,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC;
 using static MintMod.Managers.Colors;
+using Exception = System.Exception;
 
 namespace MintMod.UserInterface.OldUI {
-    class AvatarMenu : MintSubMod {
+    internal class AvatarMenu : MintSubMod {
         public override string Name => "Avatar Menu";
         public override string Description => "Edits on the Avatar Menu";
 
-        private static GameObject VRCAButton;
-        private static GameObject AvatarStats;
-        private static GameObject FallbackInfo;
+        private static GameObject VRCAButton, AvatarStats, FallbackInfo;
 
         internal override void OnUserInterface() {
             #region DL VRCA
@@ -102,17 +100,13 @@ namespace MintMod.UserInterface.OldUI {
             #endregion
 
             FallbackInfo = GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Fallback Info");
-            MelonCoroutines.Start(Loop());
-        }
-
-        private static IEnumerator Loop() {
-            while (FallbackInfo != null) {
+            GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Select Button")
+                .GetComponent<Button>().onClick.AddListener(new System.Action(() => {
                 if (!FallbackInfo.activeInHierarchy)
                     VRCAButton.SetActive(true);
                 else
                     VRCAButton.SetActive(false);
-                yield return new WaitForEndOfFrame();
-            }
+            }));
         }
     }
 }
