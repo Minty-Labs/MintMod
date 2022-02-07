@@ -1,71 +1,42 @@
 ﻿using System;
-using Il2CppSystem.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Managers;
-using MintMod.Managers.Notification;
 using MintyLoader;
 using Pastel;
-using System.Drawing;
-using UnityEngine;
 using VRC.Core;
 using VRC;
 using VRC.SDKBase;
 using ReMod.Core.VRChat;
 
 namespace MintMod.Utils {
-    class Network {// : MintSubMod {
-        //public override string Name => "NetworkHooks";
-        //public override string Description => "Hooks into VRChat's network events.";
-
-        private static bool IsInitialized, SeenFire, AFiredFirst;
-        public static event Action<Player> OnJoin, OnLeave;
-
-        internal static IEnumerator OnYieldStart() {
-            if (IsInitialized) yield break;
-            while (ReferenceEquals(NetworkManager.field_Internal_Static_NetworkManager_0, null)) yield return null;
-
-            var field0 = NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_0;
-            var field1 = NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_1;
-
-            AddDelegate(field0, EventHandlerA);
-            AddDelegate(field1, EventHandlerB);
-
-            IsInitialized = true;
-
-            OnJoin += OnPlayerJoin;
-            OnLeave += OnPlayerLeft;
-        }
-
-        private static void AddDelegate(VRCEventDelegate<Player> field, Action<Player> eventHandlerA) => field.field_Private_HashSet_1_UnityAction_1_T_0.Add(eventHandlerA);
-
-        private static void EventHandlerA(Player player) {
-            if (!SeenFire) {
-                AFiredFirst = true;
-                SeenFire = true;
-
-                Con.Debug("[" + "NetworkUtils".Pastel("ABB436") +"] A fired first".Pastel("00ffff"), MintCore.isDebug);
+    internal class NetworkEvents : MintSubMod {
+        public override string Name => "NetworkHooks";
+        public override string Description => "Hooks into VRChat's network events.";
+        
+        private static Action<Player> _eventHandlerA;
+        private static Action<Player> _eventHandlerB;
+        private static Action<Player> EventHandlerA {
+            get {
+                _eventHandlerB ??= OnPlayerLeft;
+                return _eventHandlerA ??= OnPlayerJoin;
             }
-
-            (AFiredFirst ? OnJoin : OnLeave)?.Invoke(player);
         }
-
-        private static void EventHandlerB(Player player) {
-            if (!SeenFire) {
-                AFiredFirst = false;
-                SeenFire = true;
-
-                Con.Debug("[" + "NetworkUtils".Pastel("ABB436") +"] B fired first".Pastel("00ffff"), MintCore.isDebug);
+        private static Action<Player> EventHandlerB {
+            get {
+                _eventHandlerA ??= OnPlayerLeft;
+                return _eventHandlerB ??= OnPlayerJoin;
             }
-
-            (AFiredFirst ? OnLeave : OnJoin)?.Invoke(player);
         }
 
-        static void OnPlayerJoin(Player plr) {
+        internal override void OnUserInterface() {
+            NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_0.
+                field_Private_HashSet_1_UnityAction_1_T_0.Add(EventHandlerA);
+            NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_1.
+                field_Private_HashSet_1_UnityAction_1_T_0.Add(EventHandlerB);
+        }
+        
+        private static void OnPlayerJoin(Player plr) {
             if (plr == null) return;
             var apiUser = plr.prop_APIUser_0;
             if (apiUser == null) return;
@@ -121,7 +92,7 @@ namespace MintMod.Utils {
                 MasterFinder.OnSelfJoin();
         }
 
-        static void OnPlayerLeft(Player plr) {
+        private static void OnPlayerLeft(Player plr) {
             if (plr == null) return;
             var apiUser = plr.prop_APIUser_0;
             if (apiUser == null) return;
