@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -65,7 +66,7 @@ namespace MintMod.UserInterface.QuickMenu {
             
             t.transform.SetParent(_slider.transform);
             //s.transform.SetParent(t.transform);
-            */
+            *
 
             _slider.gameObject.name = $"Slider_{name}";
             s.name = $"MintSlider_{name}";
@@ -208,3 +209,4 @@ namespace MintMod.UserInterface.QuickMenu {
         }
     }
 }
+*/
