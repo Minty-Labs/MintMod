@@ -74,6 +74,7 @@ namespace MintMod.Functions.Authentication {
             while (true) {
                 Con.Warn("You are not authorized to use this mod.");
                 yield return new WaitForSeconds(60);
+                Environment.Exit(0);
             }
         }
 
