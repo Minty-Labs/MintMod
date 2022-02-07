@@ -19,7 +19,8 @@ namespace MintMod.Resources {
         private static AssetBundle MintBundle;
 
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent;
-        public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list;
+        public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list,
+            copy, key, marker, marker_hole, star;
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
 
@@ -57,7 +58,12 @@ namespace MintMod.Resources {
                     try { jump = LoadSprite("JumpIcon_2.png"); } catch { Con.Error("Resource JumpIcon_2.png failed"); }
                     try { dl = LoadSprite("cloud-download-alt-solid.png"); } catch { Con.Error("Resource cloud-download-alt-solid.png failed"); }
                     try { list = LoadSprite("list-solid.png"); } catch { Con.Error("Resource list-solid.png failed"); }
-                    
+                    try { copy = LoadSprite("copy-solid.png"); } catch { Con.Error("Resource copy-solid.png failed"); }
+                    try { key = LoadSprite("key-solid.png"); } catch { Con.Error("Resource key-solid.png failed"); }
+                    try { marker = LoadSprite("map-marker-solid.png"); } catch { Con.Error("Resource map-marker-solid.png failed"); }
+                    try { marker_hole = LoadSprite("map-marker-alt-solid.png"); } catch { Con.Error("Resource map-marker-alt-solid.png failed"); }
+                    try { star = LoadSprite("star-solid.png"); } catch { Con.Error("Resource star-solid.png failed"); }
+                    //try {  = LoadSprite(".png"); } catch { Con.Error("Resource .png failed"); }
                 }
             }
             Con.Msg("Done loading AssetBundles.");

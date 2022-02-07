@@ -101,7 +101,7 @@ namespace MintMod.UserInterface.QuickMenu {
             }
 
             LaunchPadLayoutGroup = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup");
-            MintCategoryOnLaunchPad = new("MintMod Quick Actions", LaunchPadLayoutGroup.transform);
+            MintCategoryOnLaunchPad = new("MintMod", LaunchPadLayoutGroup.transform);
             MintCategoryOnLaunchPad.Active = false;
             
             if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value || ModCompatibility.TeleporterVR) 
@@ -186,7 +186,8 @@ namespace MintMod.UserInterface.QuickMenu {
             MintQAFly = c.AddToggle("Flight", "Toggle Flight", Movement.Fly);
             MintQANoClip = c.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
             MintQAFreeze = c.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
-            c.AddSpacer();
+            InfJump = c.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
+                onToggle => PlayerActions.InfinteJump = onToggle);
             
             var sc = MintMenu.AddSliderCategory("Flight Speed");
             FlightSpeedSlider = sc.AddSlider("Min: 0.5", "Control Flight Speed", f => Movement.finalSpeed = f,
@@ -235,7 +236,6 @@ namespace MintMod.UserInterface.QuickMenu {
                     Con.Error(c);
                 }
             }, MintyResources.checkered);
-            InfJump = c.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content", onToggle => PlayerActions.InfinteJump = onToggle);
             //var h = PlayerMenu.AddCategory("Head Lamp");
         }
 
@@ -412,7 +412,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         Con.Error(f);
                     }
                 }
-            });
+            }, MintyResources.copy);
 
             if (Config.AviFavsEnabled.Value) {
                 userSelectCategory.AddButton("Silent Favorite", $"Silently favorites the avatar {u} is wearing if public.", () => {
@@ -426,14 +426,14 @@ namespace MintMod.UserInterface.QuickMenu {
                             //VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private, cannot favorite", Color.white);
                         }
                     }
-                });
+                }, MintyResources.star);
             }
 
-            userSelectCategory.AddButton("Teleport to", $"Teleport to {u}", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); });
-            userSelectCategory.AddButton("Teleport pickups to", $"Teleport all pickup objects to {u}", () => Items.TPToPlayer(PlayerWrappers.SelVRCPlayer()._player));
+            userSelectCategory.AddButton("Teleport to", $"Teleport to {u}", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); }, MintyResources.marker);
+            userSelectCategory.AddButton("Teleport pickups to", $"Teleport all pickup objects to {u}", () => Items.TPToPlayer(PlayerWrappers.SelVRCPlayer()._player), MintyResources.marker_hole);
 
             if (APIUser.CurrentUser.id == Players.LilyID) {
-                userSelectCategory.AddButton("Mint Auth Check", $"Check to see if {u} can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)));
+                userSelectCategory.AddButton("Mint Auth Check", $"Check to see if {u} can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)), MintyResources.key);
             }
 
             Con.Debug("Done Setting up User Selected Menu", MintCore.isDebug);
@@ -470,11 +470,14 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static int SelectedActionNum = 0;
 
-        private static QMSlider ItemSlider, PlayerSlider;
+        //private static QMSlider ItemSlider, PlayerSlider;
+        private static ReMenuSlider ItemsReSlider_sp, ItemsReSlider_di, PlayerReSlider_sp, PlayerReSlider_di;
+        private static ReMenuSliderCategory ItemSliderCat, PlayerSliderCat;
         
         #region Orbit Sliders
         
         private static void CreateSliders() {
+            /*
             var categoryLayoutGroup = PlayerListMenu.GameObject.transform.Find("ScrollRect/Viewport/VerticalLayoutGroup");
             try {
                 ItemSlider = new QMSlider(categoryLayoutGroup,
@@ -490,6 +493,20 @@ namespace MintMod.UserInterface.QuickMenu {
             catch (Exception e) {
                 Con.Error(e);
             }
+            */
+            ItemSliderCat = PlayerListMenu.AddSliderCategory("Items");
+            ItemsReSlider_sp = ItemSliderCat.AddSlider("Speed", "Change orbit speed of rotation", f => Items.SpinSpeed = f, 1f, 0f, 2f);
+            ItemsReSlider_di = ItemSliderCat.AddSlider("Distance", "Change distance of rotation", f => Items.Distance = f, 1f, 0f, 5f);
+            ItemSliderCat.Header.GameObject.SetActive(false);
+            ItemsReSlider_sp.Active = false;
+            ItemsReSlider_di.Active = false;
+                
+            PlayerSliderCat = PlayerListMenu.AddSliderCategory("Players");
+            PlayerReSlider_sp = PlayerSliderCat.AddSlider("Speed", "Change orbit speed of rotation", f => Players.SelfSpinSpeed = f, 1f, 0f, 2f);
+            PlayerReSlider_di = PlayerSliderCat.AddSlider("Distance", "Change distance of rotation", f => Players.SelfDistance = f, 1f, 0.1f, 5f);
+            PlayerSliderCat.Header.GameObject.SetActive(false);
+            PlayerReSlider_sp.Active = false;
+            PlayerReSlider_di.Active = false;
         }
 
         #endregion
@@ -502,38 +519,62 @@ namespace MintMod.UserInterface.QuickMenu {
             p.AddButton("Teleport", "Teleport to player", () => {
                 SelectedActionNum = 1;
                 l.Title = "Player List > Teleport";
-                PlayerSlider.Enabled = false;
-                ItemSlider.Enabled = false;
+                //PlayerSlider.Enabled = false;
+                //ItemSlider.Enabled = false;
+                ItemsReSlider_sp.Active = false;
+                ItemsReSlider_di.Active = false;
+                PlayerReSlider_sp.Active = false;
+                PlayerReSlider_di.Active = false;
             });
             var _1 = p.AddButton("OpenQM", "Open player in Quick Menu", () => {
                 SelectedActionNum = 2;
                 l.Title = "Player List > OpenQM";
-                PlayerSlider.Enabled = false;
-                ItemSlider.Enabled = false;
+                //PlayerSlider.Enabled = false;
+                //ItemSlider.Enabled = false;
+                ItemsReSlider_sp.Active = false;
+                ItemsReSlider_di.Active = false;
+                PlayerReSlider_sp.Active = false;
+                PlayerReSlider_di.Active = false;
             });
             p.AddButton("ESP", "Draw a bubble around player", () => {
                 SelectedActionNum = 3;
                 l.Title = "Player List > ESP";
-                PlayerSlider.Enabled = false;
-                ItemSlider.Enabled = false;
+                //PlayerSlider.Enabled = false;
+                //ItemSlider.Enabled = false;
+                ItemsReSlider_sp.Active = false;
+                ItemsReSlider_di.Active = false;
+                PlayerReSlider_sp.Active = false;
+                PlayerReSlider_di.Active = false;
             });
             p.AddButton("Teleport\nPickups to", "Teleport all pickups to player", () => {
                 SelectedActionNum = 4;
                 l.Title = "Player List > Teleport Pickups";
-                PlayerSlider.Enabled = false;
-                ItemSlider.Enabled = false;
+                //PlayerSlider.Enabled = false;
+                //ItemSlider.Enabled = false;
+                ItemsReSlider_sp.Active = false;
+                ItemsReSlider_di.Active = false;
+                PlayerReSlider_sp.Active = false;
+                PlayerReSlider_di.Active = false;
             });
             var _2 = p.AddButton("Orbit\nPickups", "Orbit pickups around player", () => {
                 SelectedActionNum = 5;
                 l.Title = "Player List > Orbit Pickups";
-                ItemSlider.Enabled = true;
-                PlayerSlider.Enabled = false;
+                //PlayerSlider.Enabled = false;
+                //ItemSlider.Enabled = true;
+                ItemsReSlider_sp.Active = true;
+                ItemsReSlider_di.Active = true;
+                PlayerReSlider_sp.Active = false;
+                PlayerReSlider_di.Active = false;
             });
             var _3 = p.AddButton("Orbit\nPlayer", "Orbit around player", () => {
                 SelectedActionNum = 6;
                 l.Title = "Player List > Orbit Player";
-                PlayerSlider.Enabled = true;
-                ItemSlider.Enabled = false;
+                //PlayerSlider.Enabled = true;
+                //ItemSlider.Enabled = false;
+                ItemsReSlider_sp.Active = false;
+                ItemsReSlider_di.Active = false;
+                PlayerReSlider_sp.Active = true;
+                PlayerReSlider_di.Active = true;
             });
             // These button are disabled until I add the functions for them
             _1.Interactable = false;
