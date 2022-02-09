@@ -19,7 +19,7 @@ namespace MintMod.Resources {
         private static AssetBundle MintBundle;
 
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent, BG_HUD;
-        public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list,
+        public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list, messages,
             copy, key, marker, marker_hole, star;
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
@@ -65,6 +65,7 @@ namespace MintMod.Resources {
                     try { marker = LoadSprite("map-marker-solid.png"); } catch { Con.Error("Resource map-marker-solid.png failed"); }
                     try { marker_hole = LoadSprite("map-marker-alt-solid.png"); } catch { Con.Error("Resource map-marker-alt-solid.png failed"); }
                     try { star = LoadSprite("star-solid.png"); } catch { Con.Error("Resource star-solid.png failed"); }
+                    try { messages = LoadSprite("messages-solid.png"); } catch { Con.Error("Resource messages-solid.png failed"); }
                     //try {  = LoadSprite(".png"); } catch { Con.Error("Resource .png failed"); }
                 }
             }

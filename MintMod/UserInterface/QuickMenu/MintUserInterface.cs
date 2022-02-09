@@ -372,6 +372,13 @@ namespace MintMod.UserInterface.QuickMenu {
             r.AddButton("Refetch Nameplates",
                 "Reloads Mint's custom nameplate addons in case more were added while you're playing",
                 () => Players.FetchCustomPlayerObjects(true), MintyResources.extlink);
+
+            r.AddButton("Clear HUD Message Queue", "Clears the HUD Popup Message Queue", () => {
+                if (!Config.UseOldHudMessages.Value)
+                    NotificationController_Mint.Instance.ClearNotifications();
+                else
+                    VRCUiManager.prop_VRCUiManager_0.field_Private_List_1_String_0.Clear();
+            }, MintyResources.messages);
         }
 
         #endregion
