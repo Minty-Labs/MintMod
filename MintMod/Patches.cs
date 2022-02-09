@@ -54,11 +54,13 @@ namespace MintMod.Hooks {
             if (MelonHandler.Mods.FindIndex(i => i.Info.Name == "PortableMirrorMod") != -1)
                 try { HookFbtController(); } catch (Exception e) { Con.Error(e); }
 
+            /*
             if (Config.SpoofDeviceType.Value) {
                 applyPatches(typeof(PlatformSpoof));
                 Con.Debug("Patched DeviceSpoof", MintCore.isDebug);
             }
             Con.Msg($"Device Type: {(Config.SpoofDeviceType.Value ? "Quest" : "PC")}");
+            */
         }
 
         #region Calibration Mirror
@@ -185,7 +187,6 @@ namespace MintMod.Hooks {
         [HarmonyLib.HarmonyPatch("Awake")]
         static void OnVRCPlayerAwake(VRCPlayer __instance) {
             Nameplates.OnVRCPlayerAwake(__instance);
-            //MasterFinder.OnAvatarIsReady(__instance);
         }
     }
 
@@ -227,6 +228,7 @@ namespace MintMod.Hooks {
         }
     }
 
+    /*
     [HarmonyLib.HarmonyPatch(typeof(Tools))]
     class PlatformSpoof {
         [HarmonyLib.HarmonyPostfix]
@@ -238,6 +240,7 @@ namespace MintMod.Hooks {
             } catch { }
         }
     }
+    */
     
     [HarmonyLib.HarmonyPatch(typeof(NetworkManager))]
     class LeftRoomPatches {
