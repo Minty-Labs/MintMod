@@ -30,7 +30,7 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
-            public const string Version = "2.20.0";
+            public const string Version = "2.21.0";
             public const string DownloadLink = null;
             public const string UpdatedDate = "7 Feb 2022";
 #if !DEBUG
@@ -106,6 +106,7 @@ namespace MintMod {
             mods.Add(new NotificationSystem());
             mods.Add(new GetRubyConfig());
             mods.Add(new NetworkEvents());
+            mods.Add(new PlayerInfo());
             //mods.Add(new );
 
             ReMod.Core.Unity.EnableDisableListener_Mint.RegisterSafe();

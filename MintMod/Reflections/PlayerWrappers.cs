@@ -6,11 +6,15 @@ using UnityEngine;
 using VRC;
 using VRC.Core;
 using MintMod.Managers;
+using MintMod.UserInterface;
 using MintyLoader;
+using VRC.DataModel;
 using VRC.SDKBase;
 using VRC.UI.Elements.Menus;
 using VRC.DataModel.Core;
+using VRCSDK2.Validation.Performance;
 using Object = UnityEngine.Object;
+using AvatarPerformanceRating = EnumPublicSealedvaNoExGoMePoVe7v0;
 
 namespace MintMod.Reflections {
     public static class PlayerWrappers {
@@ -120,6 +124,30 @@ namespace MintMod.Reflections {
             _requestedAction = act;
             foreach (var plr in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0)
                 _requestedAction.Invoke(plr);
+        }
+        
+        public static string GetFramesColored(this VRCPlayer player) {
+            string numAsString;
+            if (player.GetFrames() >= 80) numAsString = "<color=#33ff47>";
+            else if (player.GetFrames() <= 80 && player.GetFrames() >= 30) numAsString = "<color=#ff8936>";
+            else numAsString = "<color=red>";
+            return string.Format("{0}{1}</color>", numAsString, player.GetFrames());
+        }
+
+        public static string GetAviPerformance(this VRCPlayer player) {
+            if (Nameplates.ValidatePlayerAvatar(player)) {
+                var p = player.field_Private_VRCAvatarManager_0.prop_AvatarPerformanceStats_0
+                    .field_Private_ArrayOf_EnumPublicSealedvaNoExGoMePoVe7v0_0[(int)AvatarPerformanceCategory.Overall];
+                return p switch {
+                    AvatarPerformanceRating.VeryPoor => "<color=#E45A42>VP</color>",
+                    AvatarPerformanceRating.Poor => "<color=#E45A42>P</color>",
+                    AvatarPerformanceRating.Medium => "<color=#E7AA08>M</color>",
+                    AvatarPerformanceRating.Good => "<color=#69A95C>G</color>",
+                    AvatarPerformanceRating.Excellent => "<color=#6BE855>E</color>",
+                    AvatarPerformanceRating.None => "<i>Loading</i>",
+                };
+            }
+            return "";
         }
     }
 }

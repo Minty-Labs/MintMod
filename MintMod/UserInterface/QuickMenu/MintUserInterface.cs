@@ -37,7 +37,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
 
-        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu;
+        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig;
 
         private static UiManager MintUI;
 
@@ -162,6 +162,7 @@ namespace MintMod.UserInterface.QuickMenu {
             World();
             RandomStuff();
             PlayerListMenuSetup();
+            PlayerListOptions();
 
             Con.Debug("Done Setting up MintMenus", MintCore.isDebug);
             yield break;
@@ -309,24 +310,13 @@ namespace MintMod.UserInterface.QuickMenu {
             RandomMenu.AddCategory($"MintMod - v<color=#9fffe3>{MintCore.ModBuildInfo.Version}</color>", false);
             var r = RandomMenu.AddCategory("General Actions", false);
             
-            DeviceType = r.AddToggle("Spoof as Quest", "Spoof your VRChat login as Quest.",
+            /*DeviceType = r.AddToggle("Spoof as Quest", "Spoof your VRChat login as Quest.",
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofDeviceType.Identifier).Value = on);
             DeviceType.Toggle(Config.SpoofDeviceType.Value);
             
             r.AddSpacer();
             
-            FrameSpoof = r.AddToggle("Spoof Frames", "Spoof your framerate for the monkes.",
-                on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofFramerate.Identifier).Value = on);
-            FrameSpoof.Toggle(Config.SpoofFramerate.Value);
-            
-            Frame = r.AddButton($"{Config.SpoofedFrameNumber.Value}", "This is the number of your spoofed framerate.", () => {
-                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Framerate", "",
-                    InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
-                        float.TryParse(_, out var f);
-                        Config.SavePrefValue(Config.mint, Config.SpoofedFrameNumber, f);
-                        Frame.Text = f.ToString();
-                    }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
-            }, MintyResources.tv);
+            */
 
             PingSpoof = r.AddToggle("Spoof Ping", "Spoof your ping for the monkes.",
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofPing.Identifier).Value = on);
@@ -348,6 +338,19 @@ namespace MintMod.UserInterface.QuickMenu {
             bypassRiskyFunc = r.AddToggle("Bypass Risky Func", "Forces Mods with Risky Function Checks to work", 
                 on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.bypassRiskyFunc.Identifier).Value = on);
             bypassRiskyFunc.Toggle(Config.bypassRiskyFunc.Value);
+            
+            FrameSpoof = r.AddToggle("Spoof Frames", "Spoof your framerate for the monkes.",
+                on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofFramerate.Identifier).Value = on);
+            FrameSpoof.Toggle(Config.SpoofFramerate.Value);
+            
+            Frame = r.AddButton($"{Config.SpoofedFrameNumber.Value}", "This is the number of your spoofed framerate.", () => {
+                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Framerate", "",
+                    InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
+                        float.TryParse(_, out var f);
+                        Config.SavePrefValue(Config.mint, Config.SpoofedFrameNumber, f);
+                        Frame.Text = f.ToString();
+                    }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
+            }, MintyResources.tv);
 
             r.AddButton("Reset Portal", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
                 if (UnityEngine.Object.FindObjectsOfType<PortalInternal>() != null) {
@@ -648,23 +651,43 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         #endregion
+        
+        #region Player List
+
+        private static ReMenuToggle PLEnabled;
+        private static void PlayerListOptions() {
+            PlayerListConfig = BaseActions.AddCategoryPage("Player List Config", "Control the player list's options", MintyResources.user);
+            var c = PlayerListConfig.AddCategory("Player List Config", false);
+            
+            PLEnabled = c.AddToggle("Enabled", "Toggle the PLayer List", b => Config.SavePrefValue(Config.PlayerList, Config.PLEnabled, b), Config.PLEnabled.Value);
+            var t = c.AddButton("Change Position", "Change Location of the list", () => { }, MintyResources.cog);
+            t.Interactable = false;
+            var t2 = c.AddButton("Background Color", "Change the background color", () => { }, MintyResources.cog);
+            t2.Interactable = false;
+            var t3 = c.AddButton("Background Opacity", "Change the background transparency", () => { }, MintyResources.cog);
+            t3.Interactable = false;
+        }
+        
+        #endregion
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
             if (buildindex == -1) {
                 PhotonFreeze.ToggleFreeze(false);
                 ESP.ClearAllPlayerESP();
                 InfJump?.Toggle(false, true, true);
+                MainQMInfJump?.Toggle(false, true, true);
             }
         }
 
         internal override void OnUpdate() => PlayerActions.UpdateJump();
 
         internal override void OnPrefSave() {
-            DeviceType?.Toggle(Config.SpoofDeviceType.Value);
+            //DeviceType?.Toggle(Config.SpoofDeviceType.Value);
             FrameSpoof?.Toggle(Config.SpoofFramerate.Value);
             PingSpoof?.Toggle(Config.SpoofPing.Value);
             PingNegative?.Toggle(Config.SpoofedPingNegative.Value);
             bypassRiskyFunc?.Toggle(Config.bypassRiskyFunc.Value);
+            PLEnabled?.Toggle(Config.PLEnabled.Value);
             if (Frame != null)
                 Frame.Text = $"{Config.SpoofedFrameNumber.Value}";
             if (Ping != null)

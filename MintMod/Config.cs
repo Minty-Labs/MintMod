@@ -15,7 +15,7 @@ namespace MintMod {
         public override string Description => "Mint's Config system.";
 
         public static MelonPreferences_Category mint;
-        public static MelonPreferences_Entry<bool> SpoofDeviceType, QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc, ModJoinPopup;
+        public static MelonPreferences_Entry<bool> /*SpoofDeviceType,*/ QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc, ModJoinPopup;
         public static MelonPreferences_Entry<int> SpoofedPingNumber;
         public static MelonPreferences_Entry<float> SpoofedFrameNumber;
 
@@ -38,8 +38,8 @@ namespace MintMod {
 
         // Portal
         public static MelonPreferences_Category Portal;
-        public static MelonPreferences_Entry<string> Portal_1, Portal_2, Portal_3, Portal_4, Portal_5, Portal_6, Portal_7, Portal_8;
-        public static MelonPreferences_Entry<int> FakeOccupiedNumber;
+        //public static MelonPreferences_Entry<string> Portal_1, Portal_2, Portal_3, Portal_4, Portal_5, Portal_6, Portal_7, Portal_8;
+        //public static MelonPreferences_Entry<int> FakeOccupiedNumber;
         public static MelonPreferences_Entry<float> ResetTimerAmount;
 
         // Midnight Rooftop Button State
@@ -53,10 +53,13 @@ namespace MintMod {
 
         // Extras
         public static MelonPreferences_Category Extras;
-
         public static MelonPreferences_Entry<bool> useFakeName;
         public static MelonPreferences_Entry<string> FakeName;
         //public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
+
+        public static MelonPreferences_Category PlayerList;
+        public static MelonPreferences_Entry<bool> PLEnabled;
+        public static MelonPreferences_Entry<string> LocalSpoofedName, HudPosition;
 
         internal override void OnStart() {
             // Info
@@ -69,6 +72,7 @@ namespace MintMod {
             _Avatar();
             _Random();
             _Extra();
+            _PlayerList();
         }
 
         static void _Base() {
@@ -130,15 +134,15 @@ namespace MintMod {
         static void _Portal() {
             // Portal
             Portal = MelonPreferences.CreateCategory("MintMod_Portal", "MintMod - Portal");
-            Portal_1 = Portal.CreateEntry("Portal_1", "empty", "Custom Portal 1", "");
-            Portal_2 = Portal.CreateEntry("Portal_2", "empty", "Custom Portal 2", "");
-            Portal_3 = Portal.CreateEntry("Portal_3", "empty", "Custom Portal 3", "");
-            Portal_4 = Portal.CreateEntry("Portal_4", "empty", "Custom Portal 4", "");
-            Portal_5 = Portal.CreateEntry("Portal_5", "empty", "Custom Portal 5", "");
-            Portal_6 = Portal.CreateEntry("Portal_6", "empty", "Custom Portal 6", "");
-            Portal_7 = Portal.CreateEntry("Portal_7", "empty", "Custom Portal 7", "");
-            Portal_8 = Portal.CreateEntry("Portal_8", "empty", "Custom Portal 8", "");
-            FakeOccupiedNumber = Portal.CreateEntry("FakeOccupiedNumber", -1, "Fake Portal User Count", "");
+            //Portal_1 = Portal.CreateEntry("Portal_1", "empty", "Custom Portal 1", "");
+            //Portal_2 = Portal.CreateEntry("Portal_2", "empty", "Custom Portal 2", "");
+            //Portal_3 = Portal.CreateEntry("Portal_3", "empty", "Custom Portal 3", "");
+            //Portal_4 = Portal.CreateEntry("Portal_4", "empty", "Custom Portal 4", "");
+            //Portal_5 = Portal.CreateEntry("Portal_5", "empty", "Custom Portal 5", "");
+            //Portal_6 = Portal.CreateEntry("Portal_6", "empty", "Custom Portal 6", "");
+            //Portal_7 = Portal.CreateEntry("Portal_7", "empty", "Custom Portal 7", "");
+            //Portal_8 = Portal.CreateEntry("Portal_8", "empty", "Custom Portal 8", "");
+            //FakeOccupiedNumber = Portal.CreateEntry("FakeOccupiedNumber", -1, "Fake Portal User Count", "");
             ResetTimerAmount = Portal.CreateEntry("ResetTimerAmount", 3600f, "Reset Portal Timer", "");
         }
 
@@ -172,7 +176,7 @@ namespace MintMod {
         static void _Random() {
             // Random
             mint = MelonPreferences.CreateCategory("MintMod_Random", "MintMod - Random");
-            SpoofDeviceType = mint.CreateEntry("SpoofDeviceType", false, "Spoof Device to Quest", "");
+            //SpoofDeviceType = mint.CreateEntry("SpoofDeviceType", false, "Spoof Device to Quest", "");
             //QMStatus = mint.CreateEntry("QMStatus", false, "Dev Status on Quick Menu", "");
             SpoofPing = mint.CreateEntry("SpoofPing", false, "Spoof Ping", "");
             SpoofedPingNumber = mint.CreateEntry("SpoofedPingNumber", 0, "Spoofed Ping Number", "");
@@ -191,18 +195,35 @@ namespace MintMod {
             //BTKLead = Extras.CreateEntry("UseBTKLead", false, "* Use BTKLead", "");
         }
 
+        static void _PlayerList() {
+            PlayerList = MelonPreferences.CreateCategory("MintMod_PlayerList", "MintMod - PlayerList");
+            PLEnabled = PlayerList.CreateEntry("EnablePlayerList", false, "Enable Player List");
+            LocalSpoofedName = PlayerList.CreateEntry("LocalSpoofedName", "", "Local Player List Name Spoof", "If empty, nothing will change");
+        }
+
         internal override void OnPrefSave() {
             Utils.General.SetPriority();
             Utils.General.SetFrameRate();
         }
 
-        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<bool> @bool, bool value)
-            => MelonPreferences.GetEntry<bool>(cat.Identifier, @bool.Identifier).Value = value;
-        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<string> @string, string value)
-            => MelonPreferences.GetEntry<string>(cat.Identifier, @string.Identifier).Value = value;
-        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<float> @float, float value)
-            => MelonPreferences.GetEntry<float>(cat.Identifier, @float.Identifier).Value = value;
-        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<int> @int, int value)
-            => MelonPreferences.GetEntry<int>(cat.Identifier, @int.Identifier).Value = value;
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<bool> @bool, bool value) {
+            MelonPreferences.GetEntry<bool>(cat.Identifier, @bool.Identifier).Value = value;
+            MelonPreferences.Save();
+        }
+
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<string> @string, string value) {
+            MelonPreferences.GetEntry<string>(cat.Identifier, @string.Identifier).Value = value;
+            MelonPreferences.Save();
+        }
+
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<float> @float, float value) {
+            MelonPreferences.GetEntry<float>(cat.Identifier, @float.Identifier).Value = value;
+            MelonPreferences.Save();
+        }
+
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<int> @int, int value) {
+            MelonPreferences.GetEntry<int>(cat.Identifier, @int.Identifier).Value = value;
+            MelonPreferences.Save();
+        }
     }
 }

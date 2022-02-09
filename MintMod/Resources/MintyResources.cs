@@ -18,11 +18,12 @@ namespace MintMod.Resources {
         public override string Description => "Contains images in asset bundles.";
         private static AssetBundle MintBundle;
 
-        public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent;
+        public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent, BG_HUD;
         public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list,
             copy, key, marker, marker_hole, star;
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
+        public static Font BalooFont;
 
         internal override void OnStart() {
             Con.Msg("Loading AssetBundles");
@@ -34,6 +35,7 @@ namespace MintMod.Resources {
 
                     try { masterCrown = LoadSprite("masterCrown.png"); } catch { Con.Error("Resource masterCrown.png failed"); }
                     try { MintIcon = LoadSprite("MintMod.png"); } catch { Con.Error("Resource MintMod.png failed"); }
+                    try { BG_HUD = LoadSprite("BG_Trans.png"); } catch { Con.Error("Resources BG_Trans.png failed"); }
                     try { MintTabIcon = LoadSprite("MintMod_flat.png"); } catch { Con.Error("Resource MintMod_flat.png failed"); }
                     try { basicGradient = LoadTexture("Gradient.png"); } catch { Con.Error("Resource Gradient.png failed"); }
                     try { Transparent = LoadSprite("transparent.png"); } catch { Con.Error("Resource transparent.png failed"); }
@@ -42,7 +44,7 @@ namespace MintMod.Resources {
                     try { JumpIcon = LoadTexture2D("JumpIcon.png"); } catch { Con.Error("Failed to load Texture: JumpIcon.png"); }
                     try { ESPIcon = LoadTexture2D("ESPIcon.png"); } catch { Con.Error("Failed to load Texture: ESPIcon.png"); }
                     try { FlyIcon = LoadTexture2D("FlyIcon.png"); } catch { Con.Error("Failed to load Texture: FlyIcon.png"); }
-                    //try { VRTPIcon = LoadTexture2D("VRTPIcon.png"); } catch { Con.Error("Failed to load Texture: VRTPIcon.png"); }
+                    try { BalooFont = LoadFont("Baloo.ttf"); } catch { Con.Error("Resources Baloo.ttf failed"); }
                     
                     try { address_book = LoadSprite("address-book-solid.png"); } catch { Con.Error("Failed to load Texture: address-book-solid.png"); }
                     try { checkered = LoadSprite("chess-board-solid.png"); } catch { Con.Error("Resource chess-board-solid.png failed"); }
@@ -72,24 +74,28 @@ namespace MintMod.Resources {
         private static Sprite LoadSprite(string sprite) {
             Sprite sprite2 = MintBundle.LoadAsset(sprite, Il2CppType.Of<Sprite>()).Cast<Sprite>();
             sprite2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            //sprite2.hideFlags = HideFlags.HideAndDontSave;
             return sprite2;
+        }
+        
+        private static Font LoadFont(string assetToLoad)
+        {
+            Font loadedFont = MintBundle.LoadAsset_Internal(assetToLoad, Il2CppType.Of<Font>()).Cast<Font>();
+            loadedFont.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            return loadedFont;
         }
 
         private static Texture LoadTexture(string tex) {
             Texture sprite2 = MintBundle.LoadAsset(tex, Il2CppType.Of<Texture>()).Cast<Texture>();
             sprite2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            //sprite2.hideFlags = HideFlags.HideAndDontSave;
             return sprite2;
         }
 
         private static Texture2D LoadTexture2D(string tex) {
             Texture2D tex2 = MintBundle.LoadAsset_Internal(tex, Il2CppType.Of<Texture2D>()).Cast<Texture2D>();
             tex2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            //tex2.hideFlags = HideFlags.HideAndDontSave;
             return tex2;
         }
-
+/*
         public static Texture2D ConvertToSprite(Sprite s) {
             var croppedTexture = new Texture2D((int)s.rect.width, (int)s.rect.height);
             var pixels = s.texture.GetPixels((int)s.textureRect.x,
@@ -102,5 +108,6 @@ namespace MintMod.Resources {
         }
 
         public static Sprite ConvertToTexture2D(Texture2D t) => Sprite.Create(t, new Rect(0, 0, t.width, t.height), Vector2.zero);
+        */
     }
 }
