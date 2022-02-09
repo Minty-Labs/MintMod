@@ -2,27 +2,28 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using MelonLoader;
 using MintMod;
 using MintMod.Reflections;
 using MintMod.Resources;
 using MintyLoader;
 using ReMod.Core.VRChat;
+using UnityEngine.Playables;
 using VRC;
 using VRC.Core;
 using VRC.DataModel;
 using VRCSDK2;
 using VRCSDK2.Validation.Performance;
-using AvatarPerformanceRating = EnumPublicSealedvaNoExGoMePoVe7v0;
 
 namespace MintMod.UserInterface.QuickMenu {
     internal class PlayerInfo : MintSubMod {
         public override string Name => "PlayerInfoHUD";
         public override string Description => "Shows Player Info on selected user";
 
-        private Transform QuickMenu;
+        private Transform QuickMenu, Wing;
         private GameObject BackgroundObject, TextObject;
-        private Image BackgroundImage;
+        public static Image BackgroundImage;
         private Text TheText;
         private bool Initialized;
 
@@ -33,27 +34,30 @@ namespace MintMod.UserInterface.QuickMenu {
             while (MintyResources.BG_HUD == null) yield return null;
             while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
             QuickMenu = UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>().gameObject.transform;
-            var LeftWing = QuickMenu.Find("Container/Window/Wing_Left/");
+            Wing = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
             
-            BackgroundObject = new GameObject("MintUIMHUD Panel");
-            BackgroundObject.transform.SetParent(LeftWing, false);
-            BackgroundObject.AddComponent<CanvasRenderer>();
-            BackgroundImage = BackgroundObject.AddComponent<Image>();
+            if (Wing.Find("MintUiHud Panel") == null) {
+                BackgroundObject = new GameObject("MintUiHud Panel");
+                BackgroundObject.transform.SetParent(Wing, false);
+                BackgroundObject.AddComponent<CanvasRenderer>();
+                BackgroundImage = BackgroundObject.AddComponent<Image>();
             
-            BackgroundObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420f);
-            BackgroundObject.GetComponent<RectTransform>().localPosition = new Vector3(-1000, -500, -0.5f);
-            BackgroundImage.sprite = MintyResources.BG_HUD;
+                BackgroundObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420);
+                SetLocation();
+                BackgroundImage.sprite = MintyResources.BG_HUD;
+                SetBackgroundColor(Config.BackgroundColor.Value);
+            }
             
             TextObject = new GameObject("Player List");
             TextObject.transform.SetParent(BackgroundObject.transform, false);
             TextObject.AddComponent<CanvasRenderer>();
             TheText = TextObject.AddComponent<Text>();
-            TextObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, 1410f);
+            SetSizeTextObj();
             if (MintyResources.BalooFont != null)
                 TheText.font = MintyResources.BalooFont;
             else
                 TheText.font = UnityEngine.Resources.GetBuiltinResource<Font>("Arial.ttf");
-            TheText.fontSize = 42;
+            TheText.fontSize = 40;
             TheText.text = "";
             TheText.alignment = (TextAnchor)TextAlignment.Left;
             Initialized = true;
@@ -92,7 +96,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 if (PlayerManager.field_Private_Static_PlayerManager_0 != null && PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0 != null) {
                     try {
                         foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
-                            if (player != null && player.field_Private_VRCPlayerApi_0 != null && num != 23) {
+                            if (player != null && player.field_Private_VRCPlayerApi_0 != null && num != (Config.uncapListCount.Value ? 128 : 23)) {
                                 text = string.Concat(new[] {
                                     text,
                                     player.field_Private_VRCPlayerApi_0.isMaster ? ">> " : "".PadRight(6),
@@ -113,13 +117,37 @@ namespace MintMod.UserInterface.QuickMenu {
             return text;
         }
 
+        private void SetLocation() {
+            if (BackgroundObject != null) {
+                var t = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
+                BackgroundObject.transform.SetParent(t, false);
+                BackgroundObject.GetComponent<RectTransform>().localPosition = new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
+            }
+        }
+
+        private void SetSizeTextObj() {
+            if (TextObject != null)
+                TextObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 8410 : 1410);
+        }
+
+        public static void SetBackgroundColor(Color32 c) => BackgroundImage.color = c;
+
         internal override void OnPrefSave() {
             if (Initialized && !Config.PLEnabled.Value) {
+                var obj = MelonCoroutines.Start(HUDLoop());
                 Initialized = false;
                 BackgroundObject.Destroy();
                 TextObject.Destroy();
+                Wing.Find("MintUiHud Panel").gameObject.Destroy();
+                //RightWing.Find("MintUiHud Panel")?.Destroy();
+                try { MelonCoroutines.Stop(obj); } catch (Exception ee) { Con.Debug($"{ee}"); }
             } else if (!Initialized && Config.PLEnabled.Value) 
                 MelonCoroutines.Start(Init());
+
+            if (Initialized && Config.PLEnabled.Value) {
+                SetLocation();
+                SetSizeTextObj();
+            }
         }
     }
 }

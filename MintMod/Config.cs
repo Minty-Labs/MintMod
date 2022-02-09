@@ -8,6 +8,7 @@ using MintMod.Functions;
 using UnityEngine;
 using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.QuickMenu;
+using VRC;
 
 namespace MintMod {
     class Config : MintSubMod {
@@ -58,8 +59,10 @@ namespace MintMod {
         //public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
 
         public static MelonPreferences_Category PlayerList;
-        public static MelonPreferences_Entry<bool> PLEnabled;
+        public static MelonPreferences_Entry<bool> PLEnabled, uncapListCount;
         public static MelonPreferences_Entry<string> LocalSpoofedName, HudPosition;
+        public static MelonPreferences_Entry<Color32> BackgroundColor;
+        public static MelonPreferences_Entry<int> Location;
 
         internal override void OnStart() {
             // Info
@@ -121,7 +124,7 @@ namespace MintMod {
             // Menu
             Menu = MelonPreferences.CreateCategory("MintMod_Menu", "MintMod - Menu");
             useTabButtonForMenu = Menu.CreateEntry("useTabButtonForMenu", false, "* Use Tab Button Menu");
-            KeepFlightBTNsOnMainMenu = Menu.CreateEntry("KeepFlightBTNsOnMainMenu", false, "Put Fly/NoClip on Main Quick Menu", "");
+            KeepFlightBTNsOnMainMenu = Menu.CreateEntry("KeepFlightBTNsOnMainMenu", false, "Put Fly/NoClip on Main Quick Menu");
             ActionMenuON = Menu.CreateEntry("ActionMenuON", true, "Mint ActionMenu Controls", "Toggle Action Menu integration");
 
             //InfoHUDPosition = Menu.CreateEntry("InfoHUDPosition", "3", "Quick Menu Player List Location", "");
@@ -143,34 +146,34 @@ namespace MintMod {
             //Portal_7 = Portal.CreateEntry("Portal_7", "empty", "Custom Portal 7", "");
             //Portal_8 = Portal.CreateEntry("Portal_8", "empty", "Custom Portal 8", "");
             //FakeOccupiedNumber = Portal.CreateEntry("FakeOccupiedNumber", -1, "Fake Portal User Count", "");
-            ResetTimerAmount = Portal.CreateEntry("ResetTimerAmount", 3600f, "Reset Portal Timer", "");
+            ResetTimerAmount = Portal.CreateEntry("ResetTimerAmount", 3600f, "Reset Portal Timer");
         }
 
         static void _MRBS() {
             // Midnight Rooftop Button State
             MRBS = MelonPreferences.CreateCategory("MintMod_MidnightRooftop", "MintMod - Midnight Rooftop Button State");
-            DetObj = MRBS.CreateEntry("DetObj", true, "Detail Objects", "");
-            Fog = MRBS.CreateEntry("Fog", true, "Fog", "");
-            PP = MRBS.CreateEntry("PP", true, "Post Processing", "");
-            thunder = MRBS.CreateEntry("thunder", false, "Thunder Sounds", "");
-            dust = MRBS.CreateEntry("dust", true, "Dust Particles", "");
-            collider = MRBS.CreateEntry("collider", false, "Colliders", "");
-            join = MRBS.CreateEntry("join", true, "Join Notification Sound", "");
-            pillow = MRBS.CreateEntry("pillow", true, "Pillow Objects", "");
-            pillowpickup = MRBS.CreateEntry("pillowpickup", true, "Pillow Pickup", "");
-            chairs = MRBS.CreateEntry("chairs", true, "Chairs", "");
-            lightbeams = MRBS.CreateEntry("lightbeams", false, "Light Beams", "");
-            RainWin = MRBS.CreateEntry("RainWin", true, "Rainy Windows", "");
-            RainPart = MRBS.CreateEntry("RainPart", true, "Rain Particles", "");
-            FurCarpet = MRBS.CreateEntry("FurCarpet", true, "Fur Carpet", "");
+            DetObj = MRBS.CreateEntry("DetObj", true, "Detail Objects");
+            Fog = MRBS.CreateEntry("Fog", true, "Fog");
+            PP = MRBS.CreateEntry("PP", true, "Post Processing");
+            thunder = MRBS.CreateEntry("thunder", false, "Thunder Sounds");
+            dust = MRBS.CreateEntry("dust", true, "Dust Particles");
+            collider = MRBS.CreateEntry("collider", false, "Colliders");
+            join = MRBS.CreateEntry("join", true, "Join Notification Sound");
+            pillow = MRBS.CreateEntry("pillow", true, "Pillow Objects");
+            pillowpickup = MRBS.CreateEntry("pillowpickup", true, "Pillow Pickup");
+            chairs = MRBS.CreateEntry("chairs", true, "Chairs");
+            lightbeams = MRBS.CreateEntry("lightbeams", false, "Light Beams");
+            RainWin = MRBS.CreateEntry("RainWin", true, "Rainy Windows");
+            RainPart = MRBS.CreateEntry("RainPart", true, "Rain Particles");
+            FurCarpet = MRBS.CreateEntry("FurCarpet", true, "Fur Carpet");
         }
 
         static void _Avatar() {
             // Avatar
             Avatar = MelonPreferences.CreateCategory("MintMod_Avatar", "MintMod - Avatar");
-            AviFavsEnabled = Avatar.CreateEntry("AviFavsEnabled", true, "Avatar Favorites Enabled", "");
-            AviLogFavOrUnfavInConsole = Avatar.CreateEntry("AviLogFavOrUnfavInConsole", true, "Log Fav/UnFav in console", "");
-            CalibrationMirror = Avatar.CreateEntry("useCalibrationMirror", true, "Use a Mirror for Calibration", "");
+            AviFavsEnabled = Avatar.CreateEntry("AviFavsEnabled", true, "Avatar Favorites Enabled");
+            AviLogFavOrUnfavInConsole = Avatar.CreateEntry("AviLogFavOrUnfavInConsole", true, "Log Fav/UnFav in console");
+            CalibrationMirror = Avatar.CreateEntry("useCalibrationMirror", true, "Use a Mirror for Calibration");
         }
 
         static void _Random() {
@@ -178,11 +181,11 @@ namespace MintMod {
             mint = MelonPreferences.CreateCategory("MintMod_Random", "MintMod - Random");
             //SpoofDeviceType = mint.CreateEntry("SpoofDeviceType", false, "Spoof Device to Quest", "");
             //QMStatus = mint.CreateEntry("QMStatus", false, "Dev Status on Quick Menu", "");
-            SpoofPing = mint.CreateEntry("SpoofPing", false, "Spoof Ping", "");
-            SpoofedPingNumber = mint.CreateEntry("SpoofedPingNumber", 0, "Spoofed Ping Number", "");
-            SpoofedPingNegative = mint.CreateEntry("SpoofedPingNegative", false, "Fake Ping is Negative", "");
-            SpoofFramerate = mint.CreateEntry("SpoofFramerate", true, "Spoof Framerate", "");
-            SpoofedFrameNumber = mint.CreateEntry("SpoofedFrameNumber", 0f, "Spoofed Frame Number", "");
+            SpoofPing = mint.CreateEntry("SpoofPing", false, "Spoof Ping");
+            SpoofedPingNumber = mint.CreateEntry("SpoofedPingNumber", 0, "Spoofed Ping Number");
+            SpoofedPingNegative = mint.CreateEntry("SpoofedPingNegative", false, "Fake Ping is Negative");
+            SpoofFramerate = mint.CreateEntry("SpoofFramerate", true, "Spoof Framerate");
+            SpoofedFrameNumber = mint.CreateEntry("SpoofedFrameNumber", 0f, "Spoofed Frame Number");
             bypassRiskyFunc = mint.CreateEntry("bypassRiskyFunc", false, "Bypasses Mods' Risky Func Checks");
             ModJoinPopup = mint.CreateEntry("ModJoinPopup", true, "Toggle the Mod Join Popup");
         }
@@ -199,6 +202,10 @@ namespace MintMod {
             PlayerList = MelonPreferences.CreateCategory("MintMod_PlayerList", "MintMod - PlayerList");
             PLEnabled = PlayerList.CreateEntry("EnablePlayerList", false, "Enable Player List");
             LocalSpoofedName = PlayerList.CreateEntry("LocalSpoofedName", "", "Local Player List Name Spoof", "If empty, nothing will change");
+            BackgroundColor = PlayerList.CreateEntry("PLBackgroundColor", new Color32(0, 0, 0, 128), "Player List Background Color",
+                "This is the [ RR, GG, BB, Alpha ] (from RGBA values 0 - 255) values for the background image on the player list.");
+            Location = PlayerList.CreateEntry("PlayerListLocation", 0, "Location Index", "0 = LeftWing; 1 = RightWing");
+            uncapListCount = PlayerList.CreateEntry("uncapListCount", false, "Show ALL Players in list");
         }
 
         internal override void OnPrefSave() {
@@ -223,6 +230,11 @@ namespace MintMod {
 
         public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<int> @int, int value) {
             MelonPreferences.GetEntry<int>(cat.Identifier, @int.Identifier).Value = value;
+            MelonPreferences.Save();
+        }
+        
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<Color32> color, Color32 value) {
+            MelonPreferences.GetEntry<Color32>(cat.Identifier, color.Identifier).Value = value;
             MelonPreferences.Save();
         }
     }

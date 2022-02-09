@@ -35,7 +35,6 @@ namespace MintMod.Resources {
 
                     try { masterCrown = LoadSprite("masterCrown.png"); } catch { Con.Error("Resource masterCrown.png failed"); }
                     try { MintIcon = LoadSprite("MintMod.png"); } catch { Con.Error("Resource MintMod.png failed"); }
-                    try { BG_HUD = LoadSprite("BG_Trans.png"); } catch { Con.Error("Resources BG_Trans.png failed"); }
                     try { MintTabIcon = LoadSprite("MintMod_flat.png"); } catch { Con.Error("Resource MintMod_flat.png failed"); }
                     try { basicGradient = LoadTexture("Gradient.png"); } catch { Con.Error("Resource Gradient.png failed"); }
                     try { Transparent = LoadSprite("transparent.png"); } catch { Con.Error("Resource transparent.png failed"); }
@@ -44,6 +43,7 @@ namespace MintMod.Resources {
                     try { JumpIcon = LoadTexture2D("JumpIcon.png"); } catch { Con.Error("Failed to load Texture: JumpIcon.png"); }
                     try { ESPIcon = LoadTexture2D("ESPIcon.png"); } catch { Con.Error("Failed to load Texture: ESPIcon.png"); }
                     try { FlyIcon = LoadTexture2D("FlyIcon.png"); } catch { Con.Error("Failed to load Texture: FlyIcon.png"); }
+                    try { BG_HUD = LoadSprite("PlayerListBackground.png"); } catch { Con.Error("Resources PlayerListBackgrounds.png failed"); }
                     try { BalooFont = LoadFont("Baloo.ttf"); } catch { Con.Error("Resources Baloo.ttf failed"); }
                     
                     try { address_book = LoadSprite("address-book-solid.png"); } catch { Con.Error("Failed to load Texture: address-book-solid.png"); }
