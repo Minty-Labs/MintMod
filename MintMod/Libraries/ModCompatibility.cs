@@ -4,10 +4,10 @@ using MintyLoader;
 using MintMod.Managers;
 
 namespace MintMod.Libraries {
-    class ModCompatibility : MintSubMod {
+    internal class ModCompatibility : MintSubMod {
         public override string Name => "ModCompatibility";
         public override string Description => "Find other mods and do things.";
-        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, TeleporterVR, SettingsRestart, ProPlates, FriendsNotesInstalled;
+        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, TeleporterVR, SettingsRestart, ProPlates, FriendsNotesInstalled, Styletor;
         public static bool hasCNP_On, emmVRCPanicMode;
 
         internal override void OnStart() {
@@ -28,9 +28,11 @@ namespace MintMod.Libraries {
             if (MelonHandler.Mods.FindIndex(m => m.Info.Name == "Friend Notes") != 1)
                 FriendsNotesInstalled = true;
 
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "UI Expansion Kit") != -1) {
+            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "UI Expansion Kit") != -1) 
                 UIX = true;
-            }
+            
+            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "Styletor") != -1) 
+                Styletor = true;
 
             if ((MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRC") != -1) || MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRCLoader") != -1) {
                 emmVRC = true;
@@ -51,11 +53,10 @@ namespace MintMod.Libraries {
             }
         }
 
-        private static void Read_emmVRCConfig() {
-            if (GETemmVRCconfig.ReadConfig().NameplateColorChangingEnabled == true) {
+        private void Read_emmVRCConfig() {
+            if (GETemmVRCconfig.ReadConfig().NameplateColorChangingEnabled) 
                 hasCNP_On = true;
-            }
-            if (GETemmVRCconfig.ReadConfig().StealthMode == true)
+            if (GETemmVRCconfig.ReadConfig().StealthMode)
                 emmVRCPanicMode = true;
         }
 

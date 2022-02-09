@@ -15,7 +15,7 @@ using MintyLoader;
 using UnityEngine.UI;
 
 namespace MintMod.UserInterface.OldUI {
-    class ReColor : MintSubMod {
+    internal class ReColor : MintSubMod {
         public override string Name => "OldUiRecolor";
         public override string Description => "Colors the User Interface (Not the QuickMenu)";
         internal static ReColor Intstance;
@@ -207,9 +207,6 @@ namespace MintMod.UserInterface.OldUI {
             };
             color.a = 0.9f;
 
-            if (UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().Count != 0)
-                UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().FirstOrDefault().highlightColor = color;
-
             if (UIWrappers.GetVRCUiMInstance().menuContent() != null) {
                 var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
                 try {
@@ -283,6 +280,7 @@ namespace MintMod.UserInterface.OldUI {
                             img.color = color;
                     }
                     */
+                    MelonCoroutines.Start(DelayedHFXReColor(color));
                 } catch (Exception ex) {
                     Con.Error(ex);
                 }
@@ -290,12 +288,21 @@ namespace MintMod.UserInterface.OldUI {
             yield break;
         }
 
-        internal static void ColorActionMenu(Color color) {
-            foreach (PedalGraphic grph in UnityEngine.Resources.FindObjectsOfTypeAll<PedalGraphic>())
-                grph.color = color;
+        private IEnumerator DelayedHFXReColor(Color color) {
+            yield return new WaitForSeconds(10);
+            if (UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().Count != 0)
+                UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().FirstOrDefault().highlightColor = color;
+            yield break;
         }
 
-        internal static void ColorLoadingScreenEnvironment(Color color) {
+        private void ColorActionMenu(Color color) {
+            if (!ModCompatibility.Styletor) {
+                foreach (PedalGraphic grph in UnityEngine.Resources.FindObjectsOfTypeAll<PedalGraphic>())
+                    grph.color = color;
+            }
+        }
+
+        private void ColorLoadingScreenEnvironment(Color color) {
             if (Config.ColorLoadingScreen.Value && !(MelonHandler.Mods.Any(i => i.Info.Name == "BetterLoadingScreen"))) {
                 try {
                     GameObject quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
