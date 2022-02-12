@@ -110,7 +110,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         }
                     }
                     catch (Exception e) {
-                        Con.Error(e);
+                        Con.Debug($"[DEBUG ERROR] {e}");
                     }
                 }
             }
@@ -130,7 +130,10 @@ namespace MintMod.UserInterface.QuickMenu {
                 TextObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 8410 : 1410);
         }
 
-        public static void SetBackgroundColor(Color32 c) => BackgroundImage.color = c;
+        public static void SetBackgroundColor(Color32 c) {
+            if (BackgroundImage != null)
+                BackgroundImage.color = c;
+        }
 
         internal override void OnPrefSave() {
             if (Initialized && !Config.PLEnabled.Value) {
