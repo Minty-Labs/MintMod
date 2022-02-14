@@ -21,10 +21,10 @@ namespace MintMod.UserInterface.QuickMenu {
         public override string Name => "PlayerInfoHUD";
         public override string Description => "Shows Player Info on selected user";
 
-        private Transform QuickMenu, Wing;
-        private GameObject BackgroundObject, TextObject;
+        private static Transform QuickMenu, Wing;
+        private static GameObject BackgroundObject, TextObject;
         public static Image BackgroundImage;
-        private Text TheText;
+        private static Text TheText;
         private bool Initialized;
 
         internal override void OnStart() => MelonCoroutines.Start(Init());
@@ -57,14 +57,14 @@ namespace MintMod.UserInterface.QuickMenu {
                 TheText.font = MintyResources.BalooFont;
             else
                 TheText.font = UnityEngine.Resources.GetBuiltinResource<Font>("Arial.ttf");
-            TheText.fontSize = 40;
+            UpdateTextSize(40);
             TheText.text = "";
             TheText.alignment = (TextAnchor)TextAlignment.Left;
             Initialized = true;
             
             MelonCoroutines.Start(HUDLoop());
             
-            TheText.GetComponent<RectTransform>().anchoredPosition = new Vector2(130, 125);
+            MoveTheText();
         }
 
         private IEnumerator HUDLoop() {
@@ -79,11 +79,11 @@ namespace MintMod.UserInterface.QuickMenu {
                     RenderPlayerList()
                 });
                 if (TheText.text.Contains("Aicalas"))
-                    TheText.text = TheText.text.Replace("Aicalas", "Penny");
+                    TheText.text = TheText.text.Replace("Aicalas", "<color=#587EE2>Penny</color>");
                 if (TheText.text.Contains("jettsd"))
                     TheText.text = TheText.text.Replace("jettsd", "Emy");
                 if (TheText.text.Contains("~Silentt~"))
-                    TheText.text = TheText.text.Replace("~Silentt~", "Elly");
+                    TheText.text = TheText.text.Replace("~Silentt~", "<color=#D2A0FF>Elly</color>");
                 if (!string.IsNullOrWhiteSpace(Config.LocalSpoofedName.Value)) 
                     TheText.text = TheText.text.Replace(APIUser.CurrentUser.displayName, Config.LocalSpoofedName.Value);
             }
@@ -96,7 +96,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 if (PlayerManager.field_Private_Static_PlayerManager_0 != null && PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0 != null) {
                     try {
                         foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
-                            if (player != null && player.field_Private_VRCPlayerApi_0 != null && num != (Config.uncapListCount.Value ? 128 : 23)) {
+                            if (player != null && player.field_Private_VRCPlayerApi_0 != null && num != (Config.uncapListCount.Value ? 128 : 25)) {
                                 text = string.Concat(new[] {
                                     text,
                                     player.field_Private_VRCPlayerApi_0.isMaster ? ">> " : "".PadRight(6),
@@ -117,22 +117,33 @@ namespace MintMod.UserInterface.QuickMenu {
             return text;
         }
 
-        private void SetLocation() {
+        public static void SetLocation() {
             if (BackgroundObject != null) {
                 var t = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
                 BackgroundObject.transform.SetParent(t, false);
-                BackgroundObject.GetComponent<RectTransform>().localPosition = new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
+                BackgroundObject.GetComponent<RectTransform>().localPosition = 
+                    new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
             }
         }
 
         private void SetSizeTextObj() {
             if (TextObject != null)
-                TextObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 8410 : 1410);
+                TextObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 4410 : 1410);
         }
 
         public static void SetBackgroundColor(Color32 c) {
             if (BackgroundImage != null)
                 BackgroundImage.color = c;
+        }
+
+        public static void UpdateTextSize(int size) {
+            if (TheText != null)
+                TheText.fontSize = size;
+        }
+
+        public static void MoveTheText() {
+            if (TheText != null)
+                TheText.GetComponent<RectTransform>().anchoredPosition = new Vector2(130, Config.uncapListCount.Value ? -300 : 125);
         }
 
         internal override void OnPrefSave() {
