@@ -17,8 +17,10 @@ namespace MintyLoader {
             public static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
         }
 
-        internal static string[] badMods = new[] { "ripperstore", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", "snaxytag", "unchained", "abyss", "versa", "notorious" };
-        internal static string[] badAuthors = new[] { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "_unreal", "bunny", "stellar", "lady lucy", "meap" };
+        internal static string[] badMods = new[] { "ripperstore", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", "snaxytag", "unchained", 
+            "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen" };
+        internal static string[] badAuthors = new[] { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "_unreal", "bunny", "stellar", "lady lucy", 
+            "meap", "fiass" };
         
         internal static void BlacklistedModCheck() {
             var temp = new List<string>();
