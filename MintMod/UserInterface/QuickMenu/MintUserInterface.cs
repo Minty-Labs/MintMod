@@ -664,7 +664,7 @@ namespace MintMod.UserInterface.QuickMenu {
         private static ReMenuToggle PLEnabled, WingLocation, ExtendList;
         private static ReMenuButton Save;
         private static ReMenuSliderCategory ColorCat;
-        private static ReMenuSlider Red, Green, Blue, Alpha;
+        private static ReMenuSlider Red, Green, Blue, Alpha, TextSize;
         private static void PlayerListOptions() {
             PlayerListConfig = BaseActions.AddCategoryPage("Player List Config", "Control the player list's options", MintyResources.user);
             var c = PlayerListConfig.AddCategory("Player List Config", false);
@@ -681,11 +681,14 @@ namespace MintMod.UserInterface.QuickMenu {
                 Alpha.Active = tempToggle;
                 WingLocation.Active = tempToggle;
                 ExtendList.Active = tempToggle;
+                TextSize.Active = tempToggle;
             }, Config.PLEnabled.Value);
             WingLocation = c.AddToggle("List on Right Side", "Move the list on the left or right wing", b => 
                 Config.SavePrefValue(Config.PlayerList, Config.Location, b ? 1 : 0), Config.Location.Value != 0);
-            ExtendList = c.AddToggle("Extend Player Listing", "Show all players regardless on length of box", b => 
-                Config.SavePrefValue(Config.PlayerList, Config.uncapListCount, b), Config.uncapListCount.Value);
+            ExtendList = c.AddToggle("Extend Player Listing", "Show all players regardless on length of box", b => {
+                Config.SavePrefValue(Config.PlayerList, Config.uncapListCount, b);
+                PlayerInfo.MoveTheText();
+            }, Config.uncapListCount.Value);
             Save = c.AddButton("Save Values", "Save the color options below", () => {
                 var color = (Color32)PlayerInfo.BackgroundImage.color;
                 Config.SavePrefValue(Config.PlayerList, Config.BackgroundColor, color);
@@ -696,7 +699,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 var c = new Color32((byte)f, Config.BackgroundColor.Value.g,
                     Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a);
                 PlayerInfo.SetBackgroundColor(c);
-                }, Config.BackgroundColor.Value.r, 0, 255);
+            }, Config.BackgroundColor.Value.r, 0, 255);
             Green = ColorCat.AddSlider("Green Value", "Shift Green Color Values", f => {
                 var c = new Color32(Config.BackgroundColor.Value.r, (byte)f,
                     Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a);
@@ -712,6 +715,9 @@ namespace MintMod.UserInterface.QuickMenu {
                     Config.BackgroundColor.Value.b, (byte)f);
                 PlayerInfo.SetBackgroundColor(c);
             }, Config.BackgroundColor.Value.a, 0, 255);
+            TextSize = ColorCat.AddSlider("Text Size", "Change the text size of the player list", f => 
+                PlayerInfo.UpdateTextSize((int)f), Config.TextSize.Value, 32, 50);
+            
             WingLocation.Active = o;
             ExtendList.Active = o;
             Save.Active = o;
@@ -720,6 +726,7 @@ namespace MintMod.UserInterface.QuickMenu {
             Green.Active = o;
             Blue.Active = o;
             Alpha.Active = o;
+            TextSize.Active = o;
         }
         
         #endregion

@@ -62,7 +62,7 @@ namespace MintMod {
         public static MelonPreferences_Entry<bool> PLEnabled, uncapListCount;
         public static MelonPreferences_Entry<string> LocalSpoofedName, HudPosition;
         public static MelonPreferences_Entry<Color32> BackgroundColor;
-        public static MelonPreferences_Entry<int> Location;
+        public static MelonPreferences_Entry<int> Location, TextSize;
 
         internal override void OnStart() {
             // Info
@@ -206,6 +206,7 @@ namespace MintMod {
                 "This is the [ RR, GG, BB, Alpha ] (from RGBA values 0 - 255) values for the background image on the player list.");
             Location = PlayerList.CreateEntry("PlayerListLocation", 0, "Location Index", "0 = LeftWing; 1 = RightWing");
             uncapListCount = PlayerList.CreateEntry("uncapListCount", false, "Show ALL Players in list");
+            TextSize = PlayerList.CreateEntry("PlayerListTextSize", 40, "Player List Text Size");
         }
 
         internal override void OnPrefSave() {
