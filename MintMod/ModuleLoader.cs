@@ -31,5 +31,7 @@ namespace MintMod {
         internal virtual void OnGUI() {}
 
         internal virtual void OnPrefSave() {}
+
+        internal virtual void OnApplicationQuit() {}
     }
 }

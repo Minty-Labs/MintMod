@@ -20,7 +20,7 @@ namespace MintMod.Resources {
 
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent, BG_HUD;
         public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list, messages,
-            copy, key, marker, marker_hole, star;
+            copy, key, marker, marker_hole, star, m_Back, m_Foward, m_Menu, m_Play, m_Stop;
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
         public static Font BalooFont;
@@ -67,6 +67,12 @@ namespace MintMod.Resources {
                     try { star = LoadSprite("star-solid.png"); } catch { Con.Error("Resource star-solid.png failed"); }
                     try { messages = LoadSprite("messages-solid.png"); } catch { Con.Error("Resource messages-solid.png failed"); }
                     //try {  = LoadSprite(".png"); } catch { Con.Error("Resource .png failed"); }
+                    
+                    try { m_Back = LoadSprite("Back.png"); } catch { Con.Error("Resource Back.png failed"); }
+                    try { m_Foward = LoadSprite("Foward.png"); } catch { Con.Error("Resource Foward.png failed"); }
+                    try { m_Menu = LoadSprite("Menu.png"); } catch { Con.Error("Resource Menu.png failed"); }
+                    try { m_Play = LoadSprite("Play.png"); } catch { Con.Error("Resource Play.png failed"); }
+                    try { m_Stop = LoadSprite("stop.png"); } catch { Con.Error("Resource stop.png failed"); }
                 }
             }
             Con.Msg("Done loading AssetBundles.");

@@ -23,7 +23,7 @@ namespace MintMod {
         // Base
         public static MelonPreferences_Category Base;
         public static MelonPreferences_Entry<bool> KeepPriorityHighEnabled, ShowWelcomeMessages, UseCustomLoadingMusic, EnableMasterFinder, AutoAddJump,
-            EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, MintConsoleTitle, CanSitInChairs, UseOldHudMessages;
+            EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, CanSitInChairs, UseOldHudMessages, useWMC;
         public static MelonPreferences_Entry<int> MaxFrameRate;
 
         // Color
@@ -94,6 +94,7 @@ namespace MintMod {
             //MintConsoleTitle = Base.CreateEntry("MintConsoleTitle", true, "* Mint Console Title", "*Use Custom Console Title");
             CanSitInChairs = Base.CreateEntry("CanSitInChairs", true, "Can Sit In Chairs");
             UseOldHudMessages = Base.CreateEntry("UseOldHudMessages", false, "Use Old Hud Messages");
+            useWMC = Base.CreateEntry("useWMC", false, "* Use Windows Media Controller");
         }
 
         static void _Color() {

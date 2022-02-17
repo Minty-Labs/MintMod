@@ -30,11 +30,16 @@ namespace MintMod {
             public const string Name = "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
-            public const string Version = "2.22.0";
-            public const string DownloadLink = null;
-            public const string UpdatedDate = "13 Feb 2022";
 #if !DEBUG
-            public const string LoaderVer = "2.6.1";
+            public const string Version = "2.22.1";
+#endif
+#if DEBUG
+            public const string Version = "2.23.1";
+#endif
+            public const string DownloadLink = null;
+            public const string UpdatedDate = "16 Feb 2022";
+#if !DEBUG
+            internal const string LoaderVer = "2.6.2";
 #endif
         }
 
@@ -107,6 +112,9 @@ namespace MintMod {
             mods.Add(new GetRubyConfig());
             mods.Add(new NetworkEvents());
             mods.Add(new PlayerInfo());
+#if DEBUG
+            mods.Add(new ExtendedMediaPlayback());
+#endif
             //mods.Add(new );
 
             ReMod.Core.Unity.EnableDisableListener_Mint.RegisterSafe();
@@ -154,6 +162,9 @@ namespace MintMod {
 
         public override void OnApplicationQuit() {
             MelonPreferences.Save();
+            mods.ForEach(s => {
+                try { s.OnApplicationQuit(); } catch (Exception e) { Con.Error(e); }
+            });
 #if !DEBUG
             if (GetRubyConfig.HasRubyActive && MelonHandler.Mods.FindIndex(i => i.Info.Name.ToLower().Contains("aiko")) == -1) {
                 try {

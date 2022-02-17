@@ -37,11 +37,9 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
 
-        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig;
+        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig, MediaPlayback;
 
-        private static UiManager MintUI;
-
-        private static ReMenuSlider FlightSpeedSlider; 
+        private static ReMenuSlider FlightSpeedSlider;
 
         internal static ReMenuToggle 
             MainQMFly, MainQMNoClip, MainQMFreeze, MainQMInfJump,
@@ -163,6 +161,9 @@ namespace MintMod.UserInterface.QuickMenu {
             RandomStuff();
             PlayerListMenuSetup();
             PlayerListOptions();
+#if DEBUG
+            MediaControls();
+#endif
 
             Con.Debug("Done Setting up MintMenus", MintCore.isDebug);
             yield break;
@@ -594,7 +595,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 else if (SelectedActionNum == 6) Players.Toggle(false);
                 else Con.Warn("Nothing to cancel orbit.");
             });
-            
+
             PlayerListMenu.OnOpen += () => {
                 foreach (var button in PlayerButtons)
                     button.Destroy();
@@ -730,6 +731,49 @@ namespace MintMod.UserInterface.QuickMenu {
         }
         
         #endregion
+
+        #region Media Playback
+#if DEBUG
+        public static ReMenuSlider SongSeeker;
+        public static ReMenuCategory MediaApplications, SongPlaybackName;
+        private static List<ReMenuButton> PlaybackApplications = new();
+        private static ReMenuButton SingleApplication;
+        private static void MediaControls() {
+            MediaPlayback = BaseActions.AddCategoryPage("Media Playback", "Open Media Playback Menu", MintyResources.m_Menu);
+
+            SongPlaybackName = MediaPlayback.AddCategory("Controls", false);
+            
+            ExtendedMediaPlayback.RunWMC();
+
+            SongPlaybackName.AddButton("Previous", "Go back a song", Music.PrevTrack, MintyResources.m_Back);
+            SongPlaybackName.AddButton("Stop", "Stop songs", Music.Stop, MintyResources.m_Stop);
+            SongPlaybackName.AddButton("Play/Pause", "Pause or resume song", Music.PlayPause, MintyResources.m_Play);
+            SongPlaybackName.AddButton("Next", "Go to next song", Music.NextTrack, MintyResources.m_Foward);
+
+            MediaApplications = MediaPlayback.AddCategory("Media App");
+            
+            MediaPlayback.OnOpen += () => {
+                MediaApplications.Header.Title = "Media App";
+                foreach (var btn in PlaybackApplications)
+                    btn.Destroy();
+                PlaybackApplications.Clear();
+                // TODO: foreach app in active_media_apps => create button
+                int i = 0;
+                
+                foreach (var app in ExtendedMediaPlayback.Sources) {
+                    i++;
+                    if (i < 1) {
+                        SingleApplication = MediaApplications.AddButton($"{(app.Contains("NewSource") ? "null" : app)}", "null", () => {
+                            MediaApplications.Header.Title = $"Media App{(app.Contains("NewSource") ? "" : $" > {app}")}";
+                        });
+                    }
+                    PlaybackApplications.Add(SingleApplication);
+                }
+            };
+        }
+#endif
+        #endregion
+
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
             if (buildindex == -1) {
