@@ -5,6 +5,7 @@ using UnityEngine;
 using VRC.UI;
 using MelonLoader;
 using System.Collections;
+using MintMod.Libraries;
 using VRC.Core;
 using MintMod.Reflections;
 using MintMod.Reflections.VRCAPI;
@@ -40,8 +41,12 @@ namespace MintMod.UserInterface.AvatarFavs {
         internal override void OnUserInterface() {
             if (AviFavsErrored) return;
             if (ranOnce) return;
+            if (ModCompatibility.GPrivateServer) {
+                Con.Msg("Extended Avatar Favouring has been disabled.");
+                return;
+            }
             if (!Config.AviFavsEnabled.Value) {
-                Con.Msg("Extended Avatar Favoriting has been disabled.");
+                Con.Msg("Extended Avatar Favouring has been disabled.");
                 return;
             }
             if (!Config.AviFavsEnabled.Value) return;
@@ -180,10 +185,10 @@ namespace MintMod.UserInterface.AvatarFavs {
 
         internal static void DestroyList() {
             //var ConfigList = Favorites.Instance.AvatarFavorites.FavoriteLists.Where(list => list.ID == 0).FirstOrDefault();
-            var ConfigList = Favorites.Instance.AvatarFavorites.FavoriteLists.Single(list => list.ID == 0);
-            var AvatarList = FavlistDictonary[0];
-            if (ConfigList != null && AvatarList != null)
-                AvatarList.GameObject.Destroy();
+            var configList = Favorites.Instance.AvatarFavorites.FavoriteLists.Single(list => list.ID == 0);
+            var avatarList = FavlistDictonary[0];
+            if (configList != null && avatarList != null)
+                avatarList.GameObject.Destroy();
         }
 
         internal static void FavoriteAvatar(ApiAvatar avatar, int ListID) {
@@ -210,10 +215,7 @@ namespace MintMod.UserInterface.AvatarFavs {
             Favorites.Instance.SaveConfig();
         }
 
-        private static FavoriteList GetConfigList(int ID) {
-            return Favorites.Instance.AvatarFavorites.FavoriteLists.Single(List => List.ID == ID);
-            //return Favorites.Instance.AvatarFavorites.FavoriteLists.Where(List => List.ID == ID).FirstOrDefault();
-        }
+        private static FavoriteList GetConfigList(int ID) => Favorites.Instance.AvatarFavorites.FavoriteLists.Single(List => List.ID == ID);
 
         private static VRCList GetVRCList(int ID) => FavlistDictonary[ID];
     }

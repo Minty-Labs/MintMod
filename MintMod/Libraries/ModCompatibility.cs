@@ -7,7 +7,7 @@ namespace MintMod.Libraries {
     internal class ModCompatibility : MintSubMod {
         public override string Name => "ModCompatibility";
         public override string Description => "Find other mods and do things.";
-        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, TeleporterVR, SettingsRestart, ProPlates, FriendsNotesInstalled, Styletor;
+        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, TeleporterVR, SettingsRestart, ProPlates, GPrivateServer, Styletor;
         public static bool hasCNP_On, emmVRCPanicMode;
 
         internal override void OnStart() {
@@ -25,8 +25,14 @@ namespace MintMod.Libraries {
                 SettingsRestart = true;
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ProPlates") != -1)
                 ProPlates = true;
-            if (MelonHandler.Mods.FindIndex(m => m.Info.Name == "Friend Notes") != 1)
-                FriendsNotesInstalled = true;
+            GPrivateServer = MelonHandler.Mods.FindIndex(i => {
+                bool name = false, author = false;
+                if (i.Info.Name == "PrivateServer")
+                    name = true;
+                if (i.Info.Author == "[information redacted]")
+                    author = true;
+                return name && author;
+            }) != -1;
 
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "UI Expansion Kit") != -1) 
                 UIX = true;

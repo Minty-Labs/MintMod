@@ -9,6 +9,7 @@ using UnityEngine;
 using VRC.Core;
 using System.Net;
 using System.Net.Http;
+using MintMod.Libraries;
 using MintMod.Managers.Notification;
 using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
@@ -52,21 +53,20 @@ namespace MintMod.Functions.Authentication {
                     MelonCoroutines.Start(LoopNoAuth());
                     yield break;
                 }
-
-                Con.Msg(ConsoleColor.Green, "Authed for MintMod");
-                canLoadMod = true;
-                MintCore.mods.ForEach(u => {
-                    try { u.OnUserInterface(); }
-                    catch (Exception e) { Con.Error(e); }
-                });
-                MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
-                MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
-                //MelonCoroutines.Start(GetAssembly.YieldUI());
-
+                
+                if (MintyData.UserID == APIUser.CurrentUser.id || ModCompatibility.GPrivateServer) {
+                    Con.Msg(ConsoleColor.Green, "Authed for MintMod");
+                    canLoadMod = true;
+                    MintCore.mods.ForEach(u => {
+                        try { u.OnUserInterface(); }
+                        catch (Exception e) { Con.Error(e); }
+                    });
+                    MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
+                    MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
+                }
             } catch (Exception r) {
                 canLoadMod = false;
-                Con.Error($"{r}");
-                yield break;
+                Con.Error(r);
             }
         }
 
