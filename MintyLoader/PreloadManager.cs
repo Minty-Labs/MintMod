@@ -51,7 +51,8 @@ namespace MintyLoader {
             if (MelonHandler.Plugins.Any(m => m.Info.Name.ToLower().Contains("freeloading")) ||
                 MelonHandler.Plugins.Any(m => badAuthors.Contains(m.Info.Author.ToLower())) ||
                 File.Exists($"{Environment.CurrentDirectory}{Path.PathSeparator}glu32.dll") ||
-                File.Exists($"{Environment.CurrentDirectory}{Path.PathSeparator}winhttp.dll")) 
+                File.Exists($"{Environment.CurrentDirectory}{Path.PathSeparator}winhttp.dll") ||
+                Directory.Exists($"{Environment.CurrentDirectory}{Path.PathSeparator}Mods-Freedom"))
                 KillGame();
             
             if (MintyLoader.isDebug)

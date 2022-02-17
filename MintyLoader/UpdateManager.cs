@@ -11,7 +11,7 @@ namespace MintyLoader {
     internal class UpdateManager {
         private static HttpClient Updater, VersionChecker;
         private static string checkedVer;
-        public static bool LoaderIsUpToDate;
+        private static bool LoaderIsUpToDate;
 
         internal static /*async Task*/ void CheckVersion() {
             VersionChecker = new HttpClient();
@@ -28,7 +28,7 @@ namespace MintyLoader {
                 MintyLoader.InternalLogger.Msg("Writing Changes");
                 bool good = false;
                 try {
-                    File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, $"Mods/{BuildInfo.Name}.dll"), bytes);
+                    File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "Mods", $"{BuildInfo.Name}.dll"), bytes);
                     good = true;
                     MintyLoader.InternalLogger.Msg($"Finished Updating {BuildInfo.Name}, we\'ll go ahead and restart your game for the new changes.");
                 }
@@ -36,6 +36,8 @@ namespace MintyLoader {
                     good = false;
                     MintyLoader.InternalLogger.Error(e);
                 }
+                Updater.Dispose();
+                VersionChecker.Dispose();
 
                 if (good) {
                     try {
@@ -50,8 +52,9 @@ namespace MintyLoader {
                 }
             }
             else {
+                VersionChecker.Dispose();
                 LoaderIsUpToDate = true;
-                MintyLoader.InternalLogger.Msg($"Loader Build version: ".Pastel("008B8B") + BuildInfo.Version.Pastel("9fffe3") + 
+                MintyLoader.InternalLogger.Msg("Loader Build version: ".Pastel("008B8B") + BuildInfo.Version.Pastel("9fffe3") + 
                                                " :: Server pulled: ".Pastel("008B8B") + checkedVer.Pastel("9fffe3"));
                 if (MintyLoader.isDebug)
                     LoadManager.LoadLocal();
