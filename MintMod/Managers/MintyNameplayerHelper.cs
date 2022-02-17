@@ -41,7 +41,6 @@ namespace MintMod.Managers {
         private bool lerpReverse = false;
         private float lerpValue = 0f;
         private float lerpTransitionTime = 3f;
-        private bool closeRangeFadePause = false;
 
         public MintyNameplateHelper(IntPtr ptr) : base(ptr) { }
 

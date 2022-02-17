@@ -145,6 +145,7 @@ namespace MintMod.Reflections {
                     AvatarPerformanceRating.Good => "<color=#69A95C>G</color>",
                     AvatarPerformanceRating.Excellent => "<color=#6BE855>E</color>",
                     AvatarPerformanceRating.None => "<i>Loading</i>",
+                    _ => "<i>Loading</i>"
                 };
             }
             return "";
