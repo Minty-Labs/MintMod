@@ -310,7 +310,7 @@
     <EmbeddedResource Include="Managers\Notification\mintnotification" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Mint.WMC.exe" />
+    <None Include="Resources\Mint.WMC.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

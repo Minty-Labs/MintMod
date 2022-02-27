@@ -1,4 +1,5 @@
 ﻿#if DEBUG
+/*
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -91,11 +92,11 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         private static void WMC_Loop() {
-            /*var title = wmc.MainWindowTitle;
-            var f = title.Split(':');
-            if (MintUserInterface.SongPlaybackName != null)
-                MintUserInterface.SongPlaybackName.Header.Title = f[1];
-            */
+            //var title = wmc.MainWindowTitle;
+            //var f = title.Split(':');
+            //if (MintUserInterface.SongPlaybackName != null)
+            //    MintUserInterface.SongPlaybackName.Header.Title = f[1];
+            
             wmc.OutputDataReceived += POnOutputDataReceived;
             wmc.EnableRaisingEvents = true;
             wmc.BeginOutputReadLine();
@@ -116,4 +117,5 @@ namespace MintMod.UserInterface.QuickMenu {
         }
     }
 }
+*/
 #endif
