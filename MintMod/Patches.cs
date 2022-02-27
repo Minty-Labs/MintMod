@@ -42,12 +42,13 @@ namespace MintMod.Hooks {
         internal override void OnStart() {
             Con.Debug("Setting up patches", MintCore.isDebug);
 
-            applyPatches(typeof(NameplatePatches));
+            if (!ModCompatibility.MintyNameplates) {
+                applyPatches(typeof(NameplatePatches));
+                applyPatches(typeof(VRCPlayerPatches));
+            }
             applyPatches(typeof(PingSpoof));
             applyPatches(typeof(FrameSpoof));
             applyPatches(typeof(VRC_Station));
-            applyPatches(typeof(NameplatePatches));
-            applyPatches(typeof(VRCPlayerPatches));
             applyPatches(typeof(QuickMenuPatches));
             applyPatches(typeof(LeftRoomPatches));
             

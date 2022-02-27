@@ -1,7 +1,9 @@
 ﻿using MelonLoader;
 using System;
+using System.IO;
 using MintyLoader;
 using MintMod.Managers;
+using Path = Il2CppSystem.IO.Path;
 
 namespace MintMod.Libraries {
     internal class ModCompatibility : MintSubMod {
@@ -9,6 +11,13 @@ namespace MintMod.Libraries {
         public override string Description => "Find other mods and do things.";
         public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, TeleporterVR, SettingsRestart, ProPlates, GPrivateServer, Styletor;
         public static bool hasCNP_On, emmVRCPanicMode;
+
+        public static bool MintyNameplates {
+            get {
+                return MelonHandler.Mods.FindIndex(i => i.Info.Name == "MintyNameplates") != -1 ||
+                       File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "MintyNameplates.dll"));
+            }
+        }
 
         internal override void OnStart() {
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "OGTrustRanks") != -1)

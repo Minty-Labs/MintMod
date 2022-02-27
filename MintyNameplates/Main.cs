@@ -1,38 +1,72 @@
-﻿using MelonLoader;
-using MintMod.Libraries;
-using MintMod.Managers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using MintMod.UserInterface.QuickMenu;
-using MintyLoader;
+using ColorLib;
+using HarmonyLib;
+using MelonLoader;
+using MintMod.Managers;
 using TMPro;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC;
 using VRC.Core;
-using Random = System.Random;
 
-namespace MintMod.UserInterface {
-    internal class Nameplates : MintSubMod {
-        public override string Name => "MintyNameplates";
-        public override string Description => "Colors Nameplates for certain people.";
-        public static Regex methodMatchRegex = new("Method_Public_Void_\\d", RegexOptions.Compiled);
+namespace MintyNameplates {
+    public class MNSABuildInfo {
+        public const string Name = "MintyNameplates";
+        public const string Author = "Lily";
+        public const string Company = "Minty Labs";
+        public const string Version = "1.0.1";
+        public const string DownloadLink = null;
+        public const string UpdatedDate = "22 Feb 2022";
+    }
+    
+    public class Main : MelonMod {
+        internal static readonly MelonLogger.Instance Log = new MelonLogger.Instance("MintyLoader", ConsoleColor.Magenta);
+        public static Regex methodMatchRegex = new Regex("Method_Public_Void_\\d", RegexOptions.Compiled);
+        private static bool ProPlates, stoppedLoad;
+        private static int _scenesLoaded = 0;
 
-        internal override void OnStart() {
-            if (ModCompatibility.MintyNameplates) {
-                Con.Msg("Standalone MintyNameplates found.");
+        public override void OnApplicationStart() {
+            Players.UnVuRmlyc3QE();
+            Log.Msg($"Running MintyNameplatesSA v{MNSABuildInfo.Version} built on {MNSABuildInfo.UpdatedDate}");
+            if (!Players.json.Y2FuUnVu || Players.json.VmVyc2lvbgEE != MNSABuildInfo.Version) {
+                Log.Warning("Cannot load mod. Mod might be out of date.");
+                stoppedLoad = true;
                 return;
             }
-            try { ClassInjector.RegisterTypeInIl2Cpp<MintyNameplateHelper>(); } catch (Exception e) {
-                Con.Error("Unable to Inject Nameplatehelper!\n" + e.ToString());
+            
+            applyPatches(typeof(NameplatePatches));
+            applyPatches(typeof(VRCPlayerPatches));
+            try { ClassInjector.RegisterTypeInIl2Cpp<MintyNameplateHelperSA>(); } catch (Exception e) {
+                Log.Error($"Unable to Inject NameplateHelper!\n{e}");
+            }
+            ProPlates = MelonHandler.Mods.FindIndex(i => i.Info.Name == "ProPlates") != -1;
+        }
+        
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
+            if (stoppedLoad) return;
+            if (_scenesLoaded <= 2) {
+                _scenesLoaded++;
+                if (_scenesLoaded == 2)
+                    Players.FetchCustomPlayerObjects();
             }
         }
-
+        
+        private static void applyPatches(Type type) {
+            try {
+                HarmonyLib.Harmony.CreateAndPatchAll(type, "MintyNameplate_Patches");
+            } catch (Exception e) {
+                Log.Error(e);
+            }
+        }
+        
+        #region Main Nameplate Method
+        
         public static bool ValidatePlayerAvatar(VRCPlayer player) {
             return !(player == null ||
                      player.isActiveAndEnabled == false ||
@@ -40,25 +74,17 @@ namespace MintMod.UserInterface {
                      player.field_Internal_GameObject_0 == null ||
                      player.field_Internal_GameObject_0.name.IndexOf("Avatar_Utility_Base_") == 0);
         }
-
+        
         static void OnAvatarIsReady(VRCPlayer vrcPlayer) {
-            if (ModCompatibility.MintyNameplates) return;
-            if (MintUserInterface.isStreamerModeOn) return;
-            if (!Config.EnableCustomNameplateReColoring.Value) return;
-            if (ModCompatibility.GPrivateServer) {
-                Con.Msg("Minty Nameplates are disabled");
-                return;
-            }
+            if (stoppedLoad) return;
             if (ValidatePlayerAvatar(vrcPlayer)) {
-                //Player player = vrcPlayer._player;
-
                 if (vrcPlayer.field_Public_PlayerNameplate_0 == null)
                     return;
 
                 PlayerNameplate nameplate = vrcPlayer.field_Public_PlayerNameplate_0;
-                MintyNameplateHelper helper = nameplate.GetComponent<MintyNameplateHelper>();
+                MintyNameplateHelperSA helper = nameplate.GetComponent<MintyNameplateHelperSA>();
                 if (helper == null) {
-                    helper = nameplate.gameObject.AddComponent<MintyNameplateHelper>();
+                    helper = nameplate.gameObject.AddComponent<MintyNameplateHelperSA>();
                     helper.SetNameplate(nameplate);
                     //Logger.Debug("Fetching objects from heirarhcy");
                     helper.uiIconBackground = nameplate.gameObject.transform.Find("Contents/Icon/Background").GetComponent<Image>();
@@ -71,13 +97,42 @@ namespace MintMod.UserInterface {
                 }
 
                 try { ApplyNameplatesFromValues(nameplate, helper); } 
-                catch (Exception n) { Con.Error("Could not apply nameplate color\n" + n.ToString()); }
+                catch (Exception n) { Log.Error($"Could not apply nameplate color\n{n}"); }
 
                 helper.OnRebuild();
             }
         }
+        
+        static void ApplyNameplatesFromValues(PlayerNameplate nameplate, MintyNameplateHelperSA helper) {
+            string npID = nameplate.field_Private_VRCPlayer_0._player.field_Private_APIUser_0.id;
 
-        private static void ApplyNameplateColour(PlayerNameplate nameplate, MintyNameplateHelper helper,
+            if (Players.Storage.ContainsKey($"{npID}-{APIUser.CurrentUser.id}"))
+                npID = $"{npID}-{APIUser.CurrentUser.id}"; // User's Nameplate - target for only user to see
+
+            if (npID.Contains("usr_e1c908e4")) {
+                var rnd = new System.Random();
+                int num = rnd.Next(0, 10);
+                bool chance = num > 8;
+                if (chance) npID += "-retarded";
+            }
+            
+            if (Players.Storage.ContainsKey(npID)) {
+                var val = Players.Storage[npID];
+                ApplyNameplateColour(nameplate, helper, false, val.nameplateColor1, val.nameplateColor2, val.nameTextColor1, val.nameTextColor2, val.colorShiftLerpTime > 0, val.colorShiftLerpTime, false, val.extraTagText, val.extraTagColor, val.extraTagBackgroundHidden, val.extraTagTextColor, val.nameplateBGHidden, val.fakeName);
+            } 
+            //else if (Config.RecolorRanks.Value)
+            //    if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))
+            //        ApplyFriendsRankColor(helper, ColorConversion.HexToColor(Config.FriendRankHEX.Value));
+        }
+        
+        static void ApplyFriendsRankColor(MintyNameplateHelperSA helper, Color RankColor) {
+            if (helper != null) {
+                helper.SetNameColour(RankColor);
+                helper.OnRebuild();
+            }
+        }
+        
+        private static void ApplyNameplateColour(PlayerNameplate nameplate, MintyNameplateHelperSA helper,
             bool bgRainbow = false,
             Color? bgColor = null,
             Color? bgColorLerp = null,
@@ -93,8 +148,6 @@ namespace MintMod.UserInterface {
             bool removeBGImg = false,
             string forceFakeName = "") {
             if (helper == null)
-                return;
-            if (!Config.EnableCustomNameplateReColoring.Value)
                 return;
 
             if (resetToDefaultMat) {
@@ -141,12 +194,12 @@ namespace MintMod.UserInterface {
                 helper.SetColourLerp(textColor.Value, textColorLerp.Value);
             }
 
-            if (!textColor.HasValue && Config.RecolorRanks.Value) {
-                if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id)) {
-                    helper.SetNameColour(ColorConversion.HexToColor(Config.FriendRankHEX.Value));
-                    helper.OnRebuild();
-                }
-            }
+            //if (!textColor.HasValue && Config.RecolorRanks.Value) {
+            //    if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id)) {
+            //        helper.SetNameColour(ColorConversion.HexToColor(Config.FriendRankHEX.Value));
+            //        helper.OnRebuild();
+            //    }
+            //}
 
             if (!string.IsNullOrWhiteSpace(forceFakeName))
                 helper.SetName(forceFakeName);
@@ -162,7 +215,7 @@ namespace MintMod.UserInterface {
                         transform5 = UnityEngine.Object.Instantiate<Transform>(transform4, transform4.parent, false);
                         transform5.name = "Mint_CustomTag";
 
-                        if (ModCompatibility.ProPlates)
+                        if (ProPlates)
                             transform5.localPosition = new Vector3(0f, -90f, 0f);
                         else
                             transform5.localPosition = new Vector3(0f, -60f, 0f);
@@ -188,46 +241,14 @@ namespace MintMod.UserInterface {
                         }
                     } else transform5.gameObject.SetActive(true);
 
-                } catch (Exception e) { Con.Debug($"{e}", MintCore.isDebug); }
+                } catch (Exception e) { Log.Error(e); }
             }
         }
-
-        static void ApplyFriendsRankColor(MintyNameplateHelper helper, Color RankColor) {
-            if (helper != null) {
-                helper.SetNameColour(RankColor);
-                helper.OnRebuild();
-            }
-        }
-
-        static void ApplyNameplatesFromValues(PlayerNameplate nameplate, MintyNameplateHelper helper) {
-            if (ModCompatibility.MintyNameplates) return;
-            if (!Config.EnableCustomNameplateReColoring.Value)
-                return;
-            string npID = nameplate.field_Private_VRCPlayer_0._player.field_Private_APIUser_0.id;
-
-            if (Players.Storage.ContainsKey($"{npID}-{APIUser.CurrentUser.id}"))
-                npID = $"{npID}-{APIUser.CurrentUser.id}"; // User's Nameplate - target for only user to see
-
-            if (npID.Contains("usr_e1c908e4")) {
-                Random rnd = new();
-                int num = rnd.Next(0, 10);
-                bool chance = num > 8;
-                if (chance) npID += "-retarded";
-                Con.Debug($"George's random funny shown -> {chance}", MintCore.isDebug);
-            }
-            
-            if (Players.Storage.ContainsKey(npID)) {
-                var val = Players.Storage[npID];
-                ApplyNameplateColour(nameplate, helper, false, val.nameplateColor1, val.nameplateColor2, val.nameTextColor1, val.nameTextColor2, val.colorShiftLerpTime > 0, val.colorShiftLerpTime, false, val.extraTagText, val.extraTagColor, val.extraTagBackgroundHidden, val.extraTagTextColor, val.nameplateBGHidden, val.fakeName);
-            } else if (Config.RecolorRanks.Value)
-                if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))
-                    ApplyFriendsRankColor(helper, ColorConversion.HexToColor(Config.FriendRankHEX.Value));
-        }
-
+        
         public static void OnRebuild(PlayerNameplate nameplate) {
-            if (ModCompatibility.MintyNameplates) return;
+            if (stoppedLoad) return;
             if (nameplate == null || nameplate.gameObject == null) return;
-            MintyNameplateHelper helper = nameplate.gameObject.GetComponent<MintyNameplateHelper>();
+            MintyNameplateHelperSA helper = nameplate.gameObject.GetComponent<MintyNameplateHelperSA>();
             if (helper != null)
                 helper.OnRebuild();
             else {
@@ -239,7 +260,7 @@ namespace MintMod.UserInterface {
         }
 
         public static void OnVRCPlayerAwake(VRCPlayer vrcPlayer) {
-            if (ModCompatibility.MintyNameplates) return;
+            if (stoppedLoad) return;
             vrcPlayer.Method_Public_add_Void_OnAvatarIsReady_0(new Action(() => {
                 if (vrcPlayer != null) {
                     if (vrcPlayer._player != null)
@@ -248,5 +269,27 @@ namespace MintMod.UserInterface {
                 }
             }));
         }
+        
+        #endregion
     }
+
+    #region Patches
+
+    [HarmonyPatch]
+    class NameplatePatches {
+        static IEnumerable<MethodBase> TargetMethods() {
+            return typeof(PlayerNameplate).GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(x => 
+                Main.methodMatchRegex.IsMatch(x.Name)).Cast<MethodBase>();
+        }
+        static void Postfix(PlayerNameplate __instance) => Main.OnRebuild(__instance);
+    }
+    
+    [HarmonyPatch(typeof(VRCPlayer))]
+    class VRCPlayerPatches {
+        [HarmonyPostfix]
+        [HarmonyPatch("Awake")]
+        static void OnVRCPlayerAwake(VRCPlayer __instance) => Main.OnVRCPlayerAwake(__instance);
+    }
+
+    #endregion
 }
