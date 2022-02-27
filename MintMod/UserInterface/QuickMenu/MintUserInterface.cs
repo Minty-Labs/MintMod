@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Windows.Forms;
-//using Il2CppSystem;
 using System.Collections.Generic;
 using System.Linq;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Resources;
 using ReMod.Core.UI.QuickMenu;
+using ReMod.Core.VRChat;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC;
@@ -16,20 +15,19 @@ using VRC.Core;
 using VRC.SDKBase;
 using VRC.UI;
 using VRC.UI.Core.Styles;
+using VRC.UI.Core;
 using Button = UnityEngine.UI.Button;
 using MintMod.Managers;
 using MintMod.Reflections;
 using MintMod.Utils;
 using MintyLoader;
-using ReMod.Core.VRChat;
 using MintMod.Functions.Authentication;
 using MintMod.Libraries;
 using MintMod.Managers.Notification;
-using ReMod.Core.Managers;
-using VRC.UI.Core;
+using MintMod.UserInterface.OldUI;
 
 namespace MintMod.UserInterface.QuickMenu {
-    class MintUserInterface : MintSubMod {
+    internal class MintUserInterface : MintSubMod {
         public override string Name => "Mint UI";
         public override string Description => "Builds all of the Mod's menu.";
 
@@ -56,8 +54,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region Temp TPVR Values
 
-        public static MelonPreferences_Category melon;
-        public static bool TPVR_active;
+        //public static MelonPreferences_Category melon;
+        //public static bool TPVR_active;
 
         #endregion
 
@@ -67,6 +65,7 @@ namespace MintMod.UserInterface.QuickMenu {
             
             MelonCoroutines.Start(BuildStandard());
             MelonCoroutines.Start(BuildMint());
+            MelonCoroutines.Start(ReColor.DelayedHfxReColor(ReColor.finalColor));
             if (!isStreamerModeOn) UserSelMenu();
         }
 
@@ -161,9 +160,7 @@ namespace MintMod.UserInterface.QuickMenu {
             RandomStuff();
             PlayerListMenuSetup();
             PlayerListOptions();
-#if DEBUG
-            MediaControls();
-#endif
+            //MediaControls();
 
             Con.Debug("Done Setting up MintMenus", MintCore.isDebug);
             yield break;
@@ -250,7 +247,8 @@ namespace MintMod.UserInterface.QuickMenu {
             var w = WorldMenu.AddCategory("General Actions");
             ItemESP = w.AddToggle("Item ESP", "Puts a bubble around all Pickups, can be seen through walls", ESP.SetItemESPToggle);
             w.AddButton("Add Jump", "Allows you to jump in the world", WorldActions.AddJump, MintyResources.jump);
-            w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world", Networking.LocalPlayer.UseLegacyLocomotion, MintyResources.history);
+            w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world",
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.UseLegacyLocomotion, MintyResources.history);
             w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", WorldActions.WorldDownload, MintyResources.dl);
 
             w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
@@ -291,7 +289,24 @@ namespace MintMod.UserInterface.QuickMenu {
             w.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
             w.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
             w.AddButton("Beautify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
-            w.AddSpacer();
+            w.AddButton("Reset Portal", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
+                if (UnityEngine.Object.FindObjectsOfType<PortalInternal>() == null) return;
+                var single = default(Il2CppSystem.Single);
+                single.m_value = Config.ResetTimerAmount.Value < 30 ? 30 : Config.ResetTimerAmount.Value;
+                var @object = single.BoxIl2CppObject();
+                var array = UnityEngine.Resources.FindObjectsOfTypeAll<PortalTrigger>();
+                foreach (var portal in array) {
+                    if (!portal.gameObject.activeInHierarchy) return;
+                    if (portal.gameObject.GetComponentInParent<VRC_PortalMarker>() == null) return;
+                    Networking.RPC(RPC.Destination.AllBufferOne, portal.gameObject, "SetTimerRPC",
+                        new[] { @object });
+                }
+                /*for (int i = 0; i < array.Length; i++) {
+                    if (array[i].gameObject.activeInHierarchy && !(array[i].gameObject.GetComponentInParent<VRC_PortalMarker>() != null)) 
+                        Networking.RPC(RPC.Destination.AllBufferOne, array[i].gameObject, "SetTimerRPC",
+                            new Il2CppSystem.Object[1] { @object });
+                }*/
+            }, MintyResources.history);
 
             var e = WorldMenu.AddCategory("Item Manipulation");
             e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
@@ -352,23 +367,6 @@ namespace MintMod.UserInterface.QuickMenu {
                         Frame.Text = f.ToString();
                     }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
             }, MintyResources.tv);
-
-            r.AddButton("Reset Portal", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
-                if (UnityEngine.Object.FindObjectsOfType<PortalInternal>() != null) {
-                    try {
-                        var t = Config.ResetTimerAmount.Value;
-                        var final = t < 30 ? 30 : t;
-                        var destination = RPC.Destination.AllBufferOne;
-                        foreach (var objectInternal in UnityEngine.Object.FindObjectsOfType<PortalInternal>()) {
-                            Networking.RPC(destination, objectInternal.gameObject, "SetTimerRPC", new[] { new Il2CppSystem.Single
-                                { m_value = -final }.BoxIl2CppObject() });
-                        }
-                    }
-                    catch (Exception _) {
-                        Con.Error($"Failed to reset portal timer\n{_}");
-                    }
-                }
-            }, MintyResources.history);
 
             r.AddButton("Refetch Nameplates",
                 "Reloads Mint's custom nameplate addons in case more were added while you're playing",
@@ -693,6 +691,7 @@ namespace MintMod.UserInterface.QuickMenu {
             Save = c.AddButton("Save Values", "Save the color options below", () => {
                 var color = (Color32)PlayerInfo.BackgroundImage.color;
                 Config.SavePrefValue(Config.PlayerList, Config.BackgroundColor, color);
+                Config.SavePrefValue(Config.PlayerList, Config.TextSize, PlayerInfo.GetTextSize());
             }, MintyResources.cog);
             
             ColorCat = PlayerListConfig.AddSliderCategory("Background Color");
@@ -717,7 +716,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 PlayerInfo.SetBackgroundColor(c);
             }, Config.BackgroundColor.Value.a, 0, 255);
             TextSize = ColorCat.AddSlider("Text Size", "Change the text size of the player list", f => 
-                PlayerInfo.UpdateTextSize((int)f), Config.TextSize.Value, 32, 50);
+                PlayerInfo.UpdateTextSize((int)f), Config.TextSize.Value, 30, 50);
             
             WingLocation.Active = o;
             ExtendList.Active = o;
@@ -734,6 +733,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region Media Playback
 #if DEBUG
+/*
         public static ReMenuSlider SongSeeker;
         public static ReMenuCategory MediaApplications, SongPlaybackName;
         private static List<ReMenuButton> PlaybackApplications = new();
@@ -771,9 +771,9 @@ namespace MintMod.UserInterface.QuickMenu {
                 }
             };
         }
+*/
 #endif
         #endregion
-
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
             if (buildindex == -1) {
