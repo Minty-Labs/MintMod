@@ -50,7 +50,7 @@ namespace MintMod {
 
         // Avatar
         public static MelonPreferences_Category Avatar;
-        public static MelonPreferences_Entry<bool> AviFavsEnabled, AviLogFavOrUnfavInConsole, CalibrationMirror;
+        public static MelonPreferences_Entry<bool> AviFavsEnabled, AviLogFavOrUnfavInConsole;
 
         // Extras
         public static MelonPreferences_Category Extras;
@@ -173,7 +173,6 @@ namespace MintMod {
             Avatar = MelonPreferences.CreateCategory("MintMod_Avatar", "MintMod - Avatar");
             AviFavsEnabled = Avatar.CreateEntry("AviFavsEnabled", true, "Avatar Favorites Enabled");
             AviLogFavOrUnfavInConsole = Avatar.CreateEntry("AviLogFavOrUnfavInConsole", true, "Log Fav/UnFav in console");
-            CalibrationMirror = Avatar.CreateEntry("useCalibrationMirror", true, "Use a Mirror for Calibration");
         }
 
         static void _Random() {
