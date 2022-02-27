@@ -31,13 +31,13 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.22.1";
+            public const string Version = "2.24.0";
 #endif
 #if DEBUG
-            public const string Version = "2.23.1";
+            public const string Version = "xxxxxx";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "16 Feb 2022";
+            public const string UpdatedDate = "27 Feb 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.6.2";
 #endif
@@ -82,8 +82,8 @@ namespace MintMod {
 
             Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version} - Built on {ModBuildInfo.UpdatedDate}");
             mods.Add(new Config());
-            mods.Add(new Patches());
             mods.Add(new MintyResources());
+            mods.Add(new Patches());
             mods.Add(new ServerAuth());
             mods.Add(new ESP());
             mods.Add(new KeyBindings());
@@ -112,9 +112,7 @@ namespace MintMod {
             mods.Add(new GetRubyConfig());
             mods.Add(new NetworkEvents());
             mods.Add(new PlayerInfo());
-#if DEBUG
-            mods.Add(new ExtendedMediaPlayback());
-#endif
+            //mods.Add(new ExtendedMediaPlayback());
             //mods.Add(new );
 
             ReMod.Core.Unity.EnableDisableListener_Mint.RegisterSafe();

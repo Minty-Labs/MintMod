@@ -23,36 +23,38 @@ namespace MintMod.UserInterface.OldUI {
         private static List<Image> normalColorImage, dimmerColorImage, darkerColorImage;
         private static List<Text> normalColorText;
         private static GameObject loadingBackground, initialLoadingBackground;
+        public static Color finalColor;
+        private static readonly int Tex = Shader.PropertyToID("_Tex");
+        private static readonly int Tint = Shader.PropertyToID("_Tint");
 
         internal override void OnStart() => Intstance = this;
 
         internal override void OnUserInterface() {
             bool color = Config.ColorGameMenu.Value;
-            Color GameUI = Minty, _color = color ? GameUI : defaultMenuColor();
+            finalColor = color ? Minty : defaultMenuColor();
             if (Config.ColorGameMenu.Value)
-                MelonCoroutines.Start(ColorMenu(_color));
+                MelonCoroutines.Start(ColorMenu(finalColor));
             if (Config.ColorActionMenu.Value)
-                ColorActionMenu(_color);
+                ColorActionMenu(finalColor);
             if (Config.ColorLoadingScreen.Value) {
                 try {
-                    ColorLoadingScreenEnvironment(_color);
+                    ColorLoadingScreenEnvironment(finalColor);
                 }
                 catch (Exception e) {
                     if (!MintUserInterface.isStreamerModeOn)
                         Con.Error(e);
                 }
             }
-            
         }
 
         IEnumerator ColorMenu(Color color) {
             color = Config.ColorGameMenu.Value ? Minty : defaultMenuColor();
 
-            Color colorT = new Color(color.r, color.g, color.b, 0.7f);
-            Color dimmer = new Color(color.r / 0.75f, color.g / 0.75f, color.b / 0.75f);
-            Color dimmerT = new Color(color.r / 0.75f, color.g / 0.75f, color.b / 0.75f, 0.9f);
-            Color darker = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f);
-            Color darkerT = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f, 0.9f);
+            var colorT = new Color(color.r, color.g, color.b, 0.7f);
+            //var dimmer = new Color(color.r / 0.75f, color.g / 0.75f, color.b / 0.75f);
+            var dimmerT = new Color(color.r / 0.75f, color.g / 0.75f, color.b / 0.75f, 0.9f);
+            var darker = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f);
+            var darkerT = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f, 0.9f);
 
             if (normalColorImage == null || normalColorImage.Count == 0) {
                 #region normalColorImage
@@ -280,7 +282,7 @@ namespace MintMod.UserInterface.OldUI {
                             img.color = color;
                     }
                     */
-                    MelonCoroutines.Start(DelayedHFXReColor(color));
+                    //MelonCoroutines.Start(DelayedHFXReColor(color));
                 } catch (Exception ex) {
                     Con.Error(ex);
                 }
@@ -288,33 +290,32 @@ namespace MintMod.UserInterface.OldUI {
             yield break;
         }
 
-        private IEnumerator DelayedHFXReColor(Color color) {
-            yield return new WaitForSeconds(10);
-            if (UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().Count != 0)
-                UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().FirstOrDefault().highlightColor = color;
+        public static IEnumerator DelayedHfxReColor(Color color) {
+            yield return new WaitForSeconds(3);
+            if (UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().Count == 0) yield break;
+            UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().FirstOrDefault()!.highlightColor = color;
             yield break;
         }
 
         private void ColorActionMenu(Color color) {
-            if (!ModCompatibility.Styletor) {
-                foreach (PedalGraphic grph in UnityEngine.Resources.FindObjectsOfTypeAll<PedalGraphic>())
-                    grph.color = color;
-            }
+            if (ModCompatibility.Styletor) return;
+            foreach (var grph in UnityEngine.Resources.FindObjectsOfTypeAll<PedalGraphic>())
+                grph.color = color;
         }
 
         private void ColorLoadingScreenEnvironment(Color color) {
-            if (Config.ColorLoadingScreen.Value && !(MelonHandler.Mods.Any(i => i.Info.Name == "BetterLoadingScreen"))) {
+            if (Config.ColorLoadingScreen.Value && MelonHandler.Mods.Any(i => i.Info.Name != "BetterLoadingScreen")) {
                 try {
-                    GameObject quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
-                    GameObject loadingBackground = quickMenu.transform.Find("Popups/LoadingPopup/3DElements/LoadingBackground_TealGradient/SkyCube_Baked").gameObject;
-                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
-                    loadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
-                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                    var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
+                    var loadingBackground = quickMenu.transform.Find("Popups/LoadingPopup/3DElements/LoadingBackground_TealGradient/SkyCube_Baked").gameObject;
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture(Tex, MintyResources.basicGradient);
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetColor(Tint, new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture(Tex, MintyResources.basicGradient);
 
-                    GameObject initialLoadingBackground = GameObject.Find("LoadingBackground_TealGradient_Music/SkyCube_Baked");
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                    var initialLoadingBackground = GameObject.Find("LoadingBackground_TealGradient_Music/SkyCube_Baked");
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture(Tex, MintyResources.basicGradient);
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor(Tint, new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture(Tex, MintyResources.basicGradient);
                 } catch (Exception e) {
                     Con.Error(e);
                 }

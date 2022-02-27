@@ -141,6 +141,12 @@ namespace MintMod.UserInterface.QuickMenu {
                 TheText.fontSize = size;
         }
 
+        public static int GetTextSize() {
+            if (TheText != null)
+                return TheText.fontSize;
+            return 40;
+        }
+
         public static void MoveTheText() {
             if (TheText != null)
                 TheText.GetComponent<RectTransform>().anchoredPosition = new Vector2(130, Config.uncapListCount.Value ? -300 : 125);
