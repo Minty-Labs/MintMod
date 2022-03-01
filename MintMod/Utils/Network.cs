@@ -38,7 +38,7 @@ namespace MintMod.Utils {
         
         private static void OnPlayerJoin(Player plr) {
             if (plr == null) return;
-            var apiUser = plr.prop_APIUser_0;
+            var apiUser = plr.field_Private_APIUser_0;
             if (apiUser == null) return;
 
             if (apiUser.id != APIUser.CurrentUser.id) {
@@ -68,19 +68,15 @@ namespace MintMod.Utils {
                 }
                 else {
                     if (Config.EnablePlayerJoinLeave.Value) {
-                        if (Config.FriendsOnlyJoinLeave.Value && APIUser.CurrentUser.friendIDs.Contains(apiUser.id)) {
+                        if (Config.FriendsOnlyJoinLeave.Value && (APIUser.CurrentUser.friendIDs.Contains(apiUser.id) || apiUser.isFriend)) {
                             Con.Msg("[" + "JOIN".Pastel("3BA55D") + $"] {apiUser.displayName} has joined.");
-                            if (Config.HeadsUpDisplayNotifs.Value) {
+                            if (Config.HeadsUpDisplayNotifs.Value)
                                 VRCUiPopups.Notify($"{apiUser.displayName} has joined.");
-                                //VRCUiManager.prop_VRCUiManager_0.InformHudText($"{apiUser.displayName} has joined.", Color.white);
-                            }
                         }
                         else {
                             Con.Msg("[" + "JOIN".Pastel("3BA55D") + $"] {apiUser.displayName} has joined.");
-                            if (Config.HeadsUpDisplayNotifs.Value) {
+                            if (Config.HeadsUpDisplayNotifs.Value)
                                 VRCUiPopups.Notify($"{apiUser.displayName} has joined.");
-                                //VRCUiManager.prop_VRCUiManager_0.InformHudText($"{apiUser.displayName} has joined.", Color.white);
-                            }
                         }
                     }
                 }
@@ -94,7 +90,7 @@ namespace MintMod.Utils {
 
         private static void OnPlayerLeft(Player plr) {
             if (plr == null) return;
-            var apiUser = plr.prop_APIUser_0;
+            var apiUser = plr.field_Private_APIUser_0;
             if (apiUser == null) return;
             if (apiUser.id != APIUser.CurrentUser.id) {
                 MasterFinder.OnPlayerLeft();
@@ -104,17 +100,14 @@ namespace MintMod.Utils {
                         Con.Msg("[" + "Moderator LEFT".Pastel("ED4245") + $"] {apiUser.displayName} has left.");
                 } else {
                     if (Config.EnablePlayerJoinLeave.Value) {
-                        if (Config.FriendsOnlyJoinLeave.Value && APIUser.CurrentUser.friendIDs.Contains(apiUser.id)) {
+                        if (Config.FriendsOnlyJoinLeave.Value && (APIUser.CurrentUser.friendIDs.Contains(apiUser.id) || apiUser.isFriend)) {
                             Con.Msg("[" + "LEFT".Pastel("ED4245") + $"] {apiUser.displayName} has left.");
-                            if (Config.HeadsUpDisplayNotifs.Value) {
+                            if (Config.HeadsUpDisplayNotifs.Value) 
                                 VRCUiPopups.Notify($"{apiUser.displayName} has left.");
-                                //VRCUiManager.prop_VRCUiManager_0.InformHudText($"{apiUser.displayName} has left.", Color.white);
-                            }
-                        } else if (!Config.FriendsOnlyJoinLeave.Value) {
+                        } else {
                             Con.Msg("[" + "LEFT".Pastel("ED4245") + $"] {apiUser.displayName} has left.");
                             if (Config.HeadsUpDisplayNotifs.Value)
-                                if (Config.EnablePlayerJoinLeave.Value)
-                                    Con.Msg("[" + "LEFT".Pastel("ED4245") + $"] {apiUser.displayName} has left.");
+                                VRCUiPopups.Notify($"{apiUser.displayName} has left.");
                         }
                     }
                 }
