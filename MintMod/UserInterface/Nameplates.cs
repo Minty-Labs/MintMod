@@ -205,6 +205,10 @@ namespace MintMod.UserInterface {
                 return;
             string npID = nameplate.field_Private_VRCPlayer_0._player.field_Private_APIUser_0.id;
 
+            if (Players.Storage == null) {
+                Con.Error("Mint's Database Storage was empty or null");
+                return;
+            }
             if (Players.Storage.ContainsKey($"{npID}-{APIUser.CurrentUser.id}"))
                 npID = $"{npID}-{APIUser.CurrentUser.id}"; // User's Nameplate - target for only user to see
 

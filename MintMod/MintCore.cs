@@ -31,7 +31,7 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.24.2";
+            public const string Version = "2.24.3";
 #endif
 #if DEBUG
             public const string Version = "xxxxxx";

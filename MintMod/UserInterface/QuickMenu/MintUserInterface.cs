@@ -65,7 +65,7 @@ namespace MintMod.UserInterface.QuickMenu {
             
             MelonCoroutines.Start(BuildStandard());
             MelonCoroutines.Start(BuildMint());
-            MelonCoroutines.Start(ReColor.DelayedHfxReColor(ReColor.finalColor));
+            //MelonCoroutines.Start(ReColor.DelayedHfxReColor(ReColor.finalColor));
             if (!isStreamerModeOn) UserSelMenu();
         }
 

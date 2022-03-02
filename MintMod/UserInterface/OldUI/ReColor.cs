@@ -12,6 +12,7 @@ using static MintMod.Managers.Colors;
 using MintMod.Libraries;
 using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
+using UnhollowerBaseLib;
 using UnityEngine.UI;
 
 namespace MintMod.UserInterface.OldUI {
@@ -282,7 +283,7 @@ namespace MintMod.UserInterface.OldUI {
                             img.color = color;
                     }
                     */
-                    //MelonCoroutines.Start(DelayedHFXReColor(color));
+                    MelonCoroutines.Start(DelayedHfxReColor(color));
                 } catch (Exception ex) {
                     Con.Error(ex);
                 }
@@ -290,11 +291,21 @@ namespace MintMod.UserInterface.OldUI {
             yield break;
         }
 
+        internal override void OnUpdate() {
+            if (!ModCompatibility.ReMod) return;
+            if (HfxFound && Hfx.Count != 0)
+                Hfx.FirstOrDefault()!.highlightColor = finalColor;
+        }
+
+        private static Il2CppArrayBase<HighlightsFXStandalone> Hfx;
+        private static bool HfxFound;
+
         public static IEnumerator DelayedHfxReColor(Color color) {
             yield return new WaitForSeconds(3);
-            if (UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().Count == 0) yield break;
-            UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>().FirstOrDefault()!.highlightColor = color;
-            yield break;
+            Hfx = UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>();
+            if (Hfx.Count == 0) yield break;
+            Hfx.FirstOrDefault()!.highlightColor = color;
+            HfxFound = true;
         }
 
         private void ColorActionMenu(Color color) {

@@ -68,7 +68,7 @@ namespace MintMod.Utils {
                 }
                 else {
                     if (Config.EnablePlayerJoinLeave.Value) {
-                        if (Config.FriendsOnlyJoinLeave.Value && (APIUser.CurrentUser.friendIDs.Contains(apiUser.id) || apiUser.isFriend)) {
+                        if (Config.FriendsOnlyJoinLeave.Value && (APIUser.CurrentUser.friendIDs.Contains(apiUser.id) || apiUser.isFriend || APIUser.IsFriendsWith(apiUser.id))) {
                             Con.Msg("[" + "JOIN".Pastel("3BA55D") + $"] {apiUser.displayName} has joined.");
                             if (Config.HeadsUpDisplayNotifs.Value)
                                 VRCUiPopups.Notify($"{apiUser.displayName} has joined.");
@@ -100,7 +100,7 @@ namespace MintMod.Utils {
                         Con.Msg("[" + "Moderator LEFT".Pastel("ED4245") + $"] {apiUser.displayName} has left.");
                 } else {
                     if (Config.EnablePlayerJoinLeave.Value) {
-                        if (Config.FriendsOnlyJoinLeave.Value && (APIUser.CurrentUser.friendIDs.Contains(apiUser.id) || apiUser.isFriend)) {
+                        if (Config.FriendsOnlyJoinLeave.Value && (APIUser.CurrentUser.friendIDs.Contains(apiUser.id) || apiUser.isFriend || APIUser.IsFriendsWith(apiUser.id))) {
                             Con.Msg("[" + "LEFT".Pastel("ED4245") + $"] {apiUser.displayName} has left.");
                             if (Config.HeadsUpDisplayNotifs.Value) 
                                 VRCUiPopups.Notify($"{apiUser.displayName} has left.");

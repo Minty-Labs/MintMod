@@ -117,7 +117,7 @@ namespace MintMod.UserInterface.AvatarFavs {
                 yield return new WaitForSeconds(v);
                 var list2 = FavlistDictonary[list.ID];
                 if (list2 != null) {
-                    Il2CppSystem.Collections.Generic.List<ApiAvatar> AvatarList = new Il2CppSystem.Collections.Generic.List<ApiAvatar>();
+                    var AvatarList = new Il2CppSystem.Collections.Generic.List<ApiAvatar>();
                     list.Avatars.ForEach(avi => AvatarList.Add(avi.ToApiAvatar()));
                     list2.RenderElement(AvatarList);
                     list2.Text.supportRichText = true;
@@ -153,8 +153,9 @@ namespace MintMod.UserInterface.AvatarFavs {
                     var newlist = new VRCList(PublicAvatarList.transform.parent, list.name, list.ID);
                     var listofbuttons = new List<MenuButton>();
                     listofbuttons.Add(new MenuButton(newlist.UiVRCList.expandButton.gameObject.transform, MenuButtonType.AvatarFavButton, "Fav/UnFav", 930, 0, () => {
-                        if (!list.Avatars.Exists(avi => avi.id == currPageAvatar.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0.id))
+                        if (!list.Avatars.Exists(avi => avi.id == currPageAvatar.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0.id)) {
                             FavoriteAvatar(currPageAvatar.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0, list.ID);
+                        }
                         else
                             UnfavoriteAvatar(currPageAvatar.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0, list.ID);
                     }, 2, 1));
@@ -174,7 +175,7 @@ namespace MintMod.UserInterface.AvatarFavs {
 
         internal static void AddNewList() {
             var newID = Favorites.Instance.AvatarFavorites.FavoriteLists.Count;
-            Favorites.Instance.AvatarFavorites.FavoriteLists.Add(new FavoriteList() {
+            Favorites.Instance.AvatarFavorites.FavoriteLists.Add(new FavoriteList {
                 ID = newID,
                 Avatars = new List<AvatarObject>(),
                 Desciption = "",
