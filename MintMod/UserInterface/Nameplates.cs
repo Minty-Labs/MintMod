@@ -29,7 +29,7 @@ namespace MintMod.UserInterface {
                 return;
             }
             try { ClassInjector.RegisterTypeInIl2Cpp<MintyNameplateHelper>(); } catch (Exception e) {
-                Con.Error("Unable to Inject Nameplatehelper!\n" + e.ToString());
+                Con.Error("Unable to Inject NameplateHelper!\n" + e.ToString());
             }
         }
 
@@ -55,8 +55,8 @@ namespace MintMod.UserInterface {
                 if (vrcPlayer.field_Public_PlayerNameplate_0 == null)
                     return;
 
-                PlayerNameplate nameplate = vrcPlayer.field_Public_PlayerNameplate_0;
-                MintyNameplateHelper helper = nameplate.GetComponent<MintyNameplateHelper>();
+                var nameplate = vrcPlayer.field_Public_PlayerNameplate_0;
+                var helper = nameplate.GetComponent<MintyNameplateHelper>();
                 if (helper == null) {
                     helper = nameplate.gameObject.AddComponent<MintyNameplateHelper>();
                     helper.SetNameplate(nameplate);
@@ -231,7 +231,7 @@ namespace MintMod.UserInterface {
         public static void OnRebuild(PlayerNameplate nameplate) {
             if (ModCompatibility.MintyNameplates) return;
             if (nameplate == null || nameplate.gameObject == null) return;
-            MintyNameplateHelper helper = nameplate.gameObject.GetComponent<MintyNameplateHelper>();
+            var helper = nameplate.gameObject.GetComponent<MintyNameplateHelper>();
             if (helper != null)
                 helper.OnRebuild();
             else {
