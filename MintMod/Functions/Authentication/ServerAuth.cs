@@ -15,6 +15,7 @@ using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
 using MintMod.Utils;
 using Newtonsoft.Json;
+using Pastel;
 
 namespace MintMod.Functions.Authentication {
     internal class ServerAuth : MintSubMod {
@@ -47,6 +48,10 @@ namespace MintMod.Functions.Authentication {
                 // else canLoadMod = true
 
                 MintyData = JsonConvert.DeserializeObject<MintyUser>(task.Result);
+                if (MintyData == null) {
+                    Con.Error("Mint Authentication failed => Auth halting.");
+                    yield break;
+                }
 
                 if (MintyData.isBanned) {
                     canLoadMod = false;
@@ -54,8 +59,11 @@ namespace MintMod.Functions.Authentication {
                     yield break;
                 }
                 
-                if (MintyData.UserID == APIUser.CurrentUser.id || ModCompatibility.GPrivateServer) {
-                    Con.Msg(ConsoleColor.Green, "Authed for MintMod");
+                if (MintyData.UserID == APIUser.CurrentUser.id ||
+                    MintyData.AltAccounts.Any(x => x == APIUser.CurrentUser.id) ||
+                    ModCompatibility.GPrivateServer)
+                {
+                    Con.Msg("Authed for MintMod".Pastel("9fffe3"));
                     canLoadMod = true;
                     MintCore.mods.ForEach(u => {
                         try { u.OnUserInterface(); }
@@ -88,21 +96,22 @@ namespace MintMod.Functions.Authentication {
             if (!task.IsCompleted || task.Result.Contains("message")) {
                 Con.Msg("Player has no auth for Mint");
                 VRCUiPopups.Notify("Player has no auth for Mint", NotificationSystem.Alert);
-                //VRCUiManager.prop_VRCUiManager_0.InformHudText("Player has no auth for Mint", Color.yellow);
                 yield break;
             }
 
             var d = JsonConvert.DeserializeObject<MintyUser>(task.Result);
+            if (d == null) {
+                Con.Error("Mint Authentication failed => Auth halting.");
+                yield break;
+            }
 
             if (d.isBanned) {
                 Con.Msg("Player is banned from Mint");
                 VRCUiPopups.Notify("Player is banned from Mint", NotificationSystem.Alert);
-                //VRCUiManager.prop_VRCUiManager_0.InformHudText("Player is banned from Mint", Color.red);
                 yield break;
             }
             Con.Msg("Player is authed for Mint");
             VRCUiPopups.Notify("Player is authed fro Mint", NotificationSystem.Alert);
-            //VRCUiManager.prop_VRCUiManager_0.InformHudText("Player is authed for Mint", Color.white);
         }
     }
 }

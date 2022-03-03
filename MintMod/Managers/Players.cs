@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -113,6 +114,26 @@ namespace MintMod.Managers {
     }
     
     #region Mint Authentication pt.2
+/*
+    public class MintUser {
+        public string UserName { get; set; }
+        public string LinkedDiscordID { get; set; }
+        public string UserID { get; set; }
+        public string VoucherName { get; set; }
+        public bool MintBanned { get; set; }
+        public List<string> AltAccounts { get; set; }
+        
+        [JsonConstructor]
+        public MintUser(string _UserName, string _LinkedDiscordID, string _UserID, string _VoucherName, bool _MintBanned, List<string> _AltAccounts) {
+            this.UserName = _UserName;
+            this.LinkedDiscordID = _LinkedDiscordID;
+            this.UserID = _UserID;
+            this.VoucherName = _VoucherName;
+            this.MintBanned = _MintBanned;
+            this.AltAccounts = _AltAccounts;
+        }
+    }
+    */
     
     public class CustomPlayerObjects {
         public string userID { get; set; }
