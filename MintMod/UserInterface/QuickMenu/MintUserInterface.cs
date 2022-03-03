@@ -247,8 +247,9 @@ namespace MintMod.UserInterface.QuickMenu {
             var w = WorldMenu.AddCategory("General Actions");
             ItemESP = w.AddToggle("Item ESP", "Puts a bubble around all Pickups, can be seen through walls", ESP.SetItemESPToggle);
             w.AddButton("Add Jump", "Allows you to jump in the world", WorldActions.AddJump, MintyResources.jump);
-            w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world",
-                VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.UseLegacyLocomotion, MintyResources.history);
+            //w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world",
+            //    VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.UseLegacyLocomotion, MintyResources.history);
+            w.AddSpacer();
             w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", WorldActions.WorldDownload, MintyResources.dl);
 
             w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
