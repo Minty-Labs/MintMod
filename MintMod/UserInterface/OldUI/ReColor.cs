@@ -25,8 +25,6 @@ namespace MintMod.UserInterface.OldUI {
         private static List<Text> normalColorText;
         private static GameObject loadingBackground, initialLoadingBackground;
         public static Color finalColor;
-        private static readonly int Tex = Shader.PropertyToID("_Tex");
-        private static readonly int Tint = Shader.PropertyToID("_Tint");
 
         internal override void OnStart() => Intstance = this;
 
@@ -301,7 +299,7 @@ namespace MintMod.UserInterface.OldUI {
         private static bool HfxFound;
 
         public static IEnumerator DelayedHfxReColor(Color color) {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(10);
             Hfx = UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>();
             if (Hfx.Count == 0) yield break;
             Hfx.FirstOrDefault()!.highlightColor = color;
@@ -319,14 +317,14 @@ namespace MintMod.UserInterface.OldUI {
                 try {
                     var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
                     var loadingBackground = quickMenu.transform.Find("Popups/LoadingPopup/3DElements/LoadingBackground_TealGradient/SkyCube_Baked").gameObject;
-                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture(Tex, MintyResources.basicGradient);
-                    loadingBackground.GetComponent<MeshRenderer>().material.SetColor(Tint, new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
-                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture(Tex, MintyResources.basicGradient);
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
+                    loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
 
                     var initialLoadingBackground = GameObject.Find("LoadingBackground_TealGradient_Music/SkyCube_Baked");
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture(Tex, MintyResources.basicGradient);
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor(Tint, new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
-                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture(Tex, MintyResources.basicGradient);
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
+                    initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
                 } catch (Exception e) {
                     Con.Error(e);
                 }
