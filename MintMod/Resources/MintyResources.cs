@@ -20,7 +20,7 @@ namespace MintMod.Resources {
 
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent, BG_HUD;
         public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list, messages,
-            copy, key, marker, marker_hole, star, userlist, people;//m_Back, m_Foward, m_Menu, m_Play, m_Stop;
+            copy, key, marker, marker_hole, star, userlist, people, clone;//m_Back, m_Foward, m_Menu, m_Play, m_Stop;
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
         public static Font BalooFont;
@@ -49,6 +49,7 @@ namespace MintMod.Resources {
                     try { address_book = LoadSprite("address-book-solid.png"); } catch { Con.Error("Failed to load Texture: address-book-solid.png"); }
                     try { checkered = LoadSprite("chess-board-solid.png"); } catch { Con.Error("Resource chess-board-solid.png failed"); }
                     try { clipboard = LoadSprite("clipboard-list-solid.png"); } catch { Con.Error("Resource clipboard-list-solid.png failed"); }
+                    try { clone = LoadSprite("clone-solid.png"); } catch { Con.Error("Resource clone-solid.png failed"); }
                     try { cog = LoadSprite("cog-solid.png"); } catch { Con.Error("Resource cog-solid.png failed"); }
                     try { extlink = LoadSprite("external-link-alt-solid.png"); } catch { Con.Error("Resource external-link-alt-solid.png failed"); }
                     try { globe = LoadSprite("globe-americas-solid.png"); } catch { Con.Error("Resource globe-americas-solid.png failed"); }

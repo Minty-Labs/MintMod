@@ -397,7 +397,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
             userSelectCategory.AddButton("Download Avatar VRCA", $"Downloads {u}'s Avatar .VRCA", PlayerActions.AvatarDownload, MintyResources.dl);
             userSelectCategory.AddButton("Log Asset", $"Logs {u}'s information and put it into a text file", PlayerActions.LogAsset, MintyResources.list);
-            userSelectCategory.AddButton("Copy Avatar ID", $"Copies {u}'s avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id, MintyResources.clipboard);
+            userSelectCategory.AddButton("Copy Avatar ID", $"Copies {u}'s avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id, MintyResources.copy);
             userSelectCategory.AddButton("Clone Avatar", $"Clones {u}'s avatar if public", () => {
                 try {
                     var v = PlayerActions.SelPAvatar();
@@ -424,7 +424,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         Con.Error(f);
                     }
                 }
-            }, MintyResources.copy);
+            }, MintyResources.clone);
 
             if (Config.AviFavsEnabled.Value) {
                 userSelectCategory.AddButton("Silent Favorite", $"Silently favorites the avatar {u} is wearing if public.", () => {
