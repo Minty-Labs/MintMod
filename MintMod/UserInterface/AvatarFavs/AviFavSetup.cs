@@ -33,7 +33,7 @@ namespace MintMod.UserInterface.AvatarFavs {
             private static readonly string pathpath = $"{MintCore.MintDirectory}\\AviFavs.json";
             private static readonly string final = 
                 Config.haveCustomPath.Value ? 
-                Config.customPath.Value : // string.IsNullOrWhiteSpace(Config.customPath.Value) ? pathpath : Config.customPath.Value : 
+                string.IsNullOrWhiteSpace(Config.customPath.Value) ? pathpath : Config.customPath.Value : 
                 pathpath;
             
             public AviFavSetup AvatarFavorites = new();
