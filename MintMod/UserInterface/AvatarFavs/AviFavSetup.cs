@@ -33,15 +33,12 @@ namespace MintMod.UserInterface.AvatarFavs {
             private static readonly string pathpath = $"{MintCore.MintDirectory}\\AviFavs.json";
             private static readonly string final = 
                 Config.haveCustomPath.Value ? 
-                    string.IsNullOrWhiteSpace(Config.customPath.Value) ? pathpath : Config.customPath.Value : 
+                Config.customPath.Value : // string.IsNullOrWhiteSpace(Config.customPath.Value) ? pathpath : Config.customPath.Value : 
                 pathpath;
             
             public AviFavSetup AvatarFavorites = new();
 
-            public void SaveConfig() {
-                string contents = JsonConvert.SerializeObject(this, Formatting.Indented);
-                File.WriteAllText(final, contents);
-            }
+            public void SaveConfig() => File.WriteAllText(final, JsonConvert.SerializeObject(this, Formatting.Indented));
 
             public static void CreateAviFavJSONFile() {
                 //if (!Config.useWebhostSavedList.Value) {

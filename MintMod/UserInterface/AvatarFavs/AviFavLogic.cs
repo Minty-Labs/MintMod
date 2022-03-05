@@ -20,7 +20,7 @@ namespace MintMod.UserInterface.AvatarFavs {
         public override string Name => "MintyFavorties";
         public override string Description => "Avatar Favorites.";
         internal static Dictionary<int, VRCList> FavlistDictonary = new Dictionary<int, VRCList>();
-        internal static bool JustOpened, ranOnce;
+        internal static bool JustOpened, ranOnce, InitStart;
         private static GameObject avatarPage;
         public static PageAvatar currPageAvatar;
         private static GameObject PublicAvatarList;
@@ -63,7 +63,6 @@ namespace MintMod.UserInterface.AvatarFavs {
             avatarPage = GameObject.Find("UserInterface/MenuContent/Screens/Avatar");
             PublicAvatarList = GameObject.Find("/UserInterface/MenuContent/Screens/Avatar/Vertical Scroll View/Viewport/Content/Public Avatar List");
             currPageAvatar = avatarPage.GetComponent<PageAvatar>();
-            if (!Config.AviFavsEnabled.Value) return;
             if (Favorites.Instance.AvatarFavorites.FavoriteLists.Count == 0)
                 AddNewList();
             else
@@ -71,6 +70,7 @@ namespace MintMod.UserInterface.AvatarFavs {
 
             Con.Debug("Finished Minty Favorites", MintCore.isDebug);
             ranOnce = true;
+            InitStart = true;
         }
 
         internal static AviFavLogic Instance;
@@ -94,6 +94,7 @@ namespace MintMod.UserInterface.AvatarFavs {
         }
 
         internal override void OnPrefSave() {
+            if (!InitStart) return;
             if (Config.AviFavsEnabled.Value) {
                 try {
                     if (!ranOnce)
