@@ -45,10 +45,6 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="DataModel, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\DataModel.dll</HintPath>
-    </Reference>
     <Reference Include="DataModel, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\DataModel.dll</HintPath>
     </Reference>
@@ -227,10 +223,6 @@
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRCSDKBase.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="WindowsMediaController, Version=2.1.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Dubya.WindowsMediaController.2.1.0\lib\net48\WindowsMediaController.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
@@ -308,9 +300,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Managers\Notification\mintnotification" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Mint.WMC.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

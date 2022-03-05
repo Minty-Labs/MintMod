@@ -116,7 +116,7 @@ namespace MintMod.UserInterface.OldUI {
 						functionsButton?.SetActive(true);
 
 						if (!AvatarFavs.AviFavLogic.ranOnce)
-							AvatarFavs.AviFavLogic.Intance.OnUserInterface();
+							AvatarFavs.AviFavLogic.Instance.OnUserInterface();
 					}
 					MintUserInterface.UpdateMintIconForStreamerMode(isOn);
 					MenuContentBackdrop.UpdateForStreamerMode(isOn);

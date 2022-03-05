@@ -27,7 +27,7 @@ namespace MintMod.UserInterface.AvatarFavs {
         internal static bool AviFavsErrored;
 
         internal override void OnStart() {
-            Intance = this;
+            Instance = this;
             try {
                 //Favorites.Instance = Favorites.Load();
                 Favorites.CreateAviFavJSONFile();
@@ -39,14 +39,23 @@ namespace MintMod.UserInterface.AvatarFavs {
         }
 
         internal override void OnUserInterface() {
+            /*try {
+                Favorites.GetAviFavJSONFromWebhost();
+            }
+            catch (Exception e) {
+                Con.Error($"Avatar Favs Failed to load\n{e}");
+                AviFavsErrored = true;
+            }
+            */
+            
             if (AviFavsErrored) return;
             if (ranOnce) return;
             if (ModCompatibility.GPrivateServer) {
-                Con.Msg("Extended Avatar Favouring has been disabled.");
+                Con.Msg("Extended Avatar Favoriting has been disabled.");
                 return;
             }
             if (!Config.AviFavsEnabled.Value) {
-                Con.Msg("Extended Avatar Favouring has been disabled.");
+                Con.Msg("Extended Avatar Favoriting has been disabled.");
                 return;
             }
             if (!Config.AviFavsEnabled.Value) return;
@@ -64,7 +73,7 @@ namespace MintMod.UserInterface.AvatarFavs {
             ranOnce = true;
         }
 
-        internal static AviFavLogic Intance;
+        internal static AviFavLogic Instance;
 
         internal override void OnUpdate() {
             if (AviFavsErrored) return;
@@ -88,7 +97,7 @@ namespace MintMod.UserInterface.AvatarFavs {
             if (Config.AviFavsEnabled.Value) {
                 try {
                     if (!ranOnce)
-                        Intance.OnUserInterface();
+                        Instance.OnUserInterface();
                 } catch (Exception a) { Con.Error($"After game start, Avatar Favorites Start Error\n{a}"); }
 
                 try {

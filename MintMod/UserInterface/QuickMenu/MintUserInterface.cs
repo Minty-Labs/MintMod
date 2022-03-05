@@ -24,6 +24,7 @@ using MintyLoader;
 using MintMod.Functions.Authentication;
 using MintMod.Libraries;
 using MintMod.Managers.Notification;
+using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.OldUI;
 
 namespace MintMod.UserInterface.QuickMenu {
@@ -35,7 +36,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
 
-        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig, MediaPlayback;
+        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig, AvatarMenu;
 
         private static ReMenuSlider FlightSpeedSlider;
 
@@ -161,6 +162,7 @@ namespace MintMod.UserInterface.QuickMenu {
             PlayerListMenuSetup();
             PlayerListOptions();
             //MediaControls();
+            //BuildAvatarMenu();
 
             Con.Debug("Done Setting up MintMenus", MintCore.isDebug);
             yield break;
@@ -202,7 +204,7 @@ namespace MintMod.UserInterface.QuickMenu {
         private static ReMenuToggle InfJump;
         
         private static void Player() {
-            PlayerMenu = BaseActions.AddCategoryPage("Player", "Actions involving players.", MintyResources.user);
+            PlayerMenu = BaseActions.AddCategoryPage("Player", "Actions involving players.", MintyResources.people);
             var c = PlayerMenu.AddCategory("General Actions", false);
             PlayerESP = c.AddToggle("Player ESP", "Puts a bubble around each player, and is visible through walls.", ESP.PlayerESPState);
             c.AddButton("Copy Current Avi ID", "Copys your current Avatar ID into your clipboard", () => {
@@ -666,7 +668,7 @@ namespace MintMod.UserInterface.QuickMenu {
         private static ReMenuSliderCategory ColorCat;
         private static ReMenuSlider Red, Green, Blue, Alpha, TextSize;
         private static void PlayerListOptions() {
-            PlayerListConfig = BaseActions.AddCategoryPage("Player List Config", "Control the player list's options", MintyResources.user);
+            PlayerListConfig = BaseActions.AddCategoryPage("Player List Config", "Control the player list's options", MintyResources.userlist);
             var c = PlayerListConfig.AddCategory("Player List Config", false);
             var o = Config.PLEnabled.Value;
             
@@ -774,6 +776,48 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 */
 #endif
+        #endregion
+
+        #region Avatar Menu
+/*
+        private static ReMenuToggle AFToggle, AFConsole, WebOrLocal;
+        private static ReMenuButton SendAFToHost;
+        private static void BuildAvatarMenu() {
+            AvatarMenu = BaseActions.AddCategoryPage("Avatar Favorites", "Avatar Favorites related options", MintyResources.user);
+            var c = AvatarMenu.AddCategory("Config Options", false);
+
+            AFToggle = c.AddToggle("Enabled", "Toggle your Mint Avatar Favorites list", b => {
+                Config.SavePrefValue(Config.Avatar, Config.AviFavsEnabled, b);
+                if (AFConsole != null && WebOrLocal != null) {
+                    AFConsole.Active = b;
+                    WebOrLocal.Active = b;
+                    if (MintCore.isDebug && WebOrLocal != null && SendAFToHost != null) {
+                        WebOrLocal.Active = b;
+                        SendAFToHost.Active = b;
+                    }
+                }
+            }, Config.AviFavsEnabled.Value);
+            
+            AFConsole = c.AddToggle("Console Logs", "Toggle whether there is console logging with Un/Favoriting avatars.", b => {
+                Config.SavePrefValue(Config.Avatar, Config.AviLogFavOrUnfavInConsole, b);
+            }, Config.AviLogFavOrUnfavInConsole.Value);
+            
+            WebOrLocal = c.AddToggle("Use Webhost List", "Toggle whether you want to use Local List or a webhost saved list..", b => {
+                Config.SavePrefValue(Config.Avatar, Config.useWebhostSavedList, b);
+            }, Config.useWebhostSavedList.Value);
+            WebOrLocal.Active = MintCore.isDebug;
+
+            SendAFToHost = c.AddButton("Send to Webhost", "Sends your current list to Mint's webhost.", () => {
+                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowStandardPopupV2("Are you sure?", "Are you sure you want to upload your current list to Mint's webhost?", 
+                    "Cancel", VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup,
+                    "Send", () => {
+                        //AviFavSetup.Favorites.SendLocalListToServer();
+                        VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup();
+                    }, null);
+            }, MintyResources.extlink);
+            SendAFToHost.Active = MintCore.isDebug;
+        }
+*/
         #endregion
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {

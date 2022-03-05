@@ -14,59 +14,10 @@ namespace MintMod {
     class Config : MintSubMod {
         public override string Name => "Config";
         public override string Description => "Mint's Config system.";
-
-        public static MelonPreferences_Category mint;
-        public static MelonPreferences_Entry<bool> /*SpoofDeviceType,*/ QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc, ModJoinPopup;
-        public static MelonPreferences_Entry<int> SpoofedPingNumber;
-        public static MelonPreferences_Entry<float> SpoofedFrameNumber;
-
-        // Base
-        public static MelonPreferences_Category Base;
-        public static MelonPreferences_Entry<bool> KeepPriorityHighEnabled, ShowWelcomeMessages, UseCustomLoadingMusic, EnableMasterFinder, AutoAddJump,
-            EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, CanSitInChairs, UseOldHudMessages;
-        public static MelonPreferences_Entry<int> MaxFrameRate;
-
-        // Color
-        public static MelonPreferences_Category Color;
-        public static MelonPreferences_Entry<bool> RecolorRanks, ColorGameMenu, ColorActionMenu, ColorHUDMuteIcon, ColorUiExpansionKit, EnableCustomNameplateReColoring, ColorLoadingScreen;
-        public static MelonPreferences_Entry<string> FriendRankHEX, LegendRankHEX, VeteranRankHEX, TrustedRankHEX, KnownRankHEX, UserRankHEX, NewUserRankKEX,
-            VisitorRankHEX, MenuColorHEX;
-
-        // Menu
-        public static MelonPreferences_Category Menu;
-        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, useTabButtonForMenu;
-        public static MelonPreferences_Entry<string> InfoHUDPosition;
-
-        // Portal
-        public static MelonPreferences_Category Portal;
-        //public static MelonPreferences_Entry<string> Portal_1, Portal_2, Portal_3, Portal_4, Portal_5, Portal_6, Portal_7, Portal_8;
-        //public static MelonPreferences_Entry<int> FakeOccupiedNumber;
-        public static MelonPreferences_Entry<float> ResetTimerAmount;
-
-        // Midnight Rooftop Button State
-        public static MelonPreferences_Category MRBS;
-        public static MelonPreferences_Entry<bool> DetObj, Fog, PP, thunder, dust, collider, join, pillow, pillowpickup, chairs, lightbeams, RainWin, RainPart,
-            FurCarpet;
-
-        // Avatar
-        public static MelonPreferences_Category Avatar;
-        public static MelonPreferences_Entry<bool> AviFavsEnabled, AviLogFavOrUnfavInConsole;
-
-        // Extras
-        public static MelonPreferences_Category Extras;
-        public static MelonPreferences_Entry<bool> useFakeName;
-        public static MelonPreferences_Entry<string> FakeName;
-        //public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
-
-        public static MelonPreferences_Category PlayerList;
-        public static MelonPreferences_Entry<bool> PLEnabled, uncapListCount;
-        public static MelonPreferences_Entry<string> LocalSpoofedName, HudPosition;
-        public static MelonPreferences_Entry<Color32> BackgroundColor;
-        public static MelonPreferences_Entry<int> Location, TextSize;
-
+        
         internal override void OnStart() {
             // Info
-            MelonPreferences_Category yes = MelonPreferences.CreateCategory("MintMod_Info", "MintMod - * (requires game restart)");
+            var yes = MelonPreferences.CreateCategory("MintMod_Info", "MintMod - * (requires game restart)");
             _Base();
             _Color();
             _Menu();
@@ -78,6 +29,11 @@ namespace MintMod {
             _PlayerList();
         }
 
+        // Base
+        public static MelonPreferences_Category Base;
+        public static MelonPreferences_Entry<bool> KeepPriorityHighEnabled, ShowWelcomeMessages, UseCustomLoadingMusic, EnableMasterFinder, AutoAddJump,
+            EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, CanSitInChairs, UseOldHudMessages;
+        public static MelonPreferences_Entry<int> MaxFrameRate;
         static void _Base() {
             // Base
             Base = MelonPreferences.CreateCategory("MintMod_Base", "MintMod - Base");
@@ -96,6 +52,11 @@ namespace MintMod {
             UseOldHudMessages = Base.CreateEntry("UseOldHudMessages", false, "Use Old Hud Messages");
         }
 
+// Color
+        public static MelonPreferences_Category Color;
+        public static MelonPreferences_Entry<bool> RecolorRanks, ColorGameMenu, ColorActionMenu, ColorHUDMuteIcon, ColorUiExpansionKit, EnableCustomNameplateReColoring, ColorLoadingScreen;
+        public static MelonPreferences_Entry<string> FriendRankHEX, LegendRankHEX, VeteranRankHEX, TrustedRankHEX, KnownRankHEX, UserRankHEX, NewUserRankKEX,
+            VisitorRankHEX, MenuColorHEX;
         static void _Color() {
             // Color
             Color = MelonPreferences.CreateCategory("MintMod_Color", "MintMod - Color");
@@ -120,6 +81,10 @@ namespace MintMod {
             ColorLoadingScreen = Color.CreateEntry("ColorLoadingScreen", false, "* Color Loading Environment", "Colors the Loading Environment");
         }
 
+        // Menu
+        public static MelonPreferences_Category Menu;
+        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, useTabButtonForMenu;
+        public static MelonPreferences_Entry<string> InfoHUDPosition;
         static void _Menu() {
             // Menu
             Menu = MelonPreferences.CreateCategory("MintMod_Menu", "MintMod - Menu");
@@ -134,6 +99,11 @@ namespace MintMod {
             KeepInfJumpOnMainMenu = Menu.CreateEntry("KeepInfJumpOnMainMenu", false, "Puts Infinite Jump Toggle on QM");
         }
 
+        // Portal
+        public static MelonPreferences_Category Portal;
+        //public static MelonPreferences_Entry<string> Portal_1, Portal_2, Portal_3, Portal_4, Portal_5, Portal_6, Portal_7, Portal_8;
+        //public static MelonPreferences_Entry<int> FakeOccupiedNumber;
+        public static MelonPreferences_Entry<float> ResetTimerAmount;
         static void _Portal() {
             // Portal
             Portal = MelonPreferences.CreateCategory("MintMod_Portal", "MintMod - Portal");
@@ -149,6 +119,10 @@ namespace MintMod {
             ResetTimerAmount = Portal.CreateEntry("ResetTimerAmount", 3600f, "Reset Portal Timer");
         }
 
+        // Midnight Rooftop Button State
+        public static MelonPreferences_Category MRBS;
+        public static MelonPreferences_Entry<bool> DetObj, Fog, PP, thunder, dust, collider, join, pillow, pillowpickup, chairs, lightbeams, RainWin, RainPart,
+            FurCarpet;
         static void _MRBS() {
             // Midnight Rooftop Button State
             MRBS = MelonPreferences.CreateCategory("MintMod_MidnightRooftop", "MintMod - Midnight Rooftop Button State");
@@ -168,13 +142,24 @@ namespace MintMod {
             FurCarpet = MRBS.CreateEntry("FurCarpet", true, "Fur Carpet");
         }
 
+// Avatar
+        public static MelonPreferences_Category Avatar;
+        public static MelonPreferences_Entry<bool> AviFavsEnabled, AviLogFavOrUnfavInConsole, useWebhostSavedList, haveCustomPath;
+        public static MelonPreferences_Entry<string> customPath;
         static void _Avatar() {
             // Avatar
             Avatar = MelonPreferences.CreateCategory("MintMod_Avatar", "MintMod - Avatar");
             AviFavsEnabled = Avatar.CreateEntry("AviFavsEnabled", true, "Avatar Favorites Enabled");
             AviLogFavOrUnfavInConsole = Avatar.CreateEntry("AviLogFavOrUnfavInConsole", true, "Log Fav/UnFav in console");
+            if (MintCore.isDebug) useWebhostSavedList = Avatar.CreateEntry("useWebhostSavedList", false, "Use Server Save List");
+            haveCustomPath = Avatar.CreateEntry("haveCustomAvatarListPath", false, "* Custom List Path");
+            customPath = Avatar.CreateEntry("AvatarListCustomPath", $"{MintCore.MintDirectory}\\AviFavs.json", "* Custom Path");
         }
 
+        public static MelonPreferences_Category mint;
+        public static MelonPreferences_Entry<bool> /*SpoofDeviceType,*/ QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc, ModJoinPopup;
+        public static MelonPreferences_Entry<int> SpoofedPingNumber;
+        public static MelonPreferences_Entry<float> SpoofedFrameNumber;
         static void _Random() {
             // Random
             mint = MelonPreferences.CreateCategory("MintMod_Random", "MintMod - Random");
@@ -189,6 +174,11 @@ namespace MintMod {
             ModJoinPopup = mint.CreateEntry("ModJoinPopup", true, "Toggle the Mod Join Popup");
         }
 
+        // Extras
+        public static MelonPreferences_Category Extras;
+        public static MelonPreferences_Entry<bool> useFakeName;
+        public static MelonPreferences_Entry<string> FakeName;
+        //public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
         static void _Extra() {
             // Extras
             Extras = MelonPreferences.CreateCategory("MintMod_Extras", "MintMod - Extras");
@@ -197,6 +187,11 @@ namespace MintMod {
             //BTKLead = Extras.CreateEntry("UseBTKLead", false, "* Use BTKLead", "");
         }
 
+        public static MelonPreferences_Category PlayerList;
+        public static MelonPreferences_Entry<bool> PLEnabled, uncapListCount;
+        public static MelonPreferences_Entry<string> LocalSpoofedName, HudPosition;
+        public static MelonPreferences_Entry<Color32> BackgroundColor;
+        public static MelonPreferences_Entry<int> Location, TextSize;
         static void _PlayerList() {
             PlayerList = MelonPreferences.CreateCategory("MintMod_PlayerList", "MintMod - PlayerList");
             PLEnabled = PlayerList.CreateEntry("EnablePlayerList", false, "Enable Player List");
