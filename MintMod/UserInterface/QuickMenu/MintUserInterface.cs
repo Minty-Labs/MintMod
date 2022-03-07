@@ -155,6 +155,16 @@ namespace MintMod.UserInterface.QuickMenu {
 
             BaseActions = MintMenu.AddCategory("Menus", false);
 
+            if (!Config.useTabButtonForMenu.Value) {
+                try {
+                    var _ = BaseActions.Header.GameObject.transform.Find("LeftItemContainer/MintMenuButtonOvertakenBackButton")?.gameObject;
+                    _.DestroyImmediate();
+                }
+                catch (Exception e) {
+                    Con.Error(e);
+                }
+            }
+
             MintQuickActions();
             Player();
             World();

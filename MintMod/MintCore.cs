@@ -31,15 +31,15 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.26.1";
+            public const string Version = "2.26.2";
 #endif
 #if DEBUG
-            public const string Version = "xxxxxx";
+            public const string Version = "2.26.2";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "5 Mar 2022";
+            public const string UpdatedDate = "6 Mar 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.6.3";
+            internal const string LoaderVer = "2.6.4";
 #endif
         }
 
@@ -47,7 +47,7 @@ namespace MintMod {
 
         internal static List<MintSubMod> mods = new();
 
-        internal static readonly DirectoryInfo MintDirectory = new($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}UserData{Path.DirectorySeparatorChar}MintMod");
+        internal static readonly DirectoryInfo MintDirectory = new(Path.Combine(Environment.CurrentDirectory, "UserData", "MintMod"));
 
         private static int _scenesLoaded = 0;
 
@@ -60,6 +60,12 @@ namespace MintMod {
                 return;
             }
 #endif
+            ReMod_Core_Downloader.LoadReModCore(out _);
+            if (ReMod_Core_Downloader.failed) {
+                Con.Warn("ReMod.Core Failed to load, I am not going to load MintMod!");
+                cancelLoad = true;
+                return;
+            }
             Instance = this;
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);
@@ -115,7 +121,7 @@ namespace MintMod {
             //mods.Add(new ExtendedMediaPlayback());
             //mods.Add(new );
 
-            ReMod.Core.Unity.EnableDisableListener_Mint.RegisterSafe();
+            ReMod.Core.Unity.EnableDisableListener.RegisterSafe();
             //ReMod.Core.Unity.RenderObjectListener.RegisterSafe();
 
             mods.ForEach(a => {
