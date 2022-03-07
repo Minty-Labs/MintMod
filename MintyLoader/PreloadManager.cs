@@ -5,6 +5,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Windows.Forms;
 using MintyLoader;
@@ -17,11 +18,11 @@ namespace MintyLoader {
             public static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
         }
 
-        internal static string[] badMods = { "ripperstore", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", "snaxytag", "unchained", 
-            "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen" };
-        internal static string[] badAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "_unreal", "bunny", "stellar", "lady lucy", 
-            "meap", "fiass" };
-        internal static string[] badPlugins = { "astral" };
+        internal static string[] badMods = { "ripperstore", "ripper", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", "snaxytag", "unchained", 
+            "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen", "astralbypass", "astral", "plan b client", "odious" };
+        internal static string[] badAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "_unreal", "unreal", "bunny", "stellar", "lady lucy", 
+            "meap", "fiass", "some dude", "kuroi hane", "unixian" };
+        internal static string[] badPluginAuthors = { "astral", "fck" };
         
         internal static void BlacklistedModCheck() {
             var temp = new List<string>();
@@ -39,10 +40,11 @@ namespace MintyLoader {
                     temp2.Add(m.Info.Author);
                     return true;
                 }
+                if (m.Info.Author == null) return true;
                 return false;
             });
             var t3 = MelonHandler.Plugins.Any(p => {
-                if (badPlugins.Contains(p.Info.Name.ToLower())) {
+                if (badPluginAuthors.Contains(p.Info.Name.ToLower())) {
                     temp3.Add(p.Info.Name);
                     return true;
                 }
@@ -64,9 +66,12 @@ namespace MintyLoader {
             
             if (MelonHandler.Plugins.Any(m => m.Info.Name.ToLower().Contains("freeloading")) ||
                 MelonHandler.Plugins.Any(m => badAuthors.Contains(m.Info.Author.ToLower())) ||
-                File.Exists($"{Environment.CurrentDirectory}{Path.PathSeparator}glu32.dll") ||
-                File.Exists($"{Environment.CurrentDirectory}{Path.PathSeparator}winhttp.dll") ||
-                Directory.Exists($"{Environment.CurrentDirectory}{Path.PathSeparator}Mods-Freedom"))
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "glu32.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "winhttp.dll")) ||
+                Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Mods-Freedom")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.Loader.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.Core.dll")))
                 KillGame();
             
             if (MintyLoader.isDebug)
