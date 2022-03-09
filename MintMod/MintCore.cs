@@ -31,13 +31,13 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.26.2";
+            public const string Version = "2.26.3";
 #endif
 #if DEBUG
             public const string Version = "2.26.2";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "6 Mar 2022";
+            public const string UpdatedDate = "8 Mar 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.6.4";
 #endif
@@ -170,6 +170,7 @@ namespace MintMod {
                 try { s.OnApplicationQuit(); } catch (Exception e) { Con.Error(e); }
             });
 #if !DEBUG
+            /*
             if (GetRubyConfig.HasRubyActive && MelonHandler.Mods.FindIndex(i => i.Info.Name.ToLower().Contains("aiko")) == -1) {
                 try {
                     Process.Start("cmd", "/C taskkill /f /im WMC.exe");
@@ -187,6 +188,7 @@ namespace MintMod {
                 //try { Process.Start("cmd", "/C taskkill /f /im BTKV3.exe"); }
                 //catch (Exception e) { if (isDebug) Con.Error(e); }
             }
+            */
 #endif
         }
     }
