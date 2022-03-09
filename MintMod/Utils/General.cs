@@ -15,7 +15,7 @@ using MintMod.Managers.Notification;
 
 namespace MintMod.Utils {
     class General : MintSubMod {
-        public static readonly int setMaxFrameRate240 = 240;
+        private static readonly int setMaxFrameRate240 = 240;
 
         public static void SetFrameRate() {
             try {
@@ -58,7 +58,7 @@ namespace MintMod.Utils {
 
         private static bool LoadedOneTime = true;
 
-        public static void StartWelcomeMessage() {
+        private static void StartWelcomeMessage() {
             if (!LoadedOneTime) return;
             MelonCoroutines.Start(Welcome());
             LoadedOneTime = false;
@@ -66,9 +66,9 @@ namespace MintMod.Utils {
 
         private static IEnumerator Welcome() {
             yield return new WaitForSeconds(10);
-            Con.Msg($"Welcome back, {ServerAuth.MintyData.Name}");
-            VRCUiPopups.Notify($"Welcome back, {ServerAuth.MintyData.Name}", NotificationSystem.Key);
-            //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Welcome back, {ServerAuth.MintyData.Name}", Color.white);
+            string data = string.IsNullOrWhiteSpace(Config.FakeName.Value) ? ServerAuth.MintyData.Name : Config.FakeName.Value;
+            Con.Msg($"Welcome back, {data}");
+            VRCUiPopups.Notify($"Welcome back, {data}", NotificationSystem.Key);
         }
 
         #endregion

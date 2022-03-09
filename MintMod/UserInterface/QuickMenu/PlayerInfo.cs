@@ -47,7 +47,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 BackgroundImage.sprite = MintyResources.BG_HUD;
                 SetBackgroundColor(Config.BackgroundColor.Value);
             }
-            
+            if (BackgroundObject.transform.Find("Player List"))
+                yield break;
             TextObject = new GameObject("Player List");
             TextObject.transform.SetParent(BackgroundObject.transform, false);
             TextObject.AddComponent<CanvasRenderer>();
@@ -74,12 +75,12 @@ namespace MintMod.UserInterface.QuickMenu {
                 TheText.text = string.Concat(new[] {
                     "\n\n",
                     "<b>Player List</b> (" + (WorldReflect.IsInWorld() 
-                        ? "<color=yellow>" + PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count + "</color>"
+                        ? $"<color=yellow>{PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count}</color>"
                         : "-1") + ")\n",
                     RenderPlayerList()
                 });
-                if (TheText.text.Contains("Aicalas"))
-                    TheText.text = TheText.text.Replace("Aicalas", "<color=#587EE2>Penny</color>");
+                if (TheText.text.Contains(".penny"))
+                    TheText.text = TheText.text.Replace(".penny", "<color=#587EE2>Penny</color>");
                 if (TheText.text.Contains("jettsd"))
                     TheText.text = TheText.text.Replace("jettsd", "Emy");
                 if (TheText.text.Contains("~Silentt~"))
@@ -103,6 +104,7 @@ namespace MintMod.UserInterface.QuickMenu {
                                     $"<color=#{ColorUtility.ToHtmlStringRGB(VRCPlayer.Method_Public_Static_Color_APIUser_0(player.prop_APIUser_0))}>{player.field_Private_APIUser_0.displayName}</color>",
                                     $" | <color=#{Config.MenuColorHEX.Value}>{player._vrcplayer.prop_Int16_0.ToString()}</color> ms",
                                     $" | {player.GetVRCPlayer().GetFramesColored()} fps",
+                                    $" | {player.GetVRCPlayer().Platform()}",
                                     $" | {player.GetVRCPlayer().GetAviPerformance()}\n"
                                 });
                                 num++;
@@ -149,7 +151,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         public static void MoveTheText() {
             if (TheText != null)
-                TheText.GetComponent<RectTransform>().anchoredPosition = new Vector2(130, Config.uncapListCount.Value ? -300 : 125);
+                TheText.GetComponent<RectTransform>().anchoredPosition = new Vector2(15, Config.uncapListCount.Value ? -150 : 125);
         }
 
         internal override void OnPrefSave() {

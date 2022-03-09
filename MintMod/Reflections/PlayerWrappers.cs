@@ -150,5 +150,13 @@ namespace MintMod.Reflections {
             }
             return "";
         }
+        
+        public static bool IsInVR(this VRCPlayer player) => player.prop_VRCPlayerApi_0.IsUserInVR();
+
+        public static string Platform(this VRCPlayer player) {
+            if (player.prop_Player_0.prop_APIUser_0.last_platform == "standalonewindows") 
+                return player.IsInVR() ? "<color=#3592C4>VR</color>" : "<color=#40B6E0>D</color>";
+            return "<color=#7AA45D>Q</color>";
+        }
     }
 }
