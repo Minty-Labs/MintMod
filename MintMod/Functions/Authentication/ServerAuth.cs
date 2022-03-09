@@ -111,7 +111,7 @@ namespace MintMod.Functions.Authentication {
                 yield break;
             }
             Con.Msg("Player is authed for Mint");
-            VRCUiPopups.Notify("Player is authed fro Mint", NotificationSystem.Alert);
+            VRCUiPopups.Notify("Player is authed for Mint", NotificationSystem.Alert);
         }
     }
 }
