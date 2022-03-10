@@ -29,7 +29,7 @@ namespace MintMod.UserInterface {
                 return;
             }
             try { ClassInjector.RegisterTypeInIl2Cpp<MintyNameplateHelper>(); } catch (Exception e) {
-                Con.Error("Unable to Inject NameplateHelper!\n" + e.ToString());
+                Con.Error($"Unable to Inject NameplateHelper!\n{e}");
             }
         }
 

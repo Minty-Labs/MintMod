@@ -28,7 +28,7 @@ namespace MintMod.Libraries {
                 TeleporterVR = true;
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "NameplateStats") != -1)
                 NameplateStats = true;
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ReMod") != -1)
+            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ReMod") != -1 || File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")))
                 ReMod = true;
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "SettingsRestart") != -1)
                 SettingsRestart = true;

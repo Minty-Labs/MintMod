@@ -298,8 +298,14 @@ namespace MintMod.UserInterface.OldUI {
         private static Il2CppArrayBase<HighlightsFXStandalone> Hfx;
         private static bool HfxFound;
 
+        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+            if (buildindex == -1 && ModCompatibility.ReMod) {
+                MelonCoroutines.Start(DelayedHfxReColor(finalColor));
+            }
+        }
+
         public static IEnumerator DelayedHfxReColor(Color color) {
-            yield return new WaitForSeconds(10);
+            yield return new WaitForSeconds(5);
             Hfx = UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>();
             if (Hfx.Count == 0) yield break;
             Hfx.FirstOrDefault()!.highlightColor = color;

@@ -5,7 +5,7 @@ using MelonLoader;
 using MintyLoader;
 
 namespace MintMod.Utils {
-    public class ReMod_Core_Downloader {
+    public class ReMod_Core_Loader {
         internal static bool failed;
         public static void LoadReModCore(out Assembly loadedAssembly) {
             byte[] bytes = null;
