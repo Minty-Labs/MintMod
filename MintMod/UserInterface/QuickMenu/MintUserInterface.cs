@@ -26,6 +26,7 @@ using MintMod.Libraries;
 using MintMod.Managers.Notification;
 using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.OldUI;
+using VRC.DataModel;
 
 namespace MintMod.UserInterface.QuickMenu {
     internal class MintUserInterface : MintSubMod {
@@ -112,7 +113,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
                 
                 MainQMInfJump = MintCategoryOnLaunchPad.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
-                    onToggle => PlayerActions.InfinteJump = onToggle);
+                    onToggle => InfJump.Toggle(onToggle, true, true));
                 
                 MainQMFly.Active = Config.KeepFlightBTNsOnMainMenu.Value;
                 MainQMNoClip.Active = Config.KeepFlightBTNsOnMainMenu.Value;
@@ -254,6 +255,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region World Menu
 
+        private static ReMenuToggle WorldToggle;
+
         private static void World() {
             WorldMenu = BaseActions.AddCategoryPage("World", "Actions involving the world.", MintyResources.globe);
             var w = WorldMenu.AddCategory("General Actions");
@@ -261,8 +264,8 @@ namespace MintMod.UserInterface.QuickMenu {
             w.AddButton("Add Jump", "Allows you to jump in the world", WorldActions.AddJump, MintyResources.jump);
             //w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world",
             //    VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.UseLegacyLocomotion, MintyResources.history);
-            w.AddSpacer();
             w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", WorldActions.WorldDownload, MintyResources.dl);
+            w.AddSpacer();
 
             w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
                     string id = RoomManager.field_Internal_Static_ApiWorld_0.id;
@@ -296,12 +299,6 @@ namespace MintMod.UserInterface.QuickMenu {
                     Con.Error(j);
                 }
             }, MintyResources.globe);
-            w.AddSpacer();
-            w.AddButton("Log World", "Logs world info (of various data points) in a text file.", WorldActions.LogWorld, MintyResources.list);
-            
-            w.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
-            w.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
-            w.AddButton("Beautify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
             w.AddButton("Reset Portal", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
                 if (UnityEngine.Object.FindObjectsOfType<PortalInternal>() == null) return;
                 var single = default(Il2CppSystem.Single);
@@ -317,9 +314,20 @@ namespace MintMod.UserInterface.QuickMenu {
                 /*for (int i = 0; i < array.Length; i++) {
                     if (array[i].gameObject.activeInHierarchy && !(array[i].gameObject.GetComponentInParent<VRC_PortalMarker>() != null)) 
                         Networking.RPC(RPC.Destination.AllBufferOne, array[i].gameObject, "SetTimerRPC",
-                            new Il2CppSystem.Object[1] { @object });
+                            new[] { @object });
                 }*/
             }, MintyResources.history);
+            w.AddButton("Log World", "Logs world info (of various data points) in a text file.", WorldActions.LogWorld, MintyResources.list);
+            
+            w.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
+            w.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
+            w.AddButton("Beautify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
+
+            WorldToggle = w.AddToggle("Mint World Toggles", "Toggle Mint specific objects in the world, if there are any.", b => {
+                var g = GameObject.Find("WORLD BASE/cliffside_modern_home_base/_Mint_SetOFF");
+                g.SetActive(!b);
+            });
+            WorldToggle.Active = false;
 
             var e = WorldMenu.AddCategory("Item Manipulation");
             e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
@@ -836,6 +844,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 ESP.ClearAllPlayerESP();
                 InfJump?.Toggle(false, true, true);
                 MainQMInfJump?.Toggle(false, true, true);
+                if (WorldToggle != null)
+                    WorldToggle.Active = WorldReflect.IsInWorld() && WorldReflect.GetWorldInstance().id == "wrld_b0dfa268-1b67-4ac2-b660-f533a31722d7";
             }
         }
 
