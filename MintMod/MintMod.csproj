@@ -273,7 +273,7 @@
     <Compile Include="Utils\AssemblyLoader.cs" />
     <Compile Include="Utils\General.cs" />
     <Compile Include="Utils\Network.cs" />
-    <Compile Include="Utils\ReMod.Core.Downloader.cs" />
+    <Compile Include="Utils\ReMod.Core.Loader.cs" />
     <Compile Include="Utils\VRCUiPopups.cs" />
   </ItemGroup>
   <ItemGroup>

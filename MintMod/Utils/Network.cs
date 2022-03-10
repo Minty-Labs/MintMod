@@ -59,6 +59,7 @@ namespace MintMod.Utils {
                                     Config.SavePrefValue(Config.mint, Config.SpoofFramerate, false);
                                     Config.SavePrefValue(Config.mint, Config.SpoofPing, false);
                                     MelonPreferences.Save();
+                                    VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup();
                                 }, null);
                         }
                     }
