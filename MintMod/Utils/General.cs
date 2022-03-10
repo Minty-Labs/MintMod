@@ -66,7 +66,7 @@ namespace MintMod.Utils {
 
         private static IEnumerator Welcome() {
             yield return new WaitForSeconds(10);
-            string data = string.IsNullOrWhiteSpace(Config.FakeName.Value) ? ServerAuth.MintyData.Name : Config.FakeName.Value;
+            string data = Config.useFakeName.Value ? Config.FakeName.Value : ServerAuth.MintyData.Name;
             Con.Msg($"Welcome back, {data}");
             VRCUiPopups.Notify($"Welcome back, {data}", NotificationSystem.Key);
         }
