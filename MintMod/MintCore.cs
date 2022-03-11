@@ -31,15 +31,15 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.26.4";
+            public const string Version = "2.26.5";
 #endif
 #if DEBUG
-            public const string Version = "2.26.4";
+            public const string Version = "2.26.5";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "9 Mar 2022";
+            public const string UpdatedDate = "11 Mar 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.6.5";
+            internal const string LoaderVer = "2.6.6";
 #endif
         }
 
@@ -118,6 +118,9 @@ namespace MintMod {
             mods.Add(new GetRubyConfig());
             mods.Add(new NetworkEvents());
             mods.Add(new PlayerInfo());
+#if DEBUG
+            mods.Add(new Test.Class1());
+#endif
             //mods.Add(new ExtendedMediaPlayback());
             //mods.Add(new );
 

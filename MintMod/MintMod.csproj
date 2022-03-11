@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><Import Project="..\packages\Microsoft.Windows.SDK.Contracts.10.0.22000.196\build\Microsoft.Windows.SDK.Contracts.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.Contracts.10.0.22000.196\build\Microsoft.Windows.SDK.Contracts.props')" />
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Windows.SDK.Contracts.10.0.22000.196\build\Microsoft.Windows.SDK.Contracts.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.Contracts.10.0.22000.196\build\Microsoft.Windows.SDK.Contracts.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -256,6 +257,7 @@
     <Compile Include="Reflections\VRCMenuButtonAPI.cs" />
     <Compile Include="Reflections\WorldReflect.cs" />
     <Compile Include="Resources\MintyResources.cs" />
+    <Compile Include="Test\Class1.cs" />
     <Compile Include="UserInterface\ActionMenu.cs" />
     <Compile Include="UserInterface\AvatarFavs\AviFavLogic.cs" />
     <Compile Include="UserInterface\AvatarFavs\AviFavSetup.cs" />
@@ -295,5 +297,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Managers\Notification\mintnotification" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

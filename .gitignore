@@ -17,3 +17,7 @@ MintyNameplates/bin/
 MintyNameplates/obj/
 MintyNameplates/mnsaver.json
 test.bable
+x64/
+MintyNative/Debug/
+MintyNative/Release/
+MintyNative/x64/
