@@ -21,7 +21,7 @@ namespace MintyLoader {
         internal static string[] badMods = { "ripperstore", "ripper", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", /*"snaxytag",*/ "unchained", 
             "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen", "astralbypass", "astral", "plan b client", "odious" };
         internal static string[] badAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "_unreal", "unreal", "bunny", "stellar", "lady lucy", 
-            "meap", "fiass", /*"some dude",*/ "kuroi hane", "unixian" };
+            "meap", "fiass", /*"some dude",*/ "kuroi hane", "unixian", "shrekamuschrist" };
         internal static string[] badPluginAuthors = { "astral", "fck" };
         
         internal static void BlacklistedModCheck() {
@@ -99,18 +99,24 @@ namespace MintyLoader {
 
     public class ReMod_Core_Downloader {
         internal static void DownloadAndWrite() {
-            if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll"))) return;
+            if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) return;
             // If no ReMod
             var http = new HttpClient();
             byte[] data = http.GetByteArrayAsync("https://github.com/RequiDev/ReMod.Core/releases/latest/download/ReMod.Core.dll").GetAwaiter().GetResult();
-            bool good = false;
+            //bool good = false;
             try {
-                File.WriteAllBytes(Environment.CurrentDirectory, data);
-                good = true;
+                try {
+                    File.WriteAllBytes(Environment.CurrentDirectory, data);
+                }
+                catch {
+                    Con.Warn("Failed to write ReMod.Core assembly, most likely already being used by another mod or process.");
+                }
+                //good = true;
                 MintyLoader.InternalLogger.Msg("Wrote ReMod.Core to VRC root directory.");
             }
             catch (Exception e) {
-                good = false;
+                //good = false;
                 MintyLoader.InternalLogger.Error(e);
             }
             http.Dispose();

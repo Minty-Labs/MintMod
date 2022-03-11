@@ -11,7 +11,7 @@ namespace MintyLoader {
     internal class UpdateManager {
         private static HttpClient Updater, VersionChecker;
         private static string checkedVer;
-        private static bool LoaderIsUpToDate;
+        //private static bool LoaderIsUpToDate;
 
         internal static /*async Task*/ void CheckVersion() {
             VersionChecker = new HttpClient();
@@ -19,7 +19,7 @@ namespace MintyLoader {
             checkedVer = VersionChecker.GetStringAsync("https://mintlily.lgbt/mod/loader/version.txt").GetAwaiter().GetResult();
 
             if (checkedVer != BuildInfo.Version) {
-                LoaderIsUpToDate = false;
+                //LoaderIsUpToDate = false;
                 MintyLoader.InternalLogger.Warning("Loader is out of date, please wait while we update it. You game will restart!");
                 MintyLoader.InternalLogger.Msg("Downloading");
                 Updater = new HttpClient();
@@ -53,7 +53,7 @@ namespace MintyLoader {
             }
             else {
                 VersionChecker.Dispose();
-                LoaderIsUpToDate = true;
+                //LoaderIsUpToDate = true;
                 MintyLoader.InternalLogger.Msg("Loader Build version: ".Pastel("008B8B") + BuildInfo.Version.Pastel("9fffe3") + 
                                                " :: Server pulled: ".Pastel("008B8B") + checkedVer.Pastel("9fffe3"));
                 if (MintyLoader.isDebug)
