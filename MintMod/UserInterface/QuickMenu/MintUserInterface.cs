@@ -168,7 +168,13 @@ namespace MintMod.UserInterface.QuickMenu {
 
             MintQuickActions();
             Player();
-            World();
+            try {
+                World();
+            }
+            catch (Exception e) {
+                if (e.ToString().Contains("AddSpacer"))
+                    Con.Error("Please remove the ReMod.Core.dll file from the root of your VRChat game directory. Then, restart the game to fix this error.");
+            }
             RandomStuff();
             PlayerListMenuSetup();
             PlayerListOptions();
@@ -844,9 +850,14 @@ namespace MintMod.UserInterface.QuickMenu {
                 ESP.ClearAllPlayerESP();
                 InfJump?.Toggle(false, true, true);
                 MainQMInfJump?.Toggle(false, true, true);
-                if (WorldToggle != null)
-                    WorldToggle.Active = WorldReflect.IsInWorld() && WorldReflect.GetWorldInstance().id == "wrld_b0dfa268-1b67-4ac2-b660-f533a31722d7";
+                MelonCoroutines.Start(WaitChange());
             }
+        }
+
+        private static IEnumerator WaitChange() {
+            yield return new WaitForSeconds(3);
+            if (WorldToggle != null)
+                WorldToggle.Active = WorldReflect.GetWorldInstance().id == "wrld_b0dfa268-1b67-4ac2-b660-f533a31722d7";
         }
 
         internal override void OnUpdate() => PlayerActions.UpdateJump();
