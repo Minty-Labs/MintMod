@@ -20,7 +20,7 @@ namespace MintMod.Resources {
 
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent, BG_HUD;
         public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list, messages,
-            copy, key, marker, marker_hole, star, userlist, people, clone;//m_Back, m_Foward, m_Menu, m_Play, m_Stop;
+            copy, key, marker, marker_hole, star, userlist, people, clone, ColorPicker;
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
         public static Font BalooFont;
@@ -69,6 +69,7 @@ namespace MintMod.Resources {
                     try { messages = LoadSprite("messages-solid.png"); } catch { Con.Error("Resource messages-solid.png failed"); }
                     try { userlist = LoadSprite("user-list.png"); } catch { Con.Error("Resource user-list.png failed"); }
                     try { people = LoadSprite("people.png"); } catch { Con.Error("Resource people.png failed"); }
+                    try { ColorPicker = LoadSprite("color-picker.png"); } catch { Con.Error("Resource color-picker.png failed"); }
                     //try {  = LoadSprite(".png"); } catch { Con.Error("Resource .png failed"); }
                     
                     //try { m_Back = LoadSprite("Back.png"); } catch { Con.Error("Resource Back.png failed"); }

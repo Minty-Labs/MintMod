@@ -3,6 +3,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Resources;
@@ -687,8 +688,9 @@ namespace MintMod.UserInterface.QuickMenu {
         
         #region Player List
 
-        private static ReMenuToggle PLEnabled, WingLocation, ExtendList;
-        private static ReMenuButton Save;
+        private static ReMenuToggle PLEnabled, WingLocation, ExtendList, RoomTimer, GameTimer, SystemTime, System24Hour;
+        private static ReMenuCategory temp;
+        private static ReMenuButton Save, SetHEXValue;
         private static ReMenuSliderCategory ColorCat;
         private static ReMenuSlider Red, Green, Blue, Alpha, TextSize;
         private static void PlayerListOptions() {
@@ -708,6 +710,11 @@ namespace MintMod.UserInterface.QuickMenu {
                 WingLocation.Active = tempToggle;
                 ExtendList.Active = tempToggle;
                 TextSize.Active = tempToggle;
+                RoomTimer.Active = tempToggle;
+                GameTimer.Active = tempToggle;
+                SystemTime.Active = tempToggle;
+                System24Hour.Active = tempToggle;
+                SetHEXValue.Active = tempToggle;
             }, Config.PLEnabled.Value);
             WingLocation = c.AddToggle("List on Right Side", "Move the list on the left or right wing", b => 
                 Config.SavePrefValue(Config.PlayerList, Config.Location, b ? 1 : 0), Config.Location.Value != 0);
@@ -720,40 +727,75 @@ namespace MintMod.UserInterface.QuickMenu {
                 Config.SavePrefValue(Config.PlayerList, Config.BackgroundColor, color);
                 Config.SavePrefValue(Config.PlayerList, Config.TextSize, PlayerInfo.GetTextSize());
             }, MintyResources.cog);
+            RoomTimer = c.AddToggle("Room Timer", "Adds a Room Timer to the player list", b => 
+                Config.SavePrefValue(Config.PlayerList, Config.haveRoomTimer, b), Config.haveRoomTimer.Value);
+            GameTimer = c.AddToggle("Game Timer", "Adds a Game Timer to the player list (Shows how long you've been currently playing VRChat)", b => 
+                Config.SavePrefValue(Config.PlayerList, Config.haveGameTimer, b), Config.haveGameTimer.Value);
+            SystemTime = c.AddToggle("System Time", "Adds your System Time to the player list", b => 
+                Config.SavePrefValue(Config.PlayerList, Config.haveSystemTime, b), Config.haveSystemTime.Value);
+            System24Hour = c.AddToggle("24 Hour Format", "Changes the System time to the 24 hour format", b => 
+                Config.SavePrefValue(Config.PlayerList, Config.system24Hour, b), Config.system24Hour.Value);
             
-            ColorCat = PlayerListConfig.AddSliderCategory("Background Color");
+            ColorCat = PlayerListConfig.AddSliderCategory($"Background <color=#{ColorUtility.ToHtmlStringRGB(Config.BackgroundColor.Value)}>Color</color>");
             Red = ColorCat.AddSlider("Red Value", "Shift Red Color Values", f => {
-                var c = new Color32((byte)f, Config.BackgroundColor.Value.g,
+                var c = new Color(f/255, Config.BackgroundColor.Value.g,
                     Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a);
                 PlayerInfo.SetBackgroundColor(c);
-            }, Config.BackgroundColor.Value.r, 0, 255);
+                ColorCat.Title = $"Background <color=#{ColorUtility.ToHtmlStringRGB(c)}>Color</color>";
+            }, Config.BackgroundColor.Value.r*255, 0, 255);
             Green = ColorCat.AddSlider("Green Value", "Shift Green Color Values", f => {
-                var c = new Color32(Config.BackgroundColor.Value.r, (byte)f,
+                var c = new Color(Config.BackgroundColor.Value.r, f/255,
                     Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a);
                 PlayerInfo.SetBackgroundColor(c);
-            }, Config.BackgroundColor.Value.g, 0, 255);
+                ColorCat.Title = $"Background <color=#{ColorUtility.ToHtmlStringRGB(c)}>Color</color>";
+            }, Config.BackgroundColor.Value.g*255, 0, 255);
             Blue = ColorCat.AddSlider("Blue Value", "Shift Blue Color Values", f => {
-                var c = new Color32(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g,
-                    (byte)f, Config.BackgroundColor.Value.a);
+                var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g,
+                    f/255, Config.BackgroundColor.Value.a);
                 PlayerInfo.SetBackgroundColor(c);
-            }, Config.BackgroundColor.Value.b, 0, 255);
+                ColorCat.Title = $"Background <color=#{ColorUtility.ToHtmlStringRGB(c)}>Color</color>";
+            }, Config.BackgroundColor.Value.b*255, 0, 255);
             Alpha = ColorCat.AddSlider("Alpha Value", "Shift Opacity Values", f => {
-                var c = new Color32(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g,
-                    Config.BackgroundColor.Value.b, (byte)f);
+                var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g,
+                    Config.BackgroundColor.Value.b, f/255);
                 PlayerInfo.SetBackgroundColor(c);
-            }, Config.BackgroundColor.Value.a, 0, 255);
+            }, Config.BackgroundColor.Value.a*255, 0, 255);
             TextSize = ColorCat.AddSlider("Text Size", "Change the text size of the player list", f => 
                 PlayerInfo.UpdateTextSize((int)f), Config.TextSize.Value, 30, 50);
+
+            temp = PlayerListConfig.AddCategory("Hidden");
+            temp.Header.GameObject.SetActive(false);
+            SetHEXValue = temp.AddButton($"Enter <color=#{ColorUtility.ToHtmlStringRGB(Config.BackgroundColor.Value)}>HEX</color>",
+                "Enter a HEX value you know for the Player List Background Color", () => {
+                    VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Enter HEX Value", "", 
+                        InputField.InputType.Standard, false, "Continue", (s, Elly_Is, Mega_Cute) => {
+                            ColorCat.Title = $"Background <color=#{s.Replace("#", "")}>Color</color>";
+                            var c = ColorConversion.HexToColor(s.Replace("#", ""));
+                            //Con.Debug($"Color: {s}   {c.r} {c.g} {c.b}", MintCore.isDebug);
+                            Config.SavePrefValue(Config.PlayerList, Config.BackgroundColor, new Color(c.r, c.g, c.b, Config.BackgroundColor.Value.a));
+                            PlayerInfo.SetBackgroundColor(Config.BackgroundColor.Value);
+                            Red.Slide(c.r * 255, false);        // \/                        \/                            \/
+                            Green.Slide(c.g * 255, false);      // False Because Unity is Throwing Errors with onValueChanged
+                            Blue.Slide(c.b * 255, false);       // /\                        /\                            /\
+                            SetHEXValue.Text = $"Enter <color=#{ColorUtility.ToHtmlStringRGB(Config.BackgroundColor.Value)}>HEX</color>";
+                        }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
+                }, MintyResources.ColorPicker);
             
             WingLocation.Active = o;
             ExtendList.Active = o;
             Save.Active = o;
+            RoomTimer.Active = o;
+            GameTimer.Active = o;
+            SystemTime.Active = o;
+            System24Hour.Active = o;
+            
             ColorCat.Header.Active = o;
             Red.Active = o;
             Green.Active = o;
             Blue.Active = o;
             Alpha.Active = o;
             TextSize.Active = o;
+            SetHEXValue.Active = o;
         }
         
         #endregion

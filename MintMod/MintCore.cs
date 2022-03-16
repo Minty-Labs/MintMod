@@ -31,13 +31,13 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.26.5";
+            public const string Version = "2.27.0";
 #endif
 #if DEBUG
             public const string Version = "2.26.5";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "11 Mar 2022";
+            public const string UpdatedDate = "16 Mar 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.6.6";
 #endif
@@ -51,7 +51,10 @@ namespace MintMod {
 
         private static int _scenesLoaded = 0;
 
+        public static DateTime GameStartTimer;
+
         public override void OnApplicationStart() {
+            GameStartTimer = DateTime.Now;
 #if !DEBUG
             var s = MelonHandler.Mods.Single(m => m.Info.Name.Equals("MintyLoader")).Info.Version;
             //Con.Msg($"Loader Version is: {s}");

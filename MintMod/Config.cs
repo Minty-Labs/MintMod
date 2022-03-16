@@ -185,19 +185,24 @@ namespace MintMod {
         }
 
         public static MelonPreferences_Category PlayerList;
-        public static MelonPreferences_Entry<bool> PLEnabled, uncapListCount;
+        public static MelonPreferences_Entry<bool> PLEnabled, uncapListCount, haveRoomTimer, haveGameTimer, haveSystemTime, system24Hour, hideLabels;
         public static MelonPreferences_Entry<string> LocalSpoofedName, HudPosition;
-        public static MelonPreferences_Entry<Color32> BackgroundColor;
+        public static MelonPreferences_Entry<Color> BackgroundColor;
         public static MelonPreferences_Entry<int> Location, TextSize;
         static void _PlayerList() {
             PlayerList = MelonPreferences.CreateCategory("MintMod_PlayerList", "MintMod - PlayerList");
             PLEnabled = PlayerList.CreateEntry("EnablePlayerList", false, "Enable Player List");
             LocalSpoofedName = PlayerList.CreateEntry("LocalSpoofedName", "", "Local Player List Name Spoof", "If empty, nothing will change");
-            BackgroundColor = PlayerList.CreateEntry("PLBackgroundColor", new Color32(0, 0, 0, 128), "Player List Background Color",
+            BackgroundColor = PlayerList.CreateEntry("PLBackgroundColor", new Color(0, 0, 0, 128), "Player List Background Color",
                 "This is the [ RR, GG, BB, Alpha ] (from RGBA values 0 - 255) values for the background image on the player list.");
             Location = PlayerList.CreateEntry("PlayerListLocation", 0, "Location Index", "0 = LeftWing; 1 = RightWing");
             uncapListCount = PlayerList.CreateEntry("uncapListCount", false, "Show ALL Players in list");
             TextSize = PlayerList.CreateEntry("PlayerListTextSize", 40, "Player List Text Size");
+            haveRoomTimer = PlayerList.CreateEntry("haveRoomTimer", false, "Have a Room Timer on Player List");
+            haveGameTimer = PlayerList.CreateEntry("haveGameTimer", false, "Have an overall in-game timer on Player List");
+            haveSystemTime = PlayerList.CreateEntry("haveSystemTime", false, "Have system time on Player List");
+            system24Hour = PlayerList.CreateEntry("system24HourFormat", false, "System Time has 24 Hour format");
+            hideLabels = PlayerList.CreateEntry("hideLabels", false, "Hide the Labels on the timers");
         }
 
         internal override void OnPrefSave() {
@@ -225,8 +230,8 @@ namespace MintMod {
             MelonPreferences.Save();
         }
         
-        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<Color32> color, Color32 value) {
-            MelonPreferences.GetEntry<Color32>(cat.Identifier, color.Identifier).Value = value;
+        public static void SavePrefValue(MelonPreferences_Category cat, MelonPreferences_Entry<Color> color, Color value) {
+            MelonPreferences.GetEntry<Color>(cat.Identifier, color.Identifier).Value = value;
             MelonPreferences.Save();
         }
     }

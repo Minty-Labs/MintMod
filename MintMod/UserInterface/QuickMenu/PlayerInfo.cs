@@ -15,6 +15,7 @@ using VRC.Core;
 using VRC.DataModel;
 using VRCSDK2;
 using VRCSDK2.Validation.Performance;
+using Player = VRC.Player;
 
 namespace MintMod.UserInterface.QuickMenu {
     internal class PlayerInfo : MintSubMod {
@@ -26,6 +27,7 @@ namespace MintMod.UserInterface.QuickMenu {
         public static Image BackgroundImage;
         private static Text TheText;
         private bool Initialized;
+        private DateTime _timer;
 
         internal override void OnStart() => MelonCoroutines.Start(Init());
 
@@ -45,7 +47,9 @@ namespace MintMod.UserInterface.QuickMenu {
                 BackgroundObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420);
                 SetLocation();
                 BackgroundImage.sprite = MintyResources.BG_HUD;
-                SetBackgroundColor(Config.BackgroundColor.Value);
+                var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a / 255);
+                Con.Debug($"{Config.BackgroundColor.Value.r} {Config.BackgroundColor.Value.g} {Config.BackgroundColor.Value.b} {Config.BackgroundColor.Value.a} -- {Config.BackgroundColor.Value.a / 255} -- {Config.BackgroundColor.Value.a * 255}");
+                SetBackgroundColor(c);
             }
             if (BackgroundObject.transform.Find("Player List"))
                 yield break;
@@ -68,19 +72,33 @@ namespace MintMod.UserInterface.QuickMenu {
             MoveTheText();
         }
 
+        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+            if (buildindex == -1) {
+                _timer = DateTime.Now;
+            }
+        }
+
         private IEnumerator HUDLoop() {
             while (Initialized) {
                 //BackgroundObject.GetComponent<RectTransform>().localPosition = new Vector3(-1000, -500, -0.5f);
                 yield return new WaitForSeconds(1);
+                var t = DateTime.Now - _timer;
+                var g = DateTime.Now - MintCore.GameStartTimer;
                 TheText.text = string.Concat(new[] {
                     "\n\n",
                     "<b>Player List</b> (" + (WorldReflect.IsInWorld() 
                         ? $"<color=yellow>{PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count}</color>"
-                        : "-1") + ")\n",
+                        : "-1") + ")",
+                    Config.haveRoomTimer.Value ?  $" - {(Config.hideLabels.Value ? "" : "Room Timer: ")}<color=yellow>{t.ToString(@"hh\.mm\.ss")}</color>" : "",
+                    Config.haveGameTimer.Value ?  $" - {(Config.hideLabels.Value ? "" : "Game Timer: ")}<color=yellow>{g.ToString(@"hh\.mm\.ss")}</color>" : "",
+                    Config.haveSystemTime.Value ? $" - {(Config.hideLabels.Value ? "" : "System Time: ")}<color=yellow>{(Config.system24Hour.Value ? DateTime.Now.ToString("HH:mm") : DateTime.Now.ToString("h:mm tt"))}</color>" : "",
+                    "\n",
                     RenderPlayerList()
                 });
                 if (TheText.text.Contains(".penny"))
                     TheText.text = TheText.text.Replace(".penny", "<color=#587EE2>Penny</color>");
+                if (TheText.text.Contains("Rin_Isnt_Real"))
+                    TheText.text = TheText.text.Replace("Rin_Isnt_Real", "<color=#ff9efd>Rin</color>");
                 if (TheText.text.Contains("jettsd"))
                     TheText.text = TheText.text.Replace("jettsd", "Emy");
                 if (TheText.text.Contains("~Silentt~"))
@@ -132,10 +150,15 @@ namespace MintMod.UserInterface.QuickMenu {
             if (TextObject != null)
                 TextObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 4410 : 1410);
         }
-
-        public static void SetBackgroundColor(Color32 c) {
+        
+        public static void SetBackgroundColor(Color c) {
             if (BackgroundImage != null)
                 BackgroundImage.color = c;
+        }
+        
+        public static void SetBackgroundOpacity(float o) {
+            if (BackgroundImage != null)
+                BackgroundImage.color = new(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, o);
         }
 
         public static void UpdateTextSize(int size) {
@@ -162,7 +185,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 TextObject.Destroy();
                 Wing.Find("MintUiHud Panel").gameObject.Destroy();
                 //RightWing.Find("MintUiHud Panel")?.Destroy();
-                try { MelonCoroutines.Stop(obj); } catch (Exception ee) { Con.Debug($"{ee}"); }
+                try { MelonCoroutines.Stop(obj); } catch (Exception ee) { Con.Debug($"[ERROR] {ee}"); }
             } else if (!Initialized && Config.PLEnabled.Value) 
                 MelonCoroutines.Start(Init());
 
