@@ -146,7 +146,7 @@ namespace MintMod.Functions {
             return a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_1;
         }
 
-        public static StreamWriter CreateOrAppendToFile(string final) {
+        private static StreamWriter CreateOrAppendToFile(string final) {
             if (File.Exists(final))
                 return File.AppendText(final);
             return File.CreateText(final);
@@ -161,6 +161,7 @@ namespace MintMod.Functions {
             ApiAvatar a = SelPAvatar();
 
             string playerName, playerStatus, userID, avatarID, assetURL, avatarName, authorID, releaseStatus, playerBio;
+            Il2CppSystem.Collections.Generic.List<string> tags;
             int version;
 
             playerName = u.displayName;
@@ -173,15 +174,20 @@ namespace MintMod.Functions {
             version = a.version;
             releaseStatus = a.releaseStatus;
             playerBio = u.bio;
+            tags = u.tags;
 
-            string LogTimeDate = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
+            var logTimeDate = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
+            var sb = new StringBuilder();
+            foreach (var tag in tags) 
+                sb.Append($"{tag}, ");
 
-            using (StreamWriter sw = CreateOrAppendToFile(subdir + "SelectedUser_Logged.txt")) {
-                sw.WriteLine("Log Time:        " + LogTimeDate);
+            using (var sw = CreateOrAppendToFile(subdir + "SelectedUser_Logged.txt")) {
+                sw.WriteLine("Log Time:        " + logTimeDate);
                 sw.WriteLine("Player Name:     " + playerName);
                 sw.WriteLine("User ID:         " + userID);
                 sw.WriteLine("Player Status:   " + playerStatus);
                 sw.WriteLine("Player Bio:      " + playerBio);
+                sw.WriteLine("Player Tags      " + $"[ {sb} ]");
                 sw.WriteLine("");
                 sw.WriteLine("Avatar ID:       " + avatarID);
                 sw.WriteLine("Asset URL:       " + assetURL);
