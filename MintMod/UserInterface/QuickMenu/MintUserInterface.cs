@@ -105,30 +105,22 @@ namespace MintMod.UserInterface.QuickMenu {
                 MintCategoryOnLaunchPad.Active = true;
             
             if (launchPad.GameObject != null) {
-                MainQMFly = MintCategoryOnLaunchPad.AddToggle("Flight", "Toggle Flight", Movement.Fly);
-                MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
+                MainQMFly = MintCategoryOnLaunchPad.AddToggle("Flight", "Toggle Flight", b => 
+                    MintQAFly.Toggle(b, true, true));
                 
-                MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
+                MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", b => 
+                    MintQANoClip.Toggle(b, true, true));
+                
+                MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", 
+                    b => MintQAFreeze.Toggle(b, true, true));
                 
                 MainQMInfJump = MintCategoryOnLaunchPad.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
-                    onToggle => InfJump.Toggle(onToggle, true, true));
+                    b => InfJump.Toggle(b, true, true));
                 
                 MainQMFly.Active = Config.KeepFlightBTNsOnMainMenu.Value;
                 MainQMNoClip.Active = Config.KeepFlightBTNsOnMainMenu.Value;
                 MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
                 MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
-                
-                /*if (ModCompatibility.TeleporterVR) {
-                    var ver = MelonHandler.Mods.Single(m => m.Info.Name.Equals("TeleporterVR")).Info.Version;
-                    var p = new Version(ver);
-                    if (p >= new Version("4.9.0")) {
-                        melon = MelonPreferences.CreateCategory("TeleporterVR", "TeleporterVR");
-                        try { MelonPreferences.GetEntry<bool>(melon.Identifier, "ShowUIXTPVRButton").Value = false; }
-                        catch (Exception t) { Con.Debug($"Could not set value:\n{t}", MintCore.isDebug); }
-                        MintCategoryOnLaunchPad.AddToggle("TeleporterVR", "Toggle TeleporterVR\'s TPVR function.", t => TPVR_active = t);
-                    }
-                }
-                */
             }
             Con.Debug("Done Setting up StandardMenus", MintCore.isDebug);
             yield break;
@@ -154,15 +146,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
             BaseActions = MintMenu.AddCategory("Menus", false);
 
-            if (!Config.useTabButtonForMenu.Value) {
-                try {
-                    var _ = BaseActions.Header.GameObject.transform.Find("LeftItemContainer/MintMenuButtonOvertakenBackButton")?.gameObject;
-                    _.DestroyImmediate();
-                }
-                catch (Exception e) {
-                    Con.Error(e);
-                }
-            }
+            RemoveMintBackButtonDuplicate(MintMenu);
 
             MintQuickActions();
             Player();
@@ -176,7 +160,6 @@ namespace MintMod.UserInterface.QuickMenu {
             RandomStuff();
             PlayerListMenuSetup();
             PlayerListOptions();
-            //MediaControls();
             //BuildAvatarMenu();
 
             Con.Debug("Done Setting up MintMenus", MintCore.isDebug);
@@ -199,11 +182,22 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static void MintQuickActions() {
             var c = MintMenu.AddCategory("Quick Functions", false);
-            MintQAFly = c.AddToggle("Flight", "Toggle Flight", Movement.Fly);
-            MintQANoClip = c.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
-            MintQAFreeze = c.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", PhotonFreeze.ToggleFreeze);
-            InfJump = c.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
-                onToggle => PlayerActions.InfinteJump = onToggle);
+            MintQAFly = c.AddToggle("Flight", "Toggle Flight", b => {
+                Movement.Fly(b);
+                MainQMFly.Toggle(b, false, true);
+            });
+            MintQANoClip = c.AddToggle("No Clip", "Toggle No Clip", b => {
+                Movement.NoClip(b);
+                MainQMNoClip.Toggle(b, false, true);
+            });
+            MintQAFreeze = c.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", b => {
+                PhotonFreeze.ToggleFreeze(b);
+                MainQMFreeze.Toggle(b, false, true);
+            });
+            InfJump = c.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content", b => {
+                PlayerActions.InfinteJump = b;
+                MainQMInfJump.Toggle(b, false, true);
+            });
             
             var sc = MintMenu.AddSliderCategory("Flight Speed");
             FlightSpeedSlider = sc.AddSlider("Min: 0.5", "Control Flight Speed", f => Movement.finalSpeed = f,
@@ -222,7 +216,7 @@ namespace MintMod.UserInterface.QuickMenu {
             PlayerMenu = BaseActions.AddCategoryPage("Player", "Actions involving players.", MintyResources.people);
             var c = PlayerMenu.AddCategory("General Actions", false);
             PlayerESP = c.AddToggle("Player ESP", "Puts a bubble around each player, and is visible through walls.", ESP.PlayerESPState);
-            c.AddButton("Copy Current Avi ID", "Copys your current Avatar ID into your clipboard", () => {
+            c.AddButton("Copy Current Avi ID", "Copies your current Avatar ID into your clipboard", () => {
                 try {
                     Clipboard.SetText(APIUser.CurrentUser.avatarId);
                 }
@@ -252,7 +246,9 @@ namespace MintMod.UserInterface.QuickMenu {
                     Con.Error(c);
                 }
             }, MintyResources.checkered);
+            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", PlayerActions.AvatarSELFDownload, MintyResources.user);
             //var h = PlayerMenu.AddCategory("Head Lamp");
+            RemoveMintBackButtonDuplicate(PlayerMenu);
         }
 
         #endregion
@@ -328,10 +324,14 @@ namespace MintMod.UserInterface.QuickMenu {
             w.AddButton("Beautify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
 
             WorldToggle = w.AddToggle("Mint World Toggles", "Toggle Mint specific objects in the world, if there are any.", b => {
-                var g = GameObject.Find("WORLD BASE/cliffside_modern_home_base/_Mint_SetOFF");
-                g.SetActive(!b);
+                GameObject g;
+                if (WorldReflect.GetWorldInstance().id == "wrld_b0dfa268-1b67-4ac2-b660-f533a31722d7")
+                    g = GameObject.Find("WORLD BASE/cliffside_modern_home_base/_Mint_SetOFF");
+                else
+                    g = GameObject.Find("_Mint_SetOFF");
+                g!.SetActive(!b);
             });
-            WorldToggle.Active = false;
+            //WorldToggle.Active = false;
 
             var e = WorldMenu.AddCategory("Item Manipulation");
             e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
@@ -340,6 +340,7 @@ namespace MintMod.UserInterface.QuickMenu {
             
             var ct = WorldMenu.AddCategory("Component Toggle");
             Components.ComponentToggle(ct);
+            RemoveMintBackButtonDuplicate(WorldMenu);
         }
 
         #endregion
@@ -403,6 +404,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 else
                     VRCUiManager.prop_VRCUiManager_0.field_Private_List_1_String_0.Clear();
             }, MintyResources.messages);
+            RemoveMintBackButtonDuplicate(RandomMenu);
         }
 
         #endregion
@@ -680,6 +682,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     PlayerButtons.Add(SinglePlayerButton);
                 }
             };
+            RemoveMintBackButtonDuplicate(PlayerListMenu);
         }
 
         #endregion
@@ -794,52 +797,9 @@ namespace MintMod.UserInterface.QuickMenu {
             Alpha.Active = o;
             TextSize.Active = o;
             SetHEXValue.Active = o;
+            RemoveMintBackButtonDuplicate(PlayerListConfig);
         }
         
-        #endregion
-
-        #region Media Playback
-#if DEBUG
-/*
-        public static ReMenuSlider SongSeeker;
-        public static ReMenuCategory MediaApplications, SongPlaybackName;
-        private static List<ReMenuButton> PlaybackApplications = new();
-        private static ReMenuButton SingleApplication;
-        private static void MediaControls() {
-            MediaPlayback = BaseActions.AddCategoryPage("Media Playback", "Open Media Playback Menu", MintyResources.m_Menu);
-
-            SongPlaybackName = MediaPlayback.AddCategory("Controls", false);
-            
-            ExtendedMediaPlayback.RunWMC();
-
-            SongPlaybackName.AddButton("Previous", "Go back a song", Music.PrevTrack, MintyResources.m_Back);
-            SongPlaybackName.AddButton("Stop", "Stop songs", Music.Stop, MintyResources.m_Stop);
-            SongPlaybackName.AddButton("Play/Pause", "Pause or resume song", Music.PlayPause, MintyResources.m_Play);
-            SongPlaybackName.AddButton("Next", "Go to next song", Music.NextTrack, MintyResources.m_Foward);
-
-            MediaApplications = MediaPlayback.AddCategory("Media App");
-            
-            MediaPlayback.OnOpen += () => {
-                MediaApplications.Header.Title = "Media App";
-                foreach (var btn in PlaybackApplications)
-                    btn.Destroy();
-                PlaybackApplications.Clear();
-                // TODO: foreach app in active_media_apps => create button
-                int i = 0;
-                
-                foreach (var app in ExtendedMediaPlayback.Sources) {
-                    i++;
-                    if (i < 1) {
-                        SingleApplication = MediaApplications.AddButton($"{(app.Contains("NewSource") ? "null" : app)}", "null", () => {
-                            MediaApplications.Header.Title = $"Media App{(app.Contains("NewSource") ? "" : $" > {app}")}";
-                        });
-                    }
-                    PlaybackApplications.Add(SingleApplication);
-                }
-            };
-        }
-*/
-#endif
         #endregion
 
         #region Avatar Menu
@@ -890,14 +850,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 ESP.ClearAllPlayerESP();
                 InfJump?.Toggle(false, true, true);
                 MainQMInfJump?.Toggle(false, true, true);
-                MelonCoroutines.Start(WaitChange());
             }
-        }
-
-        private static IEnumerator WaitChange() {
-            yield return new WaitForSeconds(3);
-            if (WorldToggle != null)
-                WorldToggle.Active = WorldReflect.GetWorldInstance().id == "wrld_b0dfa268-1b67-4ac2-b660-f533a31722d7";
         }
 
         internal override void OnUpdate() => PlayerActions.UpdateJump();
@@ -946,6 +899,18 @@ namespace MintMod.UserInterface.QuickMenu {
                 Config.SavePrefValue(Config.mint, Config.SpoofFramerate, false);
             if (Config.SpoofPing.Value)
                 Config.SavePrefValue(Config.mint, Config.SpoofPing, false);
+        }
+
+        private static void RemoveMintBackButtonDuplicate(ReCategoryPage cat) {
+            if (!Config.useTabButtonForMenu.Value) {
+                try {
+                    var _ = cat.GameObject.transform.Find("LeftItemContainer/MintMenuButtonOvertakenBackButton")?.gameObject;
+                    _.DestroyImmediate();
+                }
+                catch (Exception e) {
+                    Con.Error(e);
+                }
+            }
         }
     }
 }
