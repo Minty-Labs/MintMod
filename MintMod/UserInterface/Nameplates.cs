@@ -188,7 +188,7 @@ namespace MintMod.UserInterface {
                         }
                     } else transform5.gameObject.SetActive(true);
 
-                } catch (Exception e) { Con.Debug($"{e}", MintCore.isDebug); }
+                } catch (Exception e) { if (MintCore.isDebug) Con.Error(e); }
             }
         }
 

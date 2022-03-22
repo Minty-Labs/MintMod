@@ -38,6 +38,8 @@ namespace MintMod.UserInterface.QuickMenu {
             QuickMenu = UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>().gameObject.transform;
             Wing = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
             
+            var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a / 255);
+            
             if (Wing.Find("MintUiHud Panel") == null) {
                 BackgroundObject = new GameObject("MintUiHud Panel");
                 BackgroundObject.transform.SetParent(Wing, false);
@@ -47,8 +49,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 BackgroundObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420);
                 SetLocation();
                 BackgroundImage.sprite = MintyResources.BG_HUD;
-                var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a / 255);
-                Con.Debug($"{Config.BackgroundColor.Value.r} {Config.BackgroundColor.Value.g} {Config.BackgroundColor.Value.b} {Config.BackgroundColor.Value.a} -- {Config.BackgroundColor.Value.a / 255} -- {Config.BackgroundColor.Value.a * 255}");
+                //var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a / 255);
+                //Con.Debug($"{Config.BackgroundColor.Value.r} {Config.BackgroundColor.Value.g} {Config.BackgroundColor.Value.b} {Config.BackgroundColor.Value.a} -- {Config.BackgroundColor.Value.a / 255} -- {Config.BackgroundColor.Value.a * 255}");
                 SetBackgroundColor(c);
             }
             if (BackgroundObject.transform.Find("Player List"))
@@ -58,16 +60,14 @@ namespace MintMod.UserInterface.QuickMenu {
             TextObject.AddComponent<CanvasRenderer>();
             TheText = TextObject.AddComponent<Text>();
             SetSizeTextObj();
-            if (MintyResources.BalooFont != null)
-                TheText.font = MintyResources.BalooFont;
-            else
-                TheText.font = UnityEngine.Resources.GetBuiltinResource<Font>("Arial.ttf");
+            TheText.font = MintyResources.BalooFont != null ? MintyResources.BalooFont : UnityEngine.Resources.GetBuiltinResource<Font>("Arial.ttf");
             UpdateTextSize(40);
             TheText.text = "";
             TheText.alignment = (TextAnchor)TextAlignment.Left;
             Initialized = true;
             
-            MelonCoroutines.Start(HUDLoop());
+            SetBackgroundColor(c);
+            yield return HUDLoop();
             
             MoveTheText();
         }

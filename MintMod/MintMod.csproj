@@ -233,7 +233,6 @@
     <Compile Include="Functions\Authentication\ServerAuth.cs" />
     <Compile Include="Functions\WorldActions.cs" />
     <Compile Include="Libraries\ColorConversion.cs" />
-    <Compile Include="Libraries\MediaControls.cs" />
     <Compile Include="Libraries\ModCompatibility.cs" />
     <Compile Include="Managers\Colors.cs" />
     <Compile Include="Managers\Components.cs" />

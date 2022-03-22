@@ -29,8 +29,7 @@ namespace MintMod.UserInterface.OldUI {
         internal override void OnStart() => Intstance = this;
 
         internal override void OnUserInterface() {
-            bool color = Config.ColorGameMenu.Value;
-            finalColor = color ? Minty : defaultMenuColor();
+            finalColor = Config.ColorGameMenu.Value ? Minty : defaultMenuColor();
             if (Config.ColorGameMenu.Value)
                 MelonCoroutines.Start(ColorMenu(finalColor));
             if (Config.ColorActionMenu.Value)
