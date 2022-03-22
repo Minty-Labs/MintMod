@@ -170,7 +170,7 @@ namespace MintMod.UserInterface {
                         component.richText = true;
                         component.text = TagText;
 
-                        component.color = TagFontColour.Value;
+                        component.color = TagFontColour == null ? ColorConversion.HexToColor("eeeeee") : TagFontColour.Value;
 
                         if (disableBGImage)
                             transform5.GetComponent<ImageThreeSlice>().enabled = false;
