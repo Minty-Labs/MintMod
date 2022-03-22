@@ -88,7 +88,7 @@ namespace MintMod.Managers {
                     //obj.gameObject.SetActive(t);
                 }
             });
-            pi.Toggle(Pickups);
+            pi.Toggle(Pickups, false, true);
             
             var po = c.AddToggle("Pickup Objects", "Toggle Pickup Objects", t => {
                 PickupObjects = t;
@@ -97,7 +97,7 @@ namespace MintMod.Managers {
                     obj.gameObject.SetActive(t);
                 }
             });
-            po.Toggle(PickupObjects);
+            po.Toggle(PickupObjects, false, true);
             
             var pp = c.AddToggle("Post Processing", "Toggle Post Processing", t => {
                 PostProcessing = t;
@@ -110,14 +110,14 @@ namespace MintMod.Managers {
                     }
                 }
             });
-            pp.Toggle(PostProcessing);
+            pp.Toggle(PostProcessing, false, true);
             
             var pe = c.AddToggle("Pens", "Toggle Pens in the world", t => {
                 _Pens = t;
                 foreach (var p in Pens)
                     p.gameObject.SetActive(t);
             });
-            pe.Toggle(_Pens);
+            pe.Toggle(_Pens, false, true);
             
             var ap = c.AddToggle("Pedestals", "Toggle Avatar Pedestals in the world", t => {
                 if (theWorldPedestals.Count != 0) {
@@ -130,12 +130,12 @@ namespace MintMod.Managers {
                     }
                 }
             });
-            ap.Toggle(true);
+            ap.Toggle(true, false, true);
 
             var ch = c.AddToggle("Chairs", "Toggle chairs in the world", t => {
                 MelonPreferences.GetEntry<bool>(Config.Base.Identifier, Config.CanSitInChairs.Identifier).Value = t;
             });
-            ch.Toggle(Config.CanSitInChairs.Value);
+            ch.Toggle(Config.CanSitInChairs.Value, false, true);
         }
     }
 }

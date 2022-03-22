@@ -34,7 +34,7 @@ namespace MintMod.UserInterface.QuickMenu {
         public override string Name => "Mint UI";
         public override string Description => "Builds all of the Mod's menu.";
 
-        private static GameObject MainMenuBackButton, TheMintMenuButton, ShittyAdverts, ShittyAdverts_2, LaunchPadLayoutGroup;
+        private static GameObject MainMenuBackButton, TheMintMenuButton, ShittyAdverts, ShittyAdverts_2;
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
 
@@ -63,12 +63,11 @@ namespace MintMod.UserInterface.QuickMenu {
         #endregion
 
 		internal static IEnumerator OnQuickMenu() {
-            while (UIManager.prop_UIManager_0 == null) yield return null;
-            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
-            
-            MelonCoroutines.Start(BuildStandard());
-            MelonCoroutines.Start(BuildMint());
-            //MelonCoroutines.Start(ReColor.DelayedHfxReColor(ReColor.finalColor));
+            while (UIManager.field_Private_Static_UIManager_0 == null) yield return null;
+            while (GameObject.Find("UserInterface").GetComponentInChildren<VRC.UI.Elements.QuickMenu>(true) == null) yield return null;
+
+            yield return BuildStandard();
+            yield return BuildMint();
             if (!isStreamerModeOn) UserSelMenu();
         }
 
@@ -84,30 +83,28 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         static IEnumerator BuildStandard() {
-            
-            MainMenuBackButton = GameObject.Find("/UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/Header_H1/LeftItemContainer/Button_Back");
+            var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_Dashboard");
+            MainMenuBackButton = f.Find("Header_H1/LeftItemContainer/Button_Back").gameObject;
             try {
-                if (MelonHandler.Mods.Any((i) => i.Info.Name != "AdBlocker")) {
-                    ShittyAdverts =
-                        GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup/Carousel_Banners");
+                if (MelonHandler.Mods.Any(i => i.Info.Name != "AdBlocker")) {
+                    ShittyAdverts = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/Carousel_Banners").gameObject;
                     ShittyAdverts.SetActive(false);
-                    ShittyAdverts_2 =
-                        GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup/VRC+_Banners");
+                    ShittyAdverts_2 = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/VRC+_Banners").gameObject;
                     ShittyAdverts_2.SetActive(false);
                 }
             }
             catch {
                 Con.Error("Action from AdBlocker failed. Ignoring");
             }
-
-            LaunchPadLayoutGroup = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup");
-            MintCategoryOnLaunchPad = new("MintMod", LaunchPadLayoutGroup.transform);
+            
+            var launchPad = new ReCategoryPage(f);
+            MintCategoryOnLaunchPad = launchPad.AddCategory("MintMod");//new("MintMod");
             MintCategoryOnLaunchPad.Active = false;
             
             if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value || ModCompatibility.TeleporterVR) 
                 MintCategoryOnLaunchPad.Active = true;
             
-            if (LaunchPadLayoutGroup != null) {
+            if (launchPad.GameObject != null) {
                 MainQMFly = MintCategoryOnLaunchPad.AddToggle("Flight", "Toggle Flight", Movement.Fly);
                 MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", Movement.NoClip);
                 
@@ -147,7 +144,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 TheMintMenuButton = UnityEngine.Object.Instantiate(MainMenuBackButton, MainMenuBackButton.transform.parent);
                 TheMintMenuButton.transform.SetAsLastSibling();
                 TheMintMenuButton.transform.Find("Badge_UnfinishedFeature").gameObject.SetActive(false);
-                MelonCoroutines.Start(SetTheFuckingSprite());
+                yield return SetTheFuckingSprite();
                 TheMintMenuButton.SetActive(true);
                 TheMintMenuButton.name = "MintMenuButtonOvertakenBackButton";
                 TheMintMenuButton.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -187,7 +184,7 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         private static IEnumerator SetTheFuckingSprite() {
-            yield return new WaitForFixedUpdate();
+            yield return null;
             UnityEngine.Object.DestroyImmediate(TheMintMenuButton.transform.Find("Icon").GetComponent<StyleElement>());
             MintIcon = TheMintMenuButton.transform.Find("Icon").GetComponent<Image>();
             MintIcon.sprite = MintyResources.MintIcon;
@@ -414,7 +411,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static GameObject TheUserSelectMenu;
         private static void UserSelMenu() {
-            TheUserSelectMenu = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMParent/Menu_SelectedUser_Local/ScrollRect/Viewport/VerticalLayoutGroup");
+            var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_SelectedUser_Local");
+            TheUserSelectMenu = f.Find("ScrollRect/Viewport/VerticalLayoutGroup").gameObject;
 
             userSelectCategory = new ReMenuCategory("MintMod", TheUserSelectMenu.transform);
 
