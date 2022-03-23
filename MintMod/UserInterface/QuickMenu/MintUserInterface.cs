@@ -410,67 +410,62 @@ namespace MintMod.UserInterface.QuickMenu {
         #endregion
 
         #region UserSelect Menu
-
-        private static GameObject TheUserSelectMenu;
+        
         private static void UserSelMenu() {
             var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_SelectedUser_Local");
-            TheUserSelectMenu = f.Find("ScrollRect/Viewport/VerticalLayoutGroup").gameObject;
+            var theUserSelectMenu = f.Find("ScrollRect/Viewport/VerticalLayoutGroup").gameObject;
 
-            userSelectCategory = new ReMenuCategory("MintMod", TheUserSelectMenu.transform);
+            userSelectCategory = new ReMenuCategory("MintMod", theUserSelectMenu.transform);
 
-            string u = "selected user";
-
-            userSelectCategory.AddButton("Download Avatar VRCA", $"Downloads {u}'s Avatar .VRCA", PlayerActions.AvatarDownload, MintyResources.dl);
-            userSelectCategory.AddButton("Log Asset", $"Logs {u}'s information and put it into a text file", PlayerActions.LogAsset, MintyResources.list);
-            userSelectCategory.AddButton("Copy Avatar ID", $"Copies {u}'s avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id, MintyResources.copy);
-            userSelectCategory.AddButton("Clone Avatar", $"Clones {u}'s avatar if public", () => {
+            userSelectCategory.AddButton("Download Avatar VRCA", "Downloads the selected user's Avatar .VRCA", PlayerActions.AvatarDownload, MintyResources.dl);
+            userSelectCategory.AddButton("Log Asset", "Logs the selected user's information and put it into a text file", PlayerActions.LogAsset, MintyResources.list);
+            userSelectCategory.AddButton("Copy Avatar ID", "Copies the selected user's avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id, MintyResources.copy);
+            userSelectCategory.AddButton("Copy User ID", "Copies the selected user's User ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerWrappers.GetSelectedAPIUser().id, MintyResources.copy);
+            userSelectCategory.AddButton("Clone Avatar", "Clones the selected user's avatar if public", () => {
+                var apiAvatar = PlayerActions.SelPAvatar();
+                var avatarIsPublic = apiAvatar.releaseStatus.ToLower().Contains("public");
+                if (!avatarIsPublic) {
+                    VRCUiPopups.Notify("Avatar is private", NotificationSystem.Alert);
+                    return;
+                }
                 try {
-                    var v = PlayerActions.SelPAvatar();
-                    string clip = v.id;
-                    if (clip.Contains("avtr_") && !string.IsNullOrWhiteSpace(clip) && v.releaseStatus.ToLower().Contains("public")) {
+                    PlayerManager.field_Private_Static_PlayerManager_0.field_Private_Player_0._vrcplayer.ChangeToAvatar(apiAvatar.id);
+                }
+                catch (Exception fail) {
+                    Con.Error(fail);
+                    Con.Warn("Attempting fallback method");
+                    try {
                         PageAvatar a = new() { field_Public_SimpleAvatarPedestal_0 = new() };
-                        new ApiAvatar { id = clip }.Get(new Action<ApiContainer>(x => {
+                        new ApiAvatar { id = apiAvatar.id }.Get(new Action<ApiContainer>(x => {
                             a.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0 = x.Model.Cast<ApiAvatar>();
                             a.ChangeToSelectedAvatar();
                         }));
-                    } else {
-                        VRCUiPopups.Notify("Avatar is private", NotificationSystem.Alert);
-                        //VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private", Color.white);
                     }
-                } catch (Exception c) {
-                    Con.Error(c);
-                    Con.Warn("Attempting fallback method");
-                    try {
-                        var v = PlayerActions.SelPAvatar();
-                        PlayerManager.field_Private_Static_PlayerManager_0.field_Private_Player_0._vrcplayer
-                            .ChangeToAvatar(v.id);
-                    }
-                    catch (Exception f) {
-                        Con.Error(f);
-                    }
+                    catch (Exception e) { Con.Error(e); }
                 }
             }, MintyResources.clone);
 
             if (Config.AviFavsEnabled.Value) {
-                userSelectCategory.AddButton("Silent Favorite", $"Silently favorites the avatar {u} is wearing if public.", () => {
+                userSelectCategory.AddButton("Silent Favorite", $"Silently favorites the avatar the selected user is wearing if public.", () => {
                     var v = PlayerActions.SelPAvatar();
                     foreach (var f in AvatarFavs.AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
-                        if (!v.releaseStatus.ToLower().Contains("private"))
-                            AvatarFavs.AviFavLogic.FavoriteAvatar(v, f.ID);
+                        if (!v.releaseStatus.ToLower().Contains("private")) {
+                            AviFavLogic.FavoriteAvatar(v, f.ID);
+                            VRCUiPopups.Notify($"Favorited the avatar: {v.name}", NotificationSystem.Alert);
+                        }
                         else {
                             Con.Warn("Avatar is private, cannot favorite");
                             VRCUiPopups.Notify("Avatar is private, cannot favorite", NotificationSystem.Alert);
-                            //VRCUiManager.prop_VRCUiManager_0.InformHudText("Avatar is private, cannot favorite", Color.white);
                         }
                     }
                 }, MintyResources.star);
             }
 
-            userSelectCategory.AddButton("Teleport to", $"Teleport to {u}", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); }, MintyResources.marker);
-            userSelectCategory.AddButton("Teleport pickups to", $"Teleport all pickup objects to {u}", () => Items.TPToPlayer(PlayerWrappers.SelVRCPlayer()._player), MintyResources.marker_hole);
+            userSelectCategory.AddButton("Teleport to", $"Teleport to the selected user", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); }, MintyResources.marker_hole);
+            userSelectCategory.AddButton("Teleport pickups to", $"Teleport all pickup objects to the selected user", () => Items.TPToPlayer(PlayerWrappers.SelVRCPlayer()._player), MintyResources.marker);
 
             if (APIUser.CurrentUser.id == Players.LilyID) {
-                userSelectCategory.AddButton("Mint Auth Check", $"Check to see if {u} can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)), MintyResources.key);
+                userSelectCategory.AddButton("Mint Auth Check", $"Check to see if the selected user can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)), MintyResources.key);
             }
 
             Con.Debug("Done Setting up User Selected Menu", MintCore.isDebug);
@@ -563,6 +558,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 PlayerReSlider_sp.Active = false;
                 PlayerReSlider_di.Active = false;
             });
+            /*
             var _1 = p.AddButton("OpenQM", "Open player in Quick Menu", () => {
                 SelectedActionNum = 2;
                 l.Title = "Player List > OpenQM";
@@ -573,6 +569,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 PlayerReSlider_sp.Active = false;
                 PlayerReSlider_di.Active = false;
             });
+            */
+            p.AddSpacer();
             p.AddButton("ESP", "Draw a bubble around player", () => {
                 SelectedActionNum = 3;
                 l.Title = "Player List > ESP";
@@ -614,7 +612,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 PlayerReSlider_di.Active = true;
             });
             // These button are disabled until I add the functions for them
-            _1.Interactable = false;
+            //_1.Interactable = false;
             p.AddButton("<color=#FF96AA>Clear ESPs</color>", "Clears any and all ESP bubbles around players", ESP.ClearAllPlayerESP);
             p.AddButton("<color=#FF96AA>Clear Orbits</color>", "Clear any type of orbiting", () => {
                 if (SelectedActionNum == 5) Items.ClearRotating();
