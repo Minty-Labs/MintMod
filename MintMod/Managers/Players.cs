@@ -73,12 +73,6 @@ namespace MintMod.Managers {
 
         #endregion
 
-        #region Players
-
-        public const string LilyID = "usr_6d71d3be-1465-4ae9-a97c-1b304ffab93b";
-
-        #endregion
-
         #region Mint Authentication pt.1
 
         internal override void OnUserInterface() => FetchCustomPlayerObjects();

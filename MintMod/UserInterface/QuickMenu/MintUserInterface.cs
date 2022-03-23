@@ -446,11 +446,11 @@ namespace MintMod.UserInterface.QuickMenu {
             }, MintyResources.clone);
 
             if (Config.AviFavsEnabled.Value) {
-                userSelectCategory.AddButton("Silent Favorite", $"Silently favorites the avatar the selected user is wearing if public.", () => {
+                userSelectCategory.AddButton("Silent Favorite", "Silently favorites the avatar the selected user is wearing if public.", () => {
                     var v = PlayerActions.SelPAvatar();
-                    foreach (var f in AvatarFavs.AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
+                    foreach (var favoriteList in AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
                         if (!v.releaseStatus.ToLower().Contains("private")) {
-                            AviFavLogic.FavoriteAvatar(v, f.ID);
+                            AviFavLogic.FavoriteAvatar(v, favoriteList.ID);
                             VRCUiPopups.Notify($"Favorited the avatar: {v.name}", NotificationSystem.Alert);
                         }
                         else {
@@ -461,11 +461,11 @@ namespace MintMod.UserInterface.QuickMenu {
                 }, MintyResources.star);
             }
 
-            userSelectCategory.AddButton("Teleport to", $"Teleport to the selected user", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); }, MintyResources.marker_hole);
-            userSelectCategory.AddButton("Teleport pickups to", $"Teleport all pickup objects to the selected user", () => Items.TPToPlayer(PlayerWrappers.SelVRCPlayer()._player), MintyResources.marker);
+            userSelectCategory.AddButton("Teleport to", "Teleport to the selected user", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); }, MintyResources.marker_hole);
+            userSelectCategory.AddButton("Teleport pickups to", "Teleport all pickup objects to the selected user", () => Items.TPToPlayer(PlayerWrappers.SelVRCPlayer()._player), MintyResources.marker);
 
-            if (APIUser.CurrentUser.id == Players.LilyID) {
-                userSelectCategory.AddButton("Mint Auth Check", $"Check to see if the selected user can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)), MintyResources.key);
+            if (APIUser.CurrentUser.id.Contains("usr_6d71d3be")) {
+                userSelectCategory.AddButton("Mint Auth Check", "Check to see if the selected user can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)), MintyResources.key);
             }
 
             Con.Debug("Done Setting up User Selected Menu", MintCore.isDebug);
@@ -632,13 +632,13 @@ namespace MintMod.UserInterface.QuickMenu {
                     
                     string tempName = String.Empty;
                     if (PlayerWrappers.isFriend(player)) {
-                        if (player.field_Private_APIUser_0.id == Players.LilyID)
+                        if (player.field_Private_APIUser_0.id.Contains("usr_6d71d3be"))
                             tempName = "<color=#9fffe3>Lily</color>";
                         else
                             tempName = $"<color=#{Config.FriendRankHEX.Value}>{n}</color>";
                     }
                     else {
-                        if (player.field_Private_APIUser_0.id == Players.LilyID)
+                        if (player.field_Private_APIUser_0.id.Contains("usr_6d71d3be"))
                             tempName = "<color=#9fffe3>Lily</color>";
                         else
                             tempName = $"<color=#{ColorConversion.ColorToHex(VRCPlayer.Method_Public_Static_Color_APIUser_0(player.GetAPIUser()))}>{n}</color>";
