@@ -29,16 +29,17 @@ namespace MintMod.UserInterface.QuickMenu {
         private bool Initialized;
         private DateTime _timer;
 
-        internal override void OnStart() => MelonCoroutines.Start(Init());
+        internal override void OnUserInterface() => MelonCoroutines.Start(Init());
 
         private IEnumerator Init() {
             if (!Config.PLEnabled.Value) yield break;
             while (MintyResources.BG_HUD == null) yield return null;
             while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
+            
             QuickMenu = UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>().gameObject.transform;
             Wing = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
             
-            var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a / 255);
+            var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a);
             
             if (Wing.Find("MintUiHud Panel") == null) {
                 BackgroundObject = new GameObject("MintUiHud Panel");
@@ -61,15 +62,14 @@ namespace MintMod.UserInterface.QuickMenu {
             TheText = TextObject.AddComponent<Text>();
             SetSizeTextObj();
             TheText.font = MintyResources.BalooFont != null ? MintyResources.BalooFont : UnityEngine.Resources.GetBuiltinResource<Font>("Arial.ttf");
-            UpdateTextSize(40);
+            UpdateTextSize(Config.TextSize.Value);
             TheText.text = "";
             TheText.alignment = (TextAnchor)TextAlignment.Left;
             Initialized = true;
             
+            MoveTheText();
             SetBackgroundColor(c);
             yield return HUDLoop();
-            
-            MoveTheText();
         }
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
@@ -192,6 +192,7 @@ namespace MintMod.UserInterface.QuickMenu {
             if (Initialized && Config.PLEnabled.Value) {
                 SetLocation();
                 SetSizeTextObj();
+                SetBackgroundColor(Config.BackgroundColor.Value);
             }
         }
     }
