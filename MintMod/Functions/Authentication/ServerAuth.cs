@@ -28,7 +28,7 @@ namespace MintMod.Functions.Authentication {
 
         internal static IEnumerator AuthUser() {
             yield return new WaitForSeconds(1);
-            while (APIUser.CurrentUser == null && APIUser.IsLoggedIn) yield return null;
+            while (APIUser.CurrentUser == null && !APIUser.IsLoggedIn) yield return null;
             /*while (true) {
                 if (APIUser.CurrentUser == null) yield return null;
                 else break;
