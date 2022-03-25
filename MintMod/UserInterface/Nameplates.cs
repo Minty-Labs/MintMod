@@ -22,6 +22,7 @@ namespace MintMod.UserInterface {
         public override string Name => "MintyNameplates";
         public override string Description => "Colors Nameplates for certain people.";
         public static Regex methodMatchRegex = new("Method_Public_Void_\\d", RegexOptions.Compiled);
+        private static bool PrivateServerRanNoticeOnce;
 
         internal override void OnStart() {
             if (ModCompatibility.MintyNameplates) {
@@ -46,7 +47,10 @@ namespace MintMod.UserInterface {
             if (MintUserInterface.isStreamerModeOn) return;
             if (!Config.EnableCustomNameplateReColoring.Value) return;
             if (ModCompatibility.GPrivateServer) {
-                Con.Msg("Minty Nameplates are disabled");
+                if (!PrivateServerRanNoticeOnce) {
+                    Con.Msg("Minty Nameplates are disabled");
+                    PrivateServerRanNoticeOnce = true;
+                }
                 return;
             }
             if (ValidatePlayerAvatar(vrcPlayer)) {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections;
 using System.Windows.Forms;
+using Il2CppSystem.Security.Cryptography;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Hooks;
@@ -21,6 +22,7 @@ using MintyLoader;
 using BuildInfo = MelonLoader.BuildInfo;
 using MintMod.Functions.Authentication;
 using MintMod.Managers.Notification;
+using UnhollowerBaseLib;
 using UnityEngine;
 
 namespace MintMod {
@@ -31,13 +33,13 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.27.3";
+            public const string Version = "2.27.4";
 #endif
 #if DEBUG
             public const string Version = "2.26.5";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "22 Mar 2022";
+            public const string UpdatedDate = "24 Mar 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.6.6";
 #endif
@@ -90,6 +92,14 @@ namespace MintMod {
 #endif
 
             Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version} - Built on {ModBuildInfo.UpdatedDate}");
+            ModCompatibility.GPrivateServer = MelonHandler.Mods.FindIndex(i => {
+                bool name = false, author = false;
+                if (i.Info.Name == "PrivateServer")
+                    name = true;
+                if (i.Info.Author == "[information redacted]")
+                    author = true;
+                return name && author;
+            }) != -1;
             mods.Add(new Config());
             mods.Add(new MintyResources());
             mods.Add(new Patches());

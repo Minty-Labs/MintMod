@@ -78,6 +78,7 @@ namespace MintMod.Managers {
         internal override void OnUserInterface() => FetchCustomPlayerObjects();
 
         public static void FetchCustomPlayerObjects(bool refreshed = false) {
+            if (ModCompatibility.GPrivateServer) return;
             try {
                 if (Storage != null && refreshed) Storage.Clear();
             } catch (Exception w) {

@@ -34,14 +34,6 @@ namespace MintMod.Libraries {
                 SettingsRestart = true;
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ProPlates") != -1)
                 ProPlates = true;
-            GPrivateServer = MelonHandler.Mods.FindIndex(i => {
-                bool name = false, author = false;
-                if (i.Info.Name == "PrivateServer")
-                    name = true;
-                if (i.Info.Author == "[information redacted]")
-                    author = true;
-                return name && author;
-            }) != -1;
 
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "UI Expansion Kit") != -1) 
                 UIX = true;

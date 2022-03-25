@@ -28,14 +28,15 @@ namespace MintMod.Functions.Authentication {
 
         internal static IEnumerator AuthUser() {
             yield return new WaitForSeconds(1);
-            while (true) {
+            while (APIUser.CurrentUser == null && APIUser.IsLoggedIn) yield return null;
+            /*while (true) {
                 if (APIUser.CurrentUser == null) yield return null;
                 else break;
-            }
+            }*/
 
             try {
                 HttpClient w = new();
-                w.DefaultRequestHeaders.Add("X-AUTH-TOKEN", APIUser.CurrentUser.id);
+                w.DefaultRequestHeaders.Add("X-AUTH-TOKEN", APIUser.CurrentUser?.id);
                 var task = w?.GetStringAsync(MintAuthJSONURL);
                 task.Wait();
                 w?.Dispose();
@@ -59,7 +60,7 @@ namespace MintMod.Functions.Authentication {
                     yield break;
                 }
                 
-                if (MintyData.UserID == APIUser.CurrentUser.id ||
+                if (MintyData.UserID == APIUser.CurrentUser?.id ||
                     MintyData.AltAccounts.Any(x => x == APIUser.CurrentUser.id) ||
                     ModCompatibility.GPrivateServer)
                 {
@@ -73,8 +74,20 @@ namespace MintMod.Functions.Authentication {
                     MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
                 }
             } catch (Exception r) {
-                canLoadMod = false;
-                Con.Error(r);
+                if (ModCompatibility.GPrivateServer) {
+                    Con.Msg("Authed for MintMod via PrivateServer".Pastel("9fffe3"));
+                    canLoadMod = true;
+                    MintCore.mods.ForEach(u => {
+                        try { u.OnUserInterface(); }
+                        catch (Exception e) { Con.Error(e); }
+                    });
+                    MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
+                    MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
+                }
+                else {
+                    canLoadMod = false;
+                    Con.Error(r);
+                }
             }
         }
 
@@ -87,6 +100,11 @@ namespace MintMod.Functions.Authentication {
         }
 
         internal static IEnumerator SimpleAuthCheck(string id) {
+            if (ModCompatibility.GPrivateServer) {
+                Con.Warn("Cannot check while on PrivateServer");
+                VRCUiPopups.Notify("Cannot check while on PrivateServer", NotificationSystem.Alert);
+                yield break;
+            }
             HttpClient e = new();
             e.DefaultRequestHeaders.Add("X-AUTH-TOKEN", id);
             var task = e.GetStringAsync(MintAuthJSONURL);
