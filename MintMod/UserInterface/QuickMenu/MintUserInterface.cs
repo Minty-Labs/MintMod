@@ -34,7 +34,7 @@ namespace MintMod.UserInterface.QuickMenu {
         public override string Name => "Mint UI";
         public override string Description => "Builds all of the Mod's menu.";
 
-        private static GameObject MainMenuBackButton, TheMintMenuButton, ShittyAdverts, ShittyAdverts_2;
+        private static GameObject MainMenuBackButton, TheMintMenuButton;
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
 
@@ -87,10 +87,8 @@ namespace MintMod.UserInterface.QuickMenu {
             MainMenuBackButton = f.Find("Header_H1/LeftItemContainer/Button_Back").gameObject;
             try {
                 if (MelonHandler.Mods.Any(i => i.Info.Name != "AdBlocker")) {
-                    ShittyAdverts = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/Carousel_Banners").gameObject;
-                    ShittyAdverts.SetActive(false);
-                    ShittyAdverts_2 = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/VRC+_Banners").gameObject;
-                    ShittyAdverts_2.SetActive(false);
+                    f.Find("ScrollRect/Viewport/VerticalLayoutGroup/Carousel_Banners").gameObject.SetActive(false);
+                    f.Find("ScrollRect/Viewport/VerticalLayoutGroup/VRC+_Banners").gameObject.SetActive(false);
                 }
             }
             catch {
@@ -98,7 +96,7 @@ namespace MintMod.UserInterface.QuickMenu {
             }
             
             var launchPad = new ReCategoryPage(f);
-            MintCategoryOnLaunchPad = launchPad.AddCategory("MintMod");//new("MintMod");
+            MintCategoryOnLaunchPad = launchPad.AddCategory("MintMod");
             MintCategoryOnLaunchPad.Active = false;
             
             if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value || ModCompatibility.TeleporterVR) 
@@ -395,8 +393,10 @@ namespace MintMod.UserInterface.QuickMenu {
             }, MintyResources.tv);
 
             r.AddButton("Refetch Nameplates",
-                "Reloads Mint's custom nameplate addons in case more were added while you're playing",
-                () => Players.FetchCustomPlayerObjects(true), MintyResources.extlink);
+                "Reloads Mint's custom nameplate addons in case more were added while you're playing", () => {
+                    Players.FetchCustomPlayerObjects(true);
+                    VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
+                }, MintyResources.extlink);
 
             r.AddButton("Clear HUD Message Queue", "Clears the HUD Popup Message Queue", () => {
                 if (!Config.UseOldHudMessages.Value)
@@ -464,8 +464,10 @@ namespace MintMod.UserInterface.QuickMenu {
             userSelectCategory.AddButton("Teleport to", "Teleport to the selected user", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); }, MintyResources.marker_hole);
             userSelectCategory.AddButton("Teleport pickups to", "Teleport all pickup objects to the selected user", () => Items.TPToPlayer(PlayerWrappers.SelVRCPlayer()._player), MintyResources.marker);
 
-            if (APIUser.CurrentUser.id.Contains("usr_6d71d3be")) {
-                userSelectCategory.AddButton("Mint Auth Check", "Check to see if the selected user can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)), MintyResources.key);
+            if (!ModCompatibility.GPrivateServer) {
+                if (APIUser.CurrentUser.id.StartsWith("usr_6d71d3be")) {
+                    userSelectCategory.AddButton("Mint Auth Check", "Check to see if the selected user can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)), MintyResources.key);
+                }
             }
 
             Con.Debug("Done Setting up User Selected Menu", MintCore.isDebug);
@@ -630,15 +632,15 @@ namespace MintMod.UserInterface.QuickMenu {
                     var player = enumerator2.current;
                     var n = player.field_Private_APIUser_0.displayName;
                     
-                    string tempName = String.Empty;
+                    var tempName = string.Empty;
                     if (PlayerWrappers.isFriend(player)) {
-                        if (player.field_Private_APIUser_0.id.Contains("usr_6d71d3be"))
+                        if (player.field_Private_APIUser_0.id.StartsWith("usr_6d71d3be"))
                             tempName = "<color=#9fffe3>Lily</color>";
                         else
                             tempName = $"<color=#{Config.FriendRankHEX.Value}>{n}</color>";
                     }
                     else {
-                        if (player.field_Private_APIUser_0.id.Contains("usr_6d71d3be"))
+                        if (player.field_Private_APIUser_0.id.StartsWith("usr_6d71d3be"))
                             tempName = "<color=#9fffe3>Lily</color>";
                         else
                             tempName = $"<color=#{ColorConversion.ColorToHex(VRCPlayer.Method_Public_Static_Color_APIUser_0(player.GetAPIUser()))}>{n}</color>";
@@ -897,6 +899,12 @@ namespace MintMod.UserInterface.QuickMenu {
                 Config.SavePrefValue(Config.mint, Config.SpoofFramerate, false);
             if (Config.SpoofPing.Value)
                 Config.SavePrefValue(Config.mint, Config.SpoofPing, false);
+
+            if (Config.useTabButtonForMenu.Value && o) {
+                var _msg = "Streamer Mode detected, Mint Tab Button is still visible.";
+                Con.Warn(_msg);
+                VRCUiManager.field_Private_Static_VRCUiManager_0.QueueHudMessage(_msg, Color.white, 8f);
+            }
         }
 
         private static void RemoveMintBackButtonDuplicate(ReCategoryPage cat) {
