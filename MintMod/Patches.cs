@@ -27,10 +27,10 @@ namespace MintMod.Hooks {
         public override string Name => "Patches";
         public override string Description => "";
 
-        internal static bool IsQMOpen;
+        internal static bool IsQmOpen;
         public static Action OnWorldJoin, OnWorldLeave;
 
-        private static void applyPatches(Type type) {
+        private static void ApplyPatches(Type type) {
             Con.Debug($"Applying {type.Name} patches!", MintCore.isDebug);
             try {
                 HarmonyLib.Harmony.CreateAndPatchAll(type, "MintMod_Patches");
@@ -43,14 +43,14 @@ namespace MintMod.Hooks {
             Con.Debug("Setting up patches", MintCore.isDebug);
 
             if (!ModCompatibility.MintyNameplates) {
-                applyPatches(typeof(NameplatePatches));
-                applyPatches(typeof(VRCPlayerPatches));
+                ApplyPatches(typeof(NameplatePatches));
+                ApplyPatches(typeof(VrcPlayerPatches));
             }
-            applyPatches(typeof(PingSpoof));
-            applyPatches(typeof(FrameSpoof));
-            applyPatches(typeof(VRC_Station));
-            applyPatches(typeof(QuickMenuPatches));
-            applyPatches(typeof(LeftRoomPatches));
+            ApplyPatches(typeof(PingSpoof));
+            ApplyPatches(typeof(FrameSpoof));
+            ApplyPatches(typeof(VrcStation));
+            ApplyPatches(typeof(QuickMenuPatches));
+            ApplyPatches(typeof(LeftRoomPatches));
 
             /*
             if (Config.SpoofDeviceType.Value) {
@@ -63,23 +63,22 @@ namespace MintMod.Hooks {
     }
 
     [HarmonyLib.HarmonyPatch(typeof(VRC.UI.Elements.QuickMenu))]
-    class QuickMenuPatches {
+    internal class QuickMenuPatches {
         [HarmonyLib.HarmonyPostfix]
         [HarmonyLib.HarmonyPatch("OnEnable")]
         private static void OnQuickMenuEnable() {
-            Patches.IsQMOpen = true;
+            Patches.IsQmOpen = true;
         }
 
         [HarmonyLib.HarmonyPostfix]
         [HarmonyLib.HarmonyPatch("OnDisable")]
         private static void OnQuickMenuDisable() {
-            Patches.IsQMOpen = false;
+            Patches.IsQmOpen = false;
         }
     }
 
     [HarmonyLib.HarmonyPatch]
-    class NameplatePatches // OnRebuild
-    {
+    internal class NameplatePatches { // OnRebuild
         static IEnumerable<MethodBase> TargetMethods() {
             return typeof(PlayerNameplate).GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(x => 
                 Nameplates.methodMatchRegex.IsMatch(x.Name)).Cast<MethodBase>();
@@ -89,8 +88,7 @@ namespace MintMod.Hooks {
     }
 
     [HarmonyLib.HarmonyPatch(typeof(VRCPlayer))]
-    class VRCPlayerPatches // OnPlayerAwake
-    {
+    internal class VrcPlayerPatches { // OnPlayerAwake
         [HarmonyLib.HarmonyPostfix]
         [HarmonyLib.HarmonyPatch("Awake")]
         static void OnVRCPlayerAwake(VRCPlayer __instance) {
@@ -99,7 +97,7 @@ namespace MintMod.Hooks {
     }
 
     [HarmonyLib.HarmonyPatch(typeof(VRC_StationInternal))]
-    class VRC_Station {
+    internal class VrcStation {
         [HarmonyLib.HarmonyPrefix]
         [HarmonyLib.HarmonyPatch("Method_Public_Boolean_Player_Boolean_0")]
         static bool PlayerCanUseStation(ref bool __result, VRC.Player __0, bool __1) {
@@ -112,7 +110,7 @@ namespace MintMod.Hooks {
     }
 
     [HarmonyLib.HarmonyPatch(typeof(PhotonPeer))]
-    class PingSpoof {
+    internal class PingSpoof {
         [HarmonyLib.HarmonyPrefix]
         [HarmonyLib.HarmonyPatch("RoundTripTime", MethodType.Getter)]
         static bool Prefix(ref int __result) {
@@ -125,7 +123,7 @@ namespace MintMod.Hooks {
     }
 
     [HarmonyLib.HarmonyPatch(typeof(Time))]
-    class FrameSpoof {
+    internal class FrameSpoof {
         [HarmonyLib.HarmonyPrefix]
         [HarmonyLib.HarmonyPatch("smoothDeltaTime", MethodType.Getter)]
         static bool Prefix(ref float __result) {
@@ -138,7 +136,7 @@ namespace MintMod.Hooks {
 
     /*
     [HarmonyLib.HarmonyPatch(typeof(Tools))]
-    class PlatformSpoof {
+    internal class PlatformSpoof {
         [HarmonyLib.HarmonyPostfix]
         [HarmonyLib.HarmonyPatch("Platform", MethodType.Getter)]
         static void Postfix(ref string __result) {
@@ -151,7 +149,7 @@ namespace MintMod.Hooks {
     */
     
     [HarmonyLib.HarmonyPatch(typeof(NetworkManager))]
-    class LeftRoomPatches {
+    internal class LeftRoomPatches {
         [HarmonyLib.HarmonyPostfix]
         [HarmonyLib.HarmonyPatch("OnLeftRoom")]
         static void Yeet() => Patches.OnWorldLeave?.Invoke();

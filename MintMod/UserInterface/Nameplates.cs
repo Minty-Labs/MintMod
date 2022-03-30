@@ -22,7 +22,7 @@ namespace MintMod.UserInterface {
         public override string Name => "MintyNameplates";
         public override string Description => "Colors Nameplates for certain people.";
         public static Regex methodMatchRegex = new("Method_Public_Void_\\d", RegexOptions.Compiled);
-        private static bool PrivateServerRanNoticeOnce;
+        private static bool _privateServerRanNoticeOnce;
 
         internal override void OnStart() {
             if (ModCompatibility.MintyNameplates) {
@@ -47,9 +47,9 @@ namespace MintMod.UserInterface {
             if (MintUserInterface.isStreamerModeOn) return;
             if (!Config.EnableCustomNameplateReColoring.Value) return;
             if (ModCompatibility.GPrivateServer) {
-                if (!PrivateServerRanNoticeOnce) {
+                if (!_privateServerRanNoticeOnce) {
                     Con.Msg("Minty Nameplates are disabled");
-                    PrivateServerRanNoticeOnce = true;
+                    _privateServerRanNoticeOnce = true;
                 }
                 return;
             }
@@ -75,7 +75,7 @@ namespace MintMod.UserInterface {
                 }
 
                 try { ApplyNameplatesFromValues(nameplate, helper); } 
-                catch (Exception n) { Con.Error("Could not apply nameplate color\n" + n.ToString()); }
+                catch (Exception n) { Con.Error($"Could not apply nameplate color\n{n}"); }
 
                 helper.OnRebuild();
             }
@@ -109,11 +109,11 @@ namespace MintMod.UserInterface {
 
             //Are we setting BGColor?
             if (bgColor.HasValue && !bgColorLerp.HasValue) {
-                Color bgColorMain = bgColor.Value;
-                Color quickStatsBGColor = bgColor.Value;
+                var bgColorMain = bgColor.Value;
+                var quickStatsBgColor = bgColor.Value;
 
                 helper.uiNameBackground.color = bgColorMain;
-                helper.uiQuickStatsBackground.color = quickStatsBGColor;
+                helper.uiQuickStatsBackground.color = quickStatsBgColor;
 
                 helper.uiIconBackground.color = bgColor.Value;
 
@@ -158,19 +158,26 @@ namespace MintMod.UserInterface {
             // Create and set Extra Text
             if (!string.IsNullOrWhiteSpace(TagText)) {
                 try {
-                    Transform transform = nameplate.transform.Find("Contents");
-                    Transform transform4 = transform.Find("Quick Stats");
+                    var transform = nameplate.transform.Find("Contents");
+                    var transform4 = transform.Find("Quick Stats");
 
-                    Transform transform5 = transform.Find("Mint_CustomTag");
+                    var transform5 = transform.Find("Mint_CustomTag");
                     if (transform5 == null) {
-                        transform5 = UnityEngine.Object.Instantiate<Transform>(transform4, transform4.parent, false);
+                        transform5 = UnityEngine.Object.Instantiate(transform4, transform4.parent, false);
                         transform5.name = "Mint_CustomTag";
+                        
+                        /*
+                        var avatarDynamicsTouchIcon = transform.Find("");
 
-                        if (ModCompatibility.ProPlates)
+                        if (avatarDynamicsTouchIcon || ModCompatibility.ProPlates)
+                            transform5.localPosition = new Vector3(0f, -90f, 0f);
+                        else if (avatarDynamicsTouchIcon && ModCompatibility.ProPlates)
+                            transform5.localPosition = new Vector3(0f, -120f, 0f);
+                        */if (ModCompatibility.ProPlates)
                             transform5.localPosition = new Vector3(0f, -90f, 0f);
                         else
                             transform5.localPosition = new Vector3(0f, -60f, 0f);
-                        TextMeshProUGUI component = transform5.Find("Trust Text").GetComponent<TextMeshProUGUI>();
+                        var component = transform5.Find("Trust Text").GetComponent<TextMeshProUGUI>();
                         component.richText = true;
                         component.text = TagText;
 
@@ -185,8 +192,8 @@ namespace MintMod.UserInterface {
                                 transform5.GetComponent<ImageThreeSlice>().color = Color.white;
                         }
 
-                        for (int i = transform5.childCount; i > 0; i--) {
-                            Transform child = transform5.GetChild(i - 1);
+                        for (var i = transform5.childCount; i > 0; i--) {
+                            var child = transform5.GetChild(i - 1);
                             if (child.name != "Trust Text")
                                 UnityEngine.Object.Destroy(child.gameObject);
                         }
@@ -216,7 +223,7 @@ namespace MintMod.UserInterface {
             if (Players.Storage.ContainsKey($"{npID}-{APIUser.CurrentUser.id}"))
                 npID = $"{npID}-{APIUser.CurrentUser.id}"; // User's Nameplate - target for only user to see
 
-            if (npID.Contains("usr_e1c908e4")) {
+            if (npID.StartsWith("usr_e1c908e4")) {
                 Random rnd = new();
                 int num = rnd.Next(0, 10);
                 bool chance = num > 8;

@@ -73,10 +73,7 @@ namespace MintMod.Functions {
                 MasterIcon.Destroy();*/
         }
 
-        public static void OnPlayerLeft() {
-            //MasterOfInstance = null;
-            MelonCoroutines.Start(DetectMaster());
-        }
+        public static void OnPlayerLeft() => MelonCoroutines.Start(DetectMaster());
 
         public static void OnSelfJoin() => MelonCoroutines.Start(DetectMaster());
 
@@ -84,7 +81,7 @@ namespace MintMod.Functions {
 
         internal override void OnUpdate() {
             if (MasterIcon != null && (ModCompatibility.NameplateStats || ModCompatibility.ReMod) && r != null && !MintUserInterface.isStreamerModeOn)
-                r.anchoredPosition = new Vector3(0f, Patches.IsQMOpen ? 120f : 90f, 0f);
+                r.anchoredPosition = new Vector3(0f, Patches.IsQmOpen ? 120f : 90f, 0f);
         }
 
         internal override void OnPrefSave() {
