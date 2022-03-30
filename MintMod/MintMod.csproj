@@ -36,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="ActionMenuApi">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\Mods\ActionMenuApi.dll</HintPath>
     </Reference>
@@ -274,7 +277,6 @@
     <Compile Include="Utils\AssemblyLoader.cs" />
     <Compile Include="Utils\General.cs" />
     <Compile Include="Utils\Network.cs" />
-    <Compile Include="Utils\ReMod.Core.Loader.cs" />
     <Compile Include="Utils\VRCUiPopups.cs" />
   </ItemGroup>
   <ItemGroup>

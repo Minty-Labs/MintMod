@@ -4,7 +4,9 @@ using MelonLoader;
 using System.Linq;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -97,29 +99,36 @@ namespace MintyLoader {
         }
     }
 
-    public class ReMod_Core_Downloader {
-        internal static void DownloadAndWrite() {
-            if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) return;
-            // If no ReMod
-            var http = new HttpClient();
-            byte[] data = http.GetByteArrayAsync("https://github.com/RequiDev/ReMod.Core/releases/latest/download/ReMod.Core.dll").GetAwaiter().GetResult();
-            //bool good = false;
-            try {
+    public class ReMod_Core_Loader {
+        internal static bool failed;
+        
+        internal static void DownloadAndWrite(out Assembly loadedAssembly) {
+            if (!File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
+                !File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) {
+                // If no ReMod
+                var http = new HttpClient();
+                var data = http.GetByteArrayAsync("https://github.com/RequiDev/ReMod.Core/releases/latest/download/ReMod.Core.dll").GetAwaiter().GetResult();
                 try {
-                    File.WriteAllBytes(Environment.CurrentDirectory, data);
+                    try { File.WriteAllBytes(Environment.CurrentDirectory, data); }
+                    catch {
+                        Con.Warn("Failed to write ReMod.Core assembly, most likely already being used by another mod or process.");
+                    }
+
+                    try { loadedAssembly = Assembly.Load(data); }
+                    catch (Exception e) {
+                        failed = true;
+                        Con.Error($"Unable to Load Core Dependency, ReMod.Core: {e}");
+                    }
+                    MintyLoader.InternalLogger.Msg("Wrote ReMod.Core to VRC root directory.");
                 }
-                catch {
-                    Con.Warn("Failed to write ReMod.Core assembly, most likely already being used by another mod or process.");
+                catch (Exception e) {
+                    failed = true;
+                    loadedAssembly = null;
+                    MintyLoader.InternalLogger.Error(e);
                 }
-                //good = true;
-                MintyLoader.InternalLogger.Msg("Wrote ReMod.Core to VRC root directory.");
+                http.Dispose();
             }
-            catch (Exception e) {
-                //good = false;
-                MintyLoader.InternalLogger.Error(e);
-            }
-            http.Dispose();
+            loadedAssembly = null;
         }
     }
 }

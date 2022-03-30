@@ -22,7 +22,7 @@ namespace MintMod {
             _Color();
             _Menu();
             _Portal();
-            _MRBS();
+            //_MRBS();
             _Avatar();
             _Random();
             _Extra();
@@ -116,6 +116,7 @@ namespace MintMod {
             ResetTimerAmount = Portal.CreateEntry("ResetTimerAmount", 3600f, "Reset Portal Timer");
         }
 
+        /*
         // Midnight Rooftop Button State
         public static MelonPreferences_Category MRBS;
         public static MelonPreferences_Entry<bool> DetObj, Fog, PP, thunder, dust, collider, join, pillow, pillowpickup, chairs, lightbeams, RainWin, RainPart,
@@ -138,6 +139,7 @@ namespace MintMod {
             RainPart = MRBS.CreateEntry("RainPart", true, "Rain Particles");
             FurCarpet = MRBS.CreateEntry("FurCarpet", true, "Fur Carpet");
         }
+        */
 
 // Avatar
         public static MelonPreferences_Category Avatar;

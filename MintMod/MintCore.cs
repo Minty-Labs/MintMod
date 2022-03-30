@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Collections;
-using System.Windows.Forms;
-using Il2CppSystem.Security.Cryptography;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Hooks;
@@ -19,11 +14,8 @@ using MintMod.UserInterface.OldUI;
 using MintMod.UserInterface.QuickMenu;
 using MintMod.Utils;
 using MintyLoader;
-using BuildInfo = MelonLoader.BuildInfo;
 using MintMod.Functions.Authentication;
 using MintMod.Managers.Notification;
-using UnhollowerBaseLib;
-using UnityEngine;
 
 namespace MintMod {
     public class MintCore : MelonMod {
@@ -33,15 +25,15 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.27.4";
+            public const string Version = "2.27.5";
 #endif
 #if DEBUG
             public const string Version = "2.26.5";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "24 Mar 2022";
+            public const string UpdatedDate = "30 Mar 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.6.6";
+            internal const string LoaderVer = "2.7.0";
 #endif
         }
 
@@ -65,12 +57,6 @@ namespace MintMod {
                 return;
             }
 #endif
-            ReMod_Core_Loader.LoadReModCore(out _);
-            if (ReMod_Core_Loader.failed) {
-                Con.Warn("ReMod.Core Failed to load, I am not going to load MintMod!");
-                cancelLoad = true;
-                return;
-            }
             Instance = this;
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);
