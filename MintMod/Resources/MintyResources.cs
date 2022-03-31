@@ -21,6 +21,8 @@ namespace MintMod.Resources {
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent, BG_HUD;
         public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list, messages,
             copy, key, marker, marker_hole, star, userlist, people, clone, ColorPicker;
+        public static Sprite PlayerListBGWalmart, WalmartTab;
+        
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
         public static Texture basicGradient;
         public static Font BalooFont;
@@ -28,7 +30,7 @@ namespace MintMod.Resources {
         internal override void OnStart() {
             Con.Msg("Loading AssetBundles");
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("MintMod.Resources.mintbundle")) {
-                using (var memoryStream = new MemoryStream((int)stream.Length)) {
+                using (var memoryStream = new MemoryStream((int)stream!.Length)) {
                     stream.CopyTo(memoryStream);
                     MintBundle = AssetBundle.LoadFromMemory_Internal(memoryStream.ToArray(), 0);
                     MintBundle.hideFlags |= HideFlags.DontUnloadUnusedAsset;
@@ -43,7 +45,7 @@ namespace MintMod.Resources {
                     try { JumpIcon = LoadTexture2D("JumpIcon.png"); } catch { Con.Error("Failed to load Texture: JumpIcon.png"); }
                     try { ESPIcon = LoadTexture2D("ESPIcon.png"); } catch { Con.Error("Failed to load Texture: ESPIcon.png"); }
                     try { FlyIcon = LoadTexture2D("FlyIcon.png"); } catch { Con.Error("Failed to load Texture: FlyIcon.png"); }
-                    try { BG_HUD = LoadSprite("PlayerListBackground.png"); } catch { Con.Error("Resources PlayerListBackgrounds.png failed"); }
+                    try { BG_HUD = LoadSprite("PlayerListBackground.png"); } catch { Con.Error("Resources PlayerListBackground.png failed"); }
                     try { BalooFont = LoadFont("Baloo.ttf"); } catch { Con.Error("Resources Baloo.ttf failed"); }
                     
                     try { address_book = LoadSprite("address-book-solid.png"); } catch { Con.Error("Failed to load Texture: address-book-solid.png"); }
@@ -71,6 +73,8 @@ namespace MintMod.Resources {
                     try { people = LoadSprite("people.png"); } catch { Con.Error("Resource people.png failed"); }
                     try { ColorPicker = LoadSprite("color-picker.png"); } catch { Con.Error("Resource color-picker.png failed"); }
                     //try {  = LoadSprite(".png"); } catch { Con.Error("Resource .png failed"); }
+                    try { PlayerListBGWalmart = LoadSprite("PlayerListWalmart.png"); } catch { Con.Error("Resource PlayerListWalmart.png failed"); }
+                    try { WalmartTab = LoadSprite("WalmartLogo.png"); } catch { Con.Error("Resource WalmartLogo.png failed"); }
                     
                     //try { m_Back = LoadSprite("Back.png"); } catch { Con.Error("Resource Back.png failed"); }
                     //try { m_Foward = LoadSprite("Foward.png"); } catch { Con.Error("Resource Foward.png failed"); }
@@ -83,26 +87,25 @@ namespace MintMod.Resources {
         }
 
         private static Sprite LoadSprite(string sprite) {
-            Sprite sprite2 = MintBundle.LoadAsset(sprite, Il2CppType.Of<Sprite>()).Cast<Sprite>();
+            var sprite2 = MintBundle.LoadAsset(sprite, Il2CppType.Of<Sprite>()).Cast<Sprite>();
             sprite2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             return sprite2;
         }
         
-        private static Font LoadFont(string assetToLoad)
-        {
-            Font loadedFont = MintBundle.LoadAsset_Internal(assetToLoad, Il2CppType.Of<Font>()).Cast<Font>();
+        private static Font LoadFont(string assetToLoad) {
+            var loadedFont = MintBundle.LoadAsset_Internal(assetToLoad, Il2CppType.Of<Font>()).Cast<Font>();
             loadedFont.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             return loadedFont;
         }
 
         private static Texture LoadTexture(string tex) {
-            Texture sprite2 = MintBundle.LoadAsset(tex, Il2CppType.Of<Texture>()).Cast<Texture>();
+            var sprite2 = MintBundle.LoadAsset(tex, Il2CppType.Of<Texture>()).Cast<Texture>();
             sprite2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             return sprite2;
         }
 
         private static Texture2D LoadTexture2D(string tex) {
-            Texture2D tex2 = MintBundle.LoadAsset_Internal(tex, Il2CppType.Of<Texture2D>()).Cast<Texture2D>();
+            var tex2 = MintBundle.LoadAsset_Internal(tex, Il2CppType.Of<Texture2D>()).Cast<Texture2D>();
             tex2.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             return tex2;
         }

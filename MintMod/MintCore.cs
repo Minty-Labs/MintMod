@@ -21,23 +21,23 @@ namespace MintMod {
     public class MintCore : MelonMod {
         internal MelonMod Instance;
         public static class ModBuildInfo {
-            public const string Name = "MintMod";
+            public static readonly string Name = DateTime.Now.Date == Con.Foolish ? "Walmart Client" : "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.27.5";
+            public const string Version = "2.27.6";
 #endif
 #if DEBUG
-            public const string Version = "2.26.5";
+            public const string Version = "2.27.6";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "30 Mar 2022";
+            public const string UpdatedDate = "31 Mar 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.7.0";
+            internal const string LoaderVer = "2.7.0.1";
 #endif
         }
 
-        internal static bool isDebug, cancelLoad;
+        internal static bool isDebug, cancelLoad, Fool = DateTime.Now.Date == Con.Foolish || Environment.CommandLine.Contains("--Foolish");
 
         internal static List<MintSubMod> mods = new();
 

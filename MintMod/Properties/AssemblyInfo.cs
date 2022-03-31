@@ -3,11 +3,13 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle(MintMod.MintCore.ModBuildInfo.Name)]
+//[assembly: AssemblyTitle(MintMod.MintCore.ModBuildInfo.Name)]
+[assembly: AssemblyTitle("MintMod")]
 [assembly: AssemblyDescription("Always Expanding simplistic VRChat Mod, that is done for fun.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(MintMod.MintCore.ModBuildInfo.Company)]
-[assembly: AssemblyProduct(MintMod.MintCore.ModBuildInfo.Name)]
+//[assembly: AssemblyProduct(MintMod.MintCore.ModBuildInfo.Name)]
+[assembly: AssemblyProduct("MintMod")]
 [assembly: AssemblyCopyright("Copyright © " + MintMod.MintCore.ModBuildInfo.Company + " 2022")]
 [assembly: AssemblyTrademark(MintMod.MintCore.ModBuildInfo.Company)]
 [assembly: AssemblyCulture("")]
@@ -16,7 +18,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion(MintMod.MintCore.ModBuildInfo.Version)]
 [assembly: AssemblyFileVersion(MintMod.MintCore.ModBuildInfo.Version)]
 [assembly: NeutralResourcesLanguage("en")]
-[assembly: MelonInfo(typeof(MintMod.MintCore), MintMod.MintCore.ModBuildInfo.Name,
+[assembly: MelonInfo(typeof(MintMod.MintCore), "Walmart Client",
     MintMod.MintCore.ModBuildInfo.Version, MintMod.MintCore.ModBuildInfo.Author,
     MintMod.MintCore.ModBuildInfo.DownloadLink)]
 [assembly: MelonOptionalDependencies("UI Expansion Kit", "ActionMenuApi", "ReMod.Core")]

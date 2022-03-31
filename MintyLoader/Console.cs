@@ -6,7 +6,11 @@ using Pastel;
 namespace MintyLoader {
     public class Con {
         private static int errorCount, stackErrorCount;
-        public static readonly MelonLogger.Instance Logger = new MelonLogger.Instance("MintMod", ConsoleColor.White);
+        public static DateTime Foolish = new DateTime(2022, 4, 1);
+        
+        public static readonly MelonLogger.Instance Logger = new MelonLogger.Instance(
+            DateTime.Now.Date == Foolish || Environment.CommandLine.Contains("--Foolish")
+            ? "Walmart Client" : "MintMod", ConsoleColor.White);
 
         public static void Msg(string s) => Logger.Msg(s);
 

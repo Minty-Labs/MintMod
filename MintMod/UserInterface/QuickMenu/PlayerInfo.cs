@@ -23,8 +23,8 @@ namespace MintMod.UserInterface.QuickMenu {
         public override string Description => "Shows Player Info on selected user";
 
         private static Transform QuickMenu, Wing;
-        private static GameObject BackgroundObject, TextObject;
-        public static Image BackgroundImage;
+        private static GameObject BackgroundObject, Foolish, TextObject;
+        public static Image BackgroundImage, BGFool;
         private static Text TheText;
         private bool Initialized;
         private DateTime _timer;
@@ -53,6 +53,16 @@ namespace MintMod.UserInterface.QuickMenu {
                 //var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a / 255);
                 //Con.Debug($"{Config.BackgroundColor.Value.r} {Config.BackgroundColor.Value.g} {Config.BackgroundColor.Value.b} {Config.BackgroundColor.Value.a} -- {Config.BackgroundColor.Value.a / 255} -- {Config.BackgroundColor.Value.a * 255}");
                 SetBackgroundColor(c);
+                if (MintCore.Fool) {
+                    Foolish = new GameObject("W A L M A R T  C L I E N T");
+                    Foolish.transform.SetParent(Wing, false);
+                    Foolish.AddComponent<CanvasRenderer>();
+                    BGFool = Foolish.AddComponent<Image>();
+            
+                    Foolish.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420);
+                    SetLocation();
+                    BGFool.sprite = MintyResources.PlayerListBGWalmart;
+                }
             }
             if (BackgroundObject.transform.Find("Player List"))
                 yield break;
@@ -143,6 +153,12 @@ namespace MintMod.UserInterface.QuickMenu {
                 BackgroundObject.transform.SetParent(t, false);
                 BackgroundObject.GetComponent<RectTransform>().localPosition = 
                     new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
+                if (Foolish != null && MintCore.Fool) {
+                    var t2 = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
+                    Foolish.transform.SetParent(t2, false);
+                    Foolish.GetComponent<RectTransform>().localPosition = 
+                        new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
+                }
             }
         }
 
@@ -182,6 +198,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 var obj = MelonCoroutines.Start(HUDLoop());
                 Initialized = false;
                 BackgroundObject.Destroy();
+                if (MintCore.Fool)
+                    Foolish.Destroy();
                 TextObject.Destroy();
                 Wing.Find("MintUiHud Panel").gameObject.Destroy();
                 //RightWing.Find("MintUiHud Panel")?.Destroy();

@@ -96,7 +96,7 @@ namespace MintMod.UserInterface.QuickMenu {
             }
             
             var launchPad = new ReCategoryPage(f);
-            MintCategoryOnLaunchPad = launchPad.AddCategory("MintMod");
+            MintCategoryOnLaunchPad = launchPad.AddCategory(MintCore.Fool ? "Walmart Client" : "MintMod");
             MintCategoryOnLaunchPad.Active = false;
             
             if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value || ModCompatibility.TeleporterVR) 
@@ -125,11 +125,12 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         static IEnumerator BuildMint() {
-            MintMenu = new ReCategoryPage("MintMenu", Config.useTabButtonForMenu.Value);
+            MintMenu = new ReCategoryPage(MintCore.Fool ? "WalmartMenu" : "MintMenu", Config.useTabButtonForMenu.Value);
             MintMenu.GameObject.SetActive(false);
 
             if (Config.useTabButtonForMenu.Value)
-                ReTabButton.Create("MintTab", "Open the MintMenu", "MintMenu", MintyResources.MintTabIcon);
+                ReTabButton.Create("MintTab", "Open the MintMenu", MintCore.Fool ? "WalmartMenu" : "MintMenu", 
+                    MintCore.Fool ? MintyResources.WalmartTab : MintyResources.MintTabIcon);
             else {
                 TheMintMenuButton = UnityEngine.Object.Instantiate(MainMenuBackButton, MainMenuBackButton.transform.parent);
                 TheMintMenuButton.transform.SetAsLastSibling();
@@ -161,14 +162,13 @@ namespace MintMod.UserInterface.QuickMenu {
             //BuildAvatarMenu();
 
             Con.Debug("Done Setting up MintMenus", MintCore.isDebug);
-            yield break;
         }
 
         private static IEnumerator SetTheFuckingSprite() {
             yield return null;
             UnityEngine.Object.DestroyImmediate(TheMintMenuButton.transform.Find("Icon").GetComponent<StyleElement>());
             MintIcon = TheMintMenuButton.transform.Find("Icon").GetComponent<Image>();
-            MintIcon.sprite = MintyResources.MintIcon;
+            MintIcon.sprite = MintCore.Fool ? MintyResources.WalmartTab : MintyResources.MintIcon;
             MintIcon.color = Color.white;
             var styleElement = TheMintMenuButton.GetComponent<StyleElement>();
             if (styleElement.field_Public_String_0 == "Back") // Ignore Style Changes
