@@ -12,10 +12,12 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002EDesign_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002EDrawing_002EDesign_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002EDrawing_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002EManagement_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002ENet_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002ENet_002EHttp_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002ENet_002EHttp_002EFormatting_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002ENet_002EHttp_002EWebRequest_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002EWeb_002EHttp_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CSystem_002EWindows_002EForms_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CUnhollowerBaseLib_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CUnhollowerRuntimeLib_002Edll/@EntryIndexedValue">True</s:Boolean>
@@ -46,10 +48,23 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CVRC_002EUI_002EShared_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CManaged_005CVRC_002EUtility_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMelonLoader_005CMelonLoader_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMods_005CActionMenuApi_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CMods_005CPortableMirrorMod_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=C_003A_005CProgram_0020Files_0020_0028x86_0029_005CSteam_005Csteamapps_005Ccommon_005CVRChat_005CUserData_005CMintMod_005CDependencies_005CMint_002EWMC_002Eexe/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CMintMod_005C3rdparty_005Cml_005C0Harmony_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CMintMod_005CMintyLoader_005Cbin_005CDebug_005CMintyLoader_002Dmerged_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CMintMod_005CMintyLoader_005Cbin_005CDebug_005CMintyLoader_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CMintMod_005CMintyNet48_005Cbin_005CRelease_005CMintyNet48_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CMintyServer_005CMintyNet48_005Cbin_005CDebug_005CILMerge_005CMintyNet48_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CMintyServer_005CMintyNet48_005Cbin_005CDebug_005CMintyNet48_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CWSS_005Cbuild_005Cframework35_005CRelease_005Cwebsocket_002Dsharp_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CWSS_005Corganized_002Dbuilds_005Cnetframework35_005Cwebsocket_002Dsharp_002Edll/@EntryIndexedValue">True</s:Boolean>
 	
 	<s:Int64 x:Key="/Default/Environment/Hierarchy/Build/BuildTool/MsbuildVersion/@EntryValue">1114112</s:Int64>
 	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=2d390917_002D54ce_002D492e_002D95e1_002D16fd09a02408_0023MintyNameplates/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=b0589cd8_002Df005_002D44e1_002Da487_002D8361633878fa_0023MintyNative/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=b5d5dc62_002D277f_002D49de_002Dbd89_002D3b93023b06e9_0023Mint_002EWMC/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	
+	
+	
+	
+	
+	</wpf:ResourceDictionary>
