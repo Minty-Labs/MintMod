@@ -27,6 +27,7 @@ namespace MintyLoader {
             if (!Interpreter.PopulateNativeAssembly.Failed)
                 Interpreter.NativeInterpreter.RunOnStart(); // Start to read MintyNative
 
+            MintyNetClient.Connect();
             // Preload
             ModBlacklist.BlacklistedModCheck(); // Check if running blacklisted mod(s)
             ReMod_Core_Loader.DownloadAndWrite(out _); // Write ReMod.Core.dll to VRC dir root if they do not have ReMod CE or Private
@@ -59,6 +60,7 @@ namespace MintyLoader {
                 LoadManager.MintMod?.OnApplicationQuit();
                 Interpreter.NativeInterpreter.Interpreter?.RunOnAppQuit();
                 InternalLogger.Msg(ConsoleColor.Red, "MintyLoader is stopping...");
+                MintyNetClient.Disconnect();
             }
         }
 

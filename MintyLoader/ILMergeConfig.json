@@ -1,7 +1,8 @@
 {
     "General": {
         "InputAssemblies": [
-		  "$(TargetDir)\\Pastel.dll"
+          "$(TargetDir)\\websocket-sharp.dll",
+          "$(TargetDir)\\MintyNet48.dll"
         ]
     }
 }

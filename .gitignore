@@ -23,3 +23,7 @@ MintyNative/Release/
 MintyNative/x64/
 3rdparty/
 MintNET6/
+MintyNet48/bin/
+MintyNet48/obj/
+MintyServer/obj/
+MintyServer/bin/

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DSharpPlus" Version="4.2.0-nightly-01105" />
+      <PackageReference Include="DSharpPlus.CommandsNext" Version="4.2.0-nightly-01105" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0-preview.2.22153.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0-preview.2" />
+      <PackageReference Include="Serilog" Version="2.11.0-dev-01380" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.0.2-dev-00890" />
+      <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
+      <PackageReference Include="System.Management" Version="7.0.0-preview.2.22152.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="websocket-sharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\WSS\organized-builds\net6\websocket-sharp.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MintyNet48\MintyNet48.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data" />
+      <Folder Include="Discord" />
+    </ItemGroup>
+
+</Project>

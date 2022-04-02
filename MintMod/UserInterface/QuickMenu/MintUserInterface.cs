@@ -3,7 +3,6 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Resources;
