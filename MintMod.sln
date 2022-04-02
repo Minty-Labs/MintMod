@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReMod.Core", "ReMod.Core\Re
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintyNative", "MintyNative\MintyNative.vcxproj", "{B0589CD8-F005-44E1-A487-8361633878FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyNet48", "MintyNet48\MintyNet48.csproj", "{2ACDCC30-CB28-4A4D-87CF-B620DB292557}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyServer", "MintyServer\MintyServer.csproj", "{2DC9B753-1E3C-4D46-8702-1C249A254525}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{B0589CD8-F005-44E1-A487-8361633878FA}.Debug|Any CPU.Build.0 = Debug|x64
 		{B0589CD8-F005-44E1-A487-8361633878FA}.Release|Any CPU.ActiveCfg = Release|x64
 		{B0589CD8-F005-44E1-A487-8361633878FA}.Release|Any CPU.Build.0 = Release|x64
+		{2ACDCC30-CB28-4A4D-87CF-B620DB292557}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ACDCC30-CB28-4A4D-87CF-B620DB292557}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ACDCC30-CB28-4A4D-87CF-B620DB292557}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ACDCC30-CB28-4A4D-87CF-B620DB292557}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DC9B753-1E3C-4D46-8702-1C249A254525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DC9B753-1E3C-4D46-8702-1C249A254525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DC9B753-1E3C-4D46-8702-1C249A254525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DC9B753-1E3C-4D46-8702-1C249A254525}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

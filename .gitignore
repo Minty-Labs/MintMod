@@ -22,3 +22,7 @@ MintyNative/Debug/
 MintyNative/Release/
 MintyNative/x64/
 3rdparty/
+MintyNet48/bin/
+MintyNet48/obj/
+MintyServer/obj/
+MintyServer/bin/

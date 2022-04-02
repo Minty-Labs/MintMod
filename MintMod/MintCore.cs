@@ -118,7 +118,7 @@ namespace MintMod {
             mods.Add(new NetworkEvents());
             mods.Add(new PlayerInfo());
 #if DEBUG
-            mods.Add(new Test.Class1());
+            //mods.Add(new Test.Class1());
 #endif
             //mods.Add(new ExtendedMediaPlayback());
             //mods.Add(new );

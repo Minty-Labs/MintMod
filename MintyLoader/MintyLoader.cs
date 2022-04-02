@@ -22,7 +22,7 @@ namespace MintyLoader {
             Instance = this;
             InternalLogger.Msg("Minty".Pastel("9fffe3") + "Loader is starting up!");
             isDebug = Environment.CommandLine.Contains("--MintyDev"); // Check if running as Debug
-            
+            MintyNetClient.Connect();
             // Preload
             ModBlacklist.BlacklistedModCheck(); // Check if running blacklisted mod(s)
             ReMod_Core_Loader.DownloadAndWrite(out _); // Write ReMod.Core.dll to VRC dir root if they do not have ReMod CE or Private
@@ -52,6 +52,7 @@ namespace MintyLoader {
                 hasQuit = true;
                 LoadManager.MintMod?.OnApplicationQuit();
                 InternalLogger.Msg(ConsoleColor.Red, "MintyLoader is stopping...");
+                MintyNetClient.Disconnect();
             }
         }
 
