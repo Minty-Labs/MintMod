@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyNet48", "MintyNet48\Mi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyServer", "MintyServer\MintyServer.csproj", "{2DC9B753-1E3C-4D46-8702-1C249A254525}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyHoneyPot", "MintyHoneyPot\MintyHoneyPot.csproj", "{0FCBEAAE-1B0B-448C-A2FB-3B66D03285F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{2DC9B753-1E3C-4D46-8702-1C249A254525}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DC9B753-1E3C-4D46-8702-1C249A254525}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DC9B753-1E3C-4D46-8702-1C249A254525}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FCBEAAE-1B0B-448C-A2FB-3B66D03285F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FCBEAAE-1B0B-448C-A2FB-3B66D03285F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FCBEAAE-1B0B-448C-A2FB-3B66D03285F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FCBEAAE-1B0B-448C-A2FB-3B66D03285F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
