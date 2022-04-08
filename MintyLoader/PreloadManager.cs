@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using MintyLoader;
 
 namespace MintyLoader {
-    public class ModBlacklist {
+    public static class ModBlacklist {
         internal static class NativeImports {
             [DllImport("kernel32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
@@ -99,7 +99,7 @@ namespace MintyLoader {
         }
     }
 
-    public class ReMod_Core_Loader {
+    public static class ReMod_Core_Loader {
         internal static bool failed;
         
         internal static void DownloadAndWrite(out Assembly loadedAssembly) {

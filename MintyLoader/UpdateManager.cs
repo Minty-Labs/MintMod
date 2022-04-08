@@ -8,7 +8,7 @@ using MelonLoader.TinyJSON;
 using Pastel;
 
 namespace MintyLoader {
-    internal class UpdateManager {
+    internal static class UpdateManager {
         private static HttpClient Updater, VersionChecker;
         private static string checkedVer;
         //private static bool LoaderIsUpToDate;
