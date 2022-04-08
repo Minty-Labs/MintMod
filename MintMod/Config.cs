@@ -150,7 +150,6 @@ namespace MintMod {
             Avatar = MelonPreferences.CreateCategory("MintMod_Avatar", "MintMod - Avatar");
             AviFavsEnabled = Avatar.CreateEntry("AviFavsEnabled", true, "Avatar Favorites Enabled");
             AviLogFavOrUnfavInConsole = Avatar.CreateEntry("AviLogFavOrUnfavInConsole", true, "Log Fav/UnFav in console");
-            //if (MintCore.isDebug) useWebhostSavedList = Avatar.CreateEntry("useWebhostSavedList", false, "Use Server Save List");
             haveCustomPath = Avatar.CreateEntry("haveCustomAvatarListPath", false, "* Custom List Path");
             customPath = Avatar.CreateEntry("AvatarListCustomPath", $"{MintCore.MintDirectory}\\AviFavs.json", "* Custom Path");
         }

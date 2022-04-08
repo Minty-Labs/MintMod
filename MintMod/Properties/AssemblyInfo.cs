@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion(MintMod.MintCore.ModBuildInfo.Version)]
 [assembly: AssemblyFileVersion(MintMod.MintCore.ModBuildInfo.Version)]
 [assembly: NeutralResourcesLanguage("en")]
-[assembly: MelonInfo(typeof(MintMod.MintCore), "Walmart Client",
+[assembly: MelonInfo(typeof(MintMod.MintCore), "MintMod",
     MintMod.MintCore.ModBuildInfo.Version, MintMod.MintCore.ModBuildInfo.Author,
     MintMod.MintCore.ModBuildInfo.DownloadLink)]
 [assembly: MelonOptionalDependencies("UI Expansion Kit", "ActionMenuApi", "ReMod.Core")]
