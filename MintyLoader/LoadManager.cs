@@ -9,22 +9,24 @@ using System.IO;
 using Pastel;
 
 namespace MintyLoader {
-    internal class LoadManager {
+    internal static class LoadManager {
         internal static MelonMod MintMod;
-        private static string modURL = "https://mintlily.lgbt/mod/MintMod.dll";
+        private static string _modURL = "https://mintlily.lgbt/mod/MintMod.dll";
         private static Assembly _localMintAssembly;
-        private static bool localLoadingFailed;
+        private static bool _localLoadingFailed;
 
         internal static void ApplyModURL() {
             if (Environment.CommandLine.Contains("--MintModBeta"))
-                modURL = "https://mintlily.lgbt/mod/MintModBeta.dll";
+                _modURL = "https://mintlily.lgbt/mod/MintModBeta.dll";
         }
 
         internal static void LoadLocal() {
             try {
                 MintyLoader.InternalLogger.Msg(ConsoleColor.Yellow, "Loading Local Mod");
                 if (File.Exists("MintMod.dll")) {
-                    _localMintAssembly = Assembly.LoadFile("MintMod.dll");
+                    _localMintAssembly = File.Exists("MintMod.pdb") ?
+                        Assembly.Load(File.ReadAllBytes("MintMod.dll"), File.ReadAllBytes("MintMod.pdb")) :
+                        Assembly.Load(File.ReadAllBytes("MintMod.dll"));
                     if (_localMintAssembly != null) loadModuleCore(_localMintAssembly);
                 }
                 else { // If No Local DLL, load DLL from webhost
@@ -32,7 +34,7 @@ namespace MintyLoader {
                     if (mintAssembly != null) loadModuleCore(mintAssembly);
                 }
             } catch (Exception e) { // If Error, load DLL from webhost
-                localLoadingFailed = true;
+                _localLoadingFailed = true;
                 MintyLoader.InternalLogger.Error(e);
                 _localMintAssembly = null;
                 MintyLoader.InternalLogger.Warning("Can not load Local Mod, loading MintMod from the server.");
@@ -41,7 +43,7 @@ namespace MintyLoader {
         }
         
         internal static void LoadWebhost() {
-            if (!localLoadingFailed) { // load DLL from webhost
+            if (!_localLoadingFailed) { // load DLL from webhost
                 MintyLoader.InternalLogger.Msg(ConsoleColor.Cyan, "Loader is up to date");
                 if (!MintyLoader.MintDirectory.Exists)
                     MintyLoader.MintDirectory.Create();
@@ -52,16 +54,15 @@ namespace MintyLoader {
         }
         
         private static void loadModuleCore(Assembly aslm) {
-            if (aslm != null) {
-                foreach (var componentType in aslm.GetTypes().Where(t => t.IsSubclassOf(typeof(MelonMod)))) {
-                    try {
-                        var coreLoad = Activator.CreateInstance(componentType) as MelonMod;
-                        coreLoad?.OnApplicationStart();
-                        MintMod = coreLoad;
-                    } catch (TypeLoadException e) {
-                        MintyLoader.InternalLogger.Error(e.Message);
-                        MintyLoader.InternalLogger.Error("Unable to load MintMod -> If VRChat has been updated, MintMod likely needs to be updated as well.");
-                    }
+            if (aslm == null) return;
+            foreach (var componentType in aslm.GetTypes().Where(t => t.IsSubclassOf(typeof(MelonMod)))) {
+                try {
+                    var coreLoad = Activator.CreateInstance(componentType) as MelonMod;
+                    coreLoad?.OnApplicationStart();
+                    MintMod = coreLoad;
+                } catch (TypeLoadException e) {
+                    MintyLoader.InternalLogger.Error(e.Message);
+                    MintyLoader.InternalLogger.Error("Unable to load MintMod -> If VRChat has been updated, MintMod likely needs to be updated as well.");
                 }
             }
         }
@@ -71,7 +72,7 @@ namespace MintyLoader {
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", BuildInfo.Name);
             try {
-                var request = client.GetAsync(modURL);
+                var request = client.GetAsync(_modURL);
                 request.Wait();
                 var message = request.Result;
                 switch (message.StatusCode) {
@@ -83,7 +84,7 @@ namespace MintyLoader {
                         break;
                     case HttpStatusCode.NotFound:
                         MintyLoader.InternalLogger.Msg("[" + "DownloadManager".Pastel("D9856A") + "] No beta module found, loading normal MintMod.");
-                        modURL = "https://mintlily.lgbt/mod/MintMod.dll";
+                        _modURL = "https://mintlily.lgbt/mod/MintMod.dll";
                         return GetMintAssembly();
                     case HttpStatusCode.InternalServerError:
                         MintyLoader.InternalLogger.Error("The DLL on this server was removed, it is probably getting updated, please try again in 30 seconds.");
@@ -101,7 +102,7 @@ namespace MintyLoader {
                 MintyLoader.InternalLogger.Error("An unknown error occured while attempting to retrieve the MintMod assembly! (Loading fallback)");
                 
                 try {
-                    var webComunication = WebRequest.CreateHttp(modURL);
+                    var webComunication = WebRequest.CreateHttp(_modURL);
                     var results = (HttpWebResponse)webComunication.GetResponse();
                     
                     switch (results.StatusCode) {
