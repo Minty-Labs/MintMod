@@ -256,13 +256,13 @@
     <Compile Include="Reflections\PlayerWrappers.cs" />
     <Compile Include="Reflections\UserInterface.cs" />
     <Compile Include="Reflections\VRCAPIObjects.cs" />
-    <Compile Include="Reflections\VRCMenuButtonAPI.cs" />
     <Compile Include="Reflections\WorldReflect.cs" />
     <Compile Include="Resources\MintyResources.cs" />
     <Compile Include="Test\Class1.cs" />
     <Compile Include="UserInterface\ActionMenu.cs" />
     <Compile Include="UserInterface\AvatarFavs\AviFavLogic.cs" />
     <Compile Include="UserInterface\AvatarFavs\AviFavSetup.cs" />
+    <Compile Include="UserInterface\AvatarFavs\ReFavs.cs" />
     <Compile Include="UserInterface\Nameplates.cs" />
     <Compile Include="UserInterface\OldUI\AvatarMenu.cs" />
     <Compile Include="UserInterface\OldUI\HudIcon.cs" />
@@ -274,6 +274,8 @@
     <Compile Include="UserInterface\QuickMenu\MintUserInterface.cs" />
     <Compile Include="UserInterface\QuickMenu\PlayerInfo.cs" />
     <Compile Include="UserInterface\QuickMenu\QMSlider.cs" />
+    <Compile Include="UserInterface\StayMute.cs" />
+    <Compile Include="UserInterface\UIXAdapter.cs" />
     <Compile Include="Utils\AssemblyLoader.cs" />
     <Compile Include="Utils\General.cs" />
     <Compile Include="Utils\Network.cs" />

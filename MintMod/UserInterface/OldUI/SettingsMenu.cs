@@ -14,6 +14,7 @@ using System.Diagnostics;
 using MintMod.Functions;
 using MintMod.Functions.Authentication;
 using MintMod.Managers;
+using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.QuickMenu;
 using UnityEngine.Events;
 using MintyLoader;
@@ -103,20 +104,28 @@ namespace MintMod.UserInterface.OldUI {
 						functionsButton?.SetActive(false);
 						MintInfoPanel?.SetActive(false);
 
-						if (AvatarFavs.AviFavLogic.ranOnce) {
+						if (Config.AviFavsEnabled.Value) {
+							ReFavs._instance._favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
+							ReFavs._instance._favoriteButton.GameObject.SetActive(Config.AviFavsEnabled.Value);
+						}
+
+						/*if (AvatarFavs.AviFavLogic.ranOnce) {
 							AvatarFavs.AviFavLogic.DestroyList();
 							AvatarFavs.AviFavLogic.ranOnce = false;
 							MelonCoroutines.Start(AvatarFavs.AviFavLogic.RefreshMenu(1f));
-						}
+						}*/
 					} else {
 						MintInfoButton?.SetActive(true);
 						RealSettingsExit?.SetActive(false);
 						SettingsExit?.SetActive(true);
 						SettingsRestart?.SetActive(true);
 						functionsButton?.SetActive(true);
+						
+						if (Config.AviFavsEnabled.Value)
+							ReFavs._instance._favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
 
-						if (!AvatarFavs.AviFavLogic.ranOnce)
-							AvatarFavs.AviFavLogic.Instance.OnUserInterface();
+						//if (!AvatarFavs.AviFavLogic.ranOnce)
+						//	AvatarFavs.AviFavLogic.Instance.OnUserInterface();
 					}
 					MintUserInterface.UpdateMintIconForStreamerMode(isOn);
 					MenuContentBackdrop.UpdateForStreamerMode(isOn);

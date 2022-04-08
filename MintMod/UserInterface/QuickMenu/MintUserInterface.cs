@@ -448,7 +448,15 @@ namespace MintMod.UserInterface.QuickMenu {
             if (Config.AviFavsEnabled.Value) {
                 userSelectCategory.AddButton("Silent Favorite", "Silently favorites the avatar the selected user is wearing if public.", () => {
                     var v = PlayerActions.SelPAvatar();
-                    foreach (var favoriteList in AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
+                    if (!v.releaseStatus.ToLower().Contains("private")) {
+                        ReFavs._instance.FavoriteAvatar(v);
+                        VRCUiPopups.Notify($"Favorited the avatar: {v.name}", NotificationSystem.Alert);
+                    }
+                    else {
+                        Con.Warn("Avatar is private, cannot favorite");
+                        VRCUiPopups.Notify("Avatar is private, cannot favorite", NotificationSystem.Alert);
+                    }
+                    /*foreach (var favoriteList in AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
                         if (!v.releaseStatus.ToLower().Contains("private")) {
                             AviFavLogic.FavoriteAvatar(v, favoriteList.ID);
                             VRCUiPopups.Notify($"Favorited the avatar: {v.name}", NotificationSystem.Alert);
@@ -457,7 +465,7 @@ namespace MintMod.UserInterface.QuickMenu {
                             Con.Warn("Avatar is private, cannot favorite");
                             VRCUiPopups.Notify("Avatar is private, cannot favorite", NotificationSystem.Alert);
                         }
-                    }
+                    }*/
                 }, MintyResources.star);
             }
 

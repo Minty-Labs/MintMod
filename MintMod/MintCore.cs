@@ -19,25 +19,26 @@ using MintMod.Managers.Notification;
 
 namespace MintMod {
     public class MintCore : MelonMod {
-        internal MelonMod Instance;
+        private MelonMod _instance;
         public static class ModBuildInfo {
             public static readonly string Name = DateTime.Now.Date == Con.Foolish ? "Walmart Client" : "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.27.6";
+            public const string Version = "2.28.0";
 #endif
 #if DEBUG
-            public const string Version = "2.27.6";
+            public const string Version = "2.28.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "31 Mar 2022";
+            public const string UpdatedDate = "7 April 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.7.0.1";
 #endif
         }
 
-        internal static bool isDebug, cancelLoad, Fool = DateTime.Now.Date == Con.Foolish || Environment.CommandLine.Contains("--Foolish");
+        internal static bool isDebug, cancelLoad;
+        internal static readonly bool Fool = DateTime.Now.Date == Con.Foolish || Environment.CommandLine.Contains("--Foolish");
 
         internal static List<MintSubMod> mods = new();
 
@@ -57,7 +58,7 @@ namespace MintMod {
                 return;
             }
 #endif
-            Instance = this;
+            _instance = this;
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);
 #if DEBUG
@@ -95,7 +96,7 @@ namespace MintMod {
             mods.Add(new Items());
             mods.Add(new LoadingWorldAudio());
             mods.Add(new MasterFinder());
-            mods.Add(new AviFavLogic());
+            mods.Add(new ReFavs());
             mods.Add(new RankRecoloring());
             mods.Add(new Movement());
             mods.Add(new HudIcon());
@@ -117,8 +118,9 @@ namespace MintMod {
             mods.Add(new GetRubyConfig());
             mods.Add(new NetworkEvents());
             mods.Add(new PlayerInfo());
+            mods.Add(new StayMute());
 #if DEBUG
-            mods.Add(new Test.Class1());
+            //mods.Add(new Test.Class1());
 #endif
             //mods.Add(new ExtendedMediaPlayback());
             //mods.Add(new );
@@ -171,27 +173,6 @@ namespace MintMod {
             mods.ForEach(s => {
                 try { s.OnApplicationQuit(); } catch (Exception e) { Con.Error(e); }
             });
-#if !DEBUG
-            /*
-            if (GetRubyConfig.HasRubyActive && MelonHandler.Mods.FindIndex(i => i.Info.Name.ToLower().Contains("aiko")) == -1) {
-                try {
-                    Process.Start("cmd", "/C taskkill /f /im WMC.exe");
-                }
-                catch (Exception e) {
-                    if (isDebug) Con.Error(e);
-                }
-            }
-
-            if (MelonHandler.Mods.FindIndex(i => i.Info.Name == "BTKCompanionLoader") != -1) {
-                try { Process.Start("cmd", "/C taskkill /f /im BTKV2X.exe"); }
-                catch (Exception e) { if (isDebug) Con.Error(e); }
-                try { Process.Start("cmd", "/C taskkill /f /im BTKV2.exe"); }
-                catch (Exception e) { if (isDebug) Con.Error(e); }
-                //try { Process.Start("cmd", "/C taskkill /f /im BTKV3.exe"); }
-                //catch (Exception e) { if (isDebug) Con.Error(e); }
-            }
-            */
-#endif
         }
     }
 }
