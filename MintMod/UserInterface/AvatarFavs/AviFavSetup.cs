@@ -32,12 +32,22 @@ namespace MintMod.UserInterface.AvatarFavs {
 
             public void SaveConfig() => File.WriteAllText(final, JsonConvert.SerializeObject(this, Formatting.Indented));
 
-            public static void CreateAviFavJSONFile() {
-                //if (!Config.useWebhostSavedList.Value) {
-                    if (!File.Exists(final))
-                        File.WriteAllText(final, JsonConvert.SerializeObject(new Favorites(), Formatting.Indented));
-                    Instance = JsonConvert.DeserializeObject<Favorites>(File.ReadAllText(final));
-                //}
+            public static void CreateAviFavJsonFile() {
+                if (!File.Exists(final))
+                    File.WriteAllText(final, JsonConvert.SerializeObject(new Favorites() {
+                        AvatarFavorites = new AviFavSetup() {
+                            FavoriteLists = new List<FavoriteList>() {
+                                new FavoriteList() {
+                                    Avatars = new List<AvatarObject>(),
+                                    ID = 0,
+                                    name = "Minty Favorites",
+                                    Desciption = "",
+                                    Rows = 2
+                                }
+                            }
+                        }
+                    }, Formatting.Indented));
+                Instance = JsonConvert.DeserializeObject<Favorites>(File.ReadAllText(final));
             }
         }
     }

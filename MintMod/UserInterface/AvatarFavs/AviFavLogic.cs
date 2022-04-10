@@ -9,7 +9,7 @@ namespace MintMod.UserInterface.AvatarFavs {
 
         internal static void OnAppStart() {
             try {
-                Favorites.CreateAviFavJSONFile();
+                Favorites.CreateAviFavJsonFile();
             }
             catch (Exception e) {
                Con.Error($"Avatar Favs Failed to load\n{e}");
