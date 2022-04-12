@@ -22,17 +22,23 @@ namespace MintyLoader {
             Instance = this;
             InternalLogger.Msg("Minty".Pastel("9fffe3") + "Loader is starting up!");
             isDebug = Environment.CommandLine.Contains("--MintyDev"); // Check if running as Debug
-            
+
+            Interpreter.PopulateNativeAssembly.Populate(out _); // Create MintyNative
+            if (!Interpreter.PopulateNativeAssembly.Failed)
+                Interpreter.NativeInterpreter.RunOnStart(); // Start to read MintyNative
+
             // Preload
             ModBlacklist.BlacklistedModCheck(); // Check if running blacklisted mod(s)
             ReMod_Core_Loader.DownloadAndWrite(out _); // Write ReMod.Core.dll to VRC dir root if they do not have ReMod CE or Private
-            if (ReMod_Core_Loader.failed) {
+            if (ReMod_Core_Loader.Failed) {
                 InternalLogger.Warning("ReMod.Core Failed to load, I am not going to load MintMod!");
                 return;
             }
             
             LoadManager.ApplyModURL(); // Check to see if running Beta Builds
             UpdateManager.CheckVersion(); // Check Loader Version and update if needed, This also loads the Mod
+            try { Interpreter.NativeInterpreter.Interpreter?.RemoveAssembly(); } // Remove Mint Image from Mono
+            catch (Exception r) { InternalLogger.Error(r); }
         }
 
         #region MintyCore pass through
@@ -51,6 +57,7 @@ namespace MintyLoader {
             if (!hasQuit) {
                 hasQuit = true;
                 LoadManager.MintMod?.OnApplicationQuit();
+                Interpreter.NativeInterpreter.Interpreter?.RunOnAppQuit();
                 InternalLogger.Msg(ConsoleColor.Red, "MintyLoader is stopping...");
             }
         }
