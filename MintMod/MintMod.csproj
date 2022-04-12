@@ -260,7 +260,7 @@
     <Compile Include="Reflections\VRCAPIObjects.cs" />
     <Compile Include="Reflections\WorldReflect.cs" />
     <Compile Include="Resources\MintyResources.cs" />
-    <Compile Include="Test\Class1.cs" />
+    <Compile Include="Interpreter\NativeInterpreter.cs" />
     <Compile Include="UserInterface\ActionMenu.cs" />
     <Compile Include="UserInterface\AvatarFavs\AviFavLogic.cs" />
     <Compile Include="UserInterface\AvatarFavs\AviFavSetup.cs" />

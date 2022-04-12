@@ -9,22 +9,28 @@ using System.Threading.Tasks;
 using MintyLoader;
 using UnityEngine;
 
-namespace MintMod.Test {
-    internal class Class1 : MintSubMod {
-        public override string Name => "Test Native Hooks";
+namespace MintMod.Interpreter {
+    internal class NativeInterpreter : MintSubMod {
+        public override string Name => "Native Hooks";
         public override string Description => "Fun Shit";
 
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //private delegate bool BoolFn();
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool BoolFn();
+        private delegate bool TwoVarFloatFn(float one, float two);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void VoidFn();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void SceneFn(int buildIndex, [MarshalAs(UnmanagedType.LPStr)] string sceneName);
+        private delegate void IntVarVoidFn(int img);
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void IsBadFn([MarshalAs(UnmanagedType.LPStr)] string mod, [MarshalAs(UnmanagedType.LPStr)] string author);
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //private delegate void SceneFn(int buildIndex, [MarshalAs(UnmanagedType.LPStr)] string sceneName);
+
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //private delegate void IsBadFn([MarshalAs(UnmanagedType.LPStr)] string mod, [MarshalAs(UnmanagedType.LPStr)] string author);
 
         [DllImport("kernel32", CharSet = CharSet.Ansi, SetLastError = true)]
         private static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string lpFileName);
@@ -38,7 +44,8 @@ namespace MintMod.Test {
 
         private readonly IntPtr _nativeDllPtr;
 
-        private readonly VoidFn _TestCmd;
+        private readonly IntVarVoidFn _imgYeet;
+        private readonly TwoVarFloatFn _add;
 
         private T GetExportedFunction<T>(string name) {
             T delegateForFunctionPointer = Marshal.GetDelegateForFunctionPointer<T>(GetProcAddress(_nativeDllPtr, name));
@@ -51,7 +58,7 @@ namespace MintMod.Test {
             return delegateForFunctionPointer;
         }
 
-        internal Class1() {
+        internal NativeInterpreter() {
             _nativeDllPtr = LoadLibrary("MintyNative.dll");
             if (_nativeDllPtr == IntPtr.Zero) {
                 var lastWin32Error = Marshal.GetLastWin32Error();
@@ -59,18 +66,21 @@ namespace MintMod.Test {
                     Data = { { "LastWin32Error", lastWin32Error } }
                 });
             }
-            _TestCmd = GetExportedFunction<VoidFn>("TestCommand");
+            //_testCmd = GetExportedFunction<VoidFn>("TestCommand");
+            _imgYeet = GetExportedFunction<IntVarVoidFn>("yeet");
+            //_add = GetExportedFunction<TwoVarFloatFn>("add");
+            //_add(1, 1);
         }
 
         internal override void OnStart() {
-            var f = new Class1();
+            var f = new NativeInterpreter();
         }
 
-        internal override void OnUpdate() {
-            if (Input.GetKeyDown(KeyCode.L)) {
-                _TestCmd();
-            }
-        }
+        //internal override void OnUpdate() {
+        //    if (Input.GetKeyDown(KeyCode.L)) {
+        //        _testCmd();
+        //    }
+        //}
 
         internal override void OnApplicationQuit() {
             Con.Msg("Releasing native DLL");
