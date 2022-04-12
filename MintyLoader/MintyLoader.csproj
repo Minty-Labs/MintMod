@@ -111,6 +111,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Console.cs" />
+    <Compile Include="Interpreter\NativeInterpreter.cs" />
+    <Compile Include="Interpreter\PopulateNativeAssembly.cs" />
     <Compile Include="LoadManager.cs" />
     <Compile Include="MintyLoader.cs" />
     <Compile Include="PreloadManager.cs" />

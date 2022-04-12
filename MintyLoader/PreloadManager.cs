@@ -100,7 +100,7 @@ namespace MintyLoader {
     }
 
     public static class ReMod_Core_Loader {
-        internal static bool failed;
+        internal static bool Failed;
         
         internal static void DownloadAndWrite(out Assembly loadedAssembly) {
             if (!File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
@@ -111,18 +111,18 @@ namespace MintyLoader {
                 try {
                     try { File.WriteAllBytes(Environment.CurrentDirectory, data); }
                     catch {
-                        Con.Warn("Failed to write ReMod.Core assembly, most likely already being used by another mod or process.");
+                        MintyLoader.InternalLogger.Warning("Failed to write ReMod.Core assembly, most likely already being used by another mod or process.");
                     }
 
                     try { loadedAssembly = Assembly.Load(data); }
                     catch (Exception e) {
-                        failed = true;
-                        Con.Error($"Unable to Load Core Dependency, ReMod.Core: {e}");
+                        Failed = true;
+                        MintyLoader.InternalLogger.Error($"Unable to Load Core Dependency, ReMod.Core: {e}");
                     }
                     MintyLoader.InternalLogger.Msg("Wrote ReMod.Core to VRC root directory.");
                 }
                 catch (Exception e) {
-                    failed = true;
+                    Failed = true;
                     loadedAssembly = null;
                     MintyLoader.InternalLogger.Error(e);
                 }
