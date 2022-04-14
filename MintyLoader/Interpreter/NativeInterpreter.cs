@@ -81,16 +81,16 @@ namespace MintyLoader.Interpreter {
 
         internal static void RunOnStart() {
             var f = new NativeInterpreter();
-            MintyLoader.InternalLogger.Msg("Native".Pastel("9CE9FF") + ": Start");
+            MintyLoader.InternalLogger.Msg("Native".Pastel("EBCAFE") + ": Start");
         }
 
         internal void RemoveAssembly() {
-            _imgYeet(0);
-            MintyLoader.InternalLogger.Msg("Native".Pastel("9CE9FF") + ": Removed");
+            //_imgYeet(0);
+            //MintyLoader.InternalLogger.Msg("Native".Pastel("EBCAFE") + ": Removed");
         }
 
         internal void RunOnAppQuit() {
-            MintyLoader.InternalLogger.Msg("Native".Pastel("9CE9FF") + ": Releasing Assembly");
+            MintyLoader.InternalLogger.Msg("Native".Pastel("EBCAFE") + ": Releasing Assembly");
             FreeLibrary(_nativeDllPtr);
         }
     }
