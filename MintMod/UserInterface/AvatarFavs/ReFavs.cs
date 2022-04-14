@@ -75,13 +75,13 @@ namespace MintMod.UserInterface.AvatarFavs {
                     AviFavLogic.GetConfigList(0).Avatars.Insert(0, new AvatarObject(apiAvatar));
                     _favoriteButton.Text = "<color=#fd4544>Unfavorite</color>";
                     if (Config.AviLogFavOrUnfavInConsole.Value)
-                        Con.Msg($"Removed {apiAvatar.name} from Minty Favorites");
+                        Con.Msg($"Favorited {apiAvatar.name} into Minty Favorites");
                 }
                 else {
                     AviFavLogic.GetConfigList(0).Avatars.Remove(AviFavLogic.GetConfigList(0).Avatars.Single(avi => avi.id == apiAvatar.id));
                     _favoriteButton.Text = "<color=#9fffe3>Favorite</color>";
                     if (Config.AviLogFavOrUnfavInConsole.Value)
-                        Con.Msg($"Favorited {apiAvatar.name} into Minty Favorites");
+                        Con.Msg($"Removed {apiAvatar.name} from Minty Favorites");
                 }
             }
             _favoriteAvatarList.RefreshAvatars();
