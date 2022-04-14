@@ -29,4 +29,12 @@
       <ProjectReference Include="..\MintyNet48\MintyNet48.csproj" />
     </ItemGroup>
 
+<<<<<<< HEAD
+=======
+    <ItemGroup>
+      <Folder Include="Data" />
+      <Folder Include="Discord" />
+    </ItemGroup>
+
+>>>>>>> 9c372e52e6dc9943620e04e459ae7ec1479f3a42
 </Project>

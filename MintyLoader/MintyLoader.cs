@@ -22,11 +22,14 @@ namespace MintyLoader {
             Instance = this;
             InternalLogger.Msg("Minty".Pastel("9fffe3") + "Loader is starting up!");
             isDebug = Environment.CommandLine.Contains("--MintyDev"); // Check if running as Debug
+<<<<<<< HEAD
 
             Interpreter.PopulateNativeAssembly.Populate(out _); // Create MintyNative
             if (!Interpreter.PopulateNativeAssembly.Failed)
                 Interpreter.NativeInterpreter.RunOnStart(); // Start to read MintyNative
 
+=======
+>>>>>>> 9c372e52e6dc9943620e04e459ae7ec1479f3a42
             MintyNetClient.Connect();
             // Preload
             ModBlacklist.BlacklistedModCheck(); // Check if running blacklisted mod(s)

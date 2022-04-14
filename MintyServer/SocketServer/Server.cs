@@ -1,5 +1,8 @@
 ﻿using MintyServer.Logger;
+<<<<<<< HEAD
 using MintyServer.Utils;
+=======
+>>>>>>> 9c372e52e6dc9943620e04e459ae7ec1479f3a42
 using WebSocketSharp.Server;
 
 namespace MintyServer.SocketServer;
@@ -7,11 +10,17 @@ namespace MintyServer.SocketServer;
 public class Server
 {
     public static WebSocketServer SocketServer { get; set; }
+<<<<<<< HEAD
     public static MintyUserManager UserManager { get; set; }
     public static bool isListening = false;
     public static void Start()
     {
         UserManager = new MintyUserManager();
+=======
+    public static bool isListening = false;
+    public static void Start()
+    {
+>>>>>>> 9c372e52e6dc9943620e04e459ae7ec1479f3a42
         SocketServer = new WebSocketServer(8088);
         SocketServer.AddWebSocketService<Behavior>("/MintyNet");
         SocketServer.Start();
@@ -22,6 +31,7 @@ public class Server
             var cmd = Console.ReadLine();
             switch (cmd.ToLower())
             {
+<<<<<<< HEAD
                 case "stop":
                     isListening = false;
                     SocketServer.Stop();
@@ -33,6 +43,9 @@ public class Server
                 default:
                     MintyLogger.info("Unknown command");
                     break;
+=======
+                
+>>>>>>> 9c372e52e6dc9943620e04e459ae7ec1479f3a42
             }
         }
     }

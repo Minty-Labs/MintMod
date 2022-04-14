@@ -118,7 +118,14 @@ namespace MintMod {
             mods.Add(new GetRubyConfig());
             mods.Add(new NetworkEvents());
             mods.Add(new PlayerInfo());
+<<<<<<< HEAD
             mods.Add(new StayMute());
+=======
+#if DEBUG
+            //mods.Add(new Test.Class1());
+#endif
+            //mods.Add(new ExtendedMediaPlayback());
+>>>>>>> 9c372e52e6dc9943620e04e459ae7ec1479f3a42
             //mods.Add(new );
 
             ReMod.Core.Unity.EnableDisableListener.RegisterSafe();

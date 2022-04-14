@@ -69,9 +69,12 @@
     </Reference>
     <Reference Include="MelonLoader">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\MelonLoader.dll</HintPath>
+<<<<<<< HEAD
     </Reference>
     <Reference Include="MintyNet48, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\MintyNet48\bin\Debug\MintyNet48.dll</HintPath>
+=======
+>>>>>>> 9c372e52e6dc9943620e04e459ae7ec1479f3a42
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -220,9 +223,12 @@
     </Reference>
     <Reference Include="VRCSDKBase">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRCSDKBase.dll</HintPath>
+<<<<<<< HEAD
     </Reference>
     <Reference Include="websocket-sharp, Version=1.0.2.39232, Culture=neutral, PublicKeyToken=5660b08a1845a91e">
       <HintPath>..\..\WSS\build\framework35\Release\websocket-sharp.dll</HintPath>
+=======
+>>>>>>> 9c372e52e6dc9943620e04e459ae7ec1479f3a42
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
