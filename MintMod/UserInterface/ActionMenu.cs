@@ -46,7 +46,7 @@ namespace MintMod.UserInterface {
         }
 
         private static void BuildMenu() {
-            ActionMenuUtils.subMenu = VRCActionMenuPage.AddSubMenu(ActionMenuPage.Main, "<color=#82ffbe>MintMenu</color>", () => {
+            VRCActionMenuPage.AddSubMenu(ActionMenuPage.Main, "<color=#82ffbe>MintMenu</color>", () => {
                 CustomSubMenu.AddToggle("Freeze", PhotonFreeze.isCurrentlyFreezing, PhotonFreeze.ToggleFreeze, MintyResources.FreezeIcon);
 
                 CustomSubMenu.AddToggle("ESP", Managers.ESP.isESPEnabled, Managers.ESP.PlayerESPState, MintyResources.ESPIcon);
