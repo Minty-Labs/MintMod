@@ -41,10 +41,3 @@ namespace MintMod.Reflections {
         }
     }
 }
-
-namespace MintMod.Reflections {
-    using ActionMenuApi.Pedals;
-    class ActionMenuUtils {
-        internal static PedalSubMenu subMenu;
-    }
-}
