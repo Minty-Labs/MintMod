@@ -71,9 +71,9 @@ namespace MintyLoader {
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "glu32.dll")) ||
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "winhttp.dll")) ||
                 Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Mods-Freedom")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.Loader.dll")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.dll")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.Core.dll")))
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins","KiraiMod.Loader.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "KiraiMod.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins","KiraiMod.Core.dll")))
                 KillGame();
             
             if (MintyLoader.isDebug)
