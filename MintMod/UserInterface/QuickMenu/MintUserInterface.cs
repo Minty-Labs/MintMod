@@ -862,22 +862,6 @@ namespace MintMod.UserInterface.QuickMenu {
         private static RectTransform _mediaRectTransform;
         
         private static IEnumerator CreateMediaDebugPanel() {
-            while (UIManager.field_Private_Static_UIManager_0 == null) yield return null;
-            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
-            var t = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMNotificationsArea/DebugInfoPanel/").transform;
-            var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_Dashboard");
-            _mediaPanel = GameObject.Instantiate(t.Find("Panel"), t, false);
-            _mediaPanel.gameObject.name = "MediaPanel";
-            var h = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/Header_MediaControls/LeftItemContainer/Text_Title");
-            _reModTextElement = h.GetComponent<TextMeshProUGUI>();
-            _reModHeaderText = _reModTextElement.text;
-            _mediaPanel.Find("Text_Ping").gameObject.Destroy();
-            _mediaPanel.Find("BTKStatusElement").gameObject!.Destroy();
-            _mediaPanel.Find("BTKClockElement").gameObject!.Destroy();
-            _mediaPanelText = _mediaPanel.Find("Text_FPS").GetComponent<TextMeshProUGUI>();
-            _mediaRectTransform = _mediaPanel.GetComponent<RectTransform>();
-            _mediaRectTransform.localPosition = new(-512, 85, 0);
-            _loaded = true;
             var ReModPriv = false;
             try { ReModPriv = Config._mediaControlsEnabled.Value && ModCompatibility.ReMod; }
             catch { // yes
@@ -886,13 +870,35 @@ namespace MintMod.UserInterface.QuickMenu {
             try { ReModCE = Config._mediaControlsEnabledCE.Value && ModCompatibility.ReModCE; }
             catch { // yes
             }
-
-            _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value && (ReModPriv || ReModCE)); // Toggle
+            if (!ReModPriv && !ReModCE) yield break; // Stop if no ReMod
+            
+            while (UIManager.field_Private_Static_UIManager_0 == null) yield return null;
+            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
+            
+            var t = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMNotificationsArea/DebugInfoPanel/").transform;
+            var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_Dashboard");
+            _mediaPanel = GameObject.Instantiate(t.Find("Panel"), t, false);
+            _mediaPanel.gameObject.name = "MediaPanel";
+            var h = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/Header_MediaControls/LeftItemContainer/Text_Title");
+            _reModTextElement = h.GetComponent<TextMeshProUGUI>();
+            _reModHeaderText = _reModTextElement.text;
+            
+            _mediaPanel.Find("Text_Ping").gameObject.Destroy();
+            _mediaPanel.Find("BTKStatusElement").gameObject!.Destroy();
+            _mediaPanel.Find("BTKClockElement").gameObject!.Destroy();
+            
+            _mediaPanelText = _mediaPanel.Find("Text_FPS").GetComponent<TextMeshProUGUI>();
+            _mediaRectTransform = _mediaPanel.GetComponent<RectTransform>();
+            _mediaRectTransform.localPosition = new(-512, 85, 0);
+            
+            _loaded = true;
+            
+            _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value); // Toggle
             yield return LoopTextChange(Config.RefreshAmount.Value);
         }
 
         private static IEnumerator LoopTextChange(float v) {
-            while (_loaded && Config.CopyReModMedia.Value && Config._mediaControlsEnabled.Value && ModCompatibility.ReMod) {
+            while (_loaded && Config.CopyReModMedia.Value) {
                 yield return new WaitForSeconds(v);
                 _reModHeaderText = _reModTextElement.text;
                 _mediaPanelText.text = _reModHeaderText;
@@ -903,12 +909,11 @@ namespace MintMod.UserInterface.QuickMenu {
         #endregion
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
-            if (buildindex == -1) {
-                PhotonFreeze.ToggleFreeze(false);
-                ESP.ClearAllPlayerESP();
-                InfJump?.Toggle(false, true, true);
-                MainQMInfJump?.Toggle(false, true, true);
-            }
+            if (buildindex != -1) return;
+            PhotonFreeze.ToggleFreeze(false);
+            ESP.ClearAllPlayerESP();
+            InfJump?.Toggle(false, true, true);
+            MainQMInfJump?.Toggle(false, true, true);
         }
 
         internal override void OnUpdate() => PlayerActions.UpdateJump();
@@ -933,8 +938,15 @@ namespace MintMod.UserInterface.QuickMenu {
                 MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
             if (MainQMInfJump != null)
                 MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
-            if (_mediaPanel != null)
-                _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
+            if (Config.CopyReModMedia.Value) {
+                if (_mediaPanel != null) {
+                    _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
+                    MelonCoroutines.Start(LoopTextChange(Config.RefreshAmount.Value));
+                }
+            } else {
+                var o = MelonCoroutines.Start(LoopTextChange(Config.RefreshAmount.Value));
+                MelonCoroutines.Stop(o);
+            }
         }
 
         internal static void UpdateMintIconForStreamerMode(bool o) {
