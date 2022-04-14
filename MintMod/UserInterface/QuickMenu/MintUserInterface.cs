@@ -27,6 +27,7 @@ using MintMod.Libraries;
 using MintMod.Managers.Notification;
 using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.OldUI;
+using TMPro;
 using VRC.DataModel;
 
 namespace MintMod.UserInterface.QuickMenu {
@@ -97,29 +98,27 @@ namespace MintMod.UserInterface.QuickMenu {
             
             var launchPad = new ReCategoryPage(f);
             MintCategoryOnLaunchPad = launchPad.AddCategory(MintCore.Fool ? "Walmart Client" : "MintMod");
-            MintCategoryOnLaunchPad.Active = false;
+            MintCategoryOnLaunchPad!.Active = false;
             
-            if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value || ModCompatibility.TeleporterVR) 
-                MintCategoryOnLaunchPad.Active = true;
-            
-            if (launchPad.GameObject != null) {
-                MainQMFly = MintCategoryOnLaunchPad.AddToggle("Flight", "Toggle Flight", b => 
+            if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value) 
+                MintCategoryOnLaunchPad!.Active = true;
+
+            MainQMFly = MintCategoryOnLaunchPad?.AddToggle("Flight", "Toggle Flight", b =>
                     MintQAFly.Toggle(b, true, true));
-                
-                MainQMNoClip = MintCategoryOnLaunchPad.AddToggle("No Clip", "Toggle No Clip", b => 
-                    MintQANoClip.Toggle(b, true, true));
-                
-                MainQMFreeze = MintCategoryOnLaunchPad.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work", 
-                    b => MintQAFreeze.Toggle(b, true, true));
-                
-                MainQMInfJump = MintCategoryOnLaunchPad.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
-                    b => InfJump.Toggle(b, true, true));
-                
-                MainQMFly.Active = Config.KeepFlightBTNsOnMainMenu.Value;
-                MainQMNoClip.Active = Config.KeepFlightBTNsOnMainMenu.Value;
-                MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
-                MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
-            }
+
+            MainQMNoClip = MintCategoryOnLaunchPad?.AddToggle("No Clip", "Toggle No Clip", b =>
+                MintQANoClip.Toggle(b, true, true));
+
+            MainQMFreeze = MintCategoryOnLaunchPad?.AddToggle("Photon Freeze", "Freeze yourself for other players, voice will still work",
+                b => MintQAFreeze.Toggle(b, true, true));
+
+            MainQMInfJump = MintCategoryOnLaunchPad?.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content",
+                b => InfJump.Toggle(b, true, true));
+
+            MainQMFly!.Active = Config.KeepFlightBTNsOnMainMenu.Value;
+            MainQMNoClip!.Active = Config.KeepFlightBTNsOnMainMenu.Value;
+            MainQMFreeze!.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
+            MainQMInfJump!.Active = Config.KeepInfJumpOnMainMenu.Value;
             Con.Debug("Done Setting up StandardMenus", MintCore.isDebug);
             yield break;
         }
@@ -160,6 +159,8 @@ namespace MintMod.UserInterface.QuickMenu {
             PlayerListMenuSetup();
             PlayerListOptions();
             //BuildAvatarMenu();
+
+            yield return CreateMediaDebugPanel();
 
             Con.Debug("Done Setting up MintMenus", MintCore.isDebug);
         }
@@ -852,6 +853,55 @@ namespace MintMod.UserInterface.QuickMenu {
 */
         #endregion
 
+        #region Media Header
+
+        private static Transform _mediaPanel;
+        private static bool _loaded;
+        private static TextMeshProUGUI _reModTextElement, _mediaPanelText;
+        private static string _reModHeaderText;
+        private static RectTransform _mediaRectTransform;
+        
+        private static IEnumerator CreateMediaDebugPanel() {
+            while (UIManager.field_Private_Static_UIManager_0 == null) yield return null;
+            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
+            var t = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMNotificationsArea/DebugInfoPanel/").transform;
+            var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_Dashboard");
+            _mediaPanel = GameObject.Instantiate(t.Find("Panel"), t, false);
+            _mediaPanel.gameObject.name = "MediaPanel";
+            var h = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/Header_MediaControls/LeftItemContainer/Text_Title");
+            _reModTextElement = h.GetComponent<TextMeshProUGUI>();
+            _reModHeaderText = _reModTextElement.text;
+            _mediaPanel.Find("Text_Ping").gameObject.Destroy();
+            _mediaPanel.Find("BTKStatusElement").gameObject!.Destroy();
+            _mediaPanel.Find("BTKClockElement").gameObject!.Destroy();
+            _mediaPanelText = _mediaPanel.Find("Text_FPS").GetComponent<TextMeshProUGUI>();
+            _mediaRectTransform = _mediaPanel.GetComponent<RectTransform>();
+            _mediaRectTransform.localPosition = new(-512, 85, 0);
+            _loaded = true;
+            var ReModPriv = false;
+            try { ReModPriv = Config._mediaControlsEnabled.Value && ModCompatibility.ReMod; }
+            catch { // yes
+            }
+            var ReModCE = false;
+            try { ReModCE = Config._mediaControlsEnabledCE.Value && ModCompatibility.ReModCE; }
+            catch { // yes
+            }
+
+            _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value && (ReModPriv || ReModCE)); // Toggle
+            yield return LoopTextChange(Config.RefreshAmount.Value);
+        }
+
+        private static IEnumerator LoopTextChange(float v) {
+            while (_loaded && Config.CopyReModMedia.Value && Config._mediaControlsEnabled.Value && ModCompatibility.ReMod) {
+                yield return new WaitForSeconds(v);
+                _reModHeaderText = _reModTextElement.text;
+                _mediaPanelText.text = _reModHeaderText;
+                _mediaRectTransform.localPosition = new(-512, 85, 0);
+            }
+        }
+
+        #endregion
+
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
             if (buildindex == -1) {
                 PhotonFreeze.ToggleFreeze(false);
@@ -883,6 +933,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
             if (MainQMInfJump != null)
                 MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
+            if (_mediaPanel != null)
+                _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
         }
 
         internal static void UpdateMintIconForStreamerMode(bool o) {

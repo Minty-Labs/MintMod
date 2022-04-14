@@ -27,6 +27,7 @@ namespace MintMod {
             _Random();
             _Extra();
             _PlayerList();
+            GetReModPrefs();
         }
 
         // Base
@@ -80,8 +81,10 @@ namespace MintMod {
 
         // Menu
         public static MelonPreferences_Category Menu;
-        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, useTabButtonForMenu;
+        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, useTabButtonForMenu,
+            CopyReModMedia;
         public static MelonPreferences_Entry<string> InfoHUDPosition;
+        public static MelonPreferences_Entry<float> RefreshAmount;
         static void _Menu() {
             // Menu
             Menu = MelonPreferences.CreateCategory("MintMod_Menu", "MintMod - Menu");
@@ -94,6 +97,8 @@ namespace MintMod {
             //    new[] { ("off", "Don't Show"), ("1", "Left"), ("2", "Top"), ("3", "Bottom"), ("4", "Right") });
             KeepPhotonFreezesOnMainMenu = Menu.CreateEntry("KeepPhotonFreezeOnMainMenu", false, "Puts a photon freeze toggle on QM");
             KeepInfJumpOnMainMenu = Menu.CreateEntry("KeepInfJumpOnMainMenu", false, "Puts Infinite Jump Toggle on QM");
+            CopyReModMedia = Menu.CreateEntry("CopyReModMedia", false, "Extra Debug Panel for Media Title");
+            RefreshAmount = Menu.CreateEntry("ReModMediaRefreshAmount", 1f, "Update increment in seconds");
         }
 
         // Portal
@@ -235,5 +240,22 @@ namespace MintMod {
             MelonPreferences.GetEntry<Color>(cat.Identifier, color.Identifier).Value = value;
             MelonPreferences.Save();
         }
+
+        #region OtherMods
+
+        #region ReMod (Private)
+
+        public static MelonPreferences_Entry<bool> _mediaControlsEnabled, _mediaControlsEnabledCE;
+
+        private static void GetReModPrefs() {
+            if (MelonPreferences.GetCategory("ReMod") != null)
+                _mediaControlsEnabled = MelonPreferences.GetEntry<bool>("ReMod", "MediaControlsEnabled");
+            if (MelonPreferences.GetCategory("ReModCE") != null)
+                _mediaControlsEnabledCE = MelonPreferences.GetEntry<bool>("ReModCE", "MediaControlsEnabled");
+        }
+
+        #endregion
+
+        #endregion
     }
 }

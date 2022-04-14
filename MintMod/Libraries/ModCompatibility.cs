@@ -9,7 +9,7 @@ namespace MintMod.Libraries {
     internal class ModCompatibility : MintSubMod {
         public override string Name => "ModCompatibility";
         public override string Description => "Find other mods and do things.";
-        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, TeleporterVR, SettingsRestart, ProPlates, GPrivateServer, Styletor;
+        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, ReModCE, TeleporterVR, SettingsRestart, ProPlates, GPrivateServer, Styletor;
         public static bool hasCNP_On, emmVRCPanicMode;
 
         public static bool MintyNameplates {
@@ -30,6 +30,7 @@ namespace MintMod.Libraries {
                 NameplateStats = true;
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ReMod") != -1 || File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")))
                 ReMod = true;
+            ReModCE = MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ReModCE") != -1 || File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"));
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "SettingsRestart") != -1)
                 SettingsRestart = true;
             if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ProPlates") != -1)
