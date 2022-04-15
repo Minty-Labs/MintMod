@@ -943,9 +943,9 @@ namespace MintMod.UserInterface.QuickMenu {
                     _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
                     MelonCoroutines.Start(LoopTextChange(Config.RefreshAmount.Value));
                 }
-            } else {
-                var o = MelonCoroutines.Start(LoopTextChange(Config.RefreshAmount.Value));
-                MelonCoroutines.Stop(o);
+            //} else {
+            //    var o = MelonCoroutines.Start(LoopTextChange(Config.RefreshAmount.Value));
+            //    MelonCoroutines.Stop(o);
             }
         }
 
