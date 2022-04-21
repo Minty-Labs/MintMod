@@ -29,11 +29,12 @@ namespace MintMod.UserInterface.OldUI {
         internal override void OnStart() => Intstance = this;
 
         internal override void OnUserInterface() {
+            return;
             finalColor = Config.ColorGameMenu.Value ? Minty : defaultMenuColor();
             if (Config.ColorGameMenu.Value)
                 MelonCoroutines.Start(ColorMenu(finalColor));
-            if (Config.ColorActionMenu.Value)
-                ColorActionMenu(finalColor);
+            //if (Config.ColorActionMenu.Value)
+            //    ColorActionMenu(finalColor);
             if (Config.ColorLoadingScreen.Value) {
                 try {
                     ColorLoadingScreenEnvironment(finalColor);
@@ -45,7 +46,7 @@ namespace MintMod.UserInterface.OldUI {
             }
         }
 
-        IEnumerator ColorMenu(Color color) {
+        private IEnumerator ColorMenu(Color color) {
             color = Config.ColorGameMenu.Value ? Minty : defaultMenuColor();
 
             var colorT = new Color(color.r, color.g, color.b, 0.7f);
@@ -73,7 +74,7 @@ namespace MintMod.UserInterface.OldUI {
                 normalColorImage.Add(quickMenu.transform.Find("Popups/InputPopup/InputField").GetComponent<Image>());
                 normalColorImage.Add(quickMenu.transform.Find("Popups/UpdateStatusPopup/Popup/InputFieldStatus").GetComponent<Image>());
                 normalColorImage.Add(quickMenu.transform.Find("Popups/AdvancedSettingsPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/AddToPlaylistPopup/Popup/Panel").GetComponent<Image>());
+                //normalColorImage.Add(quickMenu.transform.Find("Popups/AddToPlaylistPopup/Popup/Panel").GetComponent<Image>());
                 normalColorImage.Add(quickMenu.transform.Find("Popups/BookmarkFriendPopup/Popup/Panel (2)").GetComponent<Image>());
                 normalColorImage.Add(quickMenu.transform.Find("Popups/EditPlaylistPopup/Popup/Panel").GetComponent<Image>());
                 normalColorImage.Add(quickMenu.transform.Find("Popups/PerformanceSettingsPopup/Popup/Panel").GetComponent<Image>());
