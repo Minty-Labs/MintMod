@@ -25,15 +25,15 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.29.1.1";
+            public const string Version = "2.30.0";
 #endif
 #if DEBUG
             public const string Version = "2.29.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "14 April 2022";
+            public const string UpdatedDate = "21 April 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.7.1";
+            internal const string LoaderVer = "2.7.2";
 #endif
         }
 
@@ -122,7 +122,6 @@ namespace MintMod {
             //mods.Add(new );
 
             ReMod.Core.Unity.EnableDisableListener.RegisterSafe();
-            //ReMod.Core.Unity.RenderObjectListener.RegisterSafe();
 
             mods.ForEach(a => {
                 try { /*Con.Debug($"---- Loading {a.Name}", isDebug);*/ a.OnStart(); }
