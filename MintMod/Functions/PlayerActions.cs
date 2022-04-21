@@ -1,149 +1,112 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using MelonLoader;
 using MintMod.Managers.Notification;
 using MintMod.Reflections;
 using MintMod.Utils;
 using MintyLoader;
-using UnhollowerRuntimeLib.XrefScans;
-using UnityEngine;
 using VRC;
 using VRC.Core;
 using VRC.SDKBase;
 
 namespace MintMod.Functions {
-    class PlayerActions {
+    internal static class PlayerActions {
         public static void AvatarDownload() {
             try {
-                ThreadStart DLVRCA = delegate () {
-                    string subdir = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
-                    ApiAvatar a = SelPAvatar();
+                var vrcaPath = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
+                var apiAvatar = SelPAvatar();
+                
+                string grabAssetUrl, grabAssetName, grabAssetImage, grabAssetPlatform;
+                int grabAssetVersion;
 
-                    string grab_assetUrl, grab_assetName, grab_assetImage, grab_assetPlatform;
-                    int grab_assetVersion;
+                grabAssetUrl = apiAvatar.assetUrl;
+                grabAssetName = apiAvatar.name;
+                grabAssetVersion = apiAvatar.version;
+                grabAssetImage = apiAvatar.imageUrl;
+                grabAssetPlatform = apiAvatar.platform;
+                
+                if (!Directory.Exists(Path.Combine(vrcaPath)))
+                    Directory.CreateDirectory(Path.Combine(vrcaPath));
 
-                    grab_assetUrl = a.assetUrl;
-                    grab_assetName = a.name;
-                    grab_assetVersion = a.version;
-                    grab_assetImage = a.imageUrl;
-                    grab_assetPlatform = a.platform;
+                var vrcaFile = $"{vrcaPath}{grabAssetPlatform}_{grabAssetName}_V{grabAssetVersion}.vrca";
+                var imageFile = $"{vrcaPath}{grabAssetPlatform}_{grabAssetName}_V{grabAssetVersion}.png";
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0");
+                
+                if (!File.Exists(vrcaFile)) {
+                    var a = httpClient.GetByteArrayAsync(grabAssetUrl).GetAwaiter().GetResult();
+                    File.WriteAllBytes(vrcaFile, a);
+                }
 
-                    if (!Directory.Exists(Path.Combine(subdir)))
-                        Directory.CreateDirectory(Path.Combine(subdir));
-                    if (!File.Exists(Path.Combine(subdir, grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".vrca"))) {
-                        using (WebClient webClient = new WebClient {
-                            Headers =
-                            {
-                                ["User-Agent"] =
-                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0"
-                            }
-                        }) {
-                            webClient.DownloadFile(grab_assetUrl, Path.Combine(subdir + grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".vrca"));
-                        }
-                    }
-                    if (!File.Exists(Path.Combine(subdir, grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".png"))) {
-                        using (WebClient webClient = new WebClient {
-                            Headers =
-                            {
-                                ["User-Agent"] =
-                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0"
-                            }
-                        }) {
-                            webClient.DownloadFile(grab_assetImage, Path.Combine(subdir + grab_assetPlatform + "_" + grab_assetName + "_V" + grab_assetVersion + ".png"));
-                        }
-                    }
+                if (!File.Exists(imageFile)) {
+                    var i = httpClient.GetByteArrayAsync(grabAssetImage).GetAwaiter().GetResult();
+                    File.WriteAllBytes(imageFile, i);
+                }
 
-                    //Process.Start(grab_assetUrl);
-                    Con.Msg($"Downloaded VRCA for {grab_assetName}.\nLocated in {subdir}");
-                    VRCUiPopups.Notify($"Downloaded VRCA for {grab_assetName}");
-                    //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_assetName}", Color.white);
-                };
-                new Thread(DLVRCA).Start();
+                httpClient.Dispose();
+                Con.Msg($"Downloaded VRCA for {grabAssetName}.\nLocated in {vrcaPath}");
+                VRCUiPopups.Notify($"Downloaded VRCA for {grabAssetName}");
             } catch {
                 Con.Error("Failed to download VRCA");
                 VRCUiPopups.Notify("Failed to Download VRCA", NotificationSystem.Alert);
-                //VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download VRCA", Color.white);
             }
         }
 
-        public static void AvatarSELFDownload() {
+        public static void AvatarSelfDownload() {
             try {
-                ThreadStart DLSELF_VRCA = delegate() {
-                    string subdir = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
+                var vrcaPath = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
 
-                    string grab_SELF_assetUrl, grab_SELF_assetName, grab_SELF_assetImage, grab_SELF_assetPlatform;
-                    int grab_SELF_assetVersion;
+                string grabSelfAssetUrl, grabSelfAssetName, grabSelfAssetImage, grabSelfAssetPlatform;
+                int grabSelfAssetVersion;
 
-                    if (PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.platform.Contains("windows")) {
-                        grab_SELF_assetUrl = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.assetUrl;
-                        grab_SELF_assetName = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.name;
-                        grab_SELF_assetVersion = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.version;
-                        grab_SELF_assetImage = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.imageUrl;
-                        grab_SELF_assetPlatform = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.platform;
-                    }
-                    else {
-                        grab_SELF_assetUrl = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.assetUrl;
-                        grab_SELF_assetName = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.name;
-                        grab_SELF_assetVersion = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.version;
-                        grab_SELF_assetImage = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.imageUrl;
-                        grab_SELF_assetPlatform = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.platform;
-                    }
+                if (PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.platform.Contains("windows")) {
+                    grabSelfAssetUrl = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.assetUrl;
+                    grabSelfAssetName = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.name;
+                    grabSelfAssetVersion = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.version;
+                    grabSelfAssetImage = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.imageUrl;
+                    grabSelfAssetPlatform = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.platform;
+                }
+                else {
+                    grabSelfAssetUrl = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.assetUrl;
+                    grabSelfAssetName = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.name;
+                    grabSelfAssetVersion = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.version;
+                    grabSelfAssetImage = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.imageUrl;
+                    grabSelfAssetPlatform = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.platform;
+                }
+                
+                if (!Directory.Exists(Path.Combine(vrcaPath)))
+                    Directory.CreateDirectory(Path.Combine(vrcaPath));
+                
+                var vrcaFile = $"{vrcaPath}{grabSelfAssetPlatform}_{grabSelfAssetName}_V{grabSelfAssetVersion}.vrca";
+                var imageFile = $"{vrcaPath}{grabSelfAssetPlatform}_{grabSelfAssetName}_V{grabSelfAssetVersion}.png";
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0");
+                
+                if (!File.Exists(vrcaFile)) {
+                    var a = httpClient.GetByteArrayAsync(grabSelfAssetUrl).GetAwaiter().GetResult();
+                    File.WriteAllBytes(vrcaFile, a);
+                }
 
-                    if (!Directory.Exists(Path.Combine(subdir)))
-                        Directory.CreateDirectory(Path.Combine(subdir));
-                    if (!File.Exists(Path.Combine(subdir,
-                        grab_SELF_assetPlatform + "_" + grab_SELF_assetName + "_V" + grab_SELF_assetVersion + ".vrca"))) {
-                        using (WebClient webClient = new WebClient {
-                            Headers = {
-                                ["User-Agent"] =
-                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0"
-                            }
-                        }) {
-                            webClient.DownloadFile(grab_SELF_assetUrl,
-                                Path.Combine(subdir + grab_SELF_assetPlatform + "_" + grab_SELF_assetName + "_V" +
-                                             grab_SELF_assetVersion + ".vrca"));
-                        }
-                    }
-
-                    if (!File.Exists(Path.Combine(subdir,
-                        grab_SELF_assetPlatform + "_" + grab_SELF_assetName + "_V" + grab_SELF_assetVersion +
-                        ".png"))) {
-                        using (WebClient webClient = new WebClient {
-                            Headers = {
-                                ["User-Agent"] =
-                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0"
-                            }
-                        }) {
-                            webClient.DownloadFile(grab_SELF_assetImage,
-                                Path.Combine(subdir + grab_SELF_assetPlatform + "_" + grab_SELF_assetName + "_V" + grab_SELF_assetVersion + ".png"));
-                        }
-                    }
-
-                    //Process.Start(grab_assetUrl);
-                    Con.Msg($"Downloaded VRCA for {grab_SELF_assetName}");
-                    VRCUiPopups.Notify($"Downloaded VRCA fro {grab_SELF_assetName}");
-                    //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_SELF_assetName}", Color.white);
-                };
-                new Thread(DLSELF_VRCA).Start();
+                if (!File.Exists(imageFile)) {
+                    var i = httpClient.GetByteArrayAsync(grabSelfAssetImage).GetAwaiter().GetResult();
+                    File.WriteAllBytes(imageFile, i);
+                }
+                
+                Con.Msg($"Downloaded VRCA for {grabSelfAssetName}.\nLocated in {vrcaPath}");
+                VRCUiPopups.Notify($"Downloaded VRCA for {grabSelfAssetName}");
             }
             catch {
                 Con.Error("Failed to download VRCA");
                 VRCUiPopups.Notify("Failed to download VRCA", NotificationSystem.Alert);
-                //VRCUiManager.prop_VRCUiManager_0.InformHudText("Failed to download own VRCA", Color.white);
             }
         }
 
         public static ApiAvatar SelPAvatar() {
             var a = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id)._vrcplayer;
-            if (a.field_Private_VRCAvatarManager_0.field_Private_AvatarKind_0 == VRCAvatarManager.AvatarKind.Custom)
-                return a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0;
-            return a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_1;
+            return a.field_Private_VRCAvatarManager_0.field_Private_AvatarKind_0 == VRCAvatarManager.AvatarKind.Custom ?
+                a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0 :
+                a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_1;
         }
 
         private static StreamWriter CreateOrAppendToFile(string final) {
@@ -153,12 +116,12 @@ namespace MintMod.Functions {
         }
 
         public static void LogAsset() {
-            string subdir = $"{MintCore.MintDirectory}\\Logs\\";
+            var subdir = $"{MintCore.MintDirectory}\\Logs\\";
             if (!Directory.Exists(subdir))
                 Directory.CreateDirectory(subdir);
 
-            APIUser u = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id).field_Private_APIUser_0;
-            ApiAvatar a = SelPAvatar();
+            var u = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id).field_Private_APIUser_0;
+            var a = SelPAvatar();
 
             string playerName, playerStatus, userID, avatarID, assetURL, avatarName, authorID, releaseStatus, playerBio;
             Il2CppSystem.Collections.Generic.List<string> tags;
@@ -201,7 +164,6 @@ namespace MintMod.Functions {
 
             Con.Msg($"Logged {playerName}, Located in {subdir}\\SelectedUser_Logged.txt");
             VRCUiPopups.Notify($"Logged {playerName}");
-            //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Logged {playerName}", Color.white);
         }
 
         public static void Teleport(VRCPlayer player) => PlayerWrappers.GetLocalVRCPlayer().transform.position = player.transform.position;
@@ -209,18 +171,16 @@ namespace MintMod.Functions {
         #region Jump Manager
 
         internal static bool InfinteJump;
-        public static void JumpyJump() {
-            if (InfinteJump && VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").prop_Boolean_0 &&
-                !Networking.LocalPlayer.IsPlayerGrounded()) {
-                Vector3 velocity = Networking.LocalPlayer.GetVelocity();
-                velocity.y = Networking.LocalPlayer.GetJumpImpulse() + 1f;
-                Networking.LocalPlayer.SetVelocity(velocity);
-            }
+        private static void JumpyJump() {
+            if (!InfinteJump &&
+                !VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").prop_Boolean_0 &&
+                Networking.LocalPlayer.IsPlayerGrounded()) return;
+            var velocity = Networking.LocalPlayer.GetVelocity();
+            velocity.y = Networking.LocalPlayer.GetJumpImpulse() + 1f;
+            Networking.LocalPlayer.SetVelocity(velocity);
         }
 
-        private static void GravityChange(bool state) {
-            Networking.LocalPlayer.SetGravityStrength(state ? 0 : 1);
-        }
+        private static void GravityChange(bool state) => Networking.LocalPlayer.SetGravityStrength(state ? 0 : 1);
 
         public static void UpdateJump() {
             if (InfinteJump) JumpyJump();
