@@ -8,7 +8,7 @@ namespace MintyLoader {
         public const string Name = "MintyLoader";
         public const string Author = "Lily";
         public const string Company = "Minty Labs";
-        public const string Version = "2.7.1";
+        public const string Version = "2.7.2";
         public const string DownloadLink = "https://mintlily.lgbt/mod/loader/MintyLoader.dll";
     }
    
@@ -22,10 +22,11 @@ namespace MintyLoader {
             Instance = this;
             InternalLogger.Msg("Minty".Pastel("9fffe3") + "Loader is starting up!");
             isDebug = Environment.CommandLine.Contains("--MintyDev"); // Check if running as Debug
-
+#if DEBUG
             Interpreter.PopulateNativeAssembly.Populate(out _); // Create MintyNative
             if (!Interpreter.PopulateNativeAssembly.Failed)
                 Interpreter.NativeInterpreter.RunOnStart(); // Start to read MintyNative
+#endif
 
             // Preload
             ModBlacklist.BlacklistedModCheck(); // Check if running blacklisted mod(s)
@@ -37,8 +38,10 @@ namespace MintyLoader {
             
             LoadManager.ApplyModURL(); // Check to see if running Beta Builds
             UpdateManager.CheckVersion(); // Check Loader Version and update if needed, This also loads the Mod
+#if DEBUG
             try { Interpreter.NativeInterpreter.Interpreter?.RemoveAssembly(); } // Remove Mint Image from Mono
             catch (Exception r) { InternalLogger.Error(r); }
+#endif
         }
 
         #region MintyCore pass through
@@ -57,7 +60,9 @@ namespace MintyLoader {
             if (!hasQuit) {
                 hasQuit = true;
                 LoadManager.MintMod?.OnApplicationQuit();
+#if DEBUG
                 Interpreter.NativeInterpreter.Interpreter?.RunOnAppQuit();
+#endif
                 InternalLogger.Msg(ConsoleColor.Red, "MintyLoader is stopping...");
             }
         }

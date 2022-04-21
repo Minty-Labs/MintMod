@@ -14,16 +14,11 @@ using MintyLoader;
 
 namespace MintyLoader {
     public static class ModBlacklist {
-        internal static class NativeImports {
-            [DllImport("kernel32.dll", SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
-        }
-
         internal static string[] badMods = { "ripperstore", "ripper", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", /*"snaxytag",*/ "unchained", 
-            "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen", "astralbypass", "astral", "plan b client", "odious" };
-        internal static string[] badAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "_unreal", "unreal", "bunny", "stellar", "lady lucy", 
-            "meap", "fiass", /*"some dude",*/ "kuroi hane", "unixian", "shrekamuschrist" };
+            "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen", "astralbypass", "astral", "plan b", "odious", "fusionclient",
+            "fusionmodloader" };
+        internal static string[] badAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "unreal", "bunny", "stellar", "lady lucy", "meap",
+            "fiass", /*"some dude",*/ "kuroi hane", "unixian", "shrekamuschrist" };
         internal static string[] badPluginAuthors = { "astral", "fck" };
         
         internal static void BlacklistedModCheck() {
@@ -71,28 +66,32 @@ namespace MintyLoader {
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "glu32.dll")) ||
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "winhttp.dll")) ||
                 Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Mods-Freedom")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.Loader.dll")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.dll")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "KiraiMod.Core.dll")))
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "KiraiMod.Loader.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "KiraiMod.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "KiraiMod.Core.dll")))
                 KillGame();
             
             if (MintyLoader.isDebug)
                 MintyLoader.Instance.LoggerInstance.Msg("You are not using any blacklisted mods.");
         }
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
+
         internal static void KillGame() {
             try {
-                NativeImports.TerminateProcess(Process.GetCurrentProcess().Handle, 0);
+                TerminateProcess(Process.GetCurrentProcess().Handle, 0);
                 Marshal.GetDelegateForFunctionPointer<Action>(Marshal.AllocHGlobal(16))();
                 while (true) Thread.Sleep(1000);
             }
             catch (Exception) {
-                NativeImports.TerminateProcess(Process.GetCurrentProcess().Handle, 0);
+                TerminateProcess(Process.GetCurrentProcess().Handle, 0);
                 Marshal.GetDelegateForFunctionPointer<Action>(Marshal.AllocHGlobal(16))();
                 while (true) Thread.Sleep(1000);
             }
             finally {
-                NativeImports.TerminateProcess(Process.GetCurrentProcess().Handle, 0);
+                TerminateProcess(Process.GetCurrentProcess().Handle, 0);
                 Marshal.GetDelegateForFunctionPointer<Action>(Marshal.AllocHGlobal(16))();
                 while (true) Thread.Sleep(1000);
             }
