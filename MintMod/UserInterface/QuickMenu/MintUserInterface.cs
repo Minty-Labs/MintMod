@@ -39,7 +39,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
 
-        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig, AvatarMenu;
+        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig, /*AvatarMenu*/ NameplateMenu;
 
         private static ReMenuSlider FlightSpeedSlider;
 
@@ -159,6 +159,7 @@ namespace MintMod.UserInterface.QuickMenu {
             PlayerListMenuSetup();
             PlayerListOptions();
             //BuildAvatarMenu();
+            BuildNameplateMenu();
 
             yield return CreateMediaDebugPanel();
 
@@ -245,7 +246,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     Con.Error(c);
                 }
             }, MintyResources.checkered);
-            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", PlayerActions.AvatarSELFDownload, MintyResources.user);
+            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", PlayerActions.AvatarSelfDownload, MintyResources.user);
             //var h = PlayerMenu.AddCategory("Head Lamp");
             RemoveMintBackButtonDuplicate(PlayerMenu);
         }
@@ -470,8 +471,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 }, MintyResources.star);
             }
 
-            userSelectCategory.AddButton("Teleport to", "Teleport to the selected user", () => { PlayerActions.Teleport(PlayerWrappers.SelVRCPlayer()); }, MintyResources.marker_hole);
-            userSelectCategory.AddButton("Teleport pickups to", "Teleport all pickup objects to the selected user", () => Items.TPToPlayer(PlayerWrappers.SelVRCPlayer()._player), MintyResources.marker);
+            userSelectCategory.AddButton("Teleport to", "Teleport to the selected user", () => { PlayerActions.Teleport(PlayerWrappers.SelVrcPlayer()); }, MintyResources.marker_hole);
+            userSelectCategory.AddButton("Teleport pickups to", "Teleport all pickup objects to the selected user", () => Items.TPToPlayer(PlayerWrappers.SelVrcPlayer()._player), MintyResources.marker);
 
             if (!ModCompatibility.GPrivateServer) {
                 if (APIUser.CurrentUser.id.StartsWith("usr_6d71d3be")) {
@@ -642,7 +643,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     var n = player.field_Private_APIUser_0.displayName;
                     
                     var tempName = string.Empty;
-                    if (PlayerWrappers.isFriend(player)) {
+                    if (PlayerWrappers.IsFriend(player)) {
                         if (player.field_Private_APIUser_0.id.StartsWith("usr_6d71d3be"))
                             tempName = "<color=#9fffe3>Lily</color>";
                         else
@@ -853,6 +854,41 @@ namespace MintMod.UserInterface.QuickMenu {
 */
         #endregion
 
+        #region Nameplate Menu
+
+        private static ReMenuToggle _mintNameplates, _mintTags;
+
+        private static void BuildNameplateMenu() {
+            NameplateMenu = BaseActions.AddCategoryPage("Nameplate Settings","Opens Mint Nameplate Settings Menu", MintyResources.user_nameplate);
+
+            var n = NameplateMenu.AddCategory("Nameplate Settings");
+            _mintNameplates = n.AddToggle("Nameplates Changes", "Toggles all Nameplate modifications done by Mint", b => {
+                Config.SavePrefValue(Config.Nameplates, Config.EnableCustomNameplateReColoring, b);
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
+            }, Config.EnableCustomNameplateReColoring.Value);
+            
+            _mintTags = n.AddToggle("Mint Tags", "Toggles all Nameplate modifications done by Mint", b => {
+                Config.SavePrefValue(Config.Nameplates, Config.EnabledMintTags, b);
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
+            }, Config.EnabledMintTags.Value);
+            
+            n.AddButton("Tag Location", "Input a number of vertical tag placement", () => {
+                
+                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Vertical Tag Location",
+                    $"{Config.MintTagVerticleLocation.Value}", InputField.InputType.Standard, false, "Submit",
+                    (_, EllyIs, MegaAdorable) => {
+                        
+                        float.TryParse(_, out var final);
+                        Config.SavePrefValue(Config.Nameplates, Config.MintTagVerticleLocation, final);
+                        VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
+                        
+                    }, VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup, "-60.0");
+                
+            }, MintyResources.user_nameplate_tag_move);
+        }
+
+        #endregion
+
         #region Media Header
 
         private static Transform _mediaPanel;
@@ -889,7 +925,7 @@ namespace MintMod.UserInterface.QuickMenu {
             
             _mediaPanelText = _mediaPanel.Find("Text_FPS").GetComponent<TextMeshProUGUI>();
             _mediaRectTransform = _mediaPanel.GetComponent<RectTransform>();
-            _mediaRectTransform.localPosition = new(-512, 85, 0);
+            _mediaRectTransform.localPosition = new Vector3(-512, 85, 0);
             
             _loaded = true;
             
@@ -902,7 +938,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 yield return new WaitForSeconds(v);
                 _reModHeaderText = _reModTextElement.text;
                 _mediaPanelText.text = _reModHeaderText;
-                _mediaRectTransform.localPosition = new(-512, 85, 0);
+                _mediaRectTransform.localPosition = new Vector3(-512, 85, 0);
             }
         }
 
@@ -944,6 +980,8 @@ namespace MintMod.UserInterface.QuickMenu {
                     MelonCoroutines.Start(LoopTextChange(Config.RefreshAmount.Value));
                 }
             }
+            _mintNameplates?.Toggle(Config.EnableCustomNameplateReColoring.Value);
+            _mintTags?.Toggle(Config.EnabledMintTags.Value);
         }
 
         internal static void UpdateMintIconForStreamerMode(bool o) {

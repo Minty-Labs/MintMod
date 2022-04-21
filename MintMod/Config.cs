@@ -1,14 +1,5 @@
 ﻿using MelonLoader;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MintMod.Functions;
 using UnityEngine;
-using MintMod.UserInterface.AvatarFavs;
-using MintMod.UserInterface.QuickMenu;
-using VRC;
 
 namespace MintMod {
     class Config : MintSubMod {
@@ -27,6 +18,7 @@ namespace MintMod {
             _Random();
             _Extra();
             _PlayerList();
+            _Nameplates();
             GetReModPrefs();
         }
 
@@ -35,7 +27,8 @@ namespace MintMod {
         public static MelonPreferences_Entry<bool> KeepPriorityHighEnabled, ShowWelcomeMessages, UseCustomLoadingMusic, EnableMasterFinder, AutoAddJump,
             EnableAllKeybindings, EnablePlayerJoinLeave, FriendsOnlyJoinLeave, HeadsUpDisplayNotifs, CanSitInChairs, UseOldHudMessages;
         public static MelonPreferences_Entry<int> MaxFrameRate;
-        static void _Base() {
+
+        private static void _Base() {
             // Base
             Base = MelonPreferences.CreateCategory("MintMod_Base", "MintMod - Base");
             KeepPriorityHighEnabled = Base.CreateEntry("KeepPriorityHighEnabled", true, "PriorityHigh", "Make VRChat run on a higher proccess queue");
@@ -53,12 +46,12 @@ namespace MintMod {
             UseOldHudMessages = Base.CreateEntry("UseOldHudMessages", false, "Use Old Hud Messages");
         }
 
-// Color
+        // Color
         public static MelonPreferences_Category Color;
-        public static MelonPreferences_Entry<bool> RecolorRanks, ColorGameMenu, ColorActionMenu, ColorHUDMuteIcon, EnableCustomNameplateReColoring, ColorLoadingScreen;
+        public static MelonPreferences_Entry<bool> RecolorRanks, ColorGameMenu, ColorActionMenu, ColorHUDMuteIcon, ColorLoadingScreen;
         public static MelonPreferences_Entry<string> FriendRankHEX, LegendRankHEX, VeteranRankHEX, TrustedRankHEX, KnownRankHEX, UserRankHEX, NewUserRankKEX,
             VisitorRankHEX, MenuColorHEX;
-        static void _Color() {
+        private static void _Color() {
             // Color
             Color = MelonPreferences.CreateCategory("MintMod_Color", "MintMod - Color");
             RecolorRanks = Color.CreateEntry("RecolorRanks", false, "ReColor Ranks", "ReColor VRChat Ranks");
@@ -75,8 +68,20 @@ namespace MintMod {
             MenuColorHEX = Color.CreateEntry("MenuColorHEX", "00ffaa", "* HEX: Menu Color", "Menu Color");
             ColorActionMenu = Color.CreateEntry("ColorActionMenu", false, "* Color Action Menu", "* Color Action Menu");
             ColorHUDMuteIcon = Color.CreateEntry("ColorHUDMuteIcon", false, "* Color HUD Mute Icon", "* Color Mute HUD Icon");
-            EnableCustomNameplateReColoring = Color.CreateEntry("EnableCustomNameplateReColoring", true, "Custom Mint Nameplate ReColor", "Custom Nameplate ReColoring");
             ColorLoadingScreen = Color.CreateEntry("ColorLoadingScreen", false, "* Color Loading Environment", "Colors the Loading Environment");
+        }
+        
+        public static MelonPreferences_Category Nameplates;
+        public static MelonPreferences_Entry<bool> EnableCustomNameplateReColoring, EnabledMintTags;
+        public static MelonPreferences_Entry<float> MintTagVerticleLocation;
+
+        private static void _Nameplates() {
+            Nameplates = MelonPreferences.CreateCategory("MintMod_Nameplates", "MintMod - Nameplates");
+            EnableCustomNameplateReColoring = Nameplates.CreateEntry("EnableCustomNameplateReColoring", true, "Custom Mint Nameplate ReColor",
+                "Custom Nameplate ReColoring");
+            EnabledMintTags = Nameplates.CreateEntry("EnabledMintTags", true, "Show Mint Tags", "Toggles Mint Tags on namplates");
+            MintTagVerticleLocation = Nameplates.CreateEntry("MintTagVerticleLocation", -60f, "Vertical Location of Mint Tags",
+                "Allows yoyu to move the Mint Tags at any point up or down (positive numbers are above the center of nameplate, negative numbers are below)");
         }
 
         // Menu
@@ -85,7 +90,7 @@ namespace MintMod {
             CopyReModMedia;
         public static MelonPreferences_Entry<string> InfoHUDPosition;
         public static MelonPreferences_Entry<float> RefreshAmount;
-        static void _Menu() {
+        private static void _Menu() {
             // Menu
             Menu = MelonPreferences.CreateCategory("MintMod_Menu", "MintMod - Menu");
             useTabButtonForMenu = Menu.CreateEntry("useTabButtonForMenu", false, "* Use Tab Button Menu");
@@ -106,7 +111,7 @@ namespace MintMod {
         //public static MelonPreferences_Entry<string> Portal_1, Portal_2, Portal_3, Portal_4, Portal_5, Portal_6, Portal_7, Portal_8;
         //public static MelonPreferences_Entry<int> FakeOccupiedNumber;
         public static MelonPreferences_Entry<float> ResetTimerAmount;
-        static void _Portal() {
+        private static void _Portal() {
             // Portal
             Portal = MelonPreferences.CreateCategory("MintMod_Portal", "MintMod - Portal");
             //Portal_1 = Portal.CreateEntry("Portal_1", "empty", "Custom Portal 1", "");
@@ -150,7 +155,7 @@ namespace MintMod {
         public static MelonPreferences_Category Avatar;
         public static MelonPreferences_Entry<bool> AviFavsEnabled, AviLogFavOrUnfavInConsole, useWebhostSavedList, haveCustomPath;
         public static MelonPreferences_Entry<string> customPath;
-        static void _Avatar() {
+        private  static void _Avatar() {
             // Avatar
             Avatar = MelonPreferences.CreateCategory("MintMod_Avatar", "MintMod - Avatar");
             AviFavsEnabled = Avatar.CreateEntry("AviFavsEnabled", true, "Avatar Favorites Enabled");
@@ -163,7 +168,7 @@ namespace MintMod {
         public static MelonPreferences_Entry<bool> /*SpoofDeviceType,*/ QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc, ModJoinPopup;
         public static MelonPreferences_Entry<int> SpoofedPingNumber;
         public static MelonPreferences_Entry<float> SpoofedFrameNumber;
-        static void _Random() {
+        private static void _Random() {
             // Random
             mint = MelonPreferences.CreateCategory("MintMod_Random", "MintMod - Random");
             //SpoofDeviceType = mint.CreateEntry("SpoofDeviceType", false, "Spoof Device to Quest", "");
@@ -182,7 +187,7 @@ namespace MintMod {
         public static MelonPreferences_Entry<bool> useFakeName;
         public static MelonPreferences_Entry<string> FakeName;
         //public static MelonPreferences_Entry<bool> BTKLead, ChainloadWaypoints, ChainloadTeleporterVR, ChainloadAMMusic;
-        static void _Extra() {
+        private static void _Extra() {
             // Extras
             Extras = MelonPreferences.CreateCategory("MintMod_Extras", "MintMod - Extras");
             useFakeName = Extras.CreateEntry("useFakeName", false, "Use a fake name", "");
@@ -195,7 +200,7 @@ namespace MintMod {
         public static MelonPreferences_Entry<string> LocalSpoofedName, HudPosition;
         public static MelonPreferences_Entry<Color> BackgroundColor;
         public static MelonPreferences_Entry<int> Location, TextSize;
-        static void _PlayerList() {
+        private static void _PlayerList() {
             PlayerList = MelonPreferences.CreateCategory("MintMod_PlayerList", "MintMod - PlayerList");
             PLEnabled = PlayerList.CreateEntry("EnablePlayerList", false, "Enable Player List");
             LocalSpoofedName = PlayerList.CreateEntry("LocalSpoofedName", "", "Local Player List Name Spoof", "If empty, nothing will change");

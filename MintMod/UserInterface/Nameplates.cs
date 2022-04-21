@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MintMod.Hooks;
 using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
 using TMPro;
@@ -25,7 +26,7 @@ namespace MintMod.UserInterface {
         private static bool _privateServerRanNoticeOnce;
 
         internal override void OnStart() {
-            if (ModCompatibility.MintyNameplates) {
+            if (ModCompatibility.MintyNameplates || ModCompatibility.GPrivateServer) {
                 Con.Msg("Standalone MintyNameplates found.");
                 return;
             }
@@ -96,10 +97,13 @@ namespace MintMod.UserInterface {
             Color? TagFontColour = null,
             bool removeBGImg = false,
             string forceFakeName = "") {
+            
             if (helper == null)
                 return;
             if (!Config.EnableCustomNameplateReColoring.Value)
                 return;
+
+            #region Nameplate Value Changes
 
             if (resetToDefaultMat) {
                 helper.uiNameBackground.material = null;
@@ -155,66 +159,69 @@ namespace MintMod.UserInterface {
             if (!string.IsNullOrWhiteSpace(forceFakeName))
                 helper.SetName(forceFakeName);
 
+            #endregion
+
             // Create and set Extra Text
-            if (!string.IsNullOrWhiteSpace(TagText)) {
-                try {
-                    var transform = nameplate.transform.Find("Contents");
-                    var transform4 = transform.Find("Quick Stats");
-
-                    var transform5 = transform.Find("Mint_CustomTag");
-                    if (transform5 == null) {
-                        transform5 = UnityEngine.Object.Instantiate(transform4, transform4.parent, false);
-                        transform5.name = "Mint_CustomTag";
-                        
-                        /*
-                        var avatarDynamicsTouchIcon = transform.Find("");
-
-                        if (avatarDynamicsTouchIcon || ModCompatibility.ProPlates)
-                            transform5.localPosition = new Vector3(0f, -90f, 0f);
-                        else if (avatarDynamicsTouchIcon && ModCompatibility.ProPlates)
-                            transform5.localPosition = new Vector3(0f, -120f, 0f);
-                        */if (ModCompatibility.ProPlates)
-                            transform5.localPosition = new Vector3(0f, -90f, 0f);
-                        else
-                            transform5.localPosition = new Vector3(0f, -60f, 0f);
-                        var component = transform5.Find("Trust Text").GetComponent<TextMeshProUGUI>();
-                        component.richText = true;
-                        component.text = TagText;
-
-                        component.color = TagFontColour == null ? ColorConversion.HexToColor("eeeeee") : TagFontColour.Value;
-
-                        if (disableBGImage)
-                            transform5.GetComponent<ImageThreeSlice>().enabled = false;
-                        else {
-                            if (TagBGColour.HasValue)
-                                transform5.GetComponent<ImageThreeSlice>().color = TagBGColour.Value;
-                            else
-                                transform5.GetComponent<ImageThreeSlice>().color = Color.white;
-                        }
-
-                        for (var i = transform5.childCount; i > 0; i--) {
-                            var child = transform5.GetChild(i - 1);
-                            if (child.name != "Trust Text")
-                                UnityEngine.Object.Destroy(child.gameObject);
-                        }
-                    } else transform5.gameObject.SetActive(true);
-
-                } catch (Exception e) { if (MintCore.isDebug) Con.Error(e); }
-            }
+            if (!Config.EnabledMintTags.Value) return;
+            if (string.IsNullOrWhiteSpace(TagText)) return;
+            try {
+                
+                var transform = nameplate.transform.Find("Contents");
+                //var transform2 = transform.Find("Status Line");
+                var transform4 = transform.Find("Quick Stats");
+                
+                var transform5 = transform.Find("Mint_CustomTag");
+                if (transform5 == null) {
+                    transform5 = UnityEngine.Object.Instantiate(transform4, transform4.parent, false);
+                    transform5.name = "Mint_CustomTag";
+                    
+                    /*var avatarDynamicsTouchIcon = transform2.Find("InteractionStatus");
+                     
+                     if (avatarDynamicsTouchIcon || ModCompatibility.ProPlates)
+                        transform5.localPosition = new Vector3(0f, -90f, 0f);
+                     else if (avatarDynamicsTouchIcon && ModCompatibility.ProPlates)
+                        transform5.localPosition = new Vector3(0f, -120f, 0f);
+                     else if (ModCompatibility.ProPlates)
+                        transform5.localPosition = new Vector3(0f, -90f, 0f);
+                     else
+                        transform5.localPosition = new Vector3(0f, -60f, 0f);
+                     */
+                    MoveMintTag(transform5, Config.MintTagVerticleLocation.Value);
+                    var component = transform5.Find("Trust Text").GetComponent<TextMeshProUGUI>();
+                    component.richText = true;
+                    component.text = TagText;
+                    component.color = TagFontColour ?? ColorConversion.HexToColor("eeeeee");
+                    
+                    if (disableBGImage)
+                        transform5.GetComponent<ImageThreeSlice>().enabled = false;
+                    else 
+                        transform5.GetComponent<ImageThreeSlice>().color = TagBGColour ?? Color.white;
+                    
+                    for (var i = transform5.childCount; i > 0; i--) {
+                        var child = transform5.GetChild(i - 1);
+                        if (child.name != "Trust Text")
+                            UnityEngine.Object.Destroy(child.gameObject);
+                    }
+                } else transform5.gameObject.SetActive(true);
+                
+            } catch (Exception e) { if (MintCore.isDebug) Con.Error(e); }
         }
 
-        static void ApplyFriendsRankColor(MintyNameplateHelper helper, Color RankColor) {
-            if (helper != null) {
-                helper.SetNameColour(RankColor);
-                helper.OnRebuild();
-            }
+        private static Vector3 MintTagLocation;
+
+        private static void MoveMintTag(Transform transform, float y) => transform.localPosition = new Vector3(0f, y, 0f);
+
+        private static void ApplyFriendsRankColor(MintyNameplateHelper helper, Color RankColor) {
+            if (helper == null) return;
+            helper.SetNameColour(RankColor);
+            helper.OnRebuild();
         }
 
-        static void ApplyNameplatesFromValues(PlayerNameplate nameplate, MintyNameplateHelper helper) {
+        private static void ApplyNameplatesFromValues(PlayerNameplate nameplate, MintyNameplateHelper helper) {
             if (ModCompatibility.MintyNameplates) return;
             if (!Config.EnableCustomNameplateReColoring.Value)
                 return;
-            string npID = nameplate.field_Private_VRCPlayer_0._player.field_Private_APIUser_0.id;
+            var npID = nameplate.field_Private_VRCPlayer_0._player.field_Private_APIUser_0.id;
 
             if (Players.Storage == null) {
                 Con.Error("Mint's Database Storage was empty or null");

@@ -12,9 +12,8 @@ using VRC.DataModel;
 using VRC.SDKBase;
 using VRC.UI.Elements.Menus;
 using VRC.DataModel.Core;
-using VRCSDK2.Validation.Performance;
+using VRC.SDKBase.Validation.Performance;
 using Object = UnityEngine.Object;
-using AvatarPerformanceRating = EnumPublicSealedvaNoExGoMePoVe7v0;
 
 namespace MintMod.Reflections {
     public static class PlayerWrappers {
@@ -26,28 +25,23 @@ namespace MintMod.Reflections {
 
         public static Quaternion GetCurrentPlayerRot() => VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_VRCPlayerApi_0.GetRotation();
 
-        public static List<Player> GetAllPlayers(this PlayerManager instance) => instance.field_Private_List_1_Player_0;
+        private static List<Player> GetAllPlayers(this PlayerManager instance) => instance.field_Private_List_1_Player_0;
 
-        public static APIUser GetAPIUser_alt(this Player player) => player.prop_APIUser_0;
+        private static APIUser GetAPIUser_alt(this Player player) => player.prop_APIUser_0;
 
-        public static Player GetPlayer(this PlayerManager instance, string UserID) {
-            List<Player> allPlayers = instance.GetAllPlayers();
+        public static Player GetPlayer(this PlayerManager instance, string userId) {
+            var allPlayers = instance.GetAllPlayers();
             Player result = null;
             foreach (Player all in allPlayers)
-                if (all.GetAPIUser_alt().id == UserID)
+                if (all.GetAPIUser_alt().id == userId)
                     result = all;
             return result;
         }
 
-        public static Il2CppSystem.Collections.Generic.List<Player> GetAllPlayers() {
-            if (PlayerManager.field_Private_Static_PlayerManager_0 == null)
-                return null;
-            return PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
-        }
+        public static List<Player> GetAllPlayers() =>
+            PlayerManager.field_Private_Static_PlayerManager_0 == null ? null : PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
 
-        public static APIUser GetpAPI(this Player p) {
-            return p.field_Private_APIUser_0;
-        }
+        private static APIUser GetpAPI(this Player p) => p.field_Private_APIUser_0;
 
         public static Player getPlayerFromPlayerlist(string userID) {
             foreach (var player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
@@ -84,18 +78,15 @@ namespace MintMod.Reflections {
             return null;
         }
 
-        public static int GetFrames(this VRCPlayer Instance) {
+        private static int GetFrames(this VRCPlayer Instance) {
             if (Instance._playerNet.field_Private_Byte_0 == 0)
                 return 0;
             return (int)(1000f / (float)Instance._playerNet.field_Private_Byte_0);
         }
 
         public static Color GetTrustColor(this APIUser user) {
-            if (user.hasLegendTrustLevel) {
-                if (user.tags.Contains("system_legend"))
-                    return Colors.LegendNP;
-                return Colors.VeteranNP;
-            }
+            if (user.hasLegendTrustLevel) 
+                return user.tags.Contains("system_legend") ? Colors.LegendNP : Colors.VeteranNP;
             if (user.hasVeteranTrustLevel)
                 return Colors.TrustedNP;
             if (user.hasTrustedTrustLevel)
@@ -104,20 +95,16 @@ namespace MintMod.Reflections {
                 return Colors.UserNP;
             if (user.hasBasicTrustLevel)
                 return Colors.NewUserNP;
-            if (user.isUntrusted)
-                return Colors.VisitorNP;
-            return Color.white;
+            return user.isUntrusted ? Colors.VisitorNP : Color.white;
         }
 
-        public static Player SelPlayer() {
-            return PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer._player;
-        }
+        public static Player SelPlayer() =>
+            PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer._player;
 
-        public static VRCPlayer SelVRCPlayer() {
-            return PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer;
-        }
+        public static VRCPlayer SelVrcPlayer() =>
+            PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer;
         
-        public static bool isFriend(Player p) => APIUser.IsFriendsWith(p.field_Private_APIUser_0.id);
+        public static bool IsFriend(Player p) => APIUser.IsFriendsWith(p.field_Private_APIUser_0.id);
         
         private static Action<Player> _requestedAction;
         public static void GetEachPlayer(Action<Player> act) {
@@ -131,27 +118,32 @@ namespace MintMod.Reflections {
             if (player.GetFrames() >= 80) numAsString = "<color=#33ff47>";
             else if (player.GetFrames() <= 80 && player.GetFrames() >= 30) numAsString = "<color=#ff8936>";
             else numAsString = "<color=red>";
-            return string.Format("{0}{1}</color>", numAsString, player.GetFrames());
+            return $"{numAsString}{player.GetFrames()}</color>";
         }
 
         public static string GetAviPerformance(this VRCPlayer player) {
-            if (Nameplates.ValidatePlayerAvatar(player)) {
-                var p = player.field_Private_VRCAvatarManager_0.prop_AvatarPerformanceStats_0
-                    .field_Private_ArrayOf_EnumPublicSealedvaNoExGoMePoVe7v0_0[(int)AvatarPerformanceCategory.Overall];
-                return p switch {
-                    AvatarPerformanceRating.VeryPoor => "<color=#E45A42>VP</color>",
-                    AvatarPerformanceRating.Poor => "<color=#E45A42>P</color>",
-                    AvatarPerformanceRating.Medium => "<color=#E7AA08>M</color>",
-                    AvatarPerformanceRating.Good => "<color=#69A95C>G</color>",
-                    AvatarPerformanceRating.Excellent => "<color=#6BE855>E</color>",
-                    AvatarPerformanceRating.None => "<i>Loading</i>",
-                    _ => "<i>Loading</i>"
+            try {
+                if (!Nameplates.ValidatePlayerAvatar(player)) return "";
+                //var p = player.field_Private_VRCAvatarManager_0.prop_AvatarPerformanceStats_0
+                //    .field_Private_ArrayOf_EnumPublicSealedvaNoExGoMePoVe7v0_0[(int)AvatarPerformanceCategory.Overall];
+                var pp = (int)player.field_Private_VRCAvatarManager_0.prop_AvatarPerformanceStats_0.GetPerformanceRatingForCategory(AvatarPerformanceCategory.Overall);
+                
+                return pp switch {
+                    5 => "<color=#E45A42>VP</color>",
+                    4 => "<color=#E45A42>P</color>",
+                    3 => "<color=#E7AA08>M</color>",
+                    2 => "<color=#69A95C>G</color>",
+                    1 => "<color=#6BE855>E</color>",
+                    0 => "<i>Loading</i>",
+                    _ => "<i>Blocked</i>"
                 };
             }
-            return "";
+            catch {
+                return "<color=red>Broke with Update</color>";
+            }
         }
         
-        public static bool IsInVR(this VRCPlayer player) => player.prop_VRCPlayerApi_0.IsUserInVR();
+        private static bool IsInVR(this VRCPlayer player) => player.prop_VRCPlayerApi_0.IsUserInVR();
 
         public static string Platform(this VRCPlayer player) {
             if (player.prop_Player_0.prop_APIUser_0.last_platform == "standalonewindows") 

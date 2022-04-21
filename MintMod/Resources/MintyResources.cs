@@ -20,7 +20,7 @@ namespace MintMod.Resources {
 
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent, BG_HUD;
         public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list, messages,
-            copy, key, marker, marker_hole, star, userlist, people, clone, ColorPicker;
+            copy, key, marker, marker_hole, star, userlist, people, clone, ColorPicker, user_nameplate, user_nameplate_tag, user_nameplate_tag_move;
         public static Sprite PlayerListBGWalmart, WalmartTab;
         
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
@@ -72,6 +72,9 @@ namespace MintMod.Resources {
                     try { userlist = LoadSprite("user-list.png"); } catch { Con.Error("Resource user-list.png failed"); }
                     try { people = LoadSprite("people.png"); } catch { Con.Error("Resource people.png failed"); }
                     try { ColorPicker = LoadSprite("color-picker.png"); } catch { Con.Error("Resource color-picker.png failed"); }
+                    try { user_nameplate = LoadSprite("user-nameplate.png"); } catch { Con.Error("Resource user-nameplate.png failed"); }
+                    //try { user_nameplate_tag = LoadSprite("user-nameplate_tag.png"); } catch { Con.Error("Resource user-nameplate_tag.png failed"); }
+                    try { user_nameplate_tag_move = LoadSprite("user-nameplate_tag-move.png"); } catch { Con.Error("Resource user-nameplate_tag-move.png failed"); }
                     //try {  = LoadSprite(".png"); } catch { Con.Error("Resource .png failed"); }
                     try { PlayerListBGWalmart = LoadSprite("PlayerListWalmart.png"); } catch { Con.Error("Resource PlayerListWalmart.png failed"); }
                     try { WalmartTab = LoadSprite("WalmartLogo.png"); } catch { Con.Error("Resource WalmartLogo.png failed"); }
