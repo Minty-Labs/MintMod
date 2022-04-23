@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if DEBUG
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -95,3 +96,4 @@ namespace MintyLoader.Interpreter {
         }
     }
 }
+#endif
