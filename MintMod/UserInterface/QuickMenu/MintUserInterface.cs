@@ -29,6 +29,7 @@ using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.OldUI;
 using TMPro;
 using VRC.DataModel;
+using Object = UnityEngine.Object;
 
 namespace MintMod.UserInterface.QuickMenu {
     internal class MintUserInterface : MintSubMod {
@@ -898,24 +899,33 @@ namespace MintMod.UserInterface.QuickMenu {
         private static RectTransform _mediaRectTransform;
         
         private static IEnumerator CreateMediaDebugPanel() {
+            /*
             var ReModPriv = false;
             try { ReModPriv = Config._mediaControlsEnabled.Value && ModCompatibility.ReMod; }
-            catch { // yes
-            }
+            catch { ReModPriv = false; }
+            
             var ReModCE = false;
             try { ReModCE = Config._mediaControlsEnabledCE.Value && ModCompatibility.ReModCE; }
-            catch { // yes
-            }
+            catch { ReModCE = false; }
             if (!ReModPriv && !ReModCE) yield break; // Stop if no ReMod
+            */
             
             while (UIManager.field_Private_Static_UIManager_0 == null) yield return null;
-            while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
+            while (Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
+            yield return new WaitForSeconds(0.25f);
             
             var t = GameObject.Find("UserInterface/Canvas_QuickMenu(Clone)/Container/Window/QMNotificationsArea/DebugInfoPanel/").transform;
             var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_Dashboard");
-            _mediaPanel = GameObject.Instantiate(t.Find("Panel"), t, false);
+            _mediaPanel = Object.Instantiate(t.Find("Panel"), t, false);
             _mediaPanel.gameObject.name = "MediaPanel";
-            var h = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/Header_MediaControls/LeftItemContainer/Text_Title");
+            Transform h;
+            try {
+                h = f.Find("ScrollRect/Viewport/VerticalLayoutGroup/Header_MediaControls/LeftItemContainer/Text_Title");
+            }
+            catch {
+                yield break; // Stop method if failed
+            }
+
             _reModTextElement = h.GetComponent<TextMeshProUGUI>();
             _reModHeaderText = _reModTextElement.text;
             
@@ -924,6 +934,7 @@ namespace MintMod.UserInterface.QuickMenu {
             _mediaPanel.Find("BTKClockElement").gameObject!.Destroy();
             
             _mediaPanelText = _mediaPanel.Find("Text_FPS").GetComponent<TextMeshProUGUI>();
+            _mediaPanelText.text = "MediaPanel";
             _mediaRectTransform = _mediaPanel.GetComponent<RectTransform>();
             _mediaRectTransform.localPosition = new Vector3(-512, 85, 0);
             
@@ -936,6 +947,7 @@ namespace MintMod.UserInterface.QuickMenu {
         private static IEnumerator LoopTextChange(float v) {
             while (_loaded && Config.CopyReModMedia.Value) {
                 yield return new WaitForSeconds(v);
+                _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
                 _reModHeaderText = _reModTextElement.text;
                 _mediaPanelText.text = _reModHeaderText;
                 _mediaRectTransform.localPosition = new Vector3(-512, 85, 0);
@@ -979,6 +991,9 @@ namespace MintMod.UserInterface.QuickMenu {
                     _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
                     MelonCoroutines.Start(LoopTextChange(Config.RefreshAmount.Value));
                 }
+
+                if (_mediaPanel != null && !_loaded)
+                    MelonCoroutines.Start(CreateMediaDebugPanel());
             }
             _mintNameplates?.Toggle(Config.EnableCustomNameplateReColoring.Value);
             _mintTags?.Toggle(Config.EnabledMintTags.Value);
