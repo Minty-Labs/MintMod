@@ -84,7 +84,7 @@ namespace MintMod.UserInterface.QuickMenu {
             UpdateMintIconForStreamerMode(isStreamerModeOn);
         }
 
-        static IEnumerator BuildStandard() {
+        private static IEnumerator BuildStandard() {
             var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_Dashboard");
             MainMenuBackButton = f.Find("Header_H1/LeftItemContainer/Button_Back").gameObject;
             try {
@@ -124,7 +124,7 @@ namespace MintMod.UserInterface.QuickMenu {
             yield break;
         }
 
-        static IEnumerator BuildMint() {
+        private static IEnumerator BuildMint() {
             MintMenu = new ReCategoryPage(MintCore.Fool ? "WalmartMenu" : "MintMenu", Config.useTabButtonForMenu.Value);
             MintMenu.GameObject.SetActive(false);
 
@@ -964,7 +964,11 @@ namespace MintMod.UserInterface.QuickMenu {
             MainQMInfJump?.Toggle(false, true, true);
         }
 
-        internal override void OnUpdate() => PlayerActions.UpdateJump();
+        internal override void OnUpdate() {
+            PlayerActions.UpdateJump();
+            if (!MintCore.isDebug) return;
+            if (Input.GetKeyDown(KeyCode.End)) UserSelMenu();
+        }
 
         internal override void OnPrefSave() {
             //DeviceType?.Toggle(Config.SpoofDeviceType.Value);
