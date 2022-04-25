@@ -12,6 +12,7 @@ using MelonLoader;
 using MintMod.Managers.Notification;
 using MintMod.Reflections;
 using MintMod.Utils;
+using MintMod.Libraries;
 using MintyLoader;
 using UnityEngine;
 using VRCSDK2;
@@ -39,12 +40,14 @@ namespace MintMod.Functions {
                 
                 if (!File.Exists(vrcwFile)) {
                     var w = httpClient.GetByteArrayAsync(grabAssetUrlVrcw).GetAwaiter().GetResult();
-                    File.WriteAllBytes(vrcwFile, w);
+                    try { CustomAsync.File.WriteAllBytesAsync(vrcwFile, w).GetAwaiter().GetResult(); }
+                    catch { File.WriteAllBytes(vrcwFile, w); }
                 }
 
                 if (!File.Exists(imageFile)) {
                     var i = httpClient.GetByteArrayAsync(grabAssetImageVrcw).GetAwaiter().GetResult();
-                    File.WriteAllBytes(imageFile, i);
+                    try { CustomAsync.File.WriteAllBytesAsync(imageFile, i).GetAwaiter().GetResult(); }
+                    catch { File.WriteAllBytes(imageFile, i); }
                 }
 
                 httpClient.Dispose();
@@ -60,8 +63,8 @@ namespace MintMod.Functions {
 
         public static void LogWorld() {
             try {
-                var subdir = $"{MintCore.MintDirectory}\\Logs\\";
-                var final = $"{subdir}LoggedWorlds.txt";
+                var logPath = $"{MintCore.MintDirectory}\\Logs\\";
+                var final = $"{logPath}LoggedWorlds.txt";
 
                 var worldName = RoomManager.field_Internal_Static_ApiWorldInstance_0.world.name;
                 var worldAuthor = RoomManager.field_Internal_Static_ApiWorldInstance_0.world.authorName;
