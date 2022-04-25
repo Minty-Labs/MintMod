@@ -86,7 +86,7 @@ namespace MintMod {
 
         // Menu
         public static MelonPreferences_Category Menu;
-        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, ActionMenuON, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, useTabButtonForMenu,
+        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, EnableActionMenu, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, useTabButtonForMenu,
             CopyReModMedia;
         public static MelonPreferences_Entry<string> InfoHUDPosition;
         public static MelonPreferences_Entry<float> RefreshAmount;
@@ -95,7 +95,7 @@ namespace MintMod {
             Menu = MelonPreferences.CreateCategory("MintMod_Menu", "MintMod - Menu");
             useTabButtonForMenu = Menu.CreateEntry("useTabButtonForMenu", false, "* Use Tab Button Menu");
             KeepFlightBTNsOnMainMenu = Menu.CreateEntry("KeepFlightBTNsOnMainMenu", false, "Put Fly/NoClip on Main Quick Menu");
-            ActionMenuON = Menu.CreateEntry("ActionMenuON", true, "Mint ActionMenu Controls", "Toggle Action Menu integration");
+            EnableActionMenu = Menu.CreateEntry("ActionMenuON", true, "Mint ActionMenu Controls", "Toggle Action Menu integration");
 
             //InfoHUDPosition = Menu.CreateEntry("InfoHUDPosition", "3", "Quick Menu Player List Location", "");
             //UIExpansionKit.API.ExpansionKitApi.RegisterSettingAsStringEnum(Menu.Identifier, InfoHUDPosition.Identifier,

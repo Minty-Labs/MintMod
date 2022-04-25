@@ -81,7 +81,7 @@ namespace MintMod.Hooks {
     internal class NameplatePatches { // OnRebuild
         static IEnumerable<MethodBase> TargetMethods() {
             return typeof(PlayerNameplate).GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(x => 
-                Nameplates.methodMatchRegex.IsMatch(x.Name)).Cast<MethodBase>();
+                Nameplates.MethodMatchRegex.IsMatch(x.Name)).Cast<MethodBase>();
         }
 
         static void Postfix(PlayerNameplate __instance) => Nameplates.OnRebuild(__instance);
