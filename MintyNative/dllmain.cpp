@@ -18,6 +18,27 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 #include <cstdio>
 #include <cstdlib>
 #include <cstdint>
+#define KEY 0x55
+template <unsigned int N>
+struct obfuscator
+{
+    char m_data[N] = { 0 };
+
+    constexpr obfuscator(const char* data) {
+        for (unsigned int i = 0; i < N; i++) {
+            m_data[i] = data[i] ^ KEY;
+        }
+    }
+
+    void deobfoscate(unsigned char* des) const {
+        int i = 0;
+        do {
+            des[i] = m_data[i] ^ KEY;
+            i++;
+        } while (des[i - 1]);
+    }
+};
+
 extern "C" {
     __declspec(dllexport) float add(float a, float b) { return a + b; }
     __declspec(dllexport) float subtract(float a, float b) { return a - b; }
@@ -29,6 +50,56 @@ extern "C" {
     __declspec(dllexport) void TestCommand() {
         MessageBox(0, TFGPT, L"Elly is an absolute cutie~", MB_ICONINFORMATION);
     }*/
+
+
+    BOOLEAN has_run_mod_check;
+    void __cdecl IsBadMod(const char* mod, const char* author) {
+        obfuscator<256> bad_mods[] = {
+            obfuscator<256>("RipperStore"),
+            obfuscator<256>("Unchained"),
+            obfuscator<256>("Late Night"),
+            obfuscator<256>("Late_Night"),
+            obfuscator<256>("A.R.E.S"),
+            obfuscator<256>("A.R.3.S"),
+            obfuscator<256>("Abyss"),
+            obfuscator<256>("AbyssLoader"),
+            obfuscator<256>("Versa")
+        };
+
+        obfuscator<256> bad_authors[] = {
+            obfuscator<256>("xAstroBoy"),
+            obfuscator<256>("PatchedPlus"),
+            obfuscator<256>("LargestBoi"),
+            obfuscator<256>("kaaku"),
+            obfuscator<256>("L4rg3stBo1"),
+            obfuscator<256>("_Unreal"),
+            obfuscator<256>("bunny"),
+            obfuscator<256>("Stellar"),
+            obfuscator<256>("Lady Lucy")
+        };
+
+        std::string modStr(mod);
+        std::string authorStr(author);
+
+        for (const auto& bad : bad_mods) {
+            if (modStr.find(bad) != std::string::npos) {
+                //MessageBoxA(0, (MAKE_STRING("Remove \"") + modStr + MAKE_STRING("\" from your Mods directory.")).c_str(), MAKE_STRING("Forbidden Mod detected."), MB_ICONERROR);
+                MessageBoxA(0, (obfuscator<256>("Remove \"") + obfuscator<256>(modStr)), "", MB_ICONERROR);
+                KillGame();
+            }
+        }
+        for (const auto& bad : bad_authors) {
+            if (authorStr.find(bad) != std::string::npos) {
+                MessageBoxA(0, (MAKE_STRING("Remove the mod(s) by \"") + authorStr + MAKE_STRING("\" from your Mods directory.")).c_str(), MAKE_STRING("Forbidden Author detected."), MB_ICONERROR);
+                KillGame();
+            }
+        }
+        has_run_mod_check = true;
+    }
+
+    void __cdecl KillGame() {
+
+    }
 
     typedef struct image_t {
         int ref_count;
