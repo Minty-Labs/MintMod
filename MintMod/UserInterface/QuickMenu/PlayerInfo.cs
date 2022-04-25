@@ -16,17 +16,19 @@ using VRC.DataModel;
 using VRCSDK2;
 using VRCSDK2.Validation.Performance;
 using Player = VRC.Player;
+using String = Il2CppSystem.String;
 
 namespace MintMod.UserInterface.QuickMenu {
     internal class PlayerInfo : MintSubMod {
         public override string Name => "PlayerInfoHUD";
         public override string Description => "Shows Player Info on selected user";
 
-        private static Transform QuickMenu, Wing;
-        private static GameObject BackgroundObject, Foolish, TextObject;
-        public static Image BackgroundImage, BGFool;
-        private static Text TheText;
-        private bool Initialized;
+        private static Transform _quickMenu, _wing;
+        private static GameObject _backgroundObject, _foolish, _textObject;
+        public static Image BackgroundImage;
+        private static Image _bgFool;
+        private static Text _theText;
+        private bool _initialized;
         private DateTime _timer;
 
         internal override void OnUserInterface() => MelonCoroutines.Start(Init());
@@ -36,46 +38,46 @@ namespace MintMod.UserInterface.QuickMenu {
             while (MintyResources.BG_HUD == null) yield return null;
             while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
             
-            QuickMenu = UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>().gameObject.transform;
-            Wing = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
+            _quickMenu = UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>().gameObject.transform;
+            _wing = _quickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
             
             var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a);
             
-            if (Wing.Find("MintUiHud Panel") == null) {
-                BackgroundObject = new GameObject("MintUiHud Panel");
-                BackgroundObject.transform.SetParent(Wing, false);
-                BackgroundObject.AddComponent<CanvasRenderer>();
-                BackgroundImage = BackgroundObject.AddComponent<Image>();
+            if (_wing.Find("MintUiHud Panel") == null) {
+                _backgroundObject = new GameObject("MintUiHud Panel");
+                _backgroundObject.transform.SetParent(_wing, false);
+                _backgroundObject.AddComponent<CanvasRenderer>();
+                BackgroundImage = _backgroundObject.AddComponent<Image>();
             
-                BackgroundObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420);
+                _backgroundObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420);
                 SetLocation();
                 BackgroundImage.sprite = MintyResources.BG_HUD;
                 //var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a / 255);
                 //Con.Debug($"{Config.BackgroundColor.Value.r} {Config.BackgroundColor.Value.g} {Config.BackgroundColor.Value.b} {Config.BackgroundColor.Value.a} -- {Config.BackgroundColor.Value.a / 255} -- {Config.BackgroundColor.Value.a * 255}");
                 SetBackgroundColor(c);
                 if (MintCore.Fool) {
-                    Foolish = new GameObject("W A L M A R T  C L I E N T");
-                    Foolish.transform.SetParent(Wing, false);
-                    Foolish.AddComponent<CanvasRenderer>();
-                    BGFool = Foolish.AddComponent<Image>();
+                    _foolish = new GameObject("W A L M A R T  C L I E N T");
+                    _foolish.transform.SetParent(_wing, false);
+                    _foolish.AddComponent<CanvasRenderer>();
+                    _bgFool = _foolish.AddComponent<Image>();
             
-                    Foolish.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420);
+                    _foolish.GetComponent<RectTransform>().sizeDelta = new Vector2(1200f, 1420);
                     SetLocation();
-                    BGFool.sprite = MintyResources.PlayerListBGWalmart;
+                    _bgFool.sprite = MintyResources.PlayerListBGWalmart;
                 }
             }
-            if (BackgroundObject.transform.Find("Player List"))
+            if (_backgroundObject.transform.Find("Player List"))
                 yield break;
-            TextObject = new GameObject("Player List");
-            TextObject.transform.SetParent(BackgroundObject.transform, false);
-            TextObject.AddComponent<CanvasRenderer>();
-            TheText = TextObject.AddComponent<Text>();
+            _textObject = new GameObject("Player List");
+            _textObject.transform.SetParent(_backgroundObject.transform, false);
+            _textObject.AddComponent<CanvasRenderer>();
+            _theText = _textObject.AddComponent<Text>();
             SetSizeTextObj();
-            TheText.font = MintyResources.BalooFont != null ? MintyResources.BalooFont : UnityEngine.Resources.GetBuiltinResource<Font>("Arial.ttf");
+            _theText.font = MintyResources.BalooFont != null ? MintyResources.BalooFont : UnityEngine.Resources.GetBuiltinResource<Font>("Arial.ttf");
             UpdateTextSize(Config.TextSize.Value);
-            TheText.text = "";
-            TheText.alignment = (TextAnchor)TextAlignment.Left;
-            Initialized = true;
+            _theText.text = "";
+            _theText.alignment = (TextAnchor)TextAlignment.Left;
+            _initialized = true;
             
             MoveTheText();
             SetBackgroundColor(c);
@@ -83,18 +85,17 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
-            if (buildindex == -1) {
+            if (buildindex == -1) 
                 _timer = DateTime.Now;
-            }
         }
 
         private IEnumerator HUDLoop() {
-            while (Initialized) {
+            while (_initialized) {
                 //BackgroundObject.GetComponent<RectTransform>().localPosition = new Vector3(-1000, -500, -0.5f);
                 yield return new WaitForSeconds(1);
                 var t = DateTime.Now - _timer;
                 var g = DateTime.Now - MintCore.GameStartTimer;
-                TheText.text = string.Concat(new[] {
+                _theText.text = string.Concat(new[] {
                     "\n\n",
                     "<b>Player List</b> (" + (WorldReflect.IsInWorld() 
                         ? $"<color=yellow>{PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count}</color>"
@@ -105,66 +106,65 @@ namespace MintMod.UserInterface.QuickMenu {
                     "\n",
                     RenderPlayerList()
                 });
-                if (TheText.text.Contains(".penny"))
-                    TheText.text = TheText.text.Replace(".penny", "<color=#587EE2>Penny</color>");
-                if (TheText.text.Contains("Rin_Isnt_Real"))
-                    TheText.text = TheText.text.Replace("Rin_Isnt_Real", "<color=#ff9efd>Rin</color>");
-                if (TheText.text.Contains("jettsd"))
-                    TheText.text = TheText.text.Replace("jettsd", "Emy");
-                if (TheText.text.Contains("~Silentt~"))
-                    TheText.text = TheText.text.Replace("~Silentt~", "<color=#D2A0FF>Elly</color>");
+                if (_theText.text.Contains(".penny"))
+                    _theText.text = _theText.text.Replace(".penny", "<color=#587EE2>Penny</color>");
+                if (_theText.text.Contains("Rin_Isnt_Real"))
+                    _theText.text = _theText.text.Replace("Rin_Isnt_Real", "<color=#ff9efd>Rin</color>");
+                if (_theText.text.Contains("jettsd"))
+                    _theText.text = _theText.text.Replace("jettsd", "Emy");
+                if (_theText.text.Contains("~Silentt~"))
+                    _theText.text = _theText.text.Replace("~Silentt~", "<color=#D2A0FF>Elly</color>");
+                if (_theText.text.Contains("~Elly~"))
+                    _theText.text = _theText.text.Replace("~Elly~", "<color=#D2A0FF>Elly</color>");
+                if (_theText.text.Contains("MintyLily"))
+                    _theText.text = _theText.text.Replace("MintyLily", "<color=#9f99e3>Lily</color>");
                 if (!string.IsNullOrWhiteSpace(Config.LocalSpoofedName.Value)) 
-                    TheText.text = TheText.text.Replace(APIUser.CurrentUser.displayName, Config.LocalSpoofedName.Value);
+                    _theText.text = _theText.text.Replace(APIUser.CurrentUser.displayName, Config.LocalSpoofedName.Value);
             }
         }
 
         private string RenderPlayerList() {
-            string text = "";
-            if (RoomManager.field_Internal_Static_ApiWorld_0 != null) {
-                int num = 0;
-                if (PlayerManager.field_Private_Static_PlayerManager_0 != null && PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0 != null) {
-                    try {
-                        foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
-                            if (player != null && player.field_Private_VRCPlayerApi_0 != null && num != (Config.uncapListCount.Value ? 128 : 25)) {
-                                text = string.Concat(new[] {
-                                    text,
-                                    player.field_Private_VRCPlayerApi_0.isMaster ? ">> " : "".PadRight(6),
-                                    $"<color=#{ColorUtility.ToHtmlStringRGB(VRCPlayer.Method_Public_Static_Color_APIUser_0(player.prop_APIUser_0))}>{player.field_Private_APIUser_0.displayName}</color>",
-                                    $" | <color=#{Config.MenuColorHEX.Value}>{player._vrcplayer.prop_Int16_0.ToString()}</color> ms",
-                                    $" | {player.GetVRCPlayer().GetFramesColored()} fps",
-                                    $" | {player.GetVRCPlayer().Platform()}",
-                                    $" | {player.GetVRCPlayer().GetAviPerformance()}\n"
-                                });
-                                num++;
-                            }
-                        }
-                    }
-                    catch (Exception e) {
-                        Con.Debug($"[DEBUG ERROR] {e}");
-                    }
+            var text = "";
+            if (RoomManager.field_Internal_Static_ApiWorld_0 == null) return text;
+            var num = 0;
+            if (PlayerManager.field_Private_Static_PlayerManager_0 == null || PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0 == null) return text;
+            try {
+                foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
+                    if (player == null || player.field_Private_VRCPlayerApi_0 == null || num == (Config.uncapListCount.Value ? 128 : 25)) continue;
+                    text = string.Concat(new[] {
+                        text,
+                        player.field_Private_VRCPlayerApi_0.isMaster ? ">> " : "".PadRight(6),
+                        $"<color=#{ColorUtility.ToHtmlStringRGB(VRCPlayer.Method_Public_Static_Color_APIUser_0(player.prop_APIUser_0))}>{player.field_Private_APIUser_0.displayName}</color>",
+                        $" | <color=#{Config.MenuColorHEX.Value}>{player._vrcplayer.prop_Int16_0.ToString()}</color> ms",
+                        $" | {player.GetVRCPlayer().GetFramesColored()} fps",
+                        $" | {player.GetVRCPlayer().Platform()}",
+                        $" | {(String.IsNullOrWhiteSpace(player.GetVRCPlayer().GetAviPerformance()) ? "<i>Blocked</i>" : player.GetVRCPlayer().GetAviPerformance())}\n"
+                    });
+                    num++;
                 }
+            }
+            catch (Exception e) {
+                Con.Debug($"[DEBUG ERROR] {e}");
             }
             return text;
         }
 
-        public static void SetLocation() {
-            if (BackgroundObject != null) {
-                var t = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
-                BackgroundObject.transform.SetParent(t, false);
-                BackgroundObject.GetComponent<RectTransform>().localPosition = 
-                    new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
-                if (Foolish != null && MintCore.Fool) {
-                    var t2 = QuickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
-                    Foolish.transform.SetParent(t2, false);
-                    Foolish.GetComponent<RectTransform>().localPosition = 
-                        new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
-                }
-            }
+        private static void SetLocation() {
+            if (_backgroundObject == null) return;
+            var t = _quickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
+            _backgroundObject.transform.SetParent(t, false);
+            _backgroundObject.GetComponent<RectTransform>().localPosition = 
+                new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
+            if (_foolish == null || !MintCore.Fool) return;
+            var t2 = _quickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
+            _foolish.transform.SetParent(t2, false);
+            _foolish.GetComponent<RectTransform>().localPosition = 
+                new Vector3(Config.Location.Value == 0 ? -1000 : 1000, -500, -0.5f);
         }
 
-        private void SetSizeTextObj() {
-            if (TextObject != null)
-                TextObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 4410 : 1410);
+        private static void SetSizeTextObj() {
+            if (_textObject != null)
+                _textObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 4410 : 1410);
         }
         
         public static void SetBackgroundColor(Color c) {
@@ -178,40 +178,35 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         public static void UpdateTextSize(int size) {
-            if (TheText != null)
-                TheText.fontSize = size;
+            if (_theText != null)
+                _theText.fontSize = size;
         }
 
-        public static int GetTextSize() {
-            if (TheText != null)
-                return TheText.fontSize;
-            return 40;
-        }
+        public static int GetTextSize() => _theText != null ? _theText.fontSize : 40;
 
         public static void MoveTheText() {
-            if (TheText != null)
-                TheText.GetComponent<RectTransform>().anchoredPosition = new Vector2(15, Config.uncapListCount.Value ? -150 : 125);
+            if (_theText != null)
+                _theText.GetComponent<RectTransform>().anchoredPosition = new Vector2(15, Config.uncapListCount.Value ? -150 : 125);
         }
 
         internal override void OnPrefSave() {
-            if (Initialized && !Config.PLEnabled.Value) {
+            if (_initialized && !Config.PLEnabled.Value) {
                 var obj = MelonCoroutines.Start(HUDLoop());
-                Initialized = false;
-                BackgroundObject.Destroy();
+                _initialized = false;
+                _backgroundObject.Destroy();
                 if (MintCore.Fool)
-                    Foolish.Destroy();
-                TextObject.Destroy();
-                Wing.Find("MintUiHud Panel").gameObject.Destroy();
+                    _foolish.Destroy();
+                _textObject.Destroy();
+                _wing.Find("MintUiHud Panel").gameObject.Destroy();
                 //RightWing.Find("MintUiHud Panel")?.Destroy();
                 try { MelonCoroutines.Stop(obj); } catch (Exception ee) { Con.Debug($"[ERROR] {ee}"); }
-            } else if (!Initialized && Config.PLEnabled.Value) 
+            } else if (!_initialized && Config.PLEnabled.Value) 
                 MelonCoroutines.Start(Init());
 
-            if (Initialized && Config.PLEnabled.Value) {
-                SetLocation();
-                SetSizeTextObj();
-                SetBackgroundColor(Config.BackgroundColor.Value);
-            }
+            if (!_initialized || !Config.PLEnabled.Value) return;
+            SetLocation();
+            SetSizeTextObj();
+            SetBackgroundColor(Config.BackgroundColor.Value);
         }
     }
 }

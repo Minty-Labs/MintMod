@@ -22,7 +22,8 @@ namespace MintMod.UserInterface {
     internal class Nameplates : MintSubMod {
         public override string Name => "MintyNameplates";
         public override string Description => "Colors Nameplates for certain people.";
-        public static Regex methodMatchRegex = new("Method_Public_Void_\\d", RegexOptions.Compiled);
+        
+        public static readonly Regex MethodMatchRegex = new("Method_Public_Void_\\d", RegexOptions.Compiled);
         private static bool _privateServerRanNoticeOnce;
 
         internal override void OnStart() {
@@ -40,7 +41,7 @@ namespace MintMod.UserInterface {
                      player.isActiveAndEnabled == false ||
                      player.field_Internal_Animator_0 == null ||
                      player.field_Internal_GameObject_0 == null ||
-                     player.field_Internal_GameObject_0.name.IndexOf("Avatar_Utility_Base_") == 0);
+                     player.field_Internal_GameObject_0.name.IndexOf("Avatar_Utility_Base_", StringComparison.Ordinal) == 0);
         }
 
         static void OnAvatarIsReady(VRCPlayer vrcPlayer) {
@@ -48,41 +49,40 @@ namespace MintMod.UserInterface {
             if (MintUserInterface.isStreamerModeOn) return;
             if (!Config.EnableCustomNameplateReColoring.Value) return;
             if (ModCompatibility.GPrivateServer) {
-                if (!_privateServerRanNoticeOnce) {
-                    Con.Msg("Minty Nameplates are disabled");
-                    _privateServerRanNoticeOnce = true;
-                }
+                if (_privateServerRanNoticeOnce) return;
+                Con.Msg("Minty Nameplates are disabled");
+                _privateServerRanNoticeOnce = true;
                 return;
             }
-            if (ValidatePlayerAvatar(vrcPlayer)) {
-                //Player player = vrcPlayer._player;
 
-                if (vrcPlayer.field_Public_PlayerNameplate_0 == null)
-                    return;
+            if (!ValidatePlayerAvatar(vrcPlayer)) return;
+            //Player player = vrcPlayer._player;
 
-                var nameplate = vrcPlayer.field_Public_PlayerNameplate_0;
-                var helper = nameplate.GetComponent<MintyNameplateHelper>();
-                if (helper == null) {
-                    helper = nameplate.gameObject.AddComponent<MintyNameplateHelper>();
-                    helper.SetNameplate(nameplate);
-                    //Logger.Debug("Fetching objects from heirarhcy");
-                    helper.uiIconBackground = nameplate.gameObject.transform.Find("Contents/Icon/Background").GetComponent<Image>();
-                    helper.uiUserImage = nameplate.gameObject.transform.Find("Contents/Icon/User Image").GetComponent<RawImage>();
-                    helper.uiUserImageContainer = nameplate.gameObject.transform.Find("Contents/Icon").gameObject;
-                    helper.uiNameBackground = nameplate.gameObject.transform.Find("Contents/Main/Background").GetComponent<ImageThreeSlice>();
-                    helper.uiQuickStatsBackground = nameplate.gameObject.transform.Find("Contents/Quick Stats").GetComponent<ImageThreeSlice>();
-                    helper.uiName = nameplate.gameObject.transform.Find("Contents/Main/Text Container/Name").GetComponent<TextMeshProUGUI>();
-                    //Logger.Debug("Created NameplateHelper on nameplate");
-                }
+            if (vrcPlayer.field_Public_PlayerNameplate_0 == null)
+                return;
 
-                try { ApplyNameplatesFromValues(nameplate, helper); } 
-                catch (Exception n) { Con.Error($"Could not apply nameplate color\n{n}"); }
-
-                helper.OnRebuild();
+            var nameplate = vrcPlayer.field_Public_PlayerNameplate_0;
+            var helper = nameplate.GetComponent<MintyNameplateHelper>();
+            if (helper == null) {
+                helper = nameplate.gameObject.AddComponent<MintyNameplateHelper>();
+                helper.SetNameplate(nameplate);
+                //Logger.Debug("Fetching objects from heirarhcy");
+                helper.uiIconBackground = nameplate.gameObject.transform.Find("Contents/Icon/Background").GetComponent<Image>();
+                helper.uiUserImage = nameplate.gameObject.transform.Find("Contents/Icon/User Image").GetComponent<RawImage>();
+                helper.uiUserImageContainer = nameplate.gameObject.transform.Find("Contents/Icon").gameObject;
+                helper.uiNameBackground = nameplate.gameObject.transform.Find("Contents/Main/Background").GetComponent<ImageThreeSlice>();
+                helper.uiQuickStatsBackground = nameplate.gameObject.transform.Find("Contents/Quick Stats").GetComponent<ImageThreeSlice>();
+                helper.uiName = nameplate.gameObject.transform.Find("Contents/Main/Text Container/Name").GetComponent<TextMeshProUGUI>();
+                //Logger.Debug("Created NameplateHelper on nameplate");
             }
+
+            try { ApplyNameplatesFromValues(nameplate, helper); } 
+            catch (Exception n) { Con.Error($"Could not apply nameplate color\n{n}"); }
+
+            helper.OnRebuild();
         }
 
-        private static void ApplyNameplateColour(PlayerNameplate nameplate, MintyNameplateHelper helper,
+        private static void ApplyNameplateColour(Component nameplate, MintyNameplateHelper helper,
             bool bgRainbow = false,
             Color? bgColor = null,
             Color? bgColorLerp = null,
@@ -91,11 +91,11 @@ namespace MintMod.UserInterface {
             bool changeLerpTime = false,
             float lerpTime = 3f,
             bool resetToDefaultMat = false,
-            string TagText = null,
-            Color? TagBGColour = null,
-            bool disableBGImage = false,
-            Color? TagFontColour = null,
-            bool removeBGImg = false,
+            string tagText = null,
+            Color? tagBgColour = null,
+            bool disableBgImage = false,
+            Color? tagFontColour = null,
+            bool removeBgImg = false,
             string forceFakeName = "") {
             
             if (helper == null)
@@ -123,7 +123,7 @@ namespace MintMod.UserInterface {
 
                 helper.SetBGColour(bgColor.Value);
 
-                if (removeBGImg)
+                if (removeBgImg)
                     helper.uiNameBackground.enabled = false;
                 helper.OnRebuild();
             }
@@ -163,17 +163,17 @@ namespace MintMod.UserInterface {
 
             // Create and set Extra Text
             if (!Config.EnabledMintTags.Value) return;
-            if (string.IsNullOrWhiteSpace(TagText)) return;
+            if (string.IsNullOrWhiteSpace(tagText)) return;
             try {
                 
                 var transform = nameplate.transform.Find("Contents");
                 //var transform2 = transform.Find("Status Line");
                 var transform4 = transform.Find("Quick Stats");
                 
-                var transform5 = transform.Find("Mint_CustomTag");
-                if (transform5 == null) {
-                    transform5 = UnityEngine.Object.Instantiate(transform4, transform4.parent, false);
-                    transform5.name = "Mint_CustomTag";
+                MintTag = transform.Find("Mint_CustomTag");
+                if (MintTag == null) {
+                    MintTag = UnityEngine.Object.Instantiate(transform4, transform4.parent, false);
+                    MintTag.name = "Mint_CustomTag";
                     
                     /*var avatarDynamicsTouchIcon = transform2.Find("InteractionStatus");
                      
@@ -186,34 +186,40 @@ namespace MintMod.UserInterface {
                      else
                         transform5.localPosition = new Vector3(0f, -60f, 0f);
                      */
-                    MoveMintTag(transform5, Config.MintTagVerticleLocation.Value);
-                    var component = transform5.Find("Trust Text").GetComponent<TextMeshProUGUI>();
+                    MoveMintTag(MintTag, Config.MintTagVerticleLocation.Value);
+                    var component = MintTag.Find("Trust Text").GetComponent<TextMeshProUGUI>();
                     component.richText = true;
-                    component.text = TagText;
-                    component.color = TagFontColour ?? ColorConversion.HexToColor("eeeeee");
+                    component.text = tagText;
+                    component.color = tagFontColour ?? ColorConversion.HexToColor("eeeeee");
                     
-                    if (disableBGImage)
-                        transform5.GetComponent<ImageThreeSlice>().enabled = false;
+                    if (disableBgImage)
+                        MintTag.GetComponent<ImageThreeSlice>().enabled = false;
                     else 
-                        transform5.GetComponent<ImageThreeSlice>().color = TagBGColour ?? Color.white;
+                        MintTag.GetComponent<ImageThreeSlice>().color = tagBgColour ?? Color.white;
                     
-                    for (var i = transform5.childCount; i > 0; i--) {
-                        var child = transform5.GetChild(i - 1);
+                    for (var i = MintTag.childCount; i > 0; i--) {
+                        var child = MintTag.GetChild(i - 1);
                         if (child.name != "Trust Text")
                             UnityEngine.Object.Destroy(child.gameObject);
                     }
-                } else transform5.gameObject.SetActive(true);
+                } else MintTag.gameObject.SetActive(true);
                 
             } catch (Exception e) { if (MintCore.isDebug) Con.Error(e); }
         }
 
-        private static Vector3 MintTagLocation;
+        public static Transform MintTag { get; private set; }
+
+        internal override void OnPrefSave() {
+            if (!Config.EnabledMintTags.Value) return;
+            if (MintTag == null) return;
+            MoveMintTag(MintTag, Config.MintTagVerticleLocation.Value);
+        }
 
         private static void MoveMintTag(Transform transform, float y) => transform.localPosition = new Vector3(0f, y, 0f);
 
-        private static void ApplyFriendsRankColor(MintyNameplateHelper helper, Color RankColor) {
+        private static void ApplyFriendsRankColor(MintyNameplateHelper helper, Color rankColor) {
             if (helper == null) return;
-            helper.SetNameColour(RankColor);
+            helper.SetNameColour(rankColor);
             helper.OnRebuild();
         }
 
@@ -232,8 +238,8 @@ namespace MintMod.UserInterface {
 
             if (npID.StartsWith("usr_e1c908e4")) {
                 Random rnd = new();
-                int num = rnd.Next(0, 10);
-                bool chance = num > 8;
+                var num = rnd.Next(0, 10);
+                var chance = num > 8;
                 if (chance) npID += "-retarded";
                 Con.Debug($"George's random funny shown -> {chance}", MintCore.isDebug);
             }
@@ -254,20 +260,19 @@ namespace MintMod.UserInterface {
                 helper.OnRebuild();
             else {
                 //Nameplate doesn't have a helper, lets fix that
-                if (nameplate.field_Private_VRCPlayer_0 != null)
-                    if (nameplate.field_Private_VRCPlayer_0._player != null && nameplate.field_Private_VRCPlayer_0._player.prop_APIUser_0 != null)
-                        OnAvatarIsReady(nameplate.field_Private_VRCPlayer_0);
+                if (nameplate.field_Private_VRCPlayer_0 == null) return;
+                if (nameplate.field_Private_VRCPlayer_0._player != null && nameplate.field_Private_VRCPlayer_0._player.prop_APIUser_0 != null)
+                    OnAvatarIsReady(nameplate.field_Private_VRCPlayer_0);
             }
         }
 
         public static void OnVRCPlayerAwake(VRCPlayer vrcPlayer) {
             if (ModCompatibility.MintyNameplates) return;
             vrcPlayer.Method_Public_add_Void_OnAvatarIsReady_0(new Action(() => {
-                if (vrcPlayer != null) {
-                    if (vrcPlayer._player != null)
-                        if (vrcPlayer._player.prop_APIUser_0 != null)
-                            OnAvatarIsReady(vrcPlayer);
-                }
+                if (vrcPlayer == null) return;
+                if (vrcPlayer._player == null) return;
+                if (vrcPlayer._player.prop_APIUser_0 != null)
+                    OnAvatarIsReady(vrcPlayer);
             }));
         }
     }
