@@ -41,7 +41,7 @@ namespace MintyLoader {
         public static void Error(object stack, object trace) => Logger.Error($"=== STACK ===\n{stack}\n=== TRACE ==={trace}");
 
         public static void Debug(string s, bool isDebug = false) {
-            if (Environment.CommandLine.Contains("--MintyDev") || isDebug || MintyLoader.isDebug)
+            if (Environment.CommandLine.Contains("--MintyDev") || isDebug || MintyLoader.IsDebug)
                 Logger.Msg(ConsoleColor.Cyan, s);
         }
 

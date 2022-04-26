@@ -8,20 +8,21 @@ namespace MintyLoader {
         public const string Name = "MintyLoader";
         public const string Author = "Lily";
         public const string Company = "Minty Labs";
-        public const string Version = "2.7.2";
+        public const string Version = "2.7.3";
         public const string DownloadLink = "https://mintlily.lgbt/mod/loader/MintyLoader.dll";
     }
    
     public class MintyLoader : MelonMod {
         public static MintyLoader Instance;
         internal static readonly DirectoryInfo MintDirectory = new DirectoryInfo($"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}UserData{Path.DirectorySeparatorChar}MintMod");
-        internal static bool hasQuit, isDebug;
+        private static bool _hasQuit;
+        internal static bool IsDebug;
         internal static readonly MelonLogger.Instance InternalLogger = new MelonLogger.Instance("MintyLoader", ConsoleColor.Red);
 
         public override void OnApplicationStart() {
             Instance = this;
             InternalLogger.Msg("Minty".Pastel("9fffe3") + "Loader is starting up!");
-            isDebug = Environment.CommandLine.Contains("--MintyDev"); // Check if running as Debug
+            IsDebug = Environment.CommandLine.Contains("--MintyDev"); // Check if running as Debug
 #if DEBUG
             Interpreter.PopulateNativeAssembly.Populate(out _); // Create MintyNative
             if (!Interpreter.PopulateNativeAssembly.Failed)
@@ -30,8 +31,8 @@ namespace MintyLoader {
 
             // Preload
             ModBlacklist.BlacklistedModCheck(); // Check if running blacklisted mod(s)
-            ReMod_Core_Loader.DownloadAndWrite(out _); // Write ReMod.Core.dll to VRC dir root if they do not have ReMod CE or Private
-            if (ReMod_Core_Loader.Failed) {
+            ReModCoreLoader.DownloadAndWrite(out _); // Write ReMod.Core.dll to VRC dir root if they do not have ReMod CE or Private
+            if (ReModCoreLoader.Failed) {
                 InternalLogger.Warning("ReMod.Core Failed to load, I am not going to load MintMod!");
                 return;
             }
@@ -57,8 +58,8 @@ namespace MintyLoader {
         public override void OnUpdate() => LoadManager.MintMod?.OnUpdate();
 
         public override void OnApplicationQuit() {
-            if (!hasQuit) {
-                hasQuit = true;
+            if (!_hasQuit) {
+                _hasQuit = true;
                 LoadManager.MintMod?.OnApplicationQuit();
 #if DEBUG
                 Interpreter.NativeInterpreter.Interpreter?.RunOnAppQuit();

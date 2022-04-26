@@ -56,7 +56,7 @@ namespace MintyLoader {
                 //LoaderIsUpToDate = true;
                 MintyLoader.InternalLogger.Msg("Loader Build version: ".Pastel("008B8B") + BuildInfo.Version.Pastel("9fffe3") + 
                                                " :: Server pulled: ".Pastel("008B8B") + checkedVer.Pastel("9fffe3"));
-                if (MintyLoader.isDebug)
+                if (MintyLoader.IsDebug)
                     LoadManager.LoadLocal();
                 else
                     LoadManager.LoadWebhost();
