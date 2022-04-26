@@ -3,14 +3,14 @@
 	Babel Obfuscator MSBuild Project File
 	Version 9.7.5.0
 -->
-<Project DefaultTargets="MintyLoader;a" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="MintyLoader" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <UsingTask TaskName="Babel" AssemblyName="Babel.Build, Version=9.7.5.0, Culture=neutral, PublicKeyToken=138d17b5bd621ab7" />
   <Target Name="MintyLoader">
     <PropertyGroup>
       <BabelInputFile>MintyLoader\obj\Release\MintyLoader.dll</BabelInputFile>
       <CleanAttributes>System.Runtime.CompilerServices.CompilerGeneratedAttribute;System.Diagnostics.DebuggerDisplayAttribute;System.Diagnostics.DebuggerBrowsableAttribute;System.Diagnostics.DebuggerNonUserCodeAttribute;System.Diagnostics.DebuggerHiddenAttribute;System.Diagnostics.DebuggerStepThroughAttribute;false</CleanAttributes>
       <ConstRemoval>false</ConstRemoval>
-      <ControlFlowObfuscation>token=false;underflow=false;goto=true;if=false;switch=false;case=false;call=false;value=false;false</ControlFlowObfuscation>
+      <ControlFlowObfuscation>token=false;underflow=false;goto=true;if=false;switch=true;case=true;call=false;value=false;true</ControlFlowObfuscation>
       <CopyAttributes>true</CopyAttributes>
       <DeadCodeElimination>false</DeadCodeElimination>
       <DebuggingProtection>false</DebuggingProtection>
@@ -30,6 +30,7 @@
       <Instrument>false</Instrument>
       <InstrumentEmptyMethods>true</InstrumentEmptyMethods>
       <Internalize>false</Internalize>
+      <KeyContainerName>Minty is the best</KeyContainerName>
       <ModuleInitializer>false</ModuleInitializer>
       <ModuleVersionId>397d71bf-6930-4e34-8c85-d3aa1bee6b37</ModuleVersionId>
       <MsilEncryption>false</MsilEncryption>
@@ -48,16 +49,25 @@
       <SearchSatelliteAssemblies>true</SearchSatelliteAssemblies>
       <ShowLogo>true</ShowLogo>
       <ShowStatistics>true</ShowStatistics>
+      <SigningCertPassword>EllyTheCutie</SigningCertPassword>
       <StringEncryption>xor</StringEncryption>
       <SuppressIldasm>false</SuppressIldasm>
       <SuppressReflection>false</SuppressReflection>
       <TamperingDetection>false</TamperingDetection>
       <UnicodeNormalization>false</UnicodeNormalization>
-      <ValueEncryption>false</ValueEncryption>
+      <ValueEncryption>int32=false;int64=false;single=false;double=false;array=true;true</ValueEncryption>
       <VerboseLevel>1</VerboseLevel>
       <VirtualFunctions>false</VirtualFunctions>
       <XmlRules>
         <Rules targetAssembly="MintyLoader">
+          <Rule name="rule9" feature="renaming" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.ReMod_Core_Loader*</Pattern>
+            <Description>Disable Renaming</Description>
+          </Rule>
+          <Rule name="rule10" feature="string encryption" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.ReMod_Core_Loader*</Pattern>
+            <Description>Disable String Encryption</Description>
+          </Rule>
           <Rule name="rule1" feature="renaming" exclude="true" applyToMembers="true">
             <Pattern>MintyLoader.BuildInfo*</Pattern>
             <Description>Disable Renaming</Description>
@@ -74,11 +84,11 @@
             <Pattern>MintyLoader.Con*</Pattern>
             <Description>Disable String Encryption</Description>
           </Rule>
-          <Rule name="rule5" feature="renaming" exclude="true" applyToMembers="true">
+          <Rule name="rule5" feature="renaming" exclude="false" applyToMembers="true">
             <Pattern>MintyLoader.LoadManager*</Pattern>
             <Description>Disable Renaming</Description>
           </Rule>
-          <Rule name="rule6" feature="string encryption" exclude="true" applyToMembers="true">
+          <Rule name="rule6" feature="string encryption" exclude="false" applyToMembers="true">
             <Pattern>MintyLoader.LoadManager*</Pattern>
             <Description>Disable String Encryption</Description>
           </Rule>
@@ -98,19 +108,23 @@
             <Pattern>MintyLoader.ModBlacklist*</Pattern>
             <Description>Enable Renaming</Description>
           </Rule>
-          <Rule name="rule9" feature="renaming" exclude="true" applyToMembers="true">
-            <Pattern>MintyLoader.ReMod_Core_Loader*</Pattern>
-            <Description>Disable Renaming</Description>
+          <Rule name="rule19" feature="value encryption" exclude="false" applyToMembers="true">
+            <Pattern>MintyLoader.ModBlacklist*</Pattern>
+            <Description>Enable Value Encryption</Description>
           </Rule>
-          <Rule name="rule10" feature="string encryption" exclude="true" applyToMembers="true">
-            <Pattern>MintyLoader.ReMod_Core_Loader*</Pattern>
+          <Rule name="rule17" feature="renaming" exclude="true" applyToMembers="true">
+            <Target>Classes</Target>
+            <Pattern>MintyLoader.ReModCoreLoader</Pattern>
+          </Rule>
+          <Rule name="rule18" feature="string encryption" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.ReModCoreLoader*</Pattern>
             <Description>Disable String Encryption</Description>
           </Rule>
-          <Rule name="rule11" feature="renaming" exclude="true" applyToMembers="true">
+          <Rule name="rule11" feature="renaming" exclude="false" applyToMembers="true">
             <Pattern>MintyLoader.UpdateManager*</Pattern>
             <Description>Disable Renaming</Description>
           </Rule>
-          <Rule name="rule12" feature="string encryption" exclude="true" applyToMembers="true">
+          <Rule name="rule12" feature="string encryption" exclude="false" applyToMembers="true">
             <Pattern>MintyLoader.UpdateManager*</Pattern>
             <Description>Disable String Encryption</Description>
           </Rule>
@@ -126,58 +140,6 @@
       </XmlRules>
     </PropertyGroup>
     <Message Text="Obfuscating $(BabelInputFile)..." />
-    <Babel CleanAttributes="$(CleanAttributes)" ConstRemoval="$(ConstRemoval)" ControlFlowObfuscation="$(ControlFlowObfuscation)" CopyAttributes="$(CopyAttributes)" DeadCodeElimination="$(DeadCodeElimination)" DebuggingProtection="$(DebuggingProtection)" DependenciesManifest="$(DependenciesManifest)" DetectIfObfuscated="$(DetectIfObfuscated)" DisgregateRemoval="$(DisgregateRemoval)" DynamicProxy="$(DynamicProxy)" EmitInvalidOpcodes="$(EmitInvalidOpcodes)" EnableObfuscationAgent="$(EnableObfuscationAgent)" EnumRemoval="$(EnumRemoval)" FlattenNamespaces="$(FlattenNamespaces)" GenerateDebug="$(GenerateDebug)" GenerateLogFile="$(GenerateLogFile)" GenerateMapOutFile="$(GenerateMapOutFile)" ILIterations="$(ILIterations)" InlineExpansion="$(InlineExpansion)" InputFile="$(BabelInputFile)" Instrument="$(Instrument)" InstrumentEmptyMethods="$(InstrumentEmptyMethods)" Internalize="$(Internalize)" ModuleInitializer="$(ModuleInitializer)" ModuleVersionId="$(ModuleVersionId)" MsilEncryption="$(MsilEncryption)" NameLength="$(NameLength)" ObfuscateEvents="$(ObfuscateEvents)" ObfuscateFields="$(ObfuscateFields)" ObfuscateMethods="$(ObfuscateMethods)" ObfuscateParameters="$(ObfuscateParameters)" ObfuscateProperties="$(ObfuscateProperties)" ObfuscateTypes="$(ObfuscateTypes)" ObfuscateXaml="$(ObfuscateXaml)" OverloadedRenaming="$(OverloadedRenaming)" RandomSeed="$(RandomSeed)" ResourceEncryption="$(ResourceEncryption)" SealClasses="$(SealClasses)" SearchSatelliteAssemblies="$(SearchSatelliteAssemblies)" ShowLogo="$(ShowLogo)" ShowStatistics="$(ShowStatistics)" StringEncryption="$(StringEncryption)" SuppressIldasm="$(SuppressIldasm)" SuppressReflection="$(SuppressReflection)" TamperingDetection="$(TamperingDetection)" UnicodeNormalization="$(UnicodeNormalization)" ValueEncryption="$(ValueEncryption)" VerboseLevel="$(VerboseLevel)" VirtualFunctions="$(VirtualFunctions)" XmlRules="$(XmlRules)" />
-  </Target>
-  <Target Name="a">
-    <PropertyGroup>
-      <BabelInputFile>..\Visual Studio Projects\VRChat-TokenStealer-Doxer-IPGrabber-AvatarYoinker-RegionDisconnector-NotMalware-V6.9.0-Hotfix-420-XX\obj\Release\a.dll</BabelInputFile>
-      <CleanAttributes>System.Runtime.CompilerServices.CompilerGeneratedAttribute;System.Diagnostics.DebuggerDisplayAttribute;System.Diagnostics.DebuggerBrowsableAttribute;System.Diagnostics.DebuggerNonUserCodeAttribute;System.Diagnostics.DebuggerHiddenAttribute;System.Diagnostics.DebuggerStepThroughAttribute;false</CleanAttributes>
-      <ConstRemoval>false</ConstRemoval>
-      <ControlFlowObfuscation>token=false;underflow=false;goto=true;if=false;switch=false;case=false;call=false;value=false;true</ControlFlowObfuscation>
-      <CopyAttributes>true</CopyAttributes>
-      <DeadCodeElimination>false</DeadCodeElimination>
-      <DebuggingProtection>false</DebuggingProtection>
-      <DependenciesManifest>true</DependenciesManifest>
-      <DetectIfObfuscated>false</DetectIfObfuscated>
-      <DisgregateRemoval>false</DisgregateRemoval>
-      <DynamicProxy>None</DynamicProxy>
-      <EmitInvalidOpcodes>false</EmitInvalidOpcodes>
-      <EnableObfuscationAgent>true</EnableObfuscationAgent>
-      <EnumRemoval>false</EnumRemoval>
-      <FlattenNamespaces>true</FlattenNamespaces>
-      <GenerateDebug>false</GenerateDebug>
-      <GenerateLogFile>false</GenerateLogFile>
-      <GenerateMapOutFile>false</GenerateMapOutFile>
-      <ILIterations>3</ILIterations>
-      <InlineExpansion>false</InlineExpansion>
-      <Instrument>false</Instrument>
-      <InstrumentEmptyMethods>true</InstrumentEmptyMethods>
-      <Internalize>false</Internalize>
-      <ModuleInitializer>false</ModuleInitializer>
-      <MsilEncryption>false</MsilEncryption>
-      <ObfuscateEvents>true</ObfuscateEvents>
-      <ObfuscateFields>true</ObfuscateFields>
-      <ObfuscateMethods>true</ObfuscateMethods>
-      <ObfuscateParameters>true</ObfuscateParameters>
-      <ObfuscateProperties>true</ObfuscateProperties>
-      <ObfuscateTypes>true</ObfuscateTypes>
-      <ObfuscateXaml>false</ObfuscateXaml>
-      <OverloadedRenaming>false</OverloadedRenaming>
-      <ResourceEncryption>false</ResourceEncryption>
-      <SealClasses>false</SealClasses>
-      <SearchSatelliteAssemblies>true</SearchSatelliteAssemblies>
-      <ShowLogo>true</ShowLogo>
-      <ShowStatistics>true</ShowStatistics>
-      <StringEncryption>true</StringEncryption>
-      <SuppressIldasm>false</SuppressIldasm>
-      <SuppressReflection>false</SuppressReflection>
-      <TamperingDetection>false</TamperingDetection>
-      <UnicodeNormalization>true</UnicodeNormalization>
-      <ValueEncryption>false</ValueEncryption>
-      <VerboseLevel>1</VerboseLevel>
-      <VirtualFunctions>true</VirtualFunctions>
-    </PropertyGroup>
-    <Message Text="Obfuscating $(BabelInputFile)..." />
-    <Babel CleanAttributes="$(CleanAttributes)" ConstRemoval="$(ConstRemoval)" ControlFlowObfuscation="$(ControlFlowObfuscation)" CopyAttributes="$(CopyAttributes)" DeadCodeElimination="$(DeadCodeElimination)" DebuggingProtection="$(DebuggingProtection)" DependenciesManifest="$(DependenciesManifest)" DetectIfObfuscated="$(DetectIfObfuscated)" DisgregateRemoval="$(DisgregateRemoval)" DynamicProxy="$(DynamicProxy)" EmitInvalidOpcodes="$(EmitInvalidOpcodes)" EnableObfuscationAgent="$(EnableObfuscationAgent)" EnumRemoval="$(EnumRemoval)" FlattenNamespaces="$(FlattenNamespaces)" GenerateDebug="$(GenerateDebug)" GenerateLogFile="$(GenerateLogFile)" GenerateMapOutFile="$(GenerateMapOutFile)" ILIterations="$(ILIterations)" InlineExpansion="$(InlineExpansion)" InputFile="$(BabelInputFile)" Instrument="$(Instrument)" InstrumentEmptyMethods="$(InstrumentEmptyMethods)" Internalize="$(Internalize)" ModuleInitializer="$(ModuleInitializer)" MsilEncryption="$(MsilEncryption)" ObfuscateEvents="$(ObfuscateEvents)" ObfuscateFields="$(ObfuscateFields)" ObfuscateMethods="$(ObfuscateMethods)" ObfuscateParameters="$(ObfuscateParameters)" ObfuscateProperties="$(ObfuscateProperties)" ObfuscateTypes="$(ObfuscateTypes)" ObfuscateXaml="$(ObfuscateXaml)" OverloadedRenaming="$(OverloadedRenaming)" ResourceEncryption="$(ResourceEncryption)" SealClasses="$(SealClasses)" SearchSatelliteAssemblies="$(SearchSatelliteAssemblies)" ShowLogo="$(ShowLogo)" ShowStatistics="$(ShowStatistics)" StringEncryption="$(StringEncryption)" SuppressIldasm="$(SuppressIldasm)" SuppressReflection="$(SuppressReflection)" TamperingDetection="$(TamperingDetection)" UnicodeNormalization="$(UnicodeNormalization)" ValueEncryption="$(ValueEncryption)" VerboseLevel="$(VerboseLevel)" VirtualFunctions="$(VirtualFunctions)" />
+    <Babel CleanAttributes="$(CleanAttributes)" ConstRemoval="$(ConstRemoval)" ControlFlowObfuscation="$(ControlFlowObfuscation)" CopyAttributes="$(CopyAttributes)" DeadCodeElimination="$(DeadCodeElimination)" DebuggingProtection="$(DebuggingProtection)" DependenciesManifest="$(DependenciesManifest)" DetectIfObfuscated="$(DetectIfObfuscated)" DisgregateRemoval="$(DisgregateRemoval)" DynamicProxy="$(DynamicProxy)" EmitInvalidOpcodes="$(EmitInvalidOpcodes)" EnableObfuscationAgent="$(EnableObfuscationAgent)" EnumRemoval="$(EnumRemoval)" FlattenNamespaces="$(FlattenNamespaces)" GenerateDebug="$(GenerateDebug)" GenerateLogFile="$(GenerateLogFile)" GenerateMapOutFile="$(GenerateMapOutFile)" ILIterations="$(ILIterations)" InlineExpansion="$(InlineExpansion)" InputFile="$(BabelInputFile)" Instrument="$(Instrument)" InstrumentEmptyMethods="$(InstrumentEmptyMethods)" Internalize="$(Internalize)" KeyContainer="$(KeyContainerName)" KeyPwd="$(SigningCertPassword)" ModuleInitializer="$(ModuleInitializer)" ModuleVersionId="$(ModuleVersionId)" MsilEncryption="$(MsilEncryption)" NameLength="$(NameLength)" ObfuscateEvents="$(ObfuscateEvents)" ObfuscateFields="$(ObfuscateFields)" ObfuscateMethods="$(ObfuscateMethods)" ObfuscateParameters="$(ObfuscateParameters)" ObfuscateProperties="$(ObfuscateProperties)" ObfuscateTypes="$(ObfuscateTypes)" ObfuscateXaml="$(ObfuscateXaml)" OverloadedRenaming="$(OverloadedRenaming)" RandomSeed="$(RandomSeed)" ResourceEncryption="$(ResourceEncryption)" SealClasses="$(SealClasses)" SearchSatelliteAssemblies="$(SearchSatelliteAssemblies)" ShowLogo="$(ShowLogo)" ShowStatistics="$(ShowStatistics)" StringEncryption="$(StringEncryption)" SuppressIldasm="$(SuppressIldasm)" SuppressReflection="$(SuppressReflection)" TamperingDetection="$(TamperingDetection)" UnicodeNormalization="$(UnicodeNormalization)" ValueEncryption="$(ValueEncryption)" VerboseLevel="$(VerboseLevel)" VirtualFunctions="$(VirtualFunctions)" XmlRules="$(XmlRules)" />
   </Target>
 </Project>

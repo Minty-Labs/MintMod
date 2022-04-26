@@ -4,48 +4,51 @@ using MelonLoader;
 using System.Linq;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using MintyLoader;
 
 namespace MintyLoader {
     public static class ModBlacklist {
-        internal static string[] badMods = { "ripperstore", "ripper", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", /*"snaxytag",*/ "unchained", 
+        internal static string[] BadMods = { "ripperstore", "ripper", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", /*"snaxytag",*/ "unchained", 
             "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen", "astralbypass", "astral", "plan b", "odious", "fusionclient",
-            "fusionmodloader" };
-        internal static string[] badAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "unreal", "bunny", "stellar", "lady lucy", "meap",
-            "fiass", /*"some dude",*/ "kuroi hane", "unixian", "shrekamuschrist" };
-        internal static string[] badPluginAuthors = { "astral", "fck" };
+            "fusionmodloader", "astral", "fluxclient", "flux client" };
+        
+        internal static string[] BadAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "unreal", "bunny", "stellar", "lady lucy", "meap",
+            "fiass", /*"some dude",*/ "kuroi hane", "unixian", "shrekamuschrist", "zypher", "scope", "p a t c h e d   p l u s +" };
+
+        internal static string[] BadPluginAuthors = { "astral", "fck", "zypher" };
+        
+        internal static string[] BadPlugins = { "freeloading", "astralbypass" };
         
         internal static void BlacklistedModCheck() {
             var temp = new List<string>();
             var temp2 = new List<string>();
             var temp3 = new List<string>();
+            var temp4 = new List<string>();
+            
             var t = MelonHandler.Mods.Any(m => {
-                if (badMods.Contains(m.Info.Name.ToLower())) {
-                    temp.Add(m.Info.Name);
-                    return true;
-                }
-                return false;
+                if (!BadMods.Contains(m.Info.Name.ToLower())) return false;
+                temp.Add(m.Info.Name);
+                return true;
             });
             var t2 = MelonHandler.Mods.Any(m => {
-                if (badAuthors.Contains(m.Info.Author.ToLower())) {
-                    temp2.Add(m.Info.Author);
-                    return true;
-                }
                 if (m.Info.Author == null) return true;
-                return false;
+                if (!BadAuthors.Contains(m.Info.Author.ToLower())) return false;
+                temp2.Add(m.Info.Author);
+                return true;
             });
             var t3 = MelonHandler.Plugins.Any(p => {
-                if (badPluginAuthors.Contains(p.Info.Name.ToLower())) {
-                    temp3.Add(p.Info.Name);
-                    return true;
-                }
-                return false;
+                if (!BadPluginAuthors.Contains(p.Info.Author.ToLower())) return false;
+                temp3.Add(p.Info.Author);
+                return true;
+            });
+            var t4 = MelonHandler.Plugins.Any(p => {
+                if (!BadPlugins.Contains(p.Info.Name.ToLower())) return false;
+                temp4.Add(p.Info.Name);
+                return true;
             });
             
             foreach (var mod in temp.Where(mod => t)) {
@@ -53,17 +56,19 @@ namespace MintyLoader {
                 KillGame();
             }
             foreach (var author in temp2.Where(author => t2)) {
-                MessageBox.Show($"Remove the mods by \"{author}\" from your Mods directory.", "Forbidden Author Detected");
+                MessageBox.Show($"Remove the mods by \"{author}\" from your Mods directory.", "Forbidden Mod Author Detected");
                 KillGame();
             }
             foreach (var plugin in temp3.Where(plugin => t3)) {
                 MessageBox.Show($"Remove \"{plugin}\" from your Plugins directory.", "Forbidden Plugin Detected");
                 KillGame();
             }
+            foreach (var pAuthor in temp4.Where(pAuthor => t4)) {
+                MessageBox.Show($"Remove plugins by \"{pAuthor}\" from your Plugins directory.", "Forbidden Plugin Author Detected");
+                KillGame();
+            }
             
-            if (MelonHandler.Plugins.Any(m => m.Info.Name.ToLower().Contains("freeloading")) ||
-                MelonHandler.Plugins.Any(m => badAuthors.Contains(m.Info.Author.ToLower())) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "glu32.dll")) ||
+            if (File.Exists(Path.Combine(Environment.CurrentDirectory, "glu32.dll")) ||
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "winhttp.dll")) ||
                 Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Mods-Freedom")) ||
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "KiraiMod.Loader.dll")) ||
@@ -71,13 +76,13 @@ namespace MintyLoader {
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "KiraiMod.Core.dll")))
                 KillGame();
             
-            if (MintyLoader.isDebug)
+            if (MintyLoader.IsDebug)
                 MintyLoader.Instance.LoggerInstance.Msg("You are not using any blacklisted mods.");
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
+        private static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
 
         internal static void KillGame() {
             try {
@@ -98,7 +103,7 @@ namespace MintyLoader {
         }
     }
 
-    public static class ReMod_Core_Loader {
+    public static class ReModCoreLoader {
         internal static bool Failed;
         
         internal static void DownloadAndWrite(out Assembly loadedAssembly) {
