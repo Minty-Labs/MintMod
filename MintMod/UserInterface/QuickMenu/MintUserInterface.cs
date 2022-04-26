@@ -227,16 +227,21 @@ namespace MintMod.UserInterface.QuickMenu {
             }, MintyResources.clipboard);
             c.AddButton("Go into Avi by ID", "Takes an Avatar ID from your clipboard and changes into that avatar.", () => {
                 try {
-                    string clip = string.Empty;
+                    string clip;
                     try { clip = GUIUtility.systemCopyBuffer; }
                     catch { clip = Clipboard.GetText(); }
 
                     if (clip.Contains("avtr_") && !string.IsNullOrWhiteSpace(clip)) {
-                        PageAvatar a = new() { field_Public_SimpleAvatarPedestal_0 = new() };
-                        new ApiAvatar { id = clip }.Get(new Action<ApiContainer>(x => {
+                        try {
+                            PageAvatar a = new() { field_Public_SimpleAvatarPedestal_0 = new() };
+                            new ApiAvatar { id = clip }.Get(new Action<ApiContainer>(x => {
                                 a.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0 = x.Model.Cast<ApiAvatar>();
                                 a.ChangeToSelectedAvatar();
-                        }));
+                            }));
+                        }
+                        catch {
+                            VRCPlayer.field_Internal_Static_VRCPlayer_0.ChangeToAvatar(clip);
+                        }
                     }
                     else {
                         VRCUiPopups.Notify("No Avatar ID in clipboard", NotificationSystem.Alert);
