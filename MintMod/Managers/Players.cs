@@ -93,11 +93,11 @@ namespace MintMod.Managers {
                 Storage = new();
                 var c = JsonConvert.DeserializeObject<List<CustomPlayerObjects>>(data);
                 foreach (var d in c) {
-                    if (!refreshed) Con.Debug($"Adding {d.userID}", MintCore.isDebug);
+                    if (!refreshed) Con.Debug($"Adding {d.userID}", MintCore.IsDebug);
                     if (!Storage.ContainsKey(d.userID))
                         Storage.Add(d.userID, d);
                 }
-                Con.Debug($"Counted {Storage.Count} for custom nameplates", MintCore.isDebug);
+                Con.Debug($"Counted {Storage.Count} for custom nameplates", MintCore.IsDebug);
             } catch (Exception w) {
                 Con.Error(w);
             }

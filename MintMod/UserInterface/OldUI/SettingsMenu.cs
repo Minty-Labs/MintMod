@@ -208,7 +208,7 @@ namespace MintMod.UserInterface.OldUI {
 
 			Label3 = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/ReleaseType/Label");
 			Label3.GetComponent<Text>().supportRichText = true;
-			Label3.GetComponent<Text>().text = $"<color=#82ffbe>MintMod {(MintCore.isDebug ? "Debug" : "Release")}</color>";
+			Label3.GetComponent<Text>().text = $"<color=#82ffbe>MintMod {(MintCore.IsDebug ? "Debug" : "Release")}</color>";
 			#endregion
 
 			#region AllowUntrustedURLs => Supporters

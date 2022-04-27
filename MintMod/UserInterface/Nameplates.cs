@@ -204,7 +204,7 @@ namespace MintMod.UserInterface {
                     }
                 } else MintTag.gameObject.SetActive(true);
                 
-            } catch (Exception e) { if (MintCore.isDebug) Con.Error(e); }
+            } catch (Exception e) { if (MintCore.IsDebug) Con.Error(e); }
         }
 
         public static Transform MintTag { get; private set; }
@@ -241,7 +241,7 @@ namespace MintMod.UserInterface {
                 var num = rnd.Next(0, 10);
                 var chance = num > 8;
                 if (chance) npID += "-retarded";
-                Con.Debug($"George's random funny shown -> {chance}", MintCore.isDebug);
+                Con.Debug($"George's random funny shown -> {chance}", MintCore.IsDebug);
             }
             
             if (Players.Storage.ContainsKey(npID)) {

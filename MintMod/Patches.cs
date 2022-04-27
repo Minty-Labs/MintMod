@@ -31,7 +31,7 @@ namespace MintMod.Hooks {
         public static Action OnWorldJoin, OnWorldLeave;
 
         private static void ApplyPatches(Type type) {
-            Con.Debug($"Applying {type.Name} patches!", MintCore.isDebug);
+            Con.Debug($"Applying {type.Name} patches!", MintCore.IsDebug);
             try {
                 HarmonyLib.Harmony.CreateAndPatchAll(type, "MintMod_Patches");
             } catch (Exception e) {
@@ -40,7 +40,7 @@ namespace MintMod.Hooks {
         }
 
         internal override void OnStart() {
-            Con.Debug("Setting up patches", MintCore.isDebug);
+            Con.Debug("Setting up patches", MintCore.IsDebug);
 
             if (!ModCompatibility.MintyNameplates) {
                 ApplyPatches(typeof(NameplatePatches));

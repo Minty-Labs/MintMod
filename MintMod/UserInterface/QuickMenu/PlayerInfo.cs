@@ -84,7 +84,7 @@ namespace MintMod.UserInterface.QuickMenu {
             yield return HUDLoop();
         }
 
-        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+        internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
             if (buildindex == -1) 
                 _timer = DateTime.Now;
         }
@@ -117,7 +117,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 if (_theText.text.Contains("~Elly~"))
                     _theText.text = _theText.text.Replace("~Elly~", "<color=#D2A0FF>Elly</color>");
                 if (_theText.text.Contains("MintyLily"))
-                    _theText.text = _theText.text.Replace("MintyLily", "<color=#9f99e3>Lily</color>");
+                    _theText.text = _theText.text.Replace("MintyLily", "<color=#9fffe3>Lily</color>");
                 if (!string.IsNullOrWhiteSpace(Config.LocalSpoofedName.Value)) 
                     _theText.text = _theText.text.Replace(APIUser.CurrentUser.displayName, Config.LocalSpoofedName.Value);
             }

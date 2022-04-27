@@ -63,7 +63,7 @@ namespace MintMod.Managers.Notification
                 background.color = ColorConversion.HexToColor(Config.MenuColorHEX.Value, true, 0.7f);
             }
             catch (Exception e) {
-                if (MintCore.isDebug) Con.Error(e);
+                if (MintCore.IsDebug) Con.Error(e);
             }
         }
 

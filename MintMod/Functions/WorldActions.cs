@@ -124,7 +124,7 @@ namespace MintMod.Functions {
             value = -1025
         };
 
-        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+        internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
             switch (buildindex) {
                 case -1:
                     originalMirrors = new List<OriginalMirror>();

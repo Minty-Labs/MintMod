@@ -62,7 +62,7 @@ namespace MintMod.Managers {
             }
         }
 
-        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+        internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
             if (buildindex == -1) {
                 SetItemESPToggle(false);
                 ClearAllPlayerESP();

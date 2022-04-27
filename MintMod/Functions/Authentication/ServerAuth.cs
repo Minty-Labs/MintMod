@@ -43,7 +43,7 @@ namespace MintMod.Functions.Authentication {
 
                 if (!task.IsCompleted || task.Result.Contains("message")) {
                     canLoadMod = false;
-                    Con.Debug("result was null or empty", MintCore.isDebug);
+                    Con.Debug("result was null or empty", MintCore.IsDebug);
                     yield break;
                 }
                 // else canLoadMod = true
@@ -66,7 +66,7 @@ namespace MintMod.Functions.Authentication {
                 {
                     Con.Msg("Authed for MintMod".Pastel("9fffe3"));
                     canLoadMod = true;
-                    MintCore.mods.ForEach(u => {
+                    MintCore.Modules.ForEach(u => {
                         try { u.OnUserInterface(); }
                         catch (Exception e) { Con.Error(e); }
                     });
@@ -77,7 +77,7 @@ namespace MintMod.Functions.Authentication {
                 if (ModCompatibility.GPrivateServer) {
                     Con.Msg("Authed for MintMod via PrivateServer".Pastel("9fffe3"));
                     canLoadMod = true;
-                    MintCore.mods.ForEach(u => {
+                    MintCore.Modules.ForEach(u => {
                         try { u.OnUserInterface(); }
                         catch (Exception e) { Con.Error(e); }
                     });

@@ -26,7 +26,7 @@ namespace MintMod {
 
         internal virtual void OnUpdate() {}
 
-        internal virtual void OnLevelWasLoaded(int buildindex, string SceneName) {}
+        internal virtual void OnLevelWasLoaded(int buildindex, string sceneName) {}
 
         internal virtual void OnGUI() {}
 

@@ -25,22 +25,22 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.30.2";
+            public const string Version = "2.31.0";
 #endif
 #if DEBUG
             public const string Version = "2.29.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "25 April 2022";
+            public const string UpdatedDate = "26 April 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.7.2";
 #endif
         }
 
-        internal static bool isDebug, cancelLoad;
+        internal static bool IsDebug, CancelLoad;
         internal static readonly bool Fool = DateTime.Now.Date == Con.Foolish || Environment.CommandLine.Contains("--Foolish");
 
-        internal static List<MintSubMod> mods = new();
+        internal static List<MintSubMod> Modules = new();
 
         internal static readonly DirectoryInfo MintDirectory = new(Path.Combine(Environment.CurrentDirectory, "UserData", "MintMod"));
 
@@ -54,7 +54,7 @@ namespace MintMod {
             var s = MelonHandler.Mods.Single(m => m.Info.Name.Equals("MintyLoader")).Info.Version;
             //Con.Msg($"Loader Version is: {s}");
             if (s != ModBuildInfo.LoaderVer || MelonHandler.Mods.FindIndex(i => i.Info.Name == "MintyLoader") == -1) {
-                cancelLoad = true;
+                CancelLoad = true;
                 return;
             }
 #endif
@@ -67,7 +67,7 @@ namespace MintMod {
                 isDebug = true;
 #endif
 #if !DEBUG
-            if (Environment.CommandLine.Contains("--MintyDev")) isDebug = true;
+            if (Environment.CommandLine.Contains("--MintyDev")) IsDebug = true;
             /*
             var melonVersion = new Version(BuildInfo.Version);
             if (melonVersion != ModBuildInfo.TargetMLVersion) {
@@ -87,70 +87,71 @@ namespace MintMod {
                     author = true;
                 return name && author;
             }) != -1;
-            mods.Add(new Config());
-            mods.Add(new MintyResources());
-            mods.Add(new Patches());
-            mods.Add(new ServerAuth());
-            mods.Add(new ESP());
-            mods.Add(new KeyBindings());
-            mods.Add(new Items());
-            mods.Add(new LoadingWorldAudio());
-            mods.Add(new MasterFinder());
-            mods.Add(new ReFavs());
-            mods.Add(new RankRecoloring());
-            mods.Add(new Movement());
-            mods.Add(new HudIcon());
-            mods.Add(new ModCompatibility());
-            mods.Add(new ReColor());
-            mods.Add(new AvatarMenu());
-            mods.Add(new SocialMenu());
-            mods.Add(new MenuContentBackdrop());
-            mods.Add(new SettingsMenu());
-            mods.Add(new General());
-            mods.Add(new WorldActions());
-            mods.Add(new RiskyFuncAllower());
-            mods.Add(new MintUserInterface());
-            mods.Add(new Nameplates());
-            mods.Add(new UserInterface.ActionMenu());
-            mods.Add(new Players());
-            mods.Add(new Components());
-            mods.Add(new NotificationSystem());
-            mods.Add(new GetRubyConfig());
-            mods.Add(new NetworkEvents());
-            mods.Add(new PlayerInfo());
-            mods.Add(new StayMute());
+            Modules.Add(new Config());
+            Modules.Add(new MintyResources());
+            Modules.Add(new Patches());
+            Modules.Add(new ServerAuth());
+            Modules.Add(new ESP());
+            Modules.Add(new KeyBindings());
+            Modules.Add(new Items());
+            Modules.Add(new LoadingWorldAudio());
+            Modules.Add(new MasterFinder());
+            Modules.Add(new ReFavs());
+            Modules.Add(new RankRecoloring());
+            Modules.Add(new Movement());
+            Modules.Add(new HudIcon());
+            Modules.Add(new ModCompatibility());
+            Modules.Add(new ReColor());
+            Modules.Add(new AvatarMenu());
+            Modules.Add(new SocialMenu());
+            Modules.Add(new MenuContentBackdrop());
+            Modules.Add(new SettingsMenu());
+            Modules.Add(new General());
+            Modules.Add(new WorldActions());
+            Modules.Add(new RiskyFuncAllower());
+            Modules.Add(new MintUserInterface());
+            Modules.Add(new Nameplates());
+            Modules.Add(new UserInterface.ActionMenu());
+            Modules.Add(new Players());
+            Modules.Add(new Components());
+            Modules.Add(new NotificationSystem());
+            Modules.Add(new GetRubyConfig());
+            Modules.Add(new NetworkEvents());
+            Modules.Add(new PlayerInfo());
+            Modules.Add(new StayMute());
+            Modules.Add(new WorldSettings.BlackCat());
             //mods.Add(new );
 
             ReMod.Core.Unity.EnableDisableListener.RegisterSafe();
 
-            mods.ForEach(a => {
+            Modules.ForEach(a => {
                 try { /*Con.Debug($"---- Loading {a.Name}", isDebug);*/ a.OnStart(); }
                 catch (Exception e) { Con.Error(e); }
             });
-            Con.Debug($"Loaded {mods.Count} SubMods", isDebug);
+            Con.Debug($"Loaded {Modules.Count} SubMods", IsDebug);
         }
 
         public override void OnPreferencesSaved() {
 #if !DEBUG
-            if (cancelLoad) return;
+            if (CancelLoad) return;
 #endif
-            mods.ForEach(s => {
+            Modules.ForEach(s => {
                 try { s.OnPrefSave(); } catch (Exception e) { Con.Error(e); }
             });
         }
 
         public override void OnUpdate() {
 #if !DEBUG
-            if (cancelLoad) return;
+            if (CancelLoad) return;
 #endif
-            mods.ForEach(u => {
+            Modules.ForEach(u => {
                 try { u.OnUpdate(); } catch (Exception e) { Con.Error(e); }
             });
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName) {
 #if !DEBUG
-            if (cancelLoad) return;
+            if (CancelLoad) return;
 #endif
             if (_scenesLoaded <= 2) {
                 _scenesLoaded++;
@@ -158,14 +159,14 @@ namespace MintMod {
                     MelonCoroutines.Start(ServerAuth.AuthUser());
             }
             
-            mods.ForEach(s => {
+            Modules.ForEach(s => {
                 try { s.OnLevelWasLoaded(buildIndex, sceneName); } catch (Exception e) { Con.Error(e); }
             });
         }
 
         public override void OnApplicationQuit() {
             MelonPreferences.Save();
-            mods.ForEach(s => {
+            Modules.ForEach(s => {
                 try { s.OnApplicationQuit(); } catch (Exception e) { Con.Error(e); }
             });
         }

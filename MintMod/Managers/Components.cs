@@ -36,7 +36,7 @@ namespace MintMod.Managers {
         static bool WorldWasChanged = false;
         private static Il2CppArrayBase<VRC_Pickup> pickups;
 
-        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+        internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
             if (buildindex == -1) {
                 WorldWasChanged = true;
 
@@ -72,7 +72,7 @@ namespace MintMod.Managers {
                 foreach (Camera cam in Camera.allCameras) {
                     if (cam.GetComponent<PostProcessLayer>() != null) {
                         if (PostProcessing != cam.GetComponent<PostProcessLayer>().enabled) {
-                            Con.Debug(PostProcessing ? "Auto Removed Post Processing" : "Auto Re-added Post Processing", MintCore.isDebug);
+                            Con.Debug(PostProcessing ? "Auto Removed Post Processing" : "Auto Re-added Post Processing", MintCore.IsDebug);
                             cam.GetComponent<PostProcessLayer>().enabled = PostProcessing;
                         }
                     }
@@ -104,7 +104,7 @@ namespace MintMod.Managers {
                 foreach (Camera cam in Camera.allCameras) {
                     if (cam.GetComponent<PostProcessLayer>() != null) {
                         if (t != cam.GetComponent<PostProcessLayer>().enabled) {
-                            Con.Debug(t ? "Removed Post Processing" : "Re-added Post Processing", MintCore.isDebug);
+                            Con.Debug(t ? "Removed Post Processing" : "Re-added Post Processing", MintCore.IsDebug);
                             cam.GetComponent<PostProcessLayer>().enabled = t;
                         }
                     }

@@ -288,7 +288,7 @@ namespace MintMod.UserInterface.OldUI {
         private static Il2CppArrayBase<HighlightsFXStandalone> Hfx;
         private static bool HfxFound;
 
-        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+        internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
             if (buildindex == -1 && ModCompatibility.ReMod) {
                 MelonCoroutines.Start(DelayedHfxReColor(finalColor));
             }

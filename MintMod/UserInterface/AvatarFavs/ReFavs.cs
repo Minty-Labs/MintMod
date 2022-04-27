@@ -33,7 +33,7 @@ namespace MintMod.UserInterface.AvatarFavs {
                 Con.Msg("Extended Avatar Favoriting has been disabled.");
                 return;
             }
-            Con.Debug("Starting Minty Favorites (Avatar Favorites)", MintCore.isDebug);
+            Con.Debug("Starting Minty Favorites (Avatar Favorites)", MintCore.IsDebug);
             
             _favoriteAvatarList = new ReAvatarList($"<color=#{(Config.ColorGameMenu.Value ? Config.MenuColorHEX.Value : Colors.defaultMenuColor())}>Minty Favorites</color>",
                     this, false);

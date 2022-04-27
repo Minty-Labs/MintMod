@@ -51,7 +51,7 @@ namespace MintMod.Utils {
 
         #region Throwback Welcome
 
-        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+        internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
             if (Config.ShowWelcomeMessages.Value && buildindex == -1)
                 StartWelcomeMessage();
         }

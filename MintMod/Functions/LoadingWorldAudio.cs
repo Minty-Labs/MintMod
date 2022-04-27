@@ -22,7 +22,7 @@ namespace MintMod.Functions {
 
         IEnumerator Music() {
             if (!Config.UseCustomLoadingMusic.Value) yield break;
-            Con.Debug("Processing custom menu music...", MintCore.isDebug);
+            Con.Debug("Processing custom menu music...", MintCore.IsDebug);
             GameObject gameObject = GameObject.Find("LoadingBackground_TealGradient_Music/LoadingSound");
             GameObject gameObject2 = UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup/LoadingSound").gameObject;
 
