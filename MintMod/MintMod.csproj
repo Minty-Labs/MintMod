@@ -283,6 +283,7 @@
     <Compile Include="Utils\General.cs" />
     <Compile Include="Utils\Network.cs" />
     <Compile Include="Utils\VRCUiPopups.cs" />
+    <Compile Include="WorldSettings\BlackCat.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MintyLoader\MintyLoader.csproj">
@@ -303,6 +304,5 @@
   <ItemGroup>
     <EmbeddedResource Include="Managers\Notification\mintnotification" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

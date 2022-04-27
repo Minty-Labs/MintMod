@@ -13,10 +13,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC;
 using VRC.Core;
+using VRC.UI.Core;
 using VRC.SDKBase;
 using VRC.UI;
 using VRC.UI.Core.Styles;
-using VRC.UI.Core;
 using Button = UnityEngine.UI.Button;
 using MintMod.Managers;
 using MintMod.Reflections;
@@ -27,6 +27,7 @@ using MintMod.Libraries;
 using MintMod.Managers.Notification;
 using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.OldUI;
+using ReMod.Core.UI;
 using TMPro;
 using VRC.DataModel;
 using Object = UnityEngine.Object;
@@ -40,7 +41,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
 
-        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig, /*AvatarMenu*/ NameplateMenu;
+        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig, /*AvatarMenu*/ NameplateMenu, WorldActionsPage;
 
         private static ReMenuSlider FlightSpeedSlider;
 
@@ -120,7 +121,7 @@ namespace MintMod.UserInterface.QuickMenu {
             MainQMNoClip!.Active = Config.KeepFlightBTNsOnMainMenu.Value;
             MainQMFreeze!.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
             MainQMInfJump!.Active = Config.KeepInfJumpOnMainMenu.Value;
-            Con.Debug("Done Setting up StandardMenus", MintCore.isDebug);
+            Con.Debug("Done Setting up StandardMenus", MintCore.IsDebug);
             yield break;
         }
 
@@ -132,7 +133,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 ReTabButton.Create("MintTab", "Open the MintMenu", MintCore.Fool ? "WalmartMenu" : "MintMenu", 
                     MintCore.Fool ? MintyResources.WalmartTab : MintyResources.MintTabIcon);
             else {
-                TheMintMenuButton = UnityEngine.Object.Instantiate(MainMenuBackButton, MainMenuBackButton.transform.parent);
+                TheMintMenuButton = Object.Instantiate(MainMenuBackButton, MainMenuBackButton.transform.parent);
                 TheMintMenuButton.transform.SetAsLastSibling();
                 TheMintMenuButton.transform.Find("Badge_UnfinishedFeature").gameObject.SetActive(false);
                 yield return SetTheFuckingSprite();
@@ -161,15 +162,16 @@ namespace MintMod.UserInterface.QuickMenu {
             PlayerListOptions();
             //BuildAvatarMenu();
             BuildNameplateMenu();
+            BuildWorldActionsMenu();
 
             yield return CreateMediaDebugPanel();
 
-            Con.Debug("Done Setting up MintMenus", MintCore.isDebug);
+            Con.Debug("Done Setting up MintMenus", MintCore.IsDebug);
         }
 
         private static IEnumerator SetTheFuckingSprite() {
             yield return null;
-            UnityEngine.Object.DestroyImmediate(TheMintMenuButton.transform.Find("Icon").GetComponent<StyleElement>());
+            Object.DestroyImmediate(TheMintMenuButton.transform.Find("Icon").GetComponent<StyleElement>());
             MintIcon = TheMintMenuButton.transform.Find("Icon").GetComponent<Image>();
             MintIcon.sprite = MintCore.Fool ? MintyResources.WalmartTab : MintyResources.MintIcon;
             MintIcon.color = Color.white;
@@ -204,7 +206,7 @@ namespace MintMod.UserInterface.QuickMenu {
             FlightSpeedSlider = sc.AddSlider("Min: 0.5", "Control Flight Speed", f => Movement.finalSpeed = f,
                 1f, 0.5f, 5f);
             
-            Con.Debug("Done Creating QuickActions", MintCore.isDebug);
+            Con.Debug("Done Creating QuickActions", MintCore.IsDebug);
         }
 
         #endregion
@@ -245,7 +247,6 @@ namespace MintMod.UserInterface.QuickMenu {
                     }
                     else {
                         VRCUiPopups.Notify("No Avatar ID in clipboard", NotificationSystem.Alert);
-                        //VRCUiManager.field_Private_Static_VRCUiManager_0.InformHudText("No avatar ID in clipboard", Color.white);
                     }
                 }
                 catch (Exception c) {
@@ -261,8 +262,6 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region World Menu
 
-        private static ReMenuToggle WorldToggle;
-
         private static void World() {
             WorldMenu = BaseActions.AddCategoryPage("World", "Actions involving the world.", MintyResources.globe);
             var w = WorldMenu.AddCategory("General Actions");
@@ -274,9 +273,9 @@ namespace MintMod.UserInterface.QuickMenu {
             w.AddSpacer();
 
             w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
-                    string id = RoomManager.field_Internal_Static_ApiWorld_0.id;
-                    string instance = RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
-                    bool faulted = false;
+                    var id = RoomManager.field_Internal_Static_ApiWorld_0.id;
+                    var instance = RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
+                    var faulted = false;
                     try {
                         GUIUtility.systemCopyBuffer = $"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}";
                     }
@@ -289,7 +288,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 }, MintyResources.clipboard);
             w.AddButton("Join Instance by ID", "Join the room of the instance ID", () => {
                 try {
-                    string clip = string.Empty;
+                    string clip;
                     try { clip = GUIUtility.systemCopyBuffer; } catch { clip = Clipboard.GetText(); }
                     
                     if (clip.Contains("launch?")) {
@@ -306,7 +305,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 }
             }, MintyResources.globe);
             w.AddButton("Reset Portal", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
-                if (UnityEngine.Object.FindObjectsOfType<PortalInternal>() == null) return;
+                if (Object.FindObjectsOfType<PortalInternal>() == null) return;
                 var single = default(Il2CppSystem.Single);
                 single.m_value = Config.ResetTimerAmount.Value < 30 ? 30 : Config.ResetTimerAmount.Value;
                 var @object = single.BoxIl2CppObject();
@@ -328,16 +327,6 @@ namespace MintMod.UserInterface.QuickMenu {
             w.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
             w.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
             w.AddButton("Beautify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
-
-            WorldToggle = w.AddToggle("Mint World Toggles", "Toggle Mint specific objects in the world, if there are any.", b => {
-                GameObject g;
-                if (WorldReflect.GetWorldInstance().id == "wrld_b0dfa268-1b67-4ac2-b660-f533a31722d7")
-                    g = GameObject.Find("WORLD BASE/cliffside_modern_home_base/_Mint_SetOFF");
-                else
-                    g = GameObject.Find("_Mint_SetOFF");
-                g!.SetActive(!b);
-            });
-            //WorldToggle.Active = false;
 
             var e = WorldMenu.AddCategory("Item Manipulation");
             e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
@@ -486,7 +475,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 }
             }
 
-            Con.Debug("Done Setting up User Selected Menu", MintCore.isDebug);
+            Con.Debug("Done Setting up User Selected Menu", MintCore.IsDebug);
         }
 
         #endregion
@@ -895,6 +884,24 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #endregion
 
+        #region World Actions
+        
+        private static ReMenuToggle _worldToggle;
+
+        private static void BuildWorldActionsMenu() {
+            WorldActionsPage = BaseActions.AddCategoryPage("World Actions", "Actions involving specific worlds.", MintyResources.globe);
+            var actionCategory = WorldActionsPage.AddCategory("Per-world actions");
+            
+            WorldSettings.BlackCat.BuildMenu(actionCategory);
+            
+            var mintActions = WorldActionsPage.AddCategory("Mint Actions");
+
+            _worldToggle = mintActions.AddToggle("Mint World Toggles", "Toggle Mint specific objects in the world, if there are any.", b => 
+                GameObject.Find("_Mint_SetON")!.SetActive(b));
+        }
+
+        #endregion
+
         #region Media Header
 
         private static Transform _mediaPanel;
@@ -935,8 +942,13 @@ namespace MintMod.UserInterface.QuickMenu {
             _reModHeaderText = _reModTextElement.text;
             
             _mediaPanel.Find("Text_Ping").gameObject.Destroy();
-            _mediaPanel.Find("BTKStatusElement").gameObject!.Destroy();
-            _mediaPanel.Find("BTKClockElement").gameObject!.Destroy();
+            try {
+                _mediaPanel.Find("BTKStatusElement").gameObject!.Destroy();
+                _mediaPanel.Find("BTKClockElement").gameObject!.Destroy();
+            }
+            catch {
+                Con.Debug("Did not find BTK Elements to destroy!");
+            }
             
             _mediaPanelText = _mediaPanel.Find("Text_FPS").GetComponent<TextMeshProUGUI>();
             _mediaPanelText.text = "MediaPanel";
@@ -961,7 +973,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #endregion
 
-        internal override void OnLevelWasLoaded(int buildindex, string SceneName) {
+        internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
             if (buildindex != -1) return;
             PhotonFreeze.ToggleFreeze(false);
             ESP.ClearAllPlayerESP();
@@ -971,7 +983,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         internal override void OnUpdate() {
             PlayerActions.UpdateJump();
-            if (!MintCore.isDebug) return;
+            if (!MintCore.IsDebug) return;
             if (Input.GetKeyDown(KeyCode.End)) UserSelMenu();
         }
 
@@ -1032,21 +1044,20 @@ namespace MintMod.UserInterface.QuickMenu {
                 Config.SavePrefValue(Config.mint, Config.SpoofPing, false);
 
             if (Config.useTabButtonForMenu.Value && o) {
-                var _msg = "Streamer Mode detected, Mint Tab Button is still visible.";
-                Con.Warn(_msg);
-                VRCUiManager.field_Private_Static_VRCUiManager_0.QueueHudMessage(_msg, Color.white, 8f);
+                var msg = "Streamer Mode detected, Mint Tab Button is still visible.";
+                Con.Warn(msg);
+                VRCUiManager.field_Private_Static_VRCUiManager_0.QueueHudMessage(msg, Color.white, 8f);
             }
         }
 
-        private static void RemoveMintBackButtonDuplicate(ReCategoryPage cat) {
-            if (!Config.useTabButtonForMenu.Value) {
-                try {
-                    var _ = cat.GameObject.transform.Find("LeftItemContainer/MintMenuButtonOvertakenBackButton")?.gameObject;
-                    _.DestroyImmediate();
-                }
-                catch (Exception e) {
-                    Con.Error(e);
-                }
+        private static void RemoveMintBackButtonDuplicate(UiElement cat) {
+            if (Config.useTabButtonForMenu.Value) return;
+            try {
+                var _ = cat.GameObject.transform.Find("LeftItemContainer/MintMenuButtonOvertakenBackButton")?.gameObject;
+                _.DestroyImmediate();
+            }
+            catch (Exception e) {
+                Con.Error(e);
             }
         }
     }
