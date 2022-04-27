@@ -33,7 +33,7 @@ namespace MintMod {
             public const string DownloadLink = null;
             public const string UpdatedDate = "26 April 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.7.2";
+            internal const string LoaderVer = "2.7.3";
 #endif
         }
 
