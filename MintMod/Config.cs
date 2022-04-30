@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace MintMod {
-    class Config : MintSubMod {
+    internal class Config : MintSubMod {
         public override string Name => "Config";
         public override string Description => "Mint's Config system.";
         
@@ -20,6 +20,7 @@ namespace MintMod {
             _PlayerList();
             _Nameplates();
             GetReModPrefs();
+            GetNoPerfStatsPrefs();
         }
 
         // Base
@@ -257,6 +258,17 @@ namespace MintMod {
                 _mediaControlsEnabled = MelonPreferences.GetEntry<bool>("ReMod", "MediaControlsEnabled");
             if (MelonPreferences.GetCategory("ReModCE") != null)
                 _mediaControlsEnabledCE = MelonPreferences.GetEntry<bool>("ReModCE", "MediaControlsEnabled");
+        }
+
+        #endregion
+
+        #region NoPerfStats
+
+        public static MelonPreferences_Entry<bool> DisablePerformanceStats;
+            
+        private static void GetNoPerfStatsPrefs() {
+            if (MelonPreferences.GetCategory("NoPerformanceStats") == null) return;
+            DisablePerformanceStats = MelonPreferences.GetEntry<bool>("NoPerformanceStats", "DisablePerformanceStats");
         }
 
         #endregion

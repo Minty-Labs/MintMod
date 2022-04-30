@@ -19,19 +19,19 @@ using MintMod.Managers.Notification;
 
 namespace MintMod {
     public class MintCore : MelonMod {
-        private MelonMod _instance;
+        //private MelonMod _instance;
         public static class ModBuildInfo {
-            public static readonly string Name = DateTime.Now.Date == Con.Foolish ? "Walmart Client" : "MintMod";
+            public static readonly string Name = DateTime.Now.Date == Con.Foolish || Environment.CommandLine.Contains("--Foolish") ? "Walmart Client" : "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.31.0";
+            public const string Version = "2.31.1";
 #endif
 #if DEBUG
             public const string Version = "2.29.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "26 April 2022";
+            public const string UpdatedDate = "30 April 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.7.3";
 #endif
@@ -58,7 +58,7 @@ namespace MintMod {
                 return;
             }
 #endif
-            _instance = this;
+            //_instance = this;
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);
 #if DEBUG

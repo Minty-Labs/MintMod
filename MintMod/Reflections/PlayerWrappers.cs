@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using DiskWars;
 using Il2CppSystem.Collections.Generic;
+using LitJson;
 using UnityEngine;
 using VRC;
 using VRC.Core;
@@ -60,7 +62,7 @@ namespace MintMod.Reflections {
                 _selectedUserMenuQM = Object.FindObjectOfType<SelectedUserMenuQM>();
 
             if (_selectedUserMenuQM != null) {
-                DataModel<APIUser> user = _selectedUserMenuQM.field_Private_IUser_0.Cast<DataModel<APIUser>>();
+                var user = _selectedUserMenuQM.field_Private_IUser_0.Cast<DataModel<APIUser>>();
                 return user.field_Protected_TYPE_0;
             }
 
@@ -121,21 +123,23 @@ namespace MintMod.Reflections {
             return $"{numAsString}{player.GetFrames()}</color>";
         }
 
+        private static int _method = 0;
+
         public static string GetAviPerformance(this VRCPlayer player) {
             try {
-                if (!Nameplates.ValidatePlayerAvatar(player)) return "";
-                //var p = player.field_Private_VRCAvatarManager_0.prop_AvatarPerformanceStats_0
-                //    .field_Private_ArrayOf_EnumPublicSealedvaNoExGoMePoVe7v0_0[(int)AvatarPerformanceCategory.Overall];
-                var pp = (int)player.field_Private_VRCAvatarManager_0.prop_AvatarPerformanceStats_0.GetPerformanceRatingForCategory(AvatarPerformanceCategory.Overall);
-                
-                return pp switch {
-                    5 => "<color=#E45A42>VP</color>",
-                    4 => "<color=#E45A42>P</color>",
-                    3 => "<color=#E7AA08>M</color>",
-                    2 => "<color=#69A95C>G</color>",
-                    1 => "<color=#6BE855>E</color>",
-                    0 => "<i>Loading</i>",
-                    _ => "<i>Blocked</i>"
+                var p = player.field_Private_VRCAvatarManager_0.prop_AvatarPerformanceStats_0.GetPerformanceRatingForCategory(AvatarPerformanceCategory.Overall);
+
+                if (Config.DisablePerformanceStats.Value)
+                    return "<i>Disabled</i>";
+
+                return p switch {
+                    PerformanceRating.VeryPoor =>  "<color=#E45A42>VP</color>",
+                    PerformanceRating.Poor =>      "<color=#E45A42>P</color>",
+                    PerformanceRating.Medium =>    "<color=#E7AA08>M</color>",
+                    PerformanceRating.Good =>      "<color=#69A95C>G</color>",
+                    PerformanceRating.Excellent => "<color=#6BE855>E</color>",
+                    PerformanceRating.None =>      "<i>Loading</i>",
+                    _ =>                           "<i>Blocked</i>"
                 };
             }
             catch {
