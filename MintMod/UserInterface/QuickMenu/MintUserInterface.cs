@@ -71,7 +71,6 @@ namespace MintMod.UserInterface.QuickMenu {
 
             yield return BuildStandard();
             yield return BuildMint();
-            if (!isStreamerModeOn) UserSelMenu();
         }
 
         internal static IEnumerator OnSettingsPageInit() {
@@ -163,6 +162,9 @@ namespace MintMod.UserInterface.QuickMenu {
             //BuildAvatarMenu();
             BuildNameplateMenu();
             BuildWorldActionsMenu();
+            
+            // Build Last
+            UserSelMenu();
 
             yield return CreateMediaDebugPanel();
 
@@ -802,6 +804,7 @@ namespace MintMod.UserInterface.QuickMenu {
             Alpha.Active = o;
             TextSize.Active = o;
             SetHEXValue.Active = o;
+            
             RemoveMintBackButtonDuplicate(PlayerListConfig);
         }
         
@@ -938,6 +941,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 yield break; // Stop method if failed
             }
 
+            var hasNoBtk = false;
+
             _reModTextElement = h.GetComponent<TextMeshProUGUI>();
             _reModHeaderText = _reModTextElement.text;
             
@@ -948,12 +953,30 @@ namespace MintMod.UserInterface.QuickMenu {
             }
             catch {
                 Con.Debug("Did not find BTK Elements to destroy!");
+                hasNoBtk = true;
             }
             
             _mediaPanelText = _mediaPanel.Find("Text_FPS").GetComponent<TextMeshProUGUI>();
             _mediaPanelText.text = "MediaPanel";
             _mediaRectTransform = _mediaPanel.GetComponent<RectTransform>();
             _mediaRectTransform.localPosition = new Vector3(-512, 85, 0);
+
+            if (hasNoBtk) {
+                // Setup HorizontalLayoutGroup - https://github.com/ddakebono/QMClock/blob/main/QMClock/QMClock.cs#L134
+                var horizLayout = _mediaPanel.gameObject.GetOrAddComponent<HorizontalLayoutGroup>();
+                horizLayout.padding.left = 20;
+                horizLayout.padding.right = 20;
+                horizLayout.spacing = 1.5f;
+                
+                // Expand box size - https://github.com/ddakebono/QMClock/blob/main/QMClock/QMClock.cs#L154
+                var mediaPanelRect = _mediaPanel.GetComponent<RectTransform>();
+                var adjust = mediaPanelRect.sizeDelta;
+                adjust.x = 150f * _mediaPanel.transform.childCount;
+                mediaPanelRect.sizeDelta = adjust;
+                
+                _mediaPanel.Find("Background").gameObject.GetComponent<Image>().enabled = false;
+                _mediaPanel.Find("Background").gameObject.SetActive(false);
+            }
             
             _loaded = true;
             
@@ -984,7 +1007,7 @@ namespace MintMod.UserInterface.QuickMenu {
         internal override void OnUpdate() {
             PlayerActions.UpdateJump();
             if (!MintCore.IsDebug) return;
-            if (Input.GetKeyDown(KeyCode.End)) UserSelMenu();
+            if (Input.GetKeyDown(KeyCode.Home)) UserSelMenu();
         }
 
         internal override void OnPrefSave() {
