@@ -29,6 +29,7 @@ using MintMod.UserInterface.AvatarFavs;
 using MintMod.UserInterface.OldUI;
 using ReMod.Core.UI;
 using TMPro;
+using UnityEngine.Playables;
 using VRC.DataModel;
 using Object = UnityEngine.Object;
 
@@ -166,7 +167,9 @@ namespace MintMod.UserInterface.QuickMenu {
             // Build Last
             UserSelMenu();
 
-            yield return CreateMediaDebugPanel();
+            if (Config.CopyReModMedia.Value)
+                yield return CreateMediaDebugPanel();
+            _mediaReady = true;
 
             Con.Debug("Done Setting up MintMenus", MintCore.IsDebug);
         }
@@ -908,23 +911,12 @@ namespace MintMod.UserInterface.QuickMenu {
         #region Media Header
 
         private static Transform _mediaPanel;
-        private static bool _loaded;
+        private static bool _loaded, _mediaReady;
         private static TextMeshProUGUI _reModTextElement, _mediaPanelText;
         private static string _reModHeaderText;
         private static RectTransform _mediaRectTransform;
         
         private static IEnumerator CreateMediaDebugPanel() {
-            /*
-            var ReModPriv = false;
-            try { ReModPriv = Config._mediaControlsEnabled.Value && ModCompatibility.ReMod; }
-            catch { ReModPriv = false; }
-            
-            var ReModCE = false;
-            try { ReModCE = Config._mediaControlsEnabledCE.Value && ModCompatibility.ReModCE; }
-            catch { ReModCE = false; }
-            if (!ReModPriv && !ReModCE) yield break; // Stop if no ReMod
-            */
-            
             while (UIManager.field_Private_Static_UIManager_0 == null) yield return null;
             while (Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
             yield return new WaitForSeconds(0.25f);
@@ -957,7 +949,7 @@ namespace MintMod.UserInterface.QuickMenu {
             }
             
             _mediaPanelText = _mediaPanel.Find("Text_FPS").GetComponent<TextMeshProUGUI>();
-            _mediaPanelText.text = "MediaPanel";
+            _mediaPanelText.text = "";
             _mediaRectTransform = _mediaPanel.GetComponent<RectTransform>();
             _mediaRectTransform.localPosition = new Vector3(-512, 85, 0);
 
@@ -988,6 +980,10 @@ namespace MintMod.UserInterface.QuickMenu {
             while (_loaded && Config.CopyReModMedia.Value) {
                 yield return new WaitForSeconds(v);
                 _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
+                if (!Config.CopyReModMedia.Value) {
+                    _mediaPanel.gameObject.DestroyImmediate();
+                    break;
+                }
                 _reModHeaderText = _reModTextElement.text;
                 _mediaPanelText.text = _reModHeaderText;
                 _mediaRectTransform.localPosition = new Vector3(-512, 85, 0);
@@ -1030,14 +1026,16 @@ namespace MintMod.UserInterface.QuickMenu {
                 MainQMFreeze.Active = Config.KeepPhotonFreezesOnMainMenu.Value;
             if (MainQMInfJump != null)
                 MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
-            if (Config.CopyReModMedia.Value) {
-                if (_mediaPanel != null) {
-                    _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
-                    MelonCoroutines.Start(LoopTextChange(Config.RefreshAmount.Value));
-                }
-
-                if (_mediaPanel != null && !_loaded)
+            
+            switch (_loaded) {
+                case false when _mediaReady && Config.CopyReModMedia.Value:
                     MelonCoroutines.Start(CreateMediaDebugPanel());
+                    break;
+                case true when !Config.CopyReModMedia.Value: {
+                    if (_mediaPanel != null)
+                        _mediaPanel.gameObject.SetActive(Config.CopyReModMedia.Value);
+                    break;
+                }
             }
             _mintNameplates?.Toggle(Config.EnableCustomNameplateReColoring.Value);
             _mintTags?.Toggle(Config.EnabledMintTags.Value);
