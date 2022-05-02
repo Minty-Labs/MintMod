@@ -123,13 +123,11 @@ namespace MintMod.Reflections {
             return $"{numAsString}{player.GetFrames()}</color>";
         }
 
-        private static int _method = 0;
-
         public static string GetAviPerformance(this VRCPlayer player) {
             try {
                 var p = player.field_Private_VRCAvatarManager_0.prop_AvatarPerformanceStats_0.GetPerformanceRatingForCategory(AvatarPerformanceCategory.Overall);
 
-                if (Config.DisablePerformanceStats.Value)
+                if (Config.NoPerformanceStats != null && Config.DisablePerformanceStats.Value)
                     return "<i>Disabled</i>";
 
                 return p switch {
