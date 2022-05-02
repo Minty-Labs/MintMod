@@ -106,8 +106,8 @@ namespace MintMod.UserInterface.QuickMenu {
                     "\n",
                     RenderPlayerList()
                 });
-                if (_theText.text.Contains(".penny"))
-                    _theText.text = _theText.text.Replace(".penny", "<color=#587EE2>Penny</color>");
+                if (_theText.text.Contains("․penny"))
+                    _theText.text = _theText.text.Replace("․penny", "<color=#587EE2>Penny</color>");
                 if (_theText.text.Contains("Rin_Isnt_Real"))
                     _theText.text = _theText.text.Replace("Rin_Isnt_Real", "<color=#ff9efd>Rin</color>");
                 if (_theText.text.Contains("jettsd"))
@@ -129,16 +129,17 @@ namespace MintMod.UserInterface.QuickMenu {
             var num = 0;
             if (PlayerManager.field_Private_Static_PlayerManager_0 == null || PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0 == null) return text;
             try {
-                foreach (Player player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
+                foreach (var player in PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0) {
                     if (player == null || player.field_Private_VRCPlayerApi_0 == null || num == (Config.uncapListCount.Value ? 128 : 25)) continue;
                     text = string.Concat(new[] {
                         text,
                         player.field_Private_VRCPlayerApi_0.isMaster ? ">> " : "".PadRight(6),
                         $"<color=#{ColorUtility.ToHtmlStringRGB(VRCPlayer.Method_Public_Static_Color_APIUser_0(player.prop_APIUser_0))}>{player.field_Private_APIUser_0.displayName}</color>",
-                        $" | <color=#{Config.MenuColorHEX.Value}>{player._vrcplayer.prop_Int16_0.ToString()}</color> ms",
-                        $" | {player.GetVRCPlayer().GetFramesColored()} fps",
-                        $" | {player.GetVRCPlayer().Platform()}",
-                        $" | {(String.IsNullOrWhiteSpace(player.GetVRCPlayer().GetAviPerformance()) ? "<i>Blocked</i>" : player.GetVRCPlayer().GetAviPerformance())}\n"
+                        Config.showPlayerPing.Value ? $" | <color=#{Config.MenuColorHEX.Value}>{player._vrcplayer.prop_Int16_0.ToString()}</color> ms" : "",
+                        Config.showPlayerFrames.Value ? $" | {player.GetVRCPlayer().GetFramesColored()} fps" : "",
+                        Config.showPlayerPlatform.Value ? $" | {player.GetVRCPlayer().Platform()}" : "",
+                        Config.showPlayerAviPerf.Value ? 
+                            $" | {(String.IsNullOrWhiteSpace(player.GetVRCPlayer().GetAviPerformance()) ? "<i>Blocked</i>" : player.GetVRCPlayer().GetAviPerformance())}\n" : "\n"
                     });
                     num++;
                 }
@@ -164,7 +165,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static void SetSizeTextObj() {
             if (_textObject != null)
-                _textObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 4410 : 1410);
+                _textObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1200, Config.uncapListCount.Value ? 4410 : 1480);
         }
         
         public static void SetBackgroundColor(Color c) {
@@ -174,7 +175,7 @@ namespace MintMod.UserInterface.QuickMenu {
         
         public static void SetBackgroundOpacity(float o) {
             if (BackgroundImage != null)
-                BackgroundImage.color = new(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, o);
+                BackgroundImage.color = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, o);
         }
 
         public static void UpdateTextSize(int size) {
@@ -186,7 +187,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         public static void MoveTheText() {
             if (_theText != null)
-                _theText.GetComponent<RectTransform>().anchoredPosition = new Vector2(15, Config.uncapListCount.Value ? -150 : 125);
+                _theText.GetComponent<RectTransform>().anchoredPosition = new Vector2(15, Config.uncapListCount.Value ? -150 : 145);
         }
 
         internal override void OnPrefSave() {
@@ -198,7 +199,6 @@ namespace MintMod.UserInterface.QuickMenu {
                     _foolish.Destroy();
                 _textObject.Destroy();
                 _wing.Find("MintUiHud Panel").gameObject.Destroy();
-                //RightWing.Find("MintUiHud Panel")?.Destroy();
                 try { MelonCoroutines.Stop(obj); } catch (Exception ee) { Con.Debug($"[ERROR] {ee}"); }
             } else if (!_initialized && Config.PLEnabled.Value) 
                 MelonCoroutines.Start(Init());

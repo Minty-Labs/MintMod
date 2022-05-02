@@ -197,7 +197,8 @@ namespace MintMod {
         }
 
         public static MelonPreferences_Category PlayerList;
-        public static MelonPreferences_Entry<bool> PLEnabled, uncapListCount, haveRoomTimer, haveGameTimer, haveSystemTime, system24Hour, hideLabels;
+        public static MelonPreferences_Entry<bool> PLEnabled, uncapListCount, haveRoomTimer, haveGameTimer, haveSystemTime, system24Hour, hideLabels,
+            showPlayerPing, showPlayerFrames, showPlayerPlatform, showPlayerAviPerf;
         public static MelonPreferences_Entry<string> LocalSpoofedName, HudPosition;
         public static MelonPreferences_Entry<Color> BackgroundColor;
         public static MelonPreferences_Entry<int> Location, TextSize;
@@ -215,6 +216,10 @@ namespace MintMod {
             haveSystemTime = PlayerList.CreateEntry("haveSystemTime", false, "Have system time on Player List");
             system24Hour = PlayerList.CreateEntry("system24HourFormat", false, "System Time has 24 Hour format");
             hideLabels = PlayerList.CreateEntry("hideLabels", false, "Hide the Labels on the timers");
+            showPlayerPing = PlayerList.CreateEntry("showPlayerPing", true, "Show player's ping");
+            showPlayerFrames = PlayerList.CreateEntry("showPlayerFrames", true, "Show player's framerate");
+            showPlayerPlatform = PlayerList.CreateEntry("showPlayerPlatform", true, "Show player's platform");
+            showPlayerAviPerf = PlayerList.CreateEntry("showPlayerAviPerf", true, "Show player's avatar performance rating");
         }
 
         internal override void OnPrefSave() {
@@ -265,9 +270,12 @@ namespace MintMod {
         #region NoPerfStats
 
         public static MelonPreferences_Entry<bool> DisablePerformanceStats;
+        public static MelonPreferences_Category NoPerformanceStats;
             
         private static void GetNoPerfStatsPrefs() {
-            if (MelonPreferences.GetCategory("NoPerformanceStats") == null) return;
+            var n = MelonPreferences.GetCategory("NoPerformanceStats");
+            if (n == null) return;
+            NoPerformanceStats = n;
             DisablePerformanceStats = MelonPreferences.GetEntry<bool>("NoPerformanceStats", "DisablePerformanceStats");
         }
 
