@@ -25,15 +25,15 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.31.3";
+            public const string Version = "2.31.4";
 #endif
 #if DEBUG
             public const string Version = "2.29.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "2 May 2022";
+            public const string UpdatedDate = "7 May 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.7.3";
+            internal const string LoaderVer = "2.7.4";
 #endif
         }
 
@@ -62,9 +62,9 @@ namespace MintMod {
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);
 #if DEBUG
-            isDebug = true;
+            IsDebug = true;
             if (Environment.CommandLine.Contains("--MintyDev"))
-                isDebug = true;
+                IsDebug = true;
 #endif
 #if !DEBUG
             if (Environment.CommandLine.Contains("--MintyDev")) IsDebug = true;
