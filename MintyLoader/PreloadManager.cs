@@ -14,10 +14,10 @@ namespace MintyLoader {
     public static class ModBlacklist {
         internal static string[] BadMods = { "ripperstore", "ripper", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", /*"snaxytag",*/ "unchained", 
             "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen", "astralbypass", "astral", "plan b", "odious", "fusionclient",
-            "fusionmodloader", "astral", "fluxclient", "flux client" };
+            "fusionmodloader", "astral", "fluxclient", "flux client", "you already know" };
         
         internal static string[] BadAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "unreal", "bunny", "stellar", "lady lucy", "meap",
-            "fiass", /*"some dude",*/ "kuroi hane", "unixian", "shrekamuschrist", "zypher", "scope", "p a t c h e d   p l u s +" };
+            "fiass", /*"some dude",*/ "kuroi hane", "unixian", "shrekamuschrist", "zypher", "scope", "p a t c h e d   p l u s +", ">nick" };
 
         internal static string[] BadPluginAuthors = { "astral", "fck", "zypher" };
         
