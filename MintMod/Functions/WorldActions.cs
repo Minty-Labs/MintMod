@@ -20,7 +20,7 @@ using VRC_MirrorReflection = VRC.SDKBase.VRC_MirrorReflection;
 
 namespace MintMod.Functions {
     internal class WorldActions : MintSubMod {
-        public static void WorldDownload() {
+        public static async Task WorldDownload() {
             try {
                 var vrcwPath = $"{MintCore.MintDirectory}\\Assets\\VRCW\\";
 
@@ -39,14 +39,14 @@ namespace MintMod.Functions {
                 httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0");
                 
                 if (!File.Exists(vrcwFile)) {
-                    var w = httpClient.GetByteArrayAsync(grabAssetUrlVrcw).GetAwaiter().GetResult();
-                    try { CustomAsync.File.WriteAllBytesAsync(vrcwFile, w).GetAwaiter().GetResult(); }
+                    var w = await httpClient.GetByteArrayAsync(grabAssetUrlVrcw);
+                    try { await CustomAsync.File.WriteAllBytesAsync(vrcwFile, w); }
                     catch { File.WriteAllBytes(vrcwFile, w); }
                 }
 
                 if (!File.Exists(imageFile)) {
-                    var i = httpClient.GetByteArrayAsync(grabAssetImageVrcw).GetAwaiter().GetResult();
-                    try { CustomAsync.File.WriteAllBytesAsync(imageFile, i).GetAwaiter().GetResult(); }
+                    var i =  await httpClient.GetByteArrayAsync(grabAssetImageVrcw);
+                    try { await CustomAsync.File.WriteAllBytesAsync(imageFile, i); }
                     catch { File.WriteAllBytes(imageFile, i); }
                 }
 

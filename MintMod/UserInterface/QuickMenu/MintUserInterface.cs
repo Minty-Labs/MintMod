@@ -274,7 +274,7 @@ namespace MintMod.UserInterface.QuickMenu {
             w.AddButton("Add Jump", "Allows you to jump in the world", WorldActions.AddJump, MintyResources.jump);
             //w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world",
             //    VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.UseLegacyLocomotion, MintyResources.history);
-            w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", WorldActions.WorldDownload, MintyResources.dl);
+            w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", async () => await WorldActions.WorldDownload(), MintyResources.dl);
             w.AddSpacer();
 
             w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
