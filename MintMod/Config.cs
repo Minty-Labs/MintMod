@@ -19,6 +19,8 @@ namespace MintMod {
             _Extra();
             _PlayerList();
             _Nameplates();
+            _WorldSettings_BlackCat();
+            
             GetReModPrefs();
             GetNoPerfStatsPrefs();
         }
@@ -220,6 +222,18 @@ namespace MintMod {
             showPlayerFrames = PlayerList.CreateEntry("showPlayerFrames", true, "Show player's framerate");
             showPlayerPlatform = PlayerList.CreateEntry("showPlayerPlatform", true, "Show player's platform");
             showPlayerAviPerf = PlayerList.CreateEntry("showPlayerAviPerf", true, "Show player's avatar performance rating");
+        }
+
+        public static MelonPreferences_Category WorldSettings_BlackCat;
+        public static MelonPreferences_Entry<bool> BC_Booth1, BC_Booth2, BC_Top, BC_Bathroom1, BC_Bathroom2;
+
+        private static void _WorldSettings_BlackCat() {
+            WorldSettings_BlackCat = MelonPreferences.CreateCategory("MintMod_WorldSettings_BlackCat", "MintMod - World - Black Cat");
+            BC_Booth1 = WorldSettings_BlackCat.CreateEntry("Booth1", true, "Booth 1 Exit Collider");
+            BC_Booth2 = WorldSettings_BlackCat.CreateEntry("Booth2", true, "Booth 2 Exit Collider");
+            BC_Top = WorldSettings_BlackCat.CreateEntry("Top", true, "Up stairs Exit Collider");
+            BC_Bathroom1 = WorldSettings_BlackCat.CreateEntry("Bathroom1", true, "Bathroom 1 Exit Collider");
+            BC_Bathroom2 = WorldSettings_BlackCat.CreateEntry("Bathroom2", true, "Bathroom 1 Exit Collider");
         }
 
         internal override void OnPrefSave() {
