@@ -17,7 +17,7 @@ namespace MintMod {
 
         internal MintSubMod() {
             if (Name == "MOD_NAME" || Description == "MOD_DESCRIPTION") return;
-            Con.Msg($"{Name} has Loaded. {Description}");
+            Con.Debug($"{Name} has Loaded. {Description}");
         }
 
         internal virtual void OnUserInterface() {}
