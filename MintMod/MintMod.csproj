@@ -226,6 +226,7 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Functions\Authentication\AuthConstructor.cs" />
+    <Compile Include="Functions\DevThings.cs" />
     <Compile Include="Functions\HeadFlip.cs" />
     <Compile Include="Functions\KeyBindings.cs" />
     <Compile Include="Functions\LoadingWorldAudio.cs" />
