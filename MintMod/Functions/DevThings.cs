@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using MintyLoader;
 using VRC.Core;
 
 namespace MintMod.Functions {
@@ -32,13 +34,19 @@ namespace MintMod.Functions {
             var window = FindWindow(null, "VRChat");
             SetWindowText(window, "VRChat - MintMod (Dev)");
 
-            var http = new HttpClient();
-            http.DefaultRequestHeaders.Add("User-Agent", "MintMod; VRChat");
-            var bytes = http.GetByteArrayAsync("https://mintlily.lgbt/mod/Images/icon.ico").GetAwaiter().GetResult();
+            // var http = new HttpClient();
+            // http.DefaultRequestHeaders.Add("User-Agent", "MintMod");
+            // var bytes = http.GetByteArrayAsync("https://mintlily.lgbt/mod/Images/icon.ico").GetAwaiter().GetResult();
+            var bytes = new WebClient().DownloadData("https://mintlily.lgbt/mod/Images/icon.ico");
+            Con.Debug("[WINDOW-CHANGE] Got bytes of icon");
+            // http.Dispose();
             var stream = new MemoryStream(bytes);
+            Con.Debug("[WINDOW-CHANGE] Assign to MemoryStream");
             var icon = new Icon(stream);
+            Con.Debug("[WINDOW-CHANGE] Applied to Icon");
 
             SendMessage(window, WmSetIcon, IconBig, icon.Handle);
+            Con.Debug("[WINDOW-CHANGE] Set Icon to VRChat window");
         }
     }
 }

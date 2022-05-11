@@ -9,7 +9,10 @@ namespace MintMod.WorldSettings {
     internal class BlackCat : MintSubMod {
         public override string Name => "WorldSettings - Black Cat";
         public override string Description => "Various toggle control for the Black Cat world";
-        
+
+        private const string WorldId = "wrld_4cf554b4-430c-4f8f-b53e-1f294eed230b";
+        private static bool _isInWorld;
+
         private static readonly string[] OnExitCollidersBooth = {
             "MIRRORS/Mirror (3)/Booth1 mirrors/Booth1 HQ Mirror/onexit",
             "MIRRORS/Mirror (3)/Booth1 mirrors/Booth1 LQ Mirror/onexit (1)",
@@ -39,6 +42,11 @@ namespace MintMod.WorldSettings {
         private static ReMenuToggle _booth1, _booth2, _top, _bathroom1, _bathroom2;
 
         private static void ToggleComponents(string area, bool toggle, MelonPreferences_Category cat, MelonPreferences_Entry<bool> entry) {
+            if (!_isInWorld) {
+                Config.SavePrefValue(cat, entry, toggle);
+                return;
+            }
+            
             var areaBundle = area switch {
                 "Booth1"    => OnExitCollidersBooth,
                 "Booth2"    => OnExitCollidersBooth2,
@@ -80,12 +88,14 @@ namespace MintMod.WorldSettings {
 
         internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
             if (buildindex != -1) return;
-            if (WorldReflect.GetWorldInstance().id != "wrld_4cf554b4-430c-4f8f-b53e-1f294eed230b") return;
-            _booth1?.Toggle(Config.BC_Booth1.Value);
-            _booth2?.Toggle(Config.BC_Booth2.Value);
-            _top?.Toggle(Config.BC_Top.Value);
-            _bathroom1?.Toggle(Config.BC_Bathroom1.Value);
-            _bathroom2?.Toggle(Config.BC_Bathroom2.Value);
+            if (WorldReflect.GetWorldInstance() == null || WorldReflect.GetWorld() == null) return;
+            if (WorldReflect.GetWorldInstance().id != WorldId || WorldReflect.GetWorld().id != WorldId) return;
+            _isInWorld = true;
+            _booth1?.Toggle(Config.BC_Booth1.Value, true, true);
+            _booth2?.Toggle(Config.BC_Booth2.Value, true, true);
+            _top?.Toggle(Config.BC_Top.Value, true, true);
+            _bathroom1?.Toggle(Config.BC_Bathroom1.Value, true, true);
+            _bathroom2?.Toggle(Config.BC_Bathroom2.Value, true, true);
         }
     }
 }
