@@ -8,7 +8,7 @@ namespace MintyLoader {
         public const string Name = "MintyLoader";
         public const string Author = "Lily";
         public const string Company = "Minty Labs";
-        public const string Version = "2.7.4";
+        public const string Version = "2.7.5";
         public const string DownloadLink = "https://mintlily.lgbt/mod/loader/MintyLoader.dll";
     }
    
