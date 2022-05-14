@@ -203,7 +203,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 MainQMFreeze.Toggle(b, false, true);
             });
             InfJump = c.AddToggle("Infinite Jump", "What is more to say? Infinitely Jump to your heart's content", b => {
-                PlayerActions.InfinteJump = b;
+                PlayerActions.InfiniteJump = b;
                 MainQMInfJump.Toggle(b, false, true);
             });
             

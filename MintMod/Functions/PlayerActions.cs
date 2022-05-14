@@ -170,10 +170,10 @@ namespace MintMod.Functions {
 
         #region Jump Manager
 
-        internal static bool InfinteJump;
+        internal static bool InfiniteJump;
         private static void JumpyJump() {
-            if (!InfinteJump &&
-                !VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").prop_Boolean_0 &&
+            if (!InfiniteJump &&
+                !VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").prop_Boolean_2 &&
                 Networking.LocalPlayer.IsPlayerGrounded()) return;
             var velocity = Networking.LocalPlayer.GetVelocity();
             velocity.y = Networking.LocalPlayer.GetJumpImpulse() + 1f;
@@ -183,7 +183,7 @@ namespace MintMod.Functions {
         private static void GravityChange(bool state) => Networking.LocalPlayer.SetGravityStrength(state ? 0 : 1);
 
         public static void UpdateJump() {
-            if (InfinteJump) JumpyJump();
+            if (InfiniteJump) JumpyJump();
         }
 
         #endregion
