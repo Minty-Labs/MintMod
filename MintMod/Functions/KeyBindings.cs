@@ -20,8 +20,8 @@ namespace MintMod.Functions {
         internal override void OnUserInterface() => loaded = true;
 
         internal override void OnUpdate() {
-            if (Config.EnableAllKeybindings.Value && loaded) {
-                /*if (!XRDevice.isPresent) {
+            if (!Config.EnableAllKeybindings.Value || !loaded) return;
+            /*if (!XRDevice.isPresent) {
                      {
                         if (MintFunc.FunStuff.HeadFlip.IsHeadflipEnabled == false) {
                             MintFunc.FunStuff.HeadFlip.IsHeadflipEnabled = true;
@@ -33,19 +33,19 @@ namespace MintMod.Functions {
                         }
                     }
                 }*/
-                if (/*(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T)) || */Input.GetKeyDown(KeyCode.Mouse3)) {
-                    ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-                    if (Physics.Raycast(ray, out RaycastHit raycastHit))
-                        VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = raycastHit.point;
-                }/*else if ((APIUser.CurrentUser != null && APIUser.CurrentUser.id == "usr_fe9b2a3f-d2e7-41ec-910a-42f1329d8be0" || 
+            if ( /*(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T)) || */!Input.GetKeyDown(KeyCode.Mouse3))
+                return;
+            if (Camera.main != null) ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+            if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = raycastHit.point;
+            /*else if ((APIUser.CurrentUser != null && APIUser.CurrentUser.id == "usr_fe9b2a3f-d2e7-41ec-910a-42f1329d8be0" || 
                             APIUser.CurrentUser.id == "usr_239b3692-89b5-4c22-97ba-08ce5cab5f9a") && Input.GetKeyDown(KeyCode.Mouse4)) {
                     ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
                     if (Physics.Raycast(ray, out RaycastHit raycastHit))
                         VRCPlayer.field_Internal_Static_VRCPlayer_0.transform.position = raycastHit.point;
                 }*/
-                //if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.J))
-                //    Utils.AddJump();
-            }
+            //if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.J))
+            //    Utils.AddJump();
         }
     }
 }

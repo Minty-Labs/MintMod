@@ -60,14 +60,6 @@
       <VirtualFunctions>false</VirtualFunctions>
       <XmlRules>
         <Rules targetAssembly="MintyLoader">
-          <Rule name="rule9" feature="renaming" exclude="true" applyToMembers="true">
-            <Pattern>MintyLoader.ReMod_Core_Loader*</Pattern>
-            <Description>Disable Renaming</Description>
-          </Rule>
-          <Rule name="rule10" feature="string encryption" exclude="true" applyToMembers="true">
-            <Pattern>MintyLoader.ReMod_Core_Loader*</Pattern>
-            <Description>Disable String Encryption</Description>
-          </Rule>
           <Rule name="rule1" feature="renaming" exclude="true" applyToMembers="true">
             <Pattern>MintyLoader.BuildInfo*</Pattern>
             <Description>Disable Renaming</Description>
@@ -75,6 +67,10 @@
           <Rule name="rule2" feature="string encryption" exclude="true" applyToMembers="true">
             <Pattern>MintyLoader.BuildInfo*</Pattern>
             <Description>Disable String Encryption</Description>
+          </Rule>
+          <Rule name="rule25" feature="value encryption" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.BuildInfo*</Pattern>
+            <Description>Disable Value Encryption</Description>
           </Rule>
           <Rule name="rule3" feature="renaming" exclude="true" applyToMembers="true">
             <Pattern>MintyLoader.Con*</Pattern>
@@ -84,6 +80,10 @@
             <Pattern>MintyLoader.Con*</Pattern>
             <Description>Disable String Encryption</Description>
           </Rule>
+          <Rule name="rule24" feature="value encryption" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.Con*</Pattern>
+            <Description>Disable Value Encryption</Description>
+          </Rule>
           <Rule name="rule5" feature="renaming" exclude="false" applyToMembers="true">
             <Pattern>MintyLoader.LoadManager*</Pattern>
             <Description>Disable Renaming</Description>
@@ -92,6 +92,10 @@
             <Pattern>MintyLoader.LoadManager*</Pattern>
             <Description>Disable String Encryption</Description>
           </Rule>
+          <Rule name="rule23" feature="value encryption" exclude="false" applyToMembers="true">
+            <Pattern>MintyLoader.LoadManager*</Pattern>
+            <Description>Enable Value Encryption</Description>
+          </Rule>
           <Rule name="rule7" feature="renaming" exclude="true" applyToMembers="true">
             <Pattern>MintyLoader.MintyLoader*</Pattern>
             <Description>Disable Renaming</Description>
@@ -99,6 +103,10 @@
           <Rule name="rule8" feature="string encryption" exclude="true" applyToMembers="true">
             <Pattern>MintyLoader.MintyLoader*</Pattern>
             <Description>Disable String Encryption</Description>
+          </Rule>
+          <Rule name="rule22" feature="value encryption" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.MintyLoader*</Pattern>
+            <Description>Disable Value Encryption</Description>
           </Rule>
           <Rule name="rule15" feature="string encryption" exclude="false" applyToMembers="true">
             <Pattern>MintyLoader.ModBlacklist*</Pattern>
@@ -120,6 +128,10 @@
             <Pattern>MintyLoader.ReModCoreLoader*</Pattern>
             <Description>Disable String Encryption</Description>
           </Rule>
+          <Rule name="rule21" feature="value encryption" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.ReModCoreLoader*</Pattern>
+            <Description>Disable Value Encryption</Description>
+          </Rule>
           <Rule name="rule11" feature="renaming" exclude="false" applyToMembers="true">
             <Pattern>MintyLoader.UpdateManager*</Pattern>
             <Description>Disable Renaming</Description>
@@ -128,6 +140,10 @@
             <Pattern>MintyLoader.UpdateManager*</Pattern>
             <Description>Disable String Encryption</Description>
           </Rule>
+          <Rule name="rule20" feature="value encryption" exclude="false" applyToMembers="true">
+            <Pattern>MintyLoader.UpdateManager*</Pattern>
+            <Description>Disable Value Encryption</Description>
+          </Rule>
           <Rule name="rule13" feature="renaming" exclude="true" applyToMembers="true">
             <Pattern>Pastel.*</Pattern>
             <Description>Disable Renaming</Description>
@@ -135,6 +151,10 @@
           <Rule name="rule14" feature="string encryption" exclude="true" applyToMembers="true">
             <Pattern>Pastel.*</Pattern>
             <Description>Disable String Encryption</Description>
+          </Rule>
+          <Rule name="rule26" feature="value encryption" exclude="true" applyToMembers="true">
+            <Pattern>Pastel.*</Pattern>
+            <Description>Disable Value Encryption</Description>
           </Rule>
         </Rules>
       </XmlRules>
