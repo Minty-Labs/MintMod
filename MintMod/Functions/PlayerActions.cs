@@ -2,6 +2,8 @@
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using MintMod.Libraries;
 using MintMod.Managers.Notification;
 using MintMod.Reflections;
 using MintMod.Utils;
@@ -12,7 +14,7 @@ using VRC.SDKBase;
 
 namespace MintMod.Functions {
     internal static class PlayerActions {
-        public static void AvatarDownload() {
+        public static async Task AvatarDownload() {
             try {
                 var vrcaPath = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
                 var apiAvatar = SelPAvatar();
@@ -36,12 +38,14 @@ namespace MintMod.Functions {
                 
                 if (!File.Exists(vrcaFile)) {
                     var a = httpClient.GetByteArrayAsync(grabAssetUrl).GetAwaiter().GetResult();
-                    File.WriteAllBytes(vrcaFile, a);
+                    try { await CustomAsync.File.WriteAllBytesAsync(vrcaFile, a); }
+                    catch { File.WriteAllBytes(vrcaFile, a); }
                 }
 
                 if (!File.Exists(imageFile)) {
                     var i = httpClient.GetByteArrayAsync(grabAssetImage).GetAwaiter().GetResult();
-                    File.WriteAllBytes(imageFile, i);
+                    try { await CustomAsync.File.WriteAllBytesAsync(imageFile, i); }
+                    catch { File.WriteAllBytes(imageFile, i); }
                 }
 
                 httpClient.Dispose();
@@ -53,7 +57,7 @@ namespace MintMod.Functions {
             }
         }
 
-        public static void AvatarSelfDownload() {
+        public static async Task AvatarSelfDownload() {
             try {
                 var vrcaPath = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
 
@@ -85,12 +89,14 @@ namespace MintMod.Functions {
                 
                 if (!File.Exists(vrcaFile)) {
                     var a = httpClient.GetByteArrayAsync(grabSelfAssetUrl).GetAwaiter().GetResult();
-                    File.WriteAllBytes(vrcaFile, a);
+                    try { await CustomAsync.File.WriteAllBytesAsync(vrcaFile, a); }
+                    catch { File.WriteAllBytes(vrcaFile, a); }
                 }
 
                 if (!File.Exists(imageFile)) {
                     var i = httpClient.GetByteArrayAsync(grabSelfAssetImage).GetAwaiter().GetResult();
-                    File.WriteAllBytes(imageFile, i);
+                    try { await CustomAsync.File.WriteAllBytesAsync(imageFile, i); }
+                    catch { File.WriteAllBytes(imageFile, i); }
                 }
                 
                 Con.Msg($"Downloaded VRCA for {grabSelfAssetName}.\nLocated in {vrcaPath}");
@@ -173,7 +179,7 @@ namespace MintMod.Functions {
         internal static bool InfiniteJump;
         private static void JumpyJump() {
             if (!InfiniteJump &&
-                !VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").prop_Boolean_2 &&
+                !VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").Method_Public_Boolean_2() &&
                 Networking.LocalPlayer.IsPlayerGrounded()) return;
             var velocity = Networking.LocalPlayer.GetVelocity();
             velocity.y = Networking.LocalPlayer.GetJumpImpulse() + 1f;

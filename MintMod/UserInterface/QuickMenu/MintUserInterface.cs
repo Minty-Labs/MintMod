@@ -258,7 +258,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     Con.Error(c);
                 }
             }, MintyResources.checkered);
-            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", PlayerActions.AvatarSelfDownload, MintyResources.user);
+            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", async () => await PlayerActions.AvatarSelfDownload(), MintyResources.user);
             //var h = PlayerMenu.AddCategory("Head Lamp");
             RemoveMintBackButtonDuplicate(PlayerMenu);
         }
@@ -419,7 +419,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
             userSelectCategory = new ReMenuCategory("MintMod", theUserSelectMenu.transform);
 
-            userSelectCategory.AddButton("Download Avatar VRCA", "Downloads the selected user's Avatar .VRCA", PlayerActions.AvatarDownload, MintyResources.dl);
+            userSelectCategory.AddButton("Download Avatar VRCA", "Downloads the selected user's Avatar .VRCA", async () => await PlayerActions.AvatarDownload(), MintyResources.dl);
             userSelectCategory.AddButton("Log Asset", "Logs the selected user's information and put it into a text file", PlayerActions.LogAsset, MintyResources.list);
             userSelectCategory.AddButton("Copy Avatar ID", "Copies the selected user's avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id, MintyResources.copy);
             userSelectCategory.AddButton("Copy User ID", "Copies the selected user's User ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerWrappers.GetSelectedAPIUser().id, MintyResources.copy);
