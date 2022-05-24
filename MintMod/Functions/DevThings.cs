@@ -29,24 +29,22 @@ namespace MintMod.Functions {
         private const int IconBig = 1;
 
         internal override void OnUserInterface() {
-            if (!APIUser.CurrentUser.id.StartsWith("usr_6d71d3be")) return;
-            
-            var window = FindWindow(null, "VRChat");
-            SetWindowText(window, "VRChat - MintMod (Dev)");
-
             // var http = new HttpClient();
             // http.DefaultRequestHeaders.Add("User-Agent", "MintMod");
             // var bytes = http.GetByteArrayAsync("https://mintlily.lgbt/mod/Images/icon.ico").GetAwaiter().GetResult();
             var bytes = new WebClient().DownloadData("https://mintlily.lgbt/mod/Images/icon.ico");
-            Con.Debug("[WINDOW-CHANGE] Got bytes of icon");
-            // http.Dispose();
+            var window = FindWindow(null, "VRChat");
             var stream = new MemoryStream(bytes);
-            Con.Debug("[WINDOW-CHANGE] Assign to MemoryStream");
             var icon = new Icon(stream);
-            Con.Debug("[WINDOW-CHANGE] Applied to Icon");
-
-            SendMessage(window, WmSetIcon, IconBig, icon.Handle);
-            Con.Debug("[WINDOW-CHANGE] Set Icon to VRChat window");
+            
+            if (APIUser.CurrentUser.id.StartsWith("usr_6d71d3be")) {
+                SetWindowText(window, "VRChat - MintMod (Dev)");
+                SendMessage(window, WmSetIcon, IconBig, icon.Handle);
+            }
+            else if (APIUser.CurrentUser.id.StartsWith("usr_08378cbe")) {
+                SetWindowText(window, "VRChat - MintMod (Super Cutie)");
+                SendMessage(window, WmSetIcon, IconBig, icon.Handle);
+            }
         }
     }
 }
