@@ -21,22 +21,22 @@ namespace MintMod.UserInterface.OldUI {
         public override string Description => "Colors the User Interface (Not the QuickMenu)";
         internal static ReColor Intstance;
 
-        private static List<Image> normalColorImage, dimmerColorImage, darkerColorImage;
-        private static List<Text> normalColorText;
-        private static GameObject loadingBackground, initialLoadingBackground;
-        public static Color finalColor;
+        private static List<Image> _normalColorImage, _dimmerColorImage, _darkerColorImage;
+        private static List<Text> _normalColorText;
+        private static GameObject _loadingBackground, _initialLoadingBackground;
+        private static Color _finalColor;
 
         internal override void OnStart() => Intstance = this;
 
         internal override void OnUserInterface() {
-            finalColor = Config.ColorGameMenu.Value ? Minty : defaultMenuColor();
+            _finalColor = Config.ColorGameMenu.Value ? Minty : defaultMenuColor();
             if (Config.ColorGameMenu.Value)
-                MelonCoroutines.Start(ColorMenu(finalColor));
+                MelonCoroutines.Start(ColorMenu(_finalColor));
             //if (Config.ColorActionMenu.Value)
             //    ColorActionMenu(finalColor);
             if (Config.ColorLoadingScreen.Value) {
                 try {
-                    ColorLoadingScreenEnvironment(finalColor);
+                    ColorLoadingScreenEnvironment(_finalColor);
                 }
                 catch (Exception e) {
                     if (!MintUserInterface.isStreamerModeOn)
@@ -54,54 +54,54 @@ namespace MintMod.UserInterface.OldUI {
             var darker = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f);
             var darkerT = new Color(color.r / 2.5f, color.g / 2.5f, color.b / 2.5f, 0.9f);
 
-            if (normalColorImage == null || normalColorImage.Count == 0) {
+            if (_normalColorImage == null || _normalColorImage.Count == 0) {
                 #region normalColorImage
 
-                normalColorImage = new List<Image>();
+                _normalColorImage = new List<Image>();
                 var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
-                normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Description_SafetyLevel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Custom/ON").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_None/ON").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Normal/ON").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Maxiumum/ON").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/InputKeypadPopup/Rectangle/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/InputKeypadPopup/InputField").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/StandardPopupV2/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/StandardPopup/InnerDashRing").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/StandardPopup/RingGlow").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/UpdateStatusPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/InputPopup/InputField").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/UpdateStatusPopup/Popup/InputFieldStatus").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/AdvancedSettingsPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/AddToFavoriteListPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/EditFavoriteListPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/PerformanceSettingsPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/AlertPopup/Lighter").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/RoomInstancePopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/ReportWorldPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/ReportUserPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/SearchOptionsPopup/Popup/Panel (1)").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/SendInvitePopup/SendInviteMenu/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/RequestInvitePopup/RequestInviteMenu/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/ControllerBindingsPopup/Popup/Panel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/ChangeProfilePicPopup/Popup/PanelBackground").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Popups/ChangeProfilePicPopup/Popup/TitlePanel").GetComponent<Image>());
-                normalColorImage.Add(quickMenu.transform.Find("Screens/UserInfo/User Panel/PanelHeaderBackground").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Description_SafetyLevel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Custom/ON").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_None/ON").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Normal/ON").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Maxiumum/ON").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/InputKeypadPopup/Rectangle/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/InputKeypadPopup/InputField").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/StandardPopupV2/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/StandardPopup/InnerDashRing").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/StandardPopup/RingGlow").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/UpdateStatusPopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/InputPopup/InputField").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/UpdateStatusPopup/Popup/InputFieldStatus").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/AdvancedSettingsPopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/AddToFavoriteListPopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/EditFavoriteListPopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/PerformanceSettingsPopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/AlertPopup/Lighter").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/RoomInstancePopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/ReportWorldPopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/ReportUserPopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/SearchOptionsPopup/Popup/Panel (1)").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/SendInvitePopup/SendInviteMenu/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/RequestInvitePopup/RequestInviteMenu/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/ControllerBindingsPopup/Popup/Panel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/ChangeProfilePicPopup/Popup/PanelBackground").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Popups/ChangeProfilePicPopup/Popup/TitlePanel").GetComponent<Image>());
+                _normalColorImage.Add(quickMenu.transform.Find("Screens/UserInfo/User Panel/PanelHeaderBackground").GetComponent<Image>());
                 foreach (var obj in quickMenu.GetComponentsInChildren<Transform>(true).Where(x => x.name.Contains("Panel_Header"))) {
                     foreach (var img in obj.GetComponentsInChildren<Image>())
-                        normalColorImage.Add(img);
+                        _normalColorImage.Add(img);
                 }
                 foreach (var obj in quickMenu.GetComponentsInChildren<Transform>(true).Where(x => x.name.Contains("Handle"))) {
                     foreach (var img in obj.GetComponentsInChildren<Image>())
-                        normalColorImage.Add(img);
+                        _normalColorImage.Add(img);
                 }
                 try {
-                    normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Panel_Backdrop").GetComponent<Image>());
-                    normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Decoration_Left").GetComponent<Image>());
-                    normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Decoration_Right").GetComponent<Image>());
-                    normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Panel_Backdrop").GetComponent<Image>());
-                    normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Decoration_Left").GetComponent<Image>());
-                    normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Decoration_Right").GetComponent<Image>());
+                    _normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Panel_Backdrop").GetComponent<Image>());
+                    _normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Decoration_Left").GetComponent<Image>());
+                    _normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Decoration_Right").GetComponent<Image>());
+                    _normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Panel_Backdrop").GetComponent<Image>());
+                    _normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Decoration_Left").GetComponent<Image>());
+                    _normalColorImage.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Decoration_Right").GetComponent<Image>());
                 } catch (Exception ex) {
                     Con.Error(ex.ToString());
                 }
@@ -109,82 +109,82 @@ namespace MintMod.UserInterface.OldUI {
                 #endregion
             }
 
-            if (dimmerColorImage == null || dimmerColorImage.Count == 0) {
+            if (_dimmerColorImage == null || _dimmerColorImage.Count == 0) {
                 #region dimmerColorImage
 
-                dimmerColorImage = new List<Image>();
+                _dimmerColorImage = new List<Image>();
                 var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
-                dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Custom/ON/TopPanel_SafetyLevel").GetComponent<Image>());
-                dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_None/ON/TopPanel_SafetyLevel").GetComponent<Image>());
-                dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Normal/ON/TopPanel_SafetyLevel").GetComponent<Image>());
-                dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Maxiumum/ON/TopPanel_SafetyLevel").GetComponent<Image>());
-                dimmerColorImage.Add(quickMenu.transform.Find("Popups/ChangeProfilePicPopup/Popup/BorderImage").GetComponent<Image>());
+                _dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Custom/ON/TopPanel_SafetyLevel").GetComponent<Image>());
+                _dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_None/ON/TopPanel_SafetyLevel").GetComponent<Image>());
+                _dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Normal/ON/TopPanel_SafetyLevel").GetComponent<Image>());
+                _dimmerColorImage.Add(quickMenu.transform.Find("Screens/Settings_Safety/_Buttons_SafetyLevel/Button_Maxiumum/ON/TopPanel_SafetyLevel").GetComponent<Image>());
+                _dimmerColorImage.Add(quickMenu.transform.Find("Popups/ChangeProfilePicPopup/Popup/BorderImage").GetComponent<Image>());
                 foreach (var obj in quickMenu.GetComponentsInChildren<Transform>(true).Where(x => x.name.Contains("Fill"))) {
                     foreach (var img in obj.GetComponentsInChildren<Image>())
                         if (img.gameObject.name != "Checkmark")
-                            dimmerColorImage.Add(img);
+                            _dimmerColorImage.Add(img);
                 }
 
                 #endregion
             }
 
-            if (darkerColorImage == null || darkerColorImage.Count == 0) {
+            if (_darkerColorImage == null || _darkerColorImage.Count == 0) {
                 #region darkerColorImage
 
-                darkerColorImage = new List<Image>();
+                _darkerColorImage = new List<Image>();
                 var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/InputKeypadPopup/Rectangle").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/StandardPopupV2/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/StandardPopup/Rectangle").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/StandardPopup/MidRing").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/UpdateStatusPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/AdvancedSettingsPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/AddToFavoriteListPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/EditFavoriteListPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/PerformanceSettingsPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/RoomInstancePopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/RoomInstancePopup/Popup/BorderImage (1)").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/ReportWorldPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/ReportUserPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/SearchOptionsPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/SendInvitePopup/SendInviteMenu/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/RequestInvitePopup/RequestInviteMenu/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Popups/ControllerBindingsPopup/Popup/BorderImage").GetComponent<Image>());
-                darkerColorImage.Add(quickMenu.transform.Find("Screens/UserInfo/ModerateDialog/Panel/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/InputKeypadPopup/Rectangle").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/StandardPopupV2/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/StandardPopup/Rectangle").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/StandardPopup/MidRing").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/UpdateStatusPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/AdvancedSettingsPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/AddToFavoriteListPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/EditFavoriteListPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/PerformanceSettingsPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/RoomInstancePopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/RoomInstancePopup/Popup/BorderImage (1)").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/ReportWorldPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/ReportUserPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/SearchOptionsPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/SendInvitePopup/SendInviteMenu/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/RequestInvitePopup/RequestInviteMenu/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Popups/ControllerBindingsPopup/Popup/BorderImage").GetComponent<Image>());
+                _darkerColorImage.Add(quickMenu.transform.Find("Screens/UserInfo/ModerateDialog/Panel/BorderImage").GetComponent<Image>());
                 foreach (var obj in quickMenu.GetComponentsInChildren<Transform>(true).Where(x => x.name.Contains("Background") && x.name != "PanelHeaderBackground" && !x.transform.parent.name.Contains("UserIcon"))) {
                     foreach (var img in obj.GetComponentsInChildren<Image>())
-                        darkerColorImage.Add(img);
+                        _darkerColorImage.Add(img);
                 }
 
                 #endregion
             }
 
-            if (normalColorText == null || normalColorText.Count == 0) {
+            if (_normalColorText == null || _normalColorText.Count == 0) {
                 #region normalColorText
 
-                normalColorText = new List<Text>();
+                _normalColorText = new List<Text>();
                 var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
                 foreach (var txt in quickMenu.transform.Find("Popups/InputPopup/Keyboard/Keys").GetComponentsInChildren<Text>(true))
-                    normalColorText.Add(txt);
+                    _normalColorText.Add(txt);
                 foreach (var txt in quickMenu.transform.Find("Popups/InputKeypadPopup/Keyboard/Keys").GetComponentsInChildren<Text>(true))
-                    normalColorText.Add(txt);
-                normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameWorld/Label").GetComponentInChildren<Text>(true));
-                normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameVoice/Label").GetComponentInChildren<Text>(true));
-                normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameAvatars/Label").GetComponentInChildren<Text>(true));
-                normalColorText.AddRange(quickMenu.transform.Find("Screens/Social/UserProfileAndStatusSection").GetComponentsInChildren<Text>(true));
-                normalColorText.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Loading Elements/txt_LOADING_Size").GetComponentInChildren<Text>(true));
-                normalColorText.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Loading Elements/txt_LOADING_Size").GetComponentInChildren<Text>(true));
+                    _normalColorText.Add(txt);
+                _normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameWorld/Label").GetComponentInChildren<Text>(true));
+                _normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameVoice/Label").GetComponentInChildren<Text>(true));
+                _normalColorText.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel/VolumeGameAvatars/Label").GetComponentInChildren<Text>(true));
+                _normalColorText.AddRange(quickMenu.transform.Find("Screens/Social/UserProfileAndStatusSection").GetComponentsInChildren<Text>(true));
+                _normalColorText.Add(quickMenu.transform.Find("Popups/LoadingPopup/ProgressPanel/Parent_Loading_Progress/Loading Elements/txt_LOADING_Size").GetComponentInChildren<Text>(true));
+                _normalColorText.Add(quickMenu.transform.Find("Popups/LoadingPopup/MirroredElements/ProgressPanel (1)/Parent_Loading_Progress/Loading Elements/txt_LOADING_Size").GetComponentInChildren<Text>(true));
 
                 #endregion
             }
             
-            foreach (var img in normalColorImage)
+            foreach (var img in _normalColorImage)
                 img.color = colorT;
-            foreach (var img in dimmerColorImage)
+            foreach (var img in _dimmerColorImage)
                 img.color = dimmerT;
-            foreach (var img in darkerColorImage)
+            foreach (var img in _darkerColorImage)
                 img.color = darkerT;
-            foreach (var txt in normalColorText)
+            foreach (var txt in _normalColorText)
                 txt.color = color;
             
             var buttonTheme = new ColorBlock {
@@ -224,7 +224,7 @@ namespace MintMod.UserInterface.OldUI {
                         pressedColor = Color.gray,
                         fadeDuration = 0.1f
                     };
-                    quickMenu.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "Row:4 Column:0").GetComponent<Button>().colors = buttonTheme;
+                    quickMenu.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == "Row:4 Column:0")!.GetComponent<Button>().colors = buttonTheme;
                     color.a = 0.5f;
                     darker.a = 1f;
                     theme.normalColor = darker;
@@ -271,7 +271,8 @@ namespace MintMod.UserInterface.OldUI {
                             img.color = color;
                     }
                     */
-                    MelonCoroutines.Start(DelayedHfxReColor(color));
+                    //MelonCoroutines.Start(DelayedHfxReColor(color));
+                    ChangeHfxColor(color);
                 } catch (Exception ex) {
                     Con.Error(ex);
                 }
@@ -282,17 +283,17 @@ namespace MintMod.UserInterface.OldUI {
         internal override void OnUpdate() {
             if (!ModCompatibility.ReMod) return;
             if (HfxFound && Hfx.Count != 0)
-                Hfx.FirstOrDefault()!.highlightColor = finalColor;
+                Hfx.FirstOrDefault()!.highlightColor = _finalColor;
         }
 
         private static Il2CppArrayBase<HighlightsFXStandalone> Hfx;
         private static bool HfxFound;
 
-        internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
-            if (buildindex == -1 && ModCompatibility.ReMod) {
-                MelonCoroutines.Start(DelayedHfxReColor(finalColor));
-            }
-        }
+        // internal override void OnLevelWasLoaded(int buildindex, string sceneName) {
+        //     if (buildindex == -1 && ModCompatibility.ReMod) {
+        //         MelonCoroutines.Start(DelayedHfxReColor(_finalColor));
+        //     }
+        // }
 
         private static IEnumerator DelayedHfxReColor(Color color) {
             yield return new WaitForSeconds(5);
@@ -300,6 +301,11 @@ namespace MintMod.UserInterface.OldUI {
             if (Hfx.Count == 0) yield break;
             Hfx.FirstOrDefault()!.highlightColor = color;
             HfxFound = true;
+        }
+
+        private static void ChangeHfxColor(Color color) {
+            foreach (var highlightsFXStandalone in UnityEngine.Resources.FindObjectsOfTypeAll<HighlightsFXStandalone>())
+                highlightsFXStandalone.highlightColor = color;
         }
 
         //private void ColorActionMenu(Color color) {
@@ -312,15 +318,15 @@ namespace MintMod.UserInterface.OldUI {
             if (Config.ColorLoadingScreen.Value && MelonHandler.Mods.Any(i => i.Info.Name == "BetterLoadingScreen")) return;
             try {
                 var quickMenu = UIWrappers.GetVRCUiMInstance().menuContent();
-                loadingBackground = quickMenu.transform.Find("Popups/LoadingPopup/3DElements/LoadingBackground_TealGradient/SkyCube_Baked").gameObject;
-                loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
-                loadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
-                loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                _loadingBackground = quickMenu.transform.Find("Popups/LoadingPopup/3DElements/LoadingBackground_TealGradient/SkyCube_Baked").gameObject;
+                _loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                _loadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
+                _loadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
 
-                initialLoadingBackground = GameObject.Find("LoadingBackground_TealGradient_Music/SkyCube_Baked");
-                initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
-                initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
-                initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                _initialLoadingBackground = GameObject.Find("LoadingBackground_TealGradient_Music/SkyCube_Baked");
+                _initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
+                _initialLoadingBackground.GetComponent<MeshRenderer>().material.SetColor("_Tint", new Color(color.r / 2f, color.g / 2f, color.b / 2f, color.a));
+                _initialLoadingBackground.GetComponent<MeshRenderer>().material.SetTexture("_Tex", MintyResources.basicGradient);
             } catch (Exception e) {
                 Con.Error(e);
             }
