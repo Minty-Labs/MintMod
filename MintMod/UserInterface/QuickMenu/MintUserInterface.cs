@@ -164,6 +164,9 @@ namespace MintMod.UserInterface.QuickMenu {
             BuildNameplateMenu();
             BuildWorldActionsMenu();
             
+            // TEST
+            // JumpSelection();
+            
             // Build Last
             UserSelMenu();
 
@@ -924,6 +927,26 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #endregion
 
+        // #region DEBUG Jump Selection
+        //
+        // private static void JumpSelection() {
+        //     var f = new ReRadioTogglePage("JumpSelection");
+        //     f.AddItem("prop_Boolean_0", null, () => PlayerActions.JumpNum = 1);
+        //     f.AddItem("prop_Boolean_1", null, () => PlayerActions.JumpNum = 2);
+        //     f.AddItem("prop_Boolean_2", null, () => PlayerActions.JumpNum = 3);
+        //     f.AddItem("prop_Boolean_3", null, () => PlayerActions.JumpNum = 4);
+        //     f.AddItem("prop_Boolean_4", null, () => PlayerActions.JumpNum = 5);
+        //     f.AddItem("field_Private_Boolean_0", null, () => PlayerActions.JumpNum = 6);
+        //     f.AddItem("field_Private_Boolean_1", null, () => PlayerActions.JumpNum = 7);
+        //     f.AddItem("Method_Public_Boolean_0()", null, () => PlayerActions.JumpNum = 8);
+        //     f.AddItem("Method_Public_Boolean_1()", null, () => PlayerActions.JumpNum = 9);
+        //     f.AddItem("Method_Public_Boolean_2()", null, () => PlayerActions.JumpNum = 10);
+        //     f.OnClose += () => Con.Debug($"Jump: {PlayerActions.JumpNum}");
+        //     BaseActions.AddButton("Jump Selection", "yes", f.Open);
+        // }
+        //
+        // #endregion
+
         #region Media Header
 
         private static Transform _mediaPanel;
@@ -1014,6 +1037,7 @@ namespace MintMod.UserInterface.QuickMenu {
             ESP.ClearAllPlayerESP();
             InfJump?.Toggle(false, true, true);
             MainQMInfJump?.Toggle(false, true, true);
+            _worldToggle?.Toggle(false, true, true);
         }
 
         internal override void OnUpdate() {

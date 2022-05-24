@@ -176,14 +176,35 @@ namespace MintMod.Functions {
 
         #region Jump Manager
 
+        // public static int JumpNum = 3;
+
+        private static bool JumpInput() {
+            // var input = VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump");
+            // var j = JumpNum switch {
+            //     1 => input.prop_Boolean_0,
+            //     2 => input.prop_Boolean_1,
+            //     3 => input.prop_Boolean_2,
+            //     4 => input.prop_Boolean_3,
+            //     5 => input.prop_Boolean_4,
+            //     6 => input.field_Private_Boolean_0,
+            //     7 => input.field_Private_Boolean_1,
+            //     8 => input.Method_Public_Boolean_0(),
+            //     9 => input.Method_Public_Boolean_1(),
+            //     10 => input.Method_Public_Boolean_2(),
+            //     _ => input.prop_Boolean_0
+            // };
+            //
+            // return j;
+            return VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").prop_Boolean_0;
+        }
+
         internal static bool InfiniteJump;
         private static void JumpyJump() {
-            if (!InfiniteJump &&
-                !VRCInputManager.Method_Public_Static_VRCInput_String_0("Jump").Method_Public_Boolean_2() &&
-                Networking.LocalPlayer.IsPlayerGrounded()) return;
-            var velocity = Networking.LocalPlayer.GetVelocity();
-            velocity.y = Networking.LocalPlayer.GetJumpImpulse() + 1f;
-            Networking.LocalPlayer.SetVelocity(velocity);
+            if (InfiniteJump && JumpInput() && !Networking.LocalPlayer.IsPlayerGrounded()) {
+                var velocity = Networking.LocalPlayer.GetVelocity();
+                velocity.y = Networking.LocalPlayer.GetJumpImpulse() + 1f;
+                Networking.LocalPlayer.SetVelocity(velocity);
+            }
         }
 
         private static void GravityChange(bool state) => Networking.LocalPlayer.SetGravityStrength(state ? 0 : 1);
