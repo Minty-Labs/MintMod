@@ -25,13 +25,13 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.31.7";
+            public const string Version = "2.31.8";
 #endif
 #if DEBUG
-            public const string Version = "2.29.0";
+            public const string Version = "2.XX.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "19 May 2022";
+            public const string UpdatedDate = "23 May 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.7.5";
 #endif
