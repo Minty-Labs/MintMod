@@ -84,6 +84,18 @@
             <Pattern>MintyLoader.Con*</Pattern>
             <Description>Disable Value Encryption</Description>
           </Rule>
+          <Rule name="rule10" feature="renaming" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.LoaderObject*</Pattern>
+            <Description>Disable Renaming</Description>
+          </Rule>
+          <Rule name="rule27" feature="string encryption" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.LoaderObject*</Pattern>
+            <Description>Disable String Encryption</Description>
+          </Rule>
+          <Rule name="rule28" feature="value encryption" exclude="true" applyToMembers="true">
+            <Pattern>MintyLoader.LoaderObject*</Pattern>
+            <Description>Disable Value Encryption</Description>
+          </Rule>
           <Rule name="rule5" feature="renaming" exclude="false" applyToMembers="true">
             <Pattern>MintyLoader.LoadManager*</Pattern>
             <Description>Disable Renaming</Description>
