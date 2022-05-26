@@ -20,7 +20,7 @@ using UnityEngine.Events;
 using MintyLoader;
 
 namespace MintMod.UserInterface.OldUI {
-    class SettingsMenu : MintSubMod {
+    internal class SettingsMenu : MintSubMod {
         public override string Name => "Settings Menu";
         public override string Description => "Edits on the Settings Menu";
 
@@ -32,20 +32,26 @@ namespace MintMod.UserInterface.OldUI {
 
 		internal override void OnUserInterface() {
 			#region Loading screen restart
-			// functionsButton = UnityEngine.Object.Instantiate<Transform>(UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup/ButtonMiddle"), UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup")).gameObject;
-			// functionsButton.GetComponent<RectTransform>().anchoredPosition += new Vector2(0f, -128f);
-			// functionsButton.name = "Mint_LoadingScreenRestart";
-			// if (!Config.ColorGameMenu.Value) {
-			// 	functionsButton.GetComponent<Button>().GetComponentInChildren<Image>().color = Minty;
-			// 	functionsButton.GetComponentInChildren<Image>().color = Minty;
-			// }
-			// functionsButton.GetComponentInChildren<Text>().text = "Restart Game";
-			// functionsButton.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
-			// functionsButton.GetComponent<Button>().onClick.AddListener(new Action(Utils.General.RestartGame));
-			// if ((ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == false) || !ModCompatibility.emmVRC)
-			// 	functionsButton.SetActive(true);
-			// else if (ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == true)
-			// 	functionsButton.SetActive(false);
+			
+			try {
+				functionsButton = UnityEngine.Object.Instantiate(GameObject.Find("UserInterface/MenuContent/Popups/LoadingPopup/ButtonMiddle")!.transform, 
+					GameObject.Find("UserInterface/MenuContent/Popups/LoadingPopup")!.transform).gameObject;
+				functionsButton.GetComponent<RectTransform>().anchoredPosition += new Vector2(0f, -128f);
+				functionsButton.name = "Mint_LoadingScreenRestart";
+				if (!Config.ColorGameMenu.Value) {
+					functionsButton.GetComponent<Button>().GetComponentInChildren<Image>().color = Minty;
+					functionsButton.GetComponentInChildren<Image>().color = Minty;
+				}
+				functionsButton.GetComponentInChildren<Text>().text = "Restart Game";
+				functionsButton.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
+				functionsButton.GetComponent<Button>().onClick.AddListener(new Action(Utils.General.RestartGame));
+				if ((ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == false) || !ModCompatibility.emmVRC)
+					functionsButton.SetActive(true);
+				else if (ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled)
+					functionsButton.SetActive(false);
+			} catch (Exception ex) {
+				Con.Error(ex);
+			}
 
 			#endregion
 
@@ -92,8 +98,8 @@ namespace MintMod.UserInterface.OldUI {
 
 				#region StreamerModeToggle
 
-				var StreammerModeToggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle");
-				var e = StreammerModeToggle.GetComponent<Toggle>().onValueChanged;
+				var streammerModeToggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle");
+				var e = streammerModeToggle.GetComponent<Toggle>().onValueChanged;
 				e.AddListener(new Action<bool>((isOn) => {
 					MintUserInterface.isStreamerModeOn = isOn;
 					if (isOn) {
@@ -130,7 +136,7 @@ namespace MintMod.UserInterface.OldUI {
 					MintUserInterface.UpdateMintIconForStreamerMode(isOn);
 					MenuContentBackdrop.UpdateForStreamerMode(isOn);
 					HudIcon.UpdateForStreamerMode(isOn);
-					ReColor.Intstance.OnUserInterface();
+					ReColor.Instance.OnUserInterface();
 				}));
 
 				#endregion
