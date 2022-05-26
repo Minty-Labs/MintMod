@@ -52,10 +52,10 @@ namespace MintMod.Functions {
 
                 httpClient.Dispose();
                 Con.Msg($"Downloaded VRCW for {grabAssetNameVrcw}.\nLocated in {vrcwPath}");
-                VRCUiPopups.Notify($"Downloaded VRCW for {grabAssetNameVrcw}");
+                VrcUiPopups.Notify($"Downloaded VRCW for {grabAssetNameVrcw}");
             } catch (Exception e) {
                 Con.Error($"Failed to download VRCW\n{e}");
-                VRCUiPopups.Notify("Failed to download VRCW", NotificationSystem.Alert);
+                VrcUiPopups.Notify("Failed to download VRCW", NotificationSystem.Alert);
             }
         }
 
@@ -96,11 +96,11 @@ namespace MintMod.Functions {
                     swe.WriteLine("");
                 }
                 Con.Msg($"Logged World: {worldName}\nLocated in {final}");
-                VRCUiPopups.Notify($"Logged world: {worldName}");
+                VrcUiPopups.Notify($"Logged world: {worldName}");
             }
             catch (Exception w) {
                 Con.Error(w);
-                VRCUiPopups.Notify("Failed to log world", NotificationSystem.Alert);
+                VrcUiPopups.Notify("Failed to log world", NotificationSystem.Alert);
             }
         }
 

@@ -254,7 +254,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         }
                     }
                     else {
-                        VRCUiPopups.Notify("No Avatar ID in clipboard", NotificationSystem.Alert);
+                        VrcUiPopups.Notify("No Avatar ID in clipboard", NotificationSystem.Alert);
                     }
                 }
                 catch (Exception c) {
@@ -430,7 +430,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 var apiAvatar = PlayerActions.SelPAvatar();
                 var avatarIsPublic = apiAvatar.releaseStatus.ToLower().Contains("public");
                 if (!avatarIsPublic) {
-                    VRCUiPopups.Notify("Avatar is private", NotificationSystem.Alert);
+                    VrcUiPopups.Notify("Avatar is private", NotificationSystem.Alert);
                     return;
                 }
                 try {
@@ -455,11 +455,11 @@ namespace MintMod.UserInterface.QuickMenu {
                     var v = PlayerActions.SelPAvatar();
                     if (!v.releaseStatus.ToLower().Contains("private")) {
                         ReFavs._instance.FavoriteAvatar(v);
-                        VRCUiPopups.Notify($"Favorited the avatar: {v.name}", NotificationSystem.Alert);
+                        VrcUiPopups.Notify($"Favorited the avatar: {v.name}", NotificationSystem.Alert);
                     }
                     else {
                         Con.Warn("Avatar is private, cannot favorite");
-                        VRCUiPopups.Notify("Avatar is private, cannot favorite", NotificationSystem.Alert);
+                        VrcUiPopups.Notify("Avatar is private, cannot favorite", NotificationSystem.Alert);
                     }
                     /*foreach (var favoriteList in AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
                         if (!v.releaseStatus.ToLower().Contains("private")) {
@@ -687,7 +687,7 @@ namespace MintMod.UserInterface.QuickMenu {
                                     break;
                                 default:
                                     Con.Warn("Nothing is selected.");
-                                    VRCUiPopups.Notify("Noting is selected", NotificationSystem.Alert);
+                                    VrcUiPopups.Notify("Noting is selected", NotificationSystem.Alert);
                                     //VRCUiManager.prop_VRCUiManager_0.InformHudText("Nothing is selected", Color.yellow);
                                     break;
                             }
@@ -972,11 +972,18 @@ namespace MintMod.UserInterface.QuickMenu {
                 yield break; // Stop method if failed
             }
 
-            var hasNoBtk = false;
+            var hasNoReMod = false;
 
-            _reModTextElement = h.GetComponent<TextMeshProUGUI>();
+            try { _reModTextElement = h.GetComponent<TextMeshProUGUI>();
+            } catch { hasNoReMod = true; } // Stop method if no ReMod
+
+            if (hasNoReMod) {
+                _mediaPanel.gameObject.Destroy();
+                yield break;
+            }
             _reModHeaderText = _reModTextElement.text;
             
+            var hasNoBtk = false;
             _mediaPanel.Find("Text_Ping").gameObject.Destroy();
             try {
                 _mediaPanel.Find("BTKStatusElement").gameObject!.Destroy();

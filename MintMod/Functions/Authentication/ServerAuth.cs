@@ -102,7 +102,7 @@ namespace MintMod.Functions.Authentication {
         internal static IEnumerator SimpleAuthCheck(string id) {
             if (ModCompatibility.GPrivateServer) {
                 Con.Warn("Cannot check while on PrivateServer");
-                VRCUiPopups.Notify("Cannot check while on PrivateServer", NotificationSystem.Alert);
+                VrcUiPopups.Notify("Cannot check while on PrivateServer", NotificationSystem.Alert);
                 yield break;
             }
             HttpClient e = new();
@@ -113,7 +113,7 @@ namespace MintMod.Functions.Authentication {
 
             if (!task.IsCompleted || task.Result.Contains("message")) {
                 Con.Msg("Player has no auth for Mint");
-                VRCUiPopups.Notify("Player has no auth for Mint", NotificationSystem.Alert);
+                VrcUiPopups.Notify("Player has no auth for Mint", NotificationSystem.Alert);
                 yield break;
             }
 
@@ -125,11 +125,11 @@ namespace MintMod.Functions.Authentication {
 
             if (d.isBanned) {
                 Con.Msg("Player is banned from Mint");
-                VRCUiPopups.Notify("Player is banned from Mint", NotificationSystem.Alert);
+                VrcUiPopups.Notify("Player is banned from Mint", NotificationSystem.Alert);
                 yield break;
             }
             Con.Msg("Player is authed for Mint");
-            VRCUiPopups.Notify("Player is authed for Mint", NotificationSystem.Alert);
+            VrcUiPopups.Notify("Player is authed for Mint", NotificationSystem.Alert);
         }
     }
 }

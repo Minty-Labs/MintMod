@@ -50,10 +50,10 @@ namespace MintMod.Functions {
 
                 httpClient.Dispose();
                 Con.Msg($"Downloaded VRCA for {grabAssetName}.\nLocated in {vrcaPath}");
-                VRCUiPopups.Notify($"Downloaded VRCA for {grabAssetName}");
+                VrcUiPopups.Notify($"Downloaded VRCA for {grabAssetName}");
             } catch {
                 Con.Error("Failed to download VRCA");
-                VRCUiPopups.Notify("Failed to Download VRCA", NotificationSystem.Alert);
+                VrcUiPopups.Notify("Failed to Download VRCA", NotificationSystem.Alert);
             }
         }
 
@@ -100,11 +100,11 @@ namespace MintMod.Functions {
                 }
                 
                 Con.Msg($"Downloaded VRCA for {grabSelfAssetName}.\nLocated in {vrcaPath}");
-                VRCUiPopups.Notify($"Downloaded VRCA for {grabSelfAssetName}");
+                VrcUiPopups.Notify($"Downloaded VRCA for {grabSelfAssetName}");
             }
             catch {
                 Con.Error("Failed to download VRCA");
-                VRCUiPopups.Notify("Failed to download VRCA", NotificationSystem.Alert);
+                VrcUiPopups.Notify("Failed to download VRCA", NotificationSystem.Alert);
             }
         }
 
@@ -169,7 +169,7 @@ namespace MintMod.Functions {
             }
 
             Con.Msg($"Logged {playerName}, Located in {subdir}\\SelectedUser_Logged.txt");
-            VRCUiPopups.Notify($"Logged {playerName}");
+            VrcUiPopups.Notify($"Logged {playerName}");
         }
 
         public static void Teleport(VRCPlayer player) => PlayerWrappers.GetLocalVRCPlayer().transform.position = player.transform.position;

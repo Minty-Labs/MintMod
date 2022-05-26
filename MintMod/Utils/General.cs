@@ -68,7 +68,7 @@ namespace MintMod.Utils {
             yield return new WaitForSeconds(10);
             string data = Config.useFakeName.Value ? Config.FakeName.Value : ServerAuth.MintyData.Name;
             Con.Msg($"Welcome back, {data}");
-            VRCUiPopups.Notify($"Welcome back, {data}", NotificationSystem.Key);
+            VrcUiPopups.Notify($"Welcome back, {data}", NotificationSystem.Key);
         }
 
         #endregion

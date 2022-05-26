@@ -12,10 +12,6 @@ using ReMod.Core.VRChat;
 using UnityEngine.Playables;
 using VRC;
 using VRC.Core;
-using VRC.DataModel;
-using VRCSDK2;
-using VRCSDK2.Validation.Performance;
-using Player = VRC.Player;
 using String = Il2CppSystem.String;
 
 namespace MintMod.UserInterface.QuickMenu {
