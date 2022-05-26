@@ -32,20 +32,20 @@ namespace MintMod.UserInterface.OldUI {
 
 		internal override void OnUserInterface() {
 			#region Loading screen restart
-			functionsButton = UnityEngine.Object.Instantiate<Transform>(UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup/ButtonMiddle"), UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup")).gameObject;
-			functionsButton.GetComponent<RectTransform>().anchoredPosition += new Vector2(0f, -128f);
-			functionsButton.name = "Mint_LoadingScreenRestart";
-			if (!Config.ColorGameMenu.Value) {
-				functionsButton.GetComponent<Button>().GetComponentInChildren<Image>().color = Minty;
-				functionsButton.GetComponentInChildren<Image>().color = Minty;
-			}
-			functionsButton.GetComponentInChildren<Text>().text = "Restart Game";
-			functionsButton.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
-			functionsButton.GetComponent<Button>().onClick.AddListener(new Action(Utils.General.RestartGame));
-			if ((ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == false) || !ModCompatibility.emmVRC)
-				functionsButton.SetActive(true);
-			else if (ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == true)
-				functionsButton.SetActive(false);
+			// functionsButton = UnityEngine.Object.Instantiate<Transform>(UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup/ButtonMiddle"), UIWrappers.GetVRCUiMInstance().field_Public_GameObject_0.transform.Find("Popups/LoadingPopup")).gameObject;
+			// functionsButton.GetComponent<RectTransform>().anchoredPosition += new Vector2(0f, -128f);
+			// functionsButton.name = "Mint_LoadingScreenRestart";
+			// if (!Config.ColorGameMenu.Value) {
+			// 	functionsButton.GetComponent<Button>().GetComponentInChildren<Image>().color = Minty;
+			// 	functionsButton.GetComponentInChildren<Image>().color = Minty;
+			// }
+			// functionsButton.GetComponentInChildren<Text>().text = "Restart Game";
+			// functionsButton.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
+			// functionsButton.GetComponent<Button>().onClick.AddListener(new Action(Utils.General.RestartGame));
+			// if ((ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == false) || !ModCompatibility.emmVRC)
+			// 	functionsButton.SetActive(true);
+			// else if (ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == true)
+			// 	functionsButton.SetActive(false);
 
 			#endregion
 
@@ -97,12 +97,12 @@ namespace MintMod.UserInterface.OldUI {
 				e.AddListener(new Action<bool>((isOn) => {
 					MintUserInterface.isStreamerModeOn = isOn;
 					if (isOn) {
-						MintInfoButton?.SetActive(false);
-						RealSettingsExit?.SetActive(true);
-						SettingsExit?.SetActive(false);
-						SettingsRestart?.SetActive(false);
-						functionsButton?.SetActive(false);
-						MintInfoPanel?.SetActive(false);
+						MintInfoButton!.SetActive(false);
+						RealSettingsExit!.SetActive(true);
+						SettingsExit!.SetActive(false);
+						SettingsRestart!.SetActive(false);
+						functionsButton!.SetActive(false);
+						MintInfoPanel!.SetActive(false);
 
 						if (Config.AviFavsEnabled.Value) {
 							ReFavs._instance._favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
@@ -115,11 +115,11 @@ namespace MintMod.UserInterface.OldUI {
 							MelonCoroutines.Start(AvatarFavs.AviFavLogic.RefreshMenu(1f));
 						}*/
 					} else {
-						MintInfoButton?.SetActive(true);
-						RealSettingsExit?.SetActive(false);
-						SettingsExit?.SetActive(true);
-						SettingsRestart?.SetActive(true);
-						functionsButton?.SetActive(true);
+						MintInfoButton!.SetActive(true);
+						RealSettingsExit!.SetActive(false);
+						SettingsExit!.SetActive(true);
+						SettingsRestart!.SetActive(true);
+						functionsButton!.SetActive(true);
 						
 						if (Config.AviFavsEnabled.Value)
 							ReFavs._instance._favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
@@ -161,14 +161,14 @@ namespace MintMod.UserInterface.OldUI {
 
 			MintInfoPanel = UnityEngine.Object.Instantiate<GameObject>(GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel"), GameObject.Find("UserInterface/MenuContent/Screens/Settings").transform);
 			MintInfoPanel.name = "Mint_SettingsInfoPanel";
-			string name = MintInfoPanel.name;
+			var name = MintInfoPanel.name;
 			MintInfoPanel.GetComponent<RectTransform>().localPosition = new Vector2(-896, 410);
 			MintInfoPanel.GetComponent<RectTransform>().localScale = new Vector3(0.65f, 0.75f, 0.75f);
 			MintInfoPanel.GetComponent<RectTransform>().sizeDelta = new Vector2(400, 330);
 			MintInfoPanel.SetActive(false);
 
-			GameObject Title = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/TitleText (1)");
-			Title.GetComponent<Text>().text = "Mint Info";
+			var title = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/TitleText (1)");
+			title.GetComponent<Text>().text = "Mint Info";
 
 			//Title.GetComponent<Text>().font = LoliteResources.Resources.BalooFont;
 
@@ -287,11 +287,12 @@ namespace MintMod.UserInterface.OldUI {
             }
             
             if (MintUserInterface.isStreamerModeOn) {
-	            MintInfoButton.SetActive(false);
-	            RealSettingsExit.SetActive(true);
-	            SettingsExit.SetActive(false);
-	            SettingsRestart.SetActive(false);
-	            functionsButton.SetActive(false);
+	            MintInfoButton!.SetActive(false);
+	            RealSettingsExit!.SetActive(true);
+	            SettingsExit!.SetActive(false);
+	            SettingsRestart!.SetActive(false);
+	            functionsButton!.SetActive(false);
+	            MintInfoPanel!.SetActive(false);
             }
             yield break;
         }

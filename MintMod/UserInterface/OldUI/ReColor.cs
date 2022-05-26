@@ -32,21 +32,23 @@ namespace MintMod.UserInterface.OldUI {
             _finalColor = Config.ColorGameMenu.Value ? Minty : defaultMenuColor();
             if (Config.ColorGameMenu.Value)
                 MelonCoroutines.Start(ColorMenu(_finalColor));
-            //if (Config.ColorActionMenu.Value)
-            //    ColorActionMenu(finalColor);
-            if (Config.ColorLoadingScreen.Value) {
-                try {
-                    ColorLoadingScreenEnvironment(_finalColor);
-                }
-                catch (Exception e) {
-                    if (!MintUserInterface.isStreamerModeOn)
-                        Con.Error(e);
-                }
-            }
+            
+            if (!Config.ColorLoadingScreen.Value) return;
+            // try {
+            //     ColorLoadingScreenEnvironment(_finalColor);
+            // }
+            // catch (Exception e) {
+            //     if (!MintUserInterface.isStreamerModeOn)
+            //         Con.Error(e);
+            // }
         }
 
         private IEnumerator ColorMenu(Color color) {
             color = Config.ColorGameMenu.Value ? Minty : defaultMenuColor();
+                    
+            ChangeHfxColor(color);
+            
+            yield break;
 
             var colorT = new Color(color.r, color.g, color.b, 0.7f);
             //var dimmer = new Color(color.r / 0.75f, color.g / 0.75f, color.b / 0.75f);
@@ -264,15 +266,6 @@ namespace MintMod.UserInterface.OldUI {
                                 img.color = color;
                         }
                     }
-                    /*
-                    var NotificationRoot = GameObject.Find("UserInterface/QuickMenu/QuickModeMenus/QuickModeNotificationsMenu/ScrollRect");
-                    foreach (var img in NotificationRoot.GetComponentsInChildren<Image>(true)) {
-                        if (img.transform.name == "Background")
-                            img.color = color;
-                    }
-                    */
-                    //MelonCoroutines.Start(DelayedHfxReColor(color));
-                    ChangeHfxColor(color);
                 } catch (Exception ex) {
                     Con.Error(ex);
                 }

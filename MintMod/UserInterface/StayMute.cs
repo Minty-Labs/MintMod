@@ -9,10 +9,10 @@ namespace MintMod.UserInterface {
             _stayMute = MelonPreferences.CreateCategory("StayMute", "StayMute");
             _enabled = _stayMute.CreateEntry("Enabled", false, "StayMute", "Keep yourself from unmuting");
             
-            DefaultTalkController.field_Private_Static_Action_0 += new Action(() => {
-                if (!_enabled.Value) return;
-                DefaultTalkController.Method_Public_Static_Void_Boolean_0(true);
-            });
+            // DefaultTalkController.field_Private_Static_Action_0 += new Action(() => {
+            //     if (!_enabled.Value) return;
+            //     DefaultTalkController.Method_Public_Static_Void_Boolean_0(true);
+            // });
         }
     }
 }
