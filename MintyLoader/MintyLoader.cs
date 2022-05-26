@@ -8,7 +8,7 @@ namespace MintyLoader {
         public const string Name = "MintyLoader";
         public const string Author = "Lily";
         public const string Company = "Minty Labs";
-        public const string Version = "2.7.6";
+        public const string Version = "2.8.0";
         public const string DownloadLink = "https://mintlily.lgbt/mod/loader/MintyLoader.dll";
     }
    
@@ -38,7 +38,7 @@ namespace MintyLoader {
             }
             
             LoadManager.ApplyModURL(); // Check to see if running Beta Builds
-            UpdateManager.CheckVersion(); // Check Loader Version and update if needed, This also loads the Mod
+            UpdateManager.CheckForUpdate(); // Check Loader Version and update if needed, This also loads the Mod
 #if DEBUG
             try { Interpreter.NativeInterpreter.Interpreter?.RemoveAssembly(); } // Remove Mint Image from Mono
             catch (Exception r) { InternalLogger.Error(r); }

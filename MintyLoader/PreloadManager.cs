@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using MelonLoader;
 using System.Linq;
 using System.Diagnostics;
@@ -12,59 +11,37 @@ using System.Windows.Forms;
 
 namespace MintyLoader {
     public static class ModBlacklist {
-        internal static string[] BadMods = { "ripperstore", "ripper", "unchained", "late night", "late_night", "a.r.e.s", "a.r.3.s", "ares", /*"snaxytag",*/ "unchained", 
-            "abyss", "versa", "notorious", "error", "3rror", "fumo", "pasted client", "munchen", "astralbypass", "astral", "plan b", "odious", "fusionclient",
-            "fusionmodloader", "astral", "fluxclient", "flux client", "you already know", "pyromod" };
-        
-        internal static string[] BadAuthors = { "largestboi", "xastroboy", "patchedplus", "kaaku", "l4rg3stbo1", "unreal", "bunny", "stellar", "lady lucy", "meap",
-            "fiass", /*"some dude",*/ "kuroi hane", "unixian", "shrekamuschrist", "zypher", "scope", "p a t c h e d   p l u s +", ">nick", "wtfblaze" };
-
-        internal static string[] BadPluginAuthors = { "astral", "fck", "zypher" };
-        
-        internal static string[] BadPlugins = { "freeloading", "astralbypass", "moonlight" };
-        
         internal static void BlacklistedModCheck() {
-            var temp = new List<string>();
-            var temp2 = new List<string>();
-            var temp3 = new List<string>();
-            var temp4 = new List<string>();
+            var http = new HttpClient();
+            var content = http.GetStringAsync("https://mintlily.lgbt/mod/loader/hbaovy_tvk_wsbnpu_ishjrspza.txt")
+                .GetAwaiter().GetResult().Split('\n');
             
-            var t = MelonHandler.Mods.Any(m => {
-                if (!BadMods.Contains(m.Info.Name.ToLower())) return false;
-                temp.Add(m.Info.Name);
-                return true;
-            });
-            var t2 = MelonHandler.Mods.Any(m => {
-                if (m.Info.Author == null) return true;
-                if (!BadAuthors.Contains(m.Info.Author.ToLower())) return false;
-                temp2.Add(m.Info.Author);
-                return true;
-            });
-            var t3 = MelonHandler.Plugins.Any(p => {
-                if (!BadPluginAuthors.Contains(p.Info.Author.ToLower())) return false;
-                temp3.Add(p.Info.Author);
-                return true;
-            });
-            var t4 = MelonHandler.Plugins.Any(p => {
-                if (!BadPlugins.Contains(p.Info.Name.ToLower())) return false;
-                temp4.Add(p.Info.Name);
-                return true;
-            });
+            var temp =  content[0].Split('|').ToList();
+            var temp2 = content[1].Split('|').ToList();
+            var temp3 = content[2].Split('|').ToList();
+            var temp4 = content[3].Split('|').ToList();
+
+            var isBadMod =          MelonHandler.Mods.Any(m =>  temp.Any(mod => mod.ToLower().Equals(m.Info.Name.ToLower())));
+            var isBadAuthor =       MelonHandler.Mods.Any(m => temp2.Any(mod => mod.ToLower().Equals(m.Info.Name.ToLower())));
+            var isBadPluginAuthor = MelonHandler.Mods.Any(m => temp3.Any(mod => mod.ToLower().Equals(m.Info.Name.ToLower())));
+            var isBadPlugin =       MelonHandler.Mods.Any(m => temp4.Any(mod => mod.ToLower().Equals(m.Info.Name.ToLower())));
             
-            foreach (var mod in temp.Where(mod => t)) {
+            http.Dispose();
+            
+            foreach (var mod in temp.Where(mod => isBadMod)) {
                 MessageBox.Show($"Remove \"{mod}\" from your Mods directory.", "Forbidden Mod Detected");
                 KillGame();
             }
-            foreach (var author in temp2.Where(author => t2)) {
+            foreach (var author in temp2.Where(author => isBadAuthor)) {
                 MessageBox.Show($"Remove the mods by \"{author}\" from your Mods directory.", "Forbidden Mod Author Detected");
                 KillGame();
             }
-            foreach (var plugin in temp3.Where(plugin => t3)) {
-                MessageBox.Show($"Remove \"{plugin}\" from your Plugins directory.", "Forbidden Plugin Detected");
+            foreach (var pAuthor in temp4.Where(pAuthor => isBadPluginAuthor)) {
+                MessageBox.Show($"Remove plugins by \"{pAuthor}\" from your Plugins directory.", "Forbidden Plugin Author Detected");
                 KillGame();
             }
-            foreach (var pAuthor in temp4.Where(pAuthor => t4)) {
-                MessageBox.Show($"Remove plugins by \"{pAuthor}\" from your Plugins directory.", "Forbidden Plugin Author Detected");
+            foreach (var plugin in temp3.Where(plugin => isBadPlugin)) {
+                MessageBox.Show($"Remove \"{plugin}\" from your Plugins directory.", "Forbidden Plugin Detected");
                 KillGame();
             }
             
@@ -84,7 +61,7 @@ namespace MintyLoader {
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
 
-        internal static void KillGame() {
+        private static void KillGame() {
             try {
                 TerminateProcess(Process.GetCurrentProcess().Handle, 0);
                 Marshal.GetDelegateForFunctionPointer<Action>(Marshal.AllocHGlobal(16))();
