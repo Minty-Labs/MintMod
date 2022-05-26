@@ -37,8 +37,10 @@ namespace MintMod.UserInterface.AvatarFavs {
             
             _favoriteAvatarList = new ReAvatarList($"<color=#{(Config.ColorGameMenu.Value ? Config.MenuColorHEX.Value : Colors.defaultMenuColor())}>Minty Favorites</color>",
                     this, false);
-            _favoriteAvatarList.AvatarPedestal.field_Internal_Action_3_String_GameObject_AvatarPerformanceStats_0 =
-                new Action<string, GameObject, AvatarPerformanceStats>(OnAvatarInstantiated);
+            //_favoriteAvatarList.AvatarPedestal.field_Internal_Action_3_String_GameObject_AvatarPerformanceStats_0 =
+            _favoriteAvatarList.AvatarPedestal.field_Internal_Action_4_String_GameObject_AvatarPerformanceStats_ObjectPublicBoBoBoBoBoBoBoBoBoBoUnique_0 =
+                new Action<string, GameObject, AvatarPerformanceStats, ObjectPublicBoBoBoBoBoBoBoBoBoBoUnique>
+                    (OnAvatarInstantiated);
             _favoriteAvatarList.OnEnable += () => _favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
             
             var parent = GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Favorite Button").transform.parent;
@@ -121,7 +123,8 @@ namespace MintMod.UserInterface.AvatarFavs {
 
         private bool HasAvatarFavorited(string id) => AviFavLogic.GetConfigList(0).Avatars.FirstOrDefault(a => a.id == id) != null;
 
-        private void OnAvatarInstantiated(string url, GameObject avatar, AvatarPerformanceStats avatarPerformanceStats) =>
+        private void OnAvatarInstantiated(string url, GameObject avatar, AvatarPerformanceStats avatarPerformanceStats,
+            ObjectPublicBoBoBoBoBoBoBoBoBoBoUnique unknown) =>
             _favoriteButton.Text = HasAvatarFavorited(_favoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0.id) ? 
                 "<color=#fd4544>Unfavorite</color>" : "<color=#9fffe3>Favorite</color>";
 

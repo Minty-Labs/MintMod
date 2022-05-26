@@ -31,7 +31,7 @@ namespace MintMod.Managers.Notification {
                 return;
             }
             
-            Instance._hudContent = GameObject.Find("/UserInterface/UnscaledUI/HudContent");
+            Instance._hudContent = GameObject.Find("/UserInterface/UnscaledUI/HudContent_Old");
             
             //Instantiate prefab and let NotificationController setup!
             var notifInstance = Object.Instantiate(Instance._notificationPrefab, Instance._hudContent.transform);
