@@ -89,14 +89,12 @@ namespace MintMod {
 
         // Menu
         public static MelonPreferences_Category Menu;
-        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, EnableActionMenu, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, useTabButtonForMenu,
-            CopyReModMedia;
+        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, EnableActionMenu, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, CopyReModMedia;
         public static MelonPreferences_Entry<string> InfoHUDPosition;
         public static MelonPreferences_Entry<float> RefreshAmount;
         private static void _Menu() {
             // Menu
             Menu = MelonPreferences.CreateCategory("MintMod_Menu", "MintMod - Menu");
-            useTabButtonForMenu = Menu.CreateEntry("useTabButtonForMenu", true, "* Use Tab Button Menu");
             KeepFlightBTNsOnMainMenu = Menu.CreateEntry("KeepFlightBTNsOnMainMenu", false, "Put Fly/NoClip on Main Quick Menu");
             EnableActionMenu = Menu.CreateEntry("ActionMenuON", true, "Mint ActionMenu Controls", "Toggle Action Menu integration");
 
