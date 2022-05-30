@@ -32,7 +32,7 @@ namespace MintMod.Functions {
         }
 
         private static void AddToNameplate() {
-            if (!MintUserInterface.isStreamerModeOn && RoomManager.field_Internal_Static_ApiWorld_0 != null && MasterIcon == null) {
+            if (/*!MintUserInterface.isStreamerModeOn && */RoomManager.field_Internal_Static_ApiWorld_0 != null && MasterIcon == null) {
                 if (PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count > 1) {
                     PlayerWrappers.GetEachPlayer(plr => {
                         if (MasterIcon == null && (plr.prop_VRCPlayerApi_0.isMaster || plr.field_Private_VRCPlayerApi_0.isMaster) && plr.prop_APIUser_0.id != APIUser.CurrentUser.id) {
@@ -80,12 +80,12 @@ namespace MintMod.Functions {
         //internal override void OnLevelWasLoaded(int buildindex, string SceneName) => MasterOfInstance = null;
 
         internal override void OnUpdate() {
-            if (MasterIcon != null && (ModCompatibility.NameplateStats || ModCompatibility.ReMod) && r != null && !MintUserInterface.isStreamerModeOn)
+            if (MasterIcon != null && (ModCompatibility.NameplateStats || ModCompatibility.ReMod) && r != null/* && !MintUserInterface.isStreamerModeOn*/)
                 r.anchoredPosition = new Vector3(0f, Patches.IsQmOpen ? 120f : 90f, 0f);
         }
 
         internal override void OnPrefSave() {
-            if (MasterIcon != null && !MintUserInterface.isStreamerModeOn)
+            if (MasterIcon != null /*&& !MintUserInterface.isStreamerModeOn*/)
                 MasterIcon.SetActive(Config.EnableMasterFinder.Value);
             //try{ MasterIcon.SetActive(Config.EnableMasterFinder.Value); }catch{}
         }

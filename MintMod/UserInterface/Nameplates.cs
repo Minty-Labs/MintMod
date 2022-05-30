@@ -46,7 +46,7 @@ namespace MintMod.UserInterface {
 
         static void OnAvatarIsReady(VRCPlayer vrcPlayer) {
             if (ModCompatibility.MintyNameplates) return;
-            if (MintUserInterface.isStreamerModeOn) return;
+            // if (MintUserInterface.isStreamerModeOn) return;
             if (!Config.EnableCustomNameplateReColoring.Value) return;
             if (ModCompatibility.GPrivateServer) {
                 if (_privateServerRanNoticeOnce) return;

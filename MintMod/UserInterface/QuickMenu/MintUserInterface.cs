@@ -30,6 +30,7 @@ using MintMod.UserInterface.OldUI;
 using ReMod.Core.UI;
 using TMPro;
 using UnityEngine.Playables;
+using UnityEngine.XR;
 using VRC.DataModel;
 using Object = UnityEngine.Object;
 
@@ -57,14 +58,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         public static Image MintIcon;
 
-        internal static bool isStreamerModeOn;
-
-        #region Temp TPVR Values
-
-        //public static MelonPreferences_Category melon;
-        //public static bool TPVR_active;
-
-        #endregion
+        // internal static bool isStreamerModeOn;
 
 		internal static IEnumerator OnQuickMenu() {
             while (UIManager.field_Private_Static_UIManager_0 == null) yield return null;
@@ -78,11 +72,11 @@ namespace MintMod.UserInterface.QuickMenu {
             while (GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle") == null)
                 yield return null;
             
-            var toggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle").GetComponent<UiSettingConfig>();
-            isStreamerModeOn = toggle.Method_Private_Boolean_0();
-
-            yield return new WaitForSeconds(15);
-            UpdateMintIconForStreamerMode(isStreamerModeOn);
+            // var toggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle").GetComponent<UiSettingConfig>();
+            // isStreamerModeOn = toggle.Method_Private_Boolean_0();
+            //
+            // yield return new WaitForSeconds(15);
+            // UpdateMintIconForStreamerMode(isStreamerModeOn);
         }
 
         private static IEnumerator BuildStandard() {
@@ -126,23 +120,23 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         private static IEnumerator BuildMint() {
-            MintMenu = new ReCategoryPage(MintCore.Fool ? "WalmartMenu" : "MintMenu", Config.useTabButtonForMenu.Value);
+            MintMenu = new ReCategoryPage(MintCore.Fool ? "WalmartMenu" : "MintMenu", true);
             MintMenu.GameObject.SetActive(false);
 
-            if (Config.useTabButtonForMenu.Value)
+            //if (Config.useTabButtonForMenu.Value)
                 ReTabButton.Create("MintTab", "Open the MintMenu", MintCore.Fool ? "WalmartMenu" : "MintMenu", 
                     MintCore.Fool ? MintyResources.WalmartTab : MintyResources.MintTabIcon);
-            else {
-                TheMintMenuButton = Object.Instantiate(MainMenuBackButton, MainMenuBackButton.transform.parent);
-                TheMintMenuButton.transform.SetAsLastSibling();
-                TheMintMenuButton.transform.Find("Badge_UnfinishedFeature").gameObject.SetActive(false);
-                yield return SetTheFuckingSprite();
-                TheMintMenuButton.SetActive(true);
-                TheMintMenuButton.name = "MintMenuButtonOvertakenBackButton";
-                TheMintMenuButton.GetComponent<Button>().onClick.RemoveAllListeners();
-                TheMintMenuButton.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
-                TheMintMenuButton.GetComponent<Button>().onClick.AddListener(new Action(MintMenu.Open));
-            }
+            // else {
+            //     TheMintMenuButton = Object.Instantiate(MainMenuBackButton, MainMenuBackButton.transform.parent);
+            //     TheMintMenuButton.transform.SetAsLastSibling();
+            //     TheMintMenuButton.transform.Find("Badge_UnfinishedFeature").gameObject.SetActive(false);
+            //     yield return SetTheFuckingSprite();
+            //     TheMintMenuButton.SetActive(true);
+            //     TheMintMenuButton.name = "MintMenuButtonOvertakenBackButton";
+            //     TheMintMenuButton.GetComponent<Button>().onClick.RemoveAllListeners();
+            //     TheMintMenuButton.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
+            //     TheMintMenuButton.GetComponent<Button>().onClick.AddListener(new Action(MintMenu.Open));
+            // }
 
             BaseActions = MintMenu.AddCategory("Menus", false);
 
@@ -663,7 +657,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         () => {
                             switch (GetSelectedAction(SelectedActionNum)) {
                                 case PlayerListActions.Teleport:
-                                    if (player != PlayerWrappers.GetCurrentPlayer())
+                                    if (PlayerWrappers.GetCurrentPlayer()._player != player)
                                         PlayerActions.Teleport(player._vrcplayer);
                                     break;
                                 case PlayerListActions.OpenQm:
@@ -673,7 +667,7 @@ namespace MintMod.UserInterface.QuickMenu {
                                     if (ESP.isESPEnabled)
                                         Con.Warn("Main ESP is already active");
                                     else
-                                        if (player != PlayerWrappers.GetCurrentPlayer())
+                                        if (PlayerWrappers.GetCurrentPlayer()._player != player)
                                             ESP.SinglePlayerESP(player, true);
                                     break;
                                 case PlayerListActions.TeleportObjs:
@@ -681,14 +675,16 @@ namespace MintMod.UserInterface.QuickMenu {
                                     break;
                                 case PlayerListActions.OrbitObjs:
                                     Items.Toggle(player, !Items.Rotate);
+                                    ShowInfoPopup();
                                     break;
                                 case PlayerListActions.OrbitPlayer:
                                     Players.Toggle(!Players.Rotate, player);
+                                    ShowInfoPopup();
                                     break;
+                                case PlayerListActions.None:
                                 default:
                                     Con.Warn("Nothing is selected.");
                                     VrcUiPopups.Notify("Noting is selected", NotificationSystem.Alert);
-                                    //VRCUiManager.prop_VRCUiManager_0.InformHudText("Nothing is selected", Color.yellow);
                                     break;
                             }
                         });
@@ -697,6 +693,9 @@ namespace MintMod.UserInterface.QuickMenu {
             };
             RemoveMintBackButtonDuplicate(PlayerListMenu);
         }
+
+        private static void ShowInfoPopup() 
+            => VrcUiPopups.Notify($"To disable orbit, press {(XRDevice.isPresent ? "Down both triggers" : "the letter \"P\"")}", NotificationSystem.Alert);
 
         #endregion
         
@@ -1089,10 +1088,10 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         internal static void UpdateMintIconForStreamerMode(bool o) {
-            if (MintIcon != null && !Config.useTabButtonForMenu.Value) {
-                MintIcon.sprite = o ? MintyResources.Transparent : MintyResources.MintIcon;
-                MintIcon.color = Color.white;
-            }
+            // if (MintIcon != null && !Config.useTabButtonForMenu.Value) {
+            //     MintIcon.sprite = o ? MintyResources.Transparent : MintyResources.MintIcon;
+            //     MintIcon.color = Color.white;
+            // }
 
             if (userSelectCategory != null) {
                 userSelectCategory.RectTransform.gameObject.SetActive(!o);
@@ -1111,15 +1110,15 @@ namespace MintMod.UserInterface.QuickMenu {
             if (Config.SpoofPing.Value)
                 Config.SavePrefValue(Config.mint, Config.SpoofPing, false);
 
-            if (Config.useTabButtonForMenu.Value && o) {
+            //if (Config.useTabButtonForMenu.Value && o) {
                 var msg = "Streamer Mode detected, Mint Tab Button is still visible.";
                 Con.Warn(msg);
                 VRCUiManager.field_Private_Static_VRCUiManager_0.QueueHudMessage(msg, Color.white, 8f);
-            }
+            //}
         }
 
         private static void RemoveMintBackButtonDuplicate(UiElement cat) {
-            if (Config.useTabButtonForMenu.Value) return;
+            //if (Config.useTabButtonForMenu.Value) return;
             try {
                 var _ = cat.GameObject.transform.Find("LeftItemContainer/MintMenuButtonOvertakenBackButton")?.gameObject;
                 _.DestroyImmediate();
