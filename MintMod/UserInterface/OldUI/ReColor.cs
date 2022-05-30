@@ -39,7 +39,7 @@ namespace MintMod.UserInterface.OldUI {
                 ColorLoadingScreenEnvironment(_finalColor);
             }
             catch (Exception e) {
-                if (!MintUserInterface.isStreamerModeOn)
+                //if (!MintUserInterface.isStreamerModeOn)
                     Con.Error(e);
             }
         }
@@ -171,7 +171,8 @@ namespace MintMod.UserInterface.OldUI {
                     _darkerColorImage.Add(quickMenu.transform.Find("Screens/Settings/VolumePanel").GetComponent<Image>());
                     _darkerColorImage.Add(quickMenu.transform.Find("Screens/Settings/AudioDevicePanel").GetComponent<Image>());
                     _darkerColorImage.Add(quickMenu.transform.Find("Screens/Settings/UserVolumeOptions").GetComponent<Image>());
-                    _darkerColorImage.Add(quickMenu.transform.Find("Screens/Avatar/TitlePanel (1)").GetComponent<Image>());
+                    _darkerColorImage.Add(quickMenu.transform.Find("Screens/Settings/HeightPanel").GetComponent<Image>());
+                    _darkerColorImage.Add(quickMenu.transform.Find("Screens/Avatar/TitlePanel (1)").GetComponentInChildren<Image>(true));
                     foreach (var obj in quickMenu.GetComponentsInChildren<Transform>(true).Where(x =>
                                  (x.name.Contains("Background"))/* || x.name.Contains("TitlePanel"))*/ && x.name != "PanelHeaderBackground" &&
                                  !x.transform.parent.name.Contains("UserIcon") && x!.transform.name != "Button_PerformanceOptions" && !x.name.Contains("Expando"))) {
@@ -179,6 +180,9 @@ namespace MintMod.UserInterface.OldUI {
                             if (img.gameObject.name != "Checkmark")
                                 _darkerColorImage.Add(img);
                     }
+
+                    _darkerColorImage[18].enabled = false;
+                    _darkerColorImage[27].enabled = false;
 
                     #endregion
                 }
@@ -222,12 +226,8 @@ namespace MintMod.UserInterface.OldUI {
                     _normalColorTextSettings.Add(quickMenu.transform.Find("Screens/Settings/VoiceOptionsPanel/TitleText (1)").GetComponentInChildren<Text>(true));
                     _normalColorTextSettings.Add(quickMenu.transform.Find("Screens/Settings/ComfortSafetyPanel/TitleText (1)").GetComponentInChildren<Text>(true));
                     _normalColorTextSettings.Add(quickMenu.transform.Find("Screens/Settings/MousePanel/TitleText").GetComponentInChildren<Text>(true));
-                    // const string ttt = "Screens/Avatar/Vertical Scroll View/Viewport/Content/Personal Avatar List/Button/TitleText";
-                    // _normalColorTextSettings.Add(quickMenu.transform.Find(ttt).GetComponentInChildren<Text>(true));
-                    // foreach (var vpText in quickMenu.GetComponentsInChildren<Text>(true).Where(x => 
-                    //              x.name.Contains("Vertical Scroll View") && x.name.Contains("Viewport") && x.name.Contains("Content") && x.name.Contains("TitleText"))) {
-                    //     _normalColorTextSettings.Add(vpText);
-                    // }
+                    _normalColorTextSettings.Add(quickMenu.transform.Find("Screens/Settings/HeightPanel/TitleText (1)").GetComponentInChildren<Text>(true));
+                    
                     #endregion
                 }
 
