@@ -15,7 +15,6 @@ using MintMod.UserInterface.QuickMenu;
 using MintMod.Utils;
 using MintyLoader;
 using MintMod.Functions.Authentication;
-using MintMod.Managers.Notification;
 
 namespace MintMod {
     public class MintCore : MelonMod {
@@ -25,15 +24,15 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.32.3";
+            public const string Version = "2.33.0";
 #endif
 #if DEBUG
             public const string Version = "2.XX.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "30 May 2022";
+            public const string UpdatedDate = "31 May 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.8.0";
+            internal const string LoaderVer = "2.8.1";
 #endif
         }
 
@@ -114,7 +113,6 @@ namespace MintMod {
             Modules.Add(new UserInterface.ActionMenu());
             Modules.Add(new Players());
             Modules.Add(new Components());
-            Modules.Add(new NotificationSystem());
             Modules.Add(new GetRubyConfig());
             Modules.Add(new NetworkEvents());
             Modules.Add(new PlayerInfo());

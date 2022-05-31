@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MelonLoader;
 using UnityEngine;
 using VRC.Core;
-using System.Net;
 using System.Net.Http;
 using MintMod.Libraries;
-using MintMod.Managers.Notification;
+using MintMod.Resources;
 using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
 using MintMod.Utils;
 using Newtonsoft.Json;
 using Pastel;
+using BuildInfo = MintyLoader.BuildInfo;
 
 namespace MintMod.Functions.Authentication {
     internal class ServerAuth : MintSubMod {
@@ -102,7 +99,7 @@ namespace MintMod.Functions.Authentication {
         internal static IEnumerator SimpleAuthCheck(string id) {
             if (ModCompatibility.GPrivateServer) {
                 Con.Warn("Cannot check while on PrivateServer");
-                VrcUiPopups.Notify("Cannot check while on PrivateServer", NotificationSystem.Alert);
+                VrcUiPopups.Notify(BuildInfo.Name, "Cannot check while on PrivateServer", MintyResources.Alert);
                 yield break;
             }
             HttpClient e = new();
@@ -113,7 +110,7 @@ namespace MintMod.Functions.Authentication {
 
             if (!task.IsCompleted || task.Result.Contains("message")) {
                 Con.Msg("Player has no auth for Mint");
-                VrcUiPopups.Notify("Player has no auth for Mint", NotificationSystem.Alert);
+                VrcUiPopups.Notify(BuildInfo.Name, "Player has no auth for Mint", MintyResources.Lock);
                 yield break;
             }
 
@@ -125,11 +122,11 @@ namespace MintMod.Functions.Authentication {
 
             if (d.isBanned) {
                 Con.Msg("Player is banned from Mint");
-                VrcUiPopups.Notify("Player is banned from Mint", NotificationSystem.Alert);
+                VrcUiPopups.Notify(BuildInfo.Name, "Player is banned from Mint", MintyResources.Lock);
                 yield break;
             }
             Con.Msg("Player is authed for Mint");
-            VrcUiPopups.Notify("Player is authed for Mint", NotificationSystem.Alert);
+            VrcUiPopups.Notify(BuildInfo.Name, "Player is authed for Mint", MintyResources.Key);
         }
     }
 }

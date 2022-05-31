@@ -249,9 +249,6 @@
     <Compile Include="Managers\ESP.cs" />
     <Compile Include="Managers\Items.cs" />
     <Compile Include="Managers\MintyNameplayerHelper.cs" />
-    <Compile Include="Managers\Notification\NotificationController.cs" />
-    <Compile Include="Managers\Notification\NotificationObject.cs" />
-    <Compile Include="Managers\Notification\NotificationSystem.cs" />
     <Compile Include="Managers\OtherMods\GetRubyConfig.cs" />
     <Compile Include="Managers\Players.cs" />
     <Compile Include="MintCore.cs" />
@@ -302,9 +299,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Managers\Notification\mintnotification" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -20,7 +20,8 @@ namespace MintMod.Resources {
 
         public static Sprite masterCrown, MintIcon, MintTabIcon, Transparent, BG_HUD;
         public static Sprite address_book, checkered, clipboard, cog, extlink, globe, history, sync, tv, user, wifi, jump, dl, list, messages,
-            copy, key, marker, marker_hole, star, userlist, people, clone, ColorPicker, user_nameplate, user_nameplate_tag, user_nameplate_tag_move;
+            copy, key, marker, marker_hole, star, userlist, people, clone, ColorPicker, user_nameplate, user_nameplate_tag, user_nameplate_tag_move,
+            Alert, Key, Lock, Megaphone;
         public static Sprite PlayerListBGWalmart, WalmartTab;
         
         public static Texture2D MintIcon2D, FreezeIcon, JumpIcon, ESPIcon, FlyIcon, VRTPIcon;
@@ -75,7 +76,14 @@ namespace MintMod.Resources {
                     try { user_nameplate = LoadSprite("user-nameplate.png"); } catch { Con.Error("Resource user-nameplate.png failed"); }
                     //try { user_nameplate_tag = LoadSprite("user-nameplate_tag.png"); } catch { Con.Error("Resource user-nameplate_tag.png failed"); }
                     try { user_nameplate_tag_move = LoadSprite("user-nameplate_tag-move.png"); } catch { Con.Error("Resource user-nameplate_tag-move.png failed"); }
+                    try { Alert = LoadSprite("Alert.png"); } catch { Con.Error("Resource Alert.png failed"); }
+                    try { Key = LoadSprite("Key.png"); } catch { Con.Error("Resource Kery.png failed"); }
+                    try { Lock = LoadSprite("lock.png"); } catch { Con.Error("Resource lock.png failed"); }
+                    try { Megaphone = LoadSprite("Megaphone.png"); } catch { Con.Error("Resource Megaphone.png failed"); }
+                    
                     //try {  = LoadSprite(".png"); } catch { Con.Error("Resource .png failed"); }
+
+
                     try { PlayerListBGWalmart = LoadSprite("PlayerListWalmart.png"); } catch { Con.Error("Resource PlayerListWalmart.png failed"); }
                     try { WalmartTab = LoadSprite("WalmartLogo.png"); } catch { Con.Error("Resource WalmartLogo.png failed"); }
                     

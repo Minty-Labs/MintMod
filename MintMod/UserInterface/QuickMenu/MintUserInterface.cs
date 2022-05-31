@@ -22,10 +22,10 @@ using MintMod.Utils;
 using MintyLoader;
 using MintMod.Functions.Authentication;
 using MintMod.Libraries;
-using MintMod.Managers.Notification;
 using MintMod.UserInterface.AvatarFavs;
 using ReMod.Core.UI;
 using UnityEngine.XR;
+using BuildInfo = MintyLoader.BuildInfo;
 using Object = UnityEngine.Object;
 
 namespace MintMod.UserInterface.QuickMenu {
@@ -242,7 +242,7 @@ namespace MintMod.UserInterface.QuickMenu {
                         }
                     }
                     else {
-                        VrcUiPopups.Notify("No Avatar ID in clipboard", NotificationSystem.Alert);
+                        VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "No Avatar ID in clipboard", MintyResources.Alert);
                     }
                 }
                 catch (Exception c) {
@@ -392,8 +392,10 @@ namespace MintMod.UserInterface.QuickMenu {
                 }, MintyResources.extlink);
 
             r.AddButton("Clear HUD Message Queue", "Clears the HUD Popup Message Queue", () => {
-                if (!Config.UseOldHudMessages.Value)
-                    NotificationController_Mint.Instance.ClearNotifications();
+                if (!Config.UseOldHudMessages.Value) {
+                    ReMod.Core.Notification.NotificationSystem.ClearNotification();
+                    ReMod.Core.Notification.NotificationSystem.CloseNotification();
+                }
                 else
                     VRCUiManager.prop_VRCUiManager_0.field_Private_List_1_String_0.Clear();
             }, MintyResources.messages);
@@ -418,7 +420,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 var apiAvatar = PlayerActions.SelPAvatar();
                 var avatarIsPublic = apiAvatar.releaseStatus.ToLower().Contains("public");
                 if (!avatarIsPublic) {
-                    VrcUiPopups.Notify("Avatar is private", NotificationSystem.Alert);
+                    VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Avatar is private", MintyResources.Lock);
                     return;
                 }
                 try {
@@ -443,11 +445,11 @@ namespace MintMod.UserInterface.QuickMenu {
                     var v = PlayerActions.SelPAvatar();
                     if (!v.releaseStatus.ToLower().Contains("private")) {
                         ReFavs._instance.FavoriteAvatar(v);
-                        VrcUiPopups.Notify($"Favorited the avatar: {v.name}", NotificationSystem.Alert);
+                        VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Favorited the avatar: {v.name}", MintyResources.star);
                     }
                     else {
                         Con.Warn("Avatar is private, cannot favorite");
-                        VrcUiPopups.Notify("Avatar is private, cannot favorite", NotificationSystem.Alert);
+                        VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Avatar is private, cannot favorite", MintyResources.Lock);
                     }
                     /*foreach (var favoriteList in AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
                         if (!v.releaseStatus.ToLower().Contains("private")) {
@@ -678,7 +680,7 @@ namespace MintMod.UserInterface.QuickMenu {
                                 case PlayerListActions.None:
                                 default:
                                     Con.Warn("Nothing is selected.");
-                                    VrcUiPopups.Notify("Noting is selected", NotificationSystem.Alert);
+                                    VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Noting is selected", MintyResources.Alert);
                                     break;
                             }
                         });
@@ -689,7 +691,7 @@ namespace MintMod.UserInterface.QuickMenu {
         }
 
         private static void ShowInfoPopup() 
-            => VrcUiPopups.Notify($"To disable orbit, press {(XRDevice.isPresent ? "Down both triggers" : "the letter \"P\"")}", NotificationSystem.Alert);
+            => VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"To disable orbit, press {(XRDevice.isPresent ? "Down both triggers" : "the letter \"P\"")}", MintyResources.Alert);
 
         #endregion
         

@@ -4,8 +4,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using MintMod.Libraries;
-using MintMod.Managers.Notification;
 using MintMod.Reflections;
+using MintMod.Resources;
 using MintMod.Utils;
 using MintyLoader;
 using VRC;
@@ -50,10 +50,10 @@ namespace MintMod.Functions {
 
                 httpClient.Dispose();
                 Con.Msg($"Downloaded VRCA for {grabAssetName}.\nLocated in {vrcaPath}");
-                VrcUiPopups.Notify($"Downloaded VRCA for {grabAssetName}");
+                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Downloaded VRCA for {grabAssetName}");
             } catch {
                 Con.Error("Failed to download VRCA");
-                VrcUiPopups.Notify("Failed to Download VRCA", NotificationSystem.Alert);
+                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Failed to Download VRCA", MintyResources.Alert);
             }
         }
 
@@ -100,11 +100,11 @@ namespace MintMod.Functions {
                 }
                 
                 Con.Msg($"Downloaded VRCA for {grabSelfAssetName}.\nLocated in {vrcaPath}");
-                VrcUiPopups.Notify($"Downloaded VRCA for {grabSelfAssetName}");
+                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Downloaded VRCA for {grabSelfAssetName}");
             }
             catch {
                 Con.Error("Failed to download VRCA");
-                VrcUiPopups.Notify("Failed to download VRCA", NotificationSystem.Alert);
+                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Failed to download VRCA", MintyResources.Alert);
             }
         }
 
@@ -169,7 +169,7 @@ namespace MintMod.Functions {
             }
 
             Con.Msg($"Logged {playerName}, Located in {subdir}\\SelectedUser_Logged.txt");
-            VrcUiPopups.Notify($"Logged {playerName}");
+            VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Logged {playerName}");
         }
 
         public static void Teleport(VRCPlayer player) => PlayerWrappers.GetLocalVRCPlayer().transform.position = player.transform.position;

@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC;
 using static MintMod.Managers.Colors;
+using BuildInfo = MintyLoader.BuildInfo;
 using Exception = System.Exception;
 
 namespace MintMod.UserInterface.OldUI {
@@ -77,7 +78,7 @@ namespace MintMod.UserInterface.OldUI {
                                 }
                             }
                             Con.Msg("Downloaded VRCA for " + grab_assetName + ".\nLocated in /Documents/VRChat/LoliteUtilityMod/Assets/VRCA/");
-                            VrcUiPopups.Notify($"Downloaded VRCA for {grab_assetName}");
+                            VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Downloaded VRCA for {grab_assetName}");
                             //VRCUiManager.prop_VRCUiManager_0.InformHudText($"Downloaded VRCA for {grab_assetName}", Color.white);
                         };
                         new Thread(DLVRCA).Start();

@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using MelonLoader;
-using MintMod.Managers.Notification;
 using MintMod.Reflections;
 using MintMod.Utils;
 using MintMod.Libraries;
+using MintMod.Resources;
 using MintyLoader;
+using ReMod.Core.Notification;
 using UnityEngine;
-using VRCSDK2;
+using BuildInfo = MintyLoader.BuildInfo;
 using VRC_MirrorReflection = VRC.SDKBase.VRC_MirrorReflection;
 
 namespace MintMod.Functions {
@@ -52,10 +47,10 @@ namespace MintMod.Functions {
 
                 httpClient.Dispose();
                 Con.Msg($"Downloaded VRCW for {grabAssetNameVrcw}.\nLocated in {vrcwPath}");
-                VrcUiPopups.Notify($"Downloaded VRCW for {grabAssetNameVrcw}");
+                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Downloaded VRCW for {grabAssetNameVrcw}");
             } catch (Exception e) {
                 Con.Error($"Failed to download VRCW\n{e}");
-                VrcUiPopups.Notify("Failed to download VRCW", NotificationSystem.Alert);
+                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Failed to download VRCW", MintyResources.Alert);
             }
         }
 
@@ -96,11 +91,11 @@ namespace MintMod.Functions {
                     swe.WriteLine("");
                 }
                 Con.Msg($"Logged World: {worldName}\nLocated in {final}");
-                VrcUiPopups.Notify($"Logged world: {worldName}");
+                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Logged world: {worldName}");
             }
             catch (Exception w) {
                 Con.Error(w);
-                VrcUiPopups.Notify("Failed to log world", NotificationSystem.Alert);
+                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Failed to log world", MintyResources.Alert);
             }
         }
 

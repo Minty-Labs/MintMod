@@ -1,18 +1,15 @@
-﻿// using ReMod.Core.Notification;
+﻿using ReMod.Core.Notification;
+using MintMod.Libraries;
 using UnityEngine;
-using VRC.Core;
 
 namespace MintMod.Utils {
     public static class VrcUiPopups {
-        public static void Notify(string message, Sprite sprite = null, string title = "MintMod", float time = 3f) {
-            var temp = Config.useFakeName.Value ? Config.FakeName.Value : null;
-            var final = Config.useFakeName.Value && Config.ShowWelcomeMessages.Value ? message.Replace(APIUser.CurrentUser!.displayName, temp) : message;
-            
-            Managers.Notification.NotificationController_Mint.Instance.EnqueueNotification(
-                new Managers.Notification.NotificationObject(title, final,
-                    sprite == null ? Managers.Notification.NotificationSystem.Megaphone : sprite,
-                    time));
-            //NotificationSystem.EnqueueNotification(title, final, time, sprite == null ? NotificationSystem.DefaultIcon : sprite);
+        public static void Notify(string title, string message, Sprite sprite = null, Color? color = null, float durationOnScreen = 3f) {
+            NotificationSystem.EnqueueNotification(title.Replace("MintyLoader", "MintMod"), 
+                message, 
+                ColorConversion.HexToColor(Config.MenuColorHEX.Value, true, 0.7f), 
+                durationOnScreen, 
+                sprite == null ? NotificationSystem.DefaultIcon : sprite);
         }
     }
 }

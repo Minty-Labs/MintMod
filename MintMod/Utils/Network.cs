@@ -8,6 +8,7 @@ using VRC.Core;
 using VRC;
 using VRC.SDKBase;
 using ReMod.Core.VRChat;
+using BuildInfo = MelonLoader.BuildInfo;
 
 namespace MintMod.Utils {
     internal class NetworkEvents : MintSubMod {
@@ -72,12 +73,12 @@ namespace MintMod.Utils {
                         if (Config.FriendsOnlyJoinLeave.Value && (APIUser.CurrentUser.friendIDs.Contains(apiUser.id) || apiUser.isFriend || APIUser.IsFriendsWith(apiUser.id))) {
                             Con.Msg("[" + "JOIN".Pastel("3BA55D") + $"] {apiUser.displayName} has joined.");
                             if (Config.HeadsUpDisplayNotifs.Value)
-                                VrcUiPopups.Notify($"{apiUser.displayName} has joined.");
+                                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"{apiUser.displayName} has joined.");
                         }
                         else {
                             Con.Msg("[" + "JOIN".Pastel("3BA55D") + $"] {apiUser.displayName} has joined.");
                             if (Config.HeadsUpDisplayNotifs.Value)
-                                VrcUiPopups.Notify($"{apiUser.displayName} has joined.");
+                                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"{apiUser.displayName} has joined.");
                         }
                     }
                 }
@@ -104,11 +105,11 @@ namespace MintMod.Utils {
                         if (Config.FriendsOnlyJoinLeave.Value && (APIUser.CurrentUser.friendIDs.Contains(apiUser.id) || apiUser.isFriend || APIUser.IsFriendsWith(apiUser.id))) {
                             Con.Msg("[" + "LEFT".Pastel("ED4245") + $"] {apiUser.displayName} has left.");
                             if (Config.HeadsUpDisplayNotifs.Value) 
-                                VrcUiPopups.Notify($"{apiUser.displayName} has left.");
+                                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"{apiUser.displayName} has left.");
                         } else {
                             Con.Msg("[" + "LEFT".Pastel("ED4245") + $"] {apiUser.displayName} has left.");
                             if (Config.HeadsUpDisplayNotifs.Value)
-                                VrcUiPopups.Notify($"{apiUser.displayName} has left.");
+                                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"{apiUser.displayName} has left.");
                         }
                     }
                 }

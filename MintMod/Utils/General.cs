@@ -1,17 +1,12 @@
 ﻿using MelonLoader;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MintMod.Functions.Authentication;
 using UnityEngine;
-using VRC.Core;
 using MintyLoader;
-using System.Net.Http;
-using MintMod.Managers.Notification;
+using MintMod.Resources;
+using BuildInfo = MintyLoader.BuildInfo;
 
 namespace MintMod.Utils {
     internal class General : MintSubMod {
@@ -68,7 +63,7 @@ namespace MintMod.Utils {
             yield return new WaitForSeconds(10);
             string data = Config.useFakeName.Value ? Config.FakeName.Value : ServerAuth.MintyData.Name;
             Con.Msg($"Welcome back, {data}");
-            VrcUiPopups.Notify($"Welcome back, {data}", NotificationSystem.Key);
+            VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Welcome back, {data}", MintyResources.MintIcon);
         }
 
         #endregion
