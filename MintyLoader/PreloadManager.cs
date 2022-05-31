@@ -21,10 +21,10 @@ namespace MintyLoader {
             var temp3 = content[2].Split('|').ToList();
             var temp4 = content[3].Split('|').ToList();
 
-            var isBadMod =          MelonHandler.Mods.Any(m =>  temp.Any(mod => mod.ToLower().Equals(m.Info.Name.ToLower())));
-            var isBadAuthor =       MelonHandler.Mods.Any(m => temp2.Any(mod => mod.ToLower().Equals(m.Info.Name.ToLower())));
-            var isBadPluginAuthor = MelonHandler.Mods.Any(m => temp3.Any(mod => mod.ToLower().Equals(m.Info.Name.ToLower())));
-            var isBadPlugin =       MelonHandler.Mods.Any(m => temp4.Any(mod => mod.ToLower().Equals(m.Info.Name.ToLower())));
+            var isBadMod =          MelonHandler.Mods.Any(m =>  temp.Any(mod => mod.ToLower().Equals  (m.Info.Name.ToLower())));
+            var isBadAuthor =       MelonHandler.Mods.Any(m => temp2.Any(mod => mod.ToLower().Contains(m.Info.Name.ToLower())));
+            var isBadPluginAuthor = MelonHandler.Mods.Any(m => temp3.Any(mod => mod.ToLower().Contains(m.Info.Name.ToLower())));
+            var isBadPlugin =       MelonHandler.Mods.Any(m => temp4.Any(mod => mod.ToLower().Equals  (m.Info.Name.ToLower())));
             
             http.Dispose();
             
@@ -46,7 +46,7 @@ namespace MintyLoader {
             }
             
             if (File.Exists(Path.Combine(Environment.CurrentDirectory, "glu32.dll")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "winhttp.dll")) ||
+                /*File.Exists(Path.Combine(Environment.CurrentDirectory, "winhttp.dll")) ||*/
                 Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Mods-Freedom")) ||
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "KiraiMod.Loader.dll")) ||
                 File.Exists(Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins", "KiraiMod.dll")) ||
