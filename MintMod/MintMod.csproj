@@ -240,6 +240,7 @@
     <Compile Include="Functions\WorldActions.cs" />
     <Compile Include="Libraries\ColorConversion.cs" />
     <Compile Include="Libraries\CustomAsync.cs" />
+    <Compile Include="Libraries\EnDisableListener.cs" />
     <Compile Include="Libraries\ModCompatibility.cs" />
     <Compile Include="Managers\Colors.cs" />
     <Compile Include="Managers\Components.cs" />
@@ -274,7 +275,7 @@
     <Compile Include="UserInterface\OldUI\ReColor.cs" />
     <Compile Include="UserInterface\OldUI\SettingsMenu.cs" />
     <Compile Include="UserInterface\OldUI\SocialMenu.cs" />
-    <Compile Include="UserInterface\QuickMenu\ExtendedMediaPlayback.cs" />
+    <Compile Include="UserInterface\QuickMenu\QmMediaPanel.cs" />
     <Compile Include="UserInterface\QuickMenu\MintUserInterface.cs" />
     <Compile Include="UserInterface\QuickMenu\PlayerInfo.cs" />
     <Compile Include="UserInterface\QuickMenu\QMSlider.cs" />

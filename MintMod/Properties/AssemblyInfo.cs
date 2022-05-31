@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: MelonInfo(typeof(MintMod.MintCore), "MintMod",
     MintMod.MintCore.ModBuildInfo.Version, MintMod.MintCore.ModBuildInfo.Author,
     MintMod.MintCore.ModBuildInfo.DownloadLink)]
-[assembly: MelonOptionalDependencies("UI Expansion Kit", "ActionMenuApi", "ReMod.Core")]
+[assembly: MelonOptionalDependencies(/*"UI Expansion Kit",*/ "ActionMenuApi", "ReMod.Core")]
 [assembly: MelonColor(System.ConsoleColor.White)]
 [assembly: HarmonyDontPatchAll]
 [assembly: MelonGame("VRChat", "VRChat")]

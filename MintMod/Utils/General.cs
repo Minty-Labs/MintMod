@@ -14,7 +14,7 @@ using System.Net.Http;
 using MintMod.Managers.Notification;
 
 namespace MintMod.Utils {
-    class General : MintSubMod {
+    internal class General : MintSubMod {
         private static readonly int setMaxFrameRate240 = 240;
 
         public static void SetFrameRate() {
