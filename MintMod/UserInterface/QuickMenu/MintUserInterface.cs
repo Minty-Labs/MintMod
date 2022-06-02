@@ -62,16 +62,16 @@ namespace MintMod.UserInterface.QuickMenu {
             yield return BuildMint();
         }
 
-        internal static IEnumerator OnSettingsPageInit() {
-            while (GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle") == null)
-                yield return null;
-            
-            // var toggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle").GetComponent<UiSettingConfig>();
-            // isStreamerModeOn = toggle.Method_Private_Boolean_0();
-            //
-            // yield return new WaitForSeconds(15);
-            // UpdateMintIconForStreamerMode(isStreamerModeOn);
-        }
+        // internal static IEnumerator OnSettingsPageInit() {
+        //     while (GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle") == null)
+        //         yield return null;
+        //     
+        //     // var toggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle").GetComponent<UiSettingConfig>();
+        //     // isStreamerModeOn = toggle.Method_Private_Boolean_0();
+        //     //
+        //     // yield return new WaitForSeconds(15);
+        //     // UpdateMintIconForStreamerMode(isStreamerModeOn);
+        // }
 
         private static IEnumerator BuildStandard() {
             var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_Dashboard");
@@ -88,10 +88,7 @@ namespace MintMod.UserInterface.QuickMenu {
             
             var launchPad = new ReCategoryPage(f);
             MintCategoryOnLaunchPad = launchPad.AddCategory(MintCore.Fool ? "Walmart Client" : "MintMod");
-            MintCategoryOnLaunchPad!.Active = false;
-            
-            if (Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value) 
-                MintCategoryOnLaunchPad!.Active = true;
+            MintCategoryOnLaunchPad!.Active = Config.KeepFlightBTNsOnMainMenu.Value || Config.KeepPhotonFreezesOnMainMenu.Value || Config.KeepInfJumpOnMainMenu.Value;
 
             MainQMFly = MintCategoryOnLaunchPad?.AddToggle("Flight", "Toggle Flight", b =>
                     MintQAFly.Toggle(b, true, true));
@@ -134,8 +131,6 @@ namespace MintMod.UserInterface.QuickMenu {
 
             BaseActions = MintMenu.AddCategory("Menus", false);
 
-            RemoveMintBackButtonDuplicate(MintMenu);
-
             MintQuickActions();
             Player();
             try {
@@ -146,7 +141,7 @@ namespace MintMod.UserInterface.QuickMenu {
                     Con.Error("Please remove the ReMod.Core.dll file from the root of your VRChat game directory. Then, restart the game to fix this error.");
             }
             RandomStuff();
-            PlayerListMenuSetup();
+            PlayerListActionSet.MenuSetup(BaseActions);
             PlayerListOptions();
             //BuildAvatarMenu();
             BuildNameplateMenu();
@@ -165,17 +160,17 @@ namespace MintMod.UserInterface.QuickMenu {
             Con.Debug("Done Setting up MintMenus", MintCore.IsDebug);
         }
 
-        private static IEnumerator SetTheFuckingSprite() {
-            yield return null;
-            Object.DestroyImmediate(TheMintMenuButton.transform.Find("Icon").GetComponent<StyleElement>());
-            _mintIcon = TheMintMenuButton.transform.Find("Icon").GetComponent<Image>();
-            _mintIcon.sprite = MintCore.Fool ? MintyResources.WalmartTab : MintyResources.MintIcon;
-            _mintIcon.color = Color.white;
-            var styleElement = TheMintMenuButton.GetComponent<StyleElement>();
-            if (styleElement.field_Public_String_0 == "Back") // Ignore Style Changes
-                styleElement.field_Public_String_0 = "MintMenuButton";
-            else styleElement.field_Public_String_1 = "MintMenuButton";
-        }
+        // private static IEnumerator SetTheFuckingSprite() {
+        //     yield return null;
+        //     Object.DestroyImmediate(TheMintMenuButton.transform.Find("Icon").GetComponent<StyleElement>());
+        //     _mintIcon = TheMintMenuButton.transform.Find("Icon").GetComponent<Image>();
+        //     _mintIcon.sprite = MintCore.Fool ? MintyResources.WalmartTab : MintyResources.MintIcon;
+        //     _mintIcon.color = Color.white;
+        //     var styleElement = TheMintMenuButton.GetComponent<StyleElement>();
+        //     if (styleElement.field_Public_String_0 == "Back") // Ignore Style Changes
+        //         styleElement.field_Public_String_0 = "MintMenuButton";
+        //     else styleElement.field_Public_String_1 = "MintMenuButton";
+        // }
 
         #region Quick Actions
 
@@ -251,7 +246,6 @@ namespace MintMod.UserInterface.QuickMenu {
             }, MintyResources.checkered);
             c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", async () => await PlayerActions.AvatarSelfDownload(), MintyResources.user);
             //var h = PlayerMenu.AddCategory("Head Lamp");
-            RemoveMintBackButtonDuplicate(PlayerMenu);
         }
 
         #endregion
@@ -331,7 +325,6 @@ namespace MintMod.UserInterface.QuickMenu {
             
             var ct = WorldMenu.AddCategory("Component Toggle");
             Components.ComponentToggle(ct);
-            RemoveMintBackButtonDuplicate(WorldMenu);
         }
 
         #endregion
@@ -399,7 +392,6 @@ namespace MintMod.UserInterface.QuickMenu {
                 else
                     VRCUiManager.prop_VRCUiManager_0.field_Private_List_1_String_0.Clear();
             }, MintyResources.messages);
-            RemoveMintBackButtonDuplicate(RandomMenu);
         }
 
         #endregion
@@ -475,223 +467,6 @@ namespace MintMod.UserInterface.QuickMenu {
 
             Con.Debug("Done Setting up User Selected Menu", MintCore.IsDebug);
         }
-
-        #endregion
-
-        #region PlayerList Menu
-
-        private static List<ReMenuButton> PlayerButtons = new();
-        private static ReMenuButton SinglePlayerButton;
-
-        private enum PlayerListActions {
-            None,
-            Teleport,
-            OpenQm,
-            Esp,
-            TeleportObjs,
-            OrbitObjs,
-            OrbitPlayer
-        }
-
-        private static PlayerListActions GetSelectedAction(int type) {
-            return type switch {
-                1 => PlayerListActions.Teleport,
-                2 => PlayerListActions.OpenQm,
-                3 => PlayerListActions.Esp,
-                4 => PlayerListActions.TeleportObjs,
-                5 => PlayerListActions.OrbitObjs,
-                6 => PlayerListActions.OrbitPlayer,
-                _ => PlayerListActions.None
-            };
-        }
-
-        private static int SelectedActionNum = 0;
-
-        //private static QMSlider ItemSlider, PlayerSlider;
-        private static ReMenuSlider ItemsReSlider_sp, ItemsReSlider_di, PlayerReSlider_sp, PlayerReSlider_di;
-        private static ReMenuSliderCategory ItemSliderCat, PlayerSliderCat;
-        
-        #region Orbit Sliders
-        
-        private static void CreateSliders() {
-            /*
-            var categoryLayoutGroup = PlayerListMenu.GameObject.transform.Find("ScrollRect/Viewport/VerticalLayoutGroup");
-            try {
-                ItemSlider = new QMSlider(categoryLayoutGroup,
-                    f => Items.SpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
-                    f2 => Items.Distance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
-                ItemSlider.Enabled = false;
-                
-                PlayerSlider = new QMSlider(categoryLayoutGroup,
-                    f => Players.SelfSpinSpeed = f, "Speed", "Change speed of rotation.", 2f, 0f, 1f,
-                    f2 => Players.SelfDistance = f2, "Distance", "Change Distance of rotation", 5f, 0.1f, 1f);
-                PlayerSlider.Enabled = false;
-            }
-            catch (Exception e) {
-                Con.Error(e);
-            }
-            */
-            ItemSliderCat = PlayerListMenu.AddSliderCategory("Items");
-            ItemsReSlider_sp = ItemSliderCat.AddSlider("Speed", "Change orbit speed of rotation", f => Items.SpinSpeed = f, 1f, 0f, 2f);
-            ItemsReSlider_di = ItemSliderCat.AddSlider("Distance", "Change distance of rotation", f => Items.Distance = f, 1f, 0f, 5f);
-            ItemSliderCat.Header.GameObject.SetActive(false);
-            ItemsReSlider_sp.Active = false;
-            ItemsReSlider_di.Active = false;
-                
-            PlayerSliderCat = PlayerListMenu.AddSliderCategory("Players");
-            PlayerReSlider_sp = PlayerSliderCat.AddSlider("Speed", "Change orbit speed of rotation", f => Players.SelfSpinSpeed = f, 1f, 0f, 2f);
-            PlayerReSlider_di = PlayerSliderCat.AddSlider("Distance", "Change distance of rotation", f => Players.SelfDistance = f, 1f, 0.1f, 5f);
-            PlayerSliderCat.Header.GameObject.SetActive(false);
-            PlayerReSlider_sp.Active = false;
-            PlayerReSlider_di.Active = false;
-        }
-
-        #endregion
-        
-        private static void PlayerListMenuSetup() {
-            PlayerListMenu = BaseActions.AddCategoryPage("Player List", "Actions to do individually on a player.", MintyResources.address_book);
-            var p = PlayerListMenu.AddCategory("Actions");
-            CreateSliders();
-            var l = PlayerListMenu.AddCategory("Player List (Select an Action)");
-            p.AddButton("Teleport", "Teleport to player", () => {
-                SelectedActionNum = 1;
-                l.Title = "Player List > Teleport";
-                //PlayerSlider.Enabled = false;
-                //ItemSlider.Enabled = false;
-                ItemsReSlider_sp.Active = false;
-                ItemsReSlider_di.Active = false;
-                PlayerReSlider_sp.Active = false;
-                PlayerReSlider_di.Active = false;
-            });
-            /*
-            var _1 = p.AddButton("OpenQM", "Open player in Quick Menu", () => {
-                SelectedActionNum = 2;
-                l.Title = "Player List > OpenQM";
-                //PlayerSlider.Enabled = false;
-                //ItemSlider.Enabled = false;
-                ItemsReSlider_sp.Active = false;
-                ItemsReSlider_di.Active = false;
-                PlayerReSlider_sp.Active = false;
-                PlayerReSlider_di.Active = false;
-            });
-            */
-            p.AddSpacer();
-            p.AddButton("ESP", "Draw a bubble around player", () => {
-                SelectedActionNum = 3;
-                l.Title = "Player List > ESP";
-                //PlayerSlider.Enabled = false;
-                //ItemSlider.Enabled = false;
-                ItemsReSlider_sp.Active = false;
-                ItemsReSlider_di.Active = false;
-                PlayerReSlider_sp.Active = false;
-                PlayerReSlider_di.Active = false;
-            });
-            p.AddButton("Teleport\nPickups to", "Teleport all pickups to player", () => {
-                SelectedActionNum = 4;
-                l.Title = "Player List > Teleport Pickups";
-                //PlayerSlider.Enabled = false;
-                //ItemSlider.Enabled = false;
-                ItemsReSlider_sp.Active = false;
-                ItemsReSlider_di.Active = false;
-                PlayerReSlider_sp.Active = false;
-                PlayerReSlider_di.Active = false;
-            });
-            var _2 = p.AddButton("Orbit\nPickups", "Orbit pickups around player", () => {
-                SelectedActionNum = 5;
-                l.Title = "Player List > Orbit Pickups";
-                //PlayerSlider.Enabled = false;
-                //ItemSlider.Enabled = true;
-                ItemsReSlider_sp.Active = true;
-                ItemsReSlider_di.Active = true;
-                PlayerReSlider_sp.Active = false;
-                PlayerReSlider_di.Active = false;
-            });
-            var _3 = p.AddButton("Orbit\nPlayer", "Orbit around player", () => {
-                SelectedActionNum = 6;
-                l.Title = "Player List > Orbit Player";
-                //PlayerSlider.Enabled = true;
-                //ItemSlider.Enabled = false;
-                ItemsReSlider_sp.Active = false;
-                ItemsReSlider_di.Active = false;
-                PlayerReSlider_sp.Active = true;
-                PlayerReSlider_di.Active = true;
-            });
-            // These button are disabled until I add the functions for them
-            //_1.Interactable = false;
-            p.AddButton("<color=#FF96AA>Clear ESPs</color>", "Clears any and all ESP bubbles around players", ESP.ClearAllPlayerESP);
-            p.AddButton("<color=#FF96AA>Clear Orbits</color>", "Clear any type of orbiting", () => {
-                if (SelectedActionNum == 5) Items.ClearRotating();
-                else if (SelectedActionNum == 6) Players.Toggle(false);
-                else Con.Warn("Nothing to cancel orbit.");
-            });
-
-            PlayerListMenu.OnOpen += () => {
-                foreach (var button in PlayerButtons)
-                    button.Destroy();
-                PlayerButtons.Clear();
-                var enumerator2 = PlayerWrappers.GetAllPlayers().GetEnumerator();
-
-                while (enumerator2.MoveNext()) {
-                    var player = enumerator2.current;
-                    var n = player.field_Private_APIUser_0.displayName;
-                    
-                    var tempName = string.Empty;
-                    if (PlayerWrappers.IsFriend(player)) {
-                        if (player.field_Private_APIUser_0.id.StartsWith("usr_6d71d3be"))
-                            tempName = "<color=#9fffe3>Lily</color>";
-                        else
-                            tempName = $"<color=#{Config.FriendRankHEX.Value}>{n}</color>";
-                    }
-                    else {
-                        if (player.field_Private_APIUser_0.id.StartsWith("usr_6d71d3be"))
-                            tempName = "<color=#9fffe3>Lily</color>";
-                        else
-                            tempName = $"<color=#{ColorConversion.ColorToHex(VRCPlayer.Method_Public_Static_Color_APIUser_0(player.GetAPIUser()))}>{n}</color>";
-                    }
-                    
-                    SinglePlayerButton = l.AddButton($"{tempName}", "Click to do selected action",
-                        () => {
-                            switch (GetSelectedAction(SelectedActionNum)) {
-                                case PlayerListActions.Teleport:
-                                    if (PlayerWrappers.GetCurrentPlayer()._player != player)
-                                        PlayerActions.Teleport(player._vrcplayer);
-                                    break;
-                                case PlayerListActions.OpenQm:
-                                    // Action Not Yet Setup
-                                    break;
-                                case PlayerListActions.Esp:
-                                    if (ESP.isESPEnabled)
-                                        Con.Warn("Main ESP is already active");
-                                    else
-                                        if (PlayerWrappers.GetCurrentPlayer()._player != player)
-                                            ESP.SinglePlayerESP(player, true);
-                                    break;
-                                case PlayerListActions.TeleportObjs:
-                                    Items.TPToPlayer(player);
-                                    break;
-                                case PlayerListActions.OrbitObjs:
-                                    Items.Toggle(player, !Items.Rotate);
-                                    ShowInfoPopup();
-                                    break;
-                                case PlayerListActions.OrbitPlayer:
-                                    Players.Toggle(!Players.Rotate, player);
-                                    ShowInfoPopup();
-                                    break;
-                                case PlayerListActions.None:
-                                default:
-                                    Con.Warn("Nothing is selected.");
-                                    VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Noting is selected", MintyResources.Alert);
-                                    break;
-                            }
-                        });
-                    PlayerButtons.Add(SinglePlayerButton);
-                }
-            };
-            RemoveMintBackButtonDuplicate(PlayerListMenu);
-        }
-
-        private static void ShowInfoPopup() 
-            => VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"To disable orbit, press {(XRDevice.isPresent ? "Down both triggers" : "the letter \"P\"")}", MintyResources.Alert);
 
         #endregion
         
@@ -821,8 +596,6 @@ namespace MintMod.UserInterface.QuickMenu {
             _alpha.Active = o;
             _textSize.Active = o;
             _setHexValue.Active = o;
-            
-            RemoveMintBackButtonDuplicate(PlayerListConfig);
         }
         
         #endregion
@@ -1012,17 +785,6 @@ namespace MintMod.UserInterface.QuickMenu {
                 Con.Warn(msg);
                 VRCUiManager.field_Private_Static_VRCUiManager_0.QueueHudMessage(msg, Color.white, 8f);
             //}
-        }
-
-        private static void RemoveMintBackButtonDuplicate(UiElement cat) {
-            //if (Config.useTabButtonForMenu.Value) return;
-            try {
-                var _ = cat.GameObject.transform.Find("LeftItemContainer/MintMenuButtonOvertakenBackButton")?.gameObject;
-                _.DestroyImmediate();
-            }
-            catch (Exception e) {
-                Con.Error(e);
-            }
         }
     }
 }

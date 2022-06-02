@@ -272,6 +272,7 @@
     <Compile Include="UserInterface\OldUI\ReColor.cs" />
     <Compile Include="UserInterface\OldUI\SettingsMenu.cs" />
     <Compile Include="UserInterface\OldUI\SocialMenu.cs" />
+    <Compile Include="UserInterface\QuickMenu\PlayerListActionSet.cs" />
     <Compile Include="UserInterface\QuickMenu\QmMediaPanel.cs" />
     <Compile Include="UserInterface\QuickMenu\MintUserInterface.cs" />
     <Compile Include="UserInterface\QuickMenu\PlayerInfo.cs" />
