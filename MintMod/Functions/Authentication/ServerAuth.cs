@@ -19,31 +19,26 @@ namespace MintMod.Functions.Authentication {
         public override string Name => "Authentication";
         public override string Description => "Deals with authed used for Mint.";
 
-        internal static bool canLoadMod;
-        internal const string MintAuthJSONURL = "https://api.potato.moe/api-mint/auth"; // From Bono's API
+        internal static bool CanLoadMod;
+        protected const string MintAuthJsonUrl = "https://api.potato.moe/api-mint/auth"; // From Bono's API
         internal static MintyUser MintyData;
 
         internal static IEnumerator AuthUser() {
             yield return new WaitForSeconds(1);
             while (APIUser.CurrentUser == null && !APIUser.IsLoggedIn) yield return null;
-            /*while (true) {
-                if (APIUser.CurrentUser == null) yield return null;
-                else break;
-            }*/
 
             try {
-                HttpClient w = new();
-                w.DefaultRequestHeaders.Add("X-AUTH-TOKEN", APIUser.CurrentUser?.id);
-                var task = w?.GetStringAsync(MintAuthJSONURL);
+                HttpClient onStartAuth = new();
+                onStartAuth.DefaultRequestHeaders.Add("X-AUTH-TOKEN", APIUser.CurrentUser?.id);
+                var task = onStartAuth.GetStringAsync(MintAuthJsonUrl);
                 task.Wait();
-                w?.Dispose();
+                onStartAuth.Dispose();
 
                 if (!task.IsCompleted || task.Result.Contains("message")) {
-                    canLoadMod = false;
+                    CanLoadMod = false;
                     Con.Debug("result was null or empty", MintCore.IsDebug);
                     yield break;
                 }
-                // else canLoadMod = true
 
                 MintyData = JsonConvert.DeserializeObject<MintyUser>(task.Result);
                 if (MintyData == null) {
@@ -51,44 +46,43 @@ namespace MintMod.Functions.Authentication {
                     yield break;
                 }
 
-                if (MintyData.isBanned) {
-                    canLoadMod = false;
+                if (MintyData.IsBanned) {
+                    CanLoadMod = false;
                     MelonCoroutines.Start(LoopNoAuth());
                     yield break;
                 }
+
+                if (MintyData.UserId != APIUser.CurrentUser?.id && 
+                    MintyData.AltAccounts.Any(x => x != APIUser.CurrentUser.id) && 
+                    !ModCompatibility.GPrivateServer) yield break;
                 
-                if (MintyData.UserID == APIUser.CurrentUser?.id ||
-                    MintyData.AltAccounts.Any(x => x == APIUser.CurrentUser.id) ||
-                    ModCompatibility.GPrivateServer)
-                {
-                    Con.Msg("Authed for MintMod".Pastel("9fffe3"));
-                    canLoadMod = true;
-                    MintCore.Modules.ForEach(u => {
-                        try { u.OnUserInterface(); }
-                        catch (Exception e) { Con.Error(e); }
-                    });
-                    MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
-                    MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
-                }
+                Con.Msg("Authed for MintMod".Pastel("9fffe3"));
+                CanLoadMod = true;
+                MintCore.Modules.ForEach(u => {
+                    try { u.OnUserInterface(); }
+                    catch (Exception e) { Con.Error(e); }
+                });
+                MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
+                // MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
             } catch (Exception r) {
                 if (ModCompatibility.GPrivateServer) {
                     Con.Msg("Authed for MintMod via PrivateServer".Pastel("9fffe3"));
-                    canLoadMod = true;
+                    CanLoadMod = true;
                     MintCore.Modules.ForEach(u => {
                         try { u.OnUserInterface(); }
                         catch (Exception e) { Con.Error(e); }
                     });
                     MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
-                    MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
+                    // MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
                 }
                 else {
-                    canLoadMod = false;
+                    CanLoadMod = false;
                     Con.Error(r);
                 }
             }
         }
 
-        static IEnumerator LoopNoAuth() {
+        private static IEnumerator LoopNoAuth() {
             while (true) {
                 Con.Warn("You are not authorized to use this mod.");
                 yield return new WaitForSeconds(60);
@@ -102,11 +96,11 @@ namespace MintMod.Functions.Authentication {
                 VrcUiPopups.Notify(BuildInfo.Name, "Cannot check while on PrivateServer", MintyResources.Alert);
                 yield break;
             }
-            HttpClient e = new();
-            e.DefaultRequestHeaders.Add("X-AUTH-TOKEN", id);
-            var task = e.GetStringAsync(MintAuthJSONURL);
+            HttpClient oneTimeAuthCheck = new();
+            oneTimeAuthCheck.DefaultRequestHeaders.Add("X-AUTH-TOKEN", id);
+            var task = oneTimeAuthCheck.GetStringAsync(MintAuthJsonUrl);
             task.Wait();
-            e.Dispose();
+            oneTimeAuthCheck.Dispose();
 
             if (!task.IsCompleted || task.Result.Contains("message")) {
                 Con.Msg("Player has no auth for Mint");
@@ -114,13 +108,13 @@ namespace MintMod.Functions.Authentication {
                 yield break;
             }
 
-            var d = JsonConvert.DeserializeObject<MintyUser>(task.Result);
-            if (d == null) {
+            var mintyUser = JsonConvert.DeserializeObject<MintyUser>(task.Result);
+            if (mintyUser == null) {
                 Con.Error("Mint Authentication failed => Auth halting.");
                 yield break;
             }
 
-            if (d.isBanned) {
+            if (mintyUser.IsBanned) {
                 Con.Msg("Player is banned from Mint");
                 VrcUiPopups.Notify(BuildInfo.Name, "Player is banned from Mint", MintyResources.Lock);
                 yield break;

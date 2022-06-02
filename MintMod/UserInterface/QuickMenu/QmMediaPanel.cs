@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using MelonLoader;
-using MintMod.Libraries;
 using MintMod.Reflections;
 using MintyLoader;
 using UnityEngine;
-using ReMod.Core;
 using ReMod.Core.VRChat;
 using TMPro;
 using UnityEngine.UI;

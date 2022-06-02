@@ -188,7 +188,7 @@ namespace MintMod.UserInterface.OldUI {
 
 			Label1 = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/Server/Label");
 			Label1.GetComponent<Text>().supportRichText = true;
-			Label1.GetComponent<Text>().text = $"isAuthed -> <color={(ServerAuth.canLoadMod ? "#00ff00>true" : "red>false")}</color>";
+			Label1.GetComponent<Text>().text = $"isAuthed -> <color={(ServerAuth.CanLoadMod ? "#00ff00>true" : "red>false")}</color>";
 			#endregion
 
 			#region Comfort Turn => IsCute

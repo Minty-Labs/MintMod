@@ -24,7 +24,7 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.33.0";
+            public const string Version = "2.34.0";
 #endif
 #if DEBUG
             public const string Version = "2.XX.0";
@@ -121,7 +121,7 @@ namespace MintMod {
             Modules.Add(new CreateListener());
             
             Modules.Add(new DevThings());
-            //mods.Add(new );
+            // mods.Add(new );
 
             ReMod.Core.Unity.EnableDisableListener.RegisterSafe();
 
