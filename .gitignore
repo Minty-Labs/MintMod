@@ -23,3 +23,5 @@ MintyNative/Release/
 MintyNative/x64/
 3rdparty/
 MintNET6/
+ReModCorePlugin/bin/
+ReModCorePlugin/obj/

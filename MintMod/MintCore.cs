@@ -30,9 +30,9 @@ namespace MintMod {
             public const string Version = "2.XX.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "31 May 2022";
+            public const string UpdatedDate = "4 June 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.8.1";
+            internal const string LoaderVer = "2.9.0";
 #endif
         }
 
