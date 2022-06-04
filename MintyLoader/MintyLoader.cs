@@ -8,7 +8,7 @@ namespace MintyLoader {
         public const string Name = "MintyLoader";
         public const string Author = "Lily";
         public const string Company = "Minty Labs";
-        public const string Version = "2.8.1";
+        public const string Version = "2.9.0";
         public const string DownloadLink = "https://mintlily.lgbt/mod/loader/MintyLoader.dll";
     }
    
@@ -31,11 +31,7 @@ namespace MintyLoader {
 
             // Preload
             ModBlacklist.BlacklistedModCheck(); // Check if running blacklisted mod(s)
-            ReModCoreLoader.DownloadAndWrite(out _); // Write ReMod.Core.dll to VRC dir root if they do not have ReMod CE or Private
-            if (ReModCoreLoader.Failed) {
-                InternalLogger.Warning("ReMod.Core Failed to load, I am not going to load MintMod!");
-                return;
-            }
+            ReModCoreLoader.DownloadReModCorePlugin(); // Write ReModCorePlugin.dll to the Plugins folder if they do not have the plugin or Penny's version
             
             LoadManager.ApplyModURL(); // Check to see if running Beta Builds
             UpdateManager.CheckForUpdate(); // Check Loader Version and update if needed, This also loads the Mod

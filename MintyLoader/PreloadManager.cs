@@ -81,35 +81,16 @@ namespace MintyLoader {
     }
 
     public static class ReModCoreLoader {
-        internal static bool Failed;
-        
-        internal static void DownloadAndWrite(out Assembly loadedAssembly) {
-            if (!File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
-                !File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) {
-                // If no ReMod
-                var http = new HttpClient();
-                var data = http.GetByteArrayAsync("https://github.com/RequiDev/ReMod.Core/releases/latest/download/ReMod.Core.dll").GetAwaiter().GetResult();
-                try {
-                    try { File.WriteAllBytes(Environment.CurrentDirectory, data); }
-                    catch {
-                        MintyLoader.InternalLogger.Warning("Failed to write ReMod.Core assembly, most likely already being used by another mod or process.");
-                    }
+        internal static void DownloadReModCorePlugin() {
+            if (MelonHandler.Plugins.FindIndex(p => p.Info.Name == "ReMod.Core.Updater") != -1) return; // Stop if found
+            
+            if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
+                File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) return; // Stop if found
 
-                    try { loadedAssembly = Assembly.Load(data); }
-                    catch (Exception e) {
-                        Failed = true;
-                        MintyLoader.InternalLogger.Error($"Unable to Load Core Dependency, ReMod.Core: {e}");
-                    }
-                    MintyLoader.InternalLogger.Msg("Wrote ReMod.Core to VRC root directory.");
-                }
-                catch (Exception e) {
-                    Failed = true;
-                    loadedAssembly = null;
-                    MintyLoader.InternalLogger.Error(e);
-                }
-                http.Dispose();
-            }
-            loadedAssembly = null;
+            if (MelonHandler.Plugins.FindIndex(p => p.Info.Name == "ReModCorePlugin") != -1) return; // Run if not found
+            var bytes = new HttpClient().GetByteArrayAsync("https://mintlily.lgbt/mod/loader/ReModCorePlugin.dll")
+                .GetAwaiter().GetResult();
+            File.WriteAllBytes(Path.Combine(Environment.CurrentDirectory, "Plugins", "ReModCorePlugin.dll"), bytes);
         }
     }
 }
