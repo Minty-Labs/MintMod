@@ -1,12 +1,14 @@
-﻿using System;
+﻿
+
+#nullable enable
+using System;
+using MintMod.UserInterface.OldUI;
 using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
 using UnhollowerBaseLib.Attributes;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using static MintMod.Reflections.UIWrappers;
-
-#nullable enable
 namespace MintMod.Libraries {
     internal class CreateListener : MintSubMod {
         public override string Name => "CreateListener";
@@ -23,12 +25,19 @@ namespace MintMod.Libraries {
 
         internal override void OnUserInterface() {
             _quickMenuObj = ReMod.Core.VRChat.QuickMenuEx.Instance.field_Public_GameObject_0;
+            var socialMenu = GameObject.Find("UserInterface/MenuContent/Screens/Social");
 
             var listener = _quickMenuObj.GetOrAddComponent<EnableDisableListener>();
             listener.OnEnabled += QmMediaPanel.OnOpen;
             listener.OnDisabled += QmMediaPanel.OnClose;
             
-            Con.Debug("Finished Creating QMListener.");
+            Con.Debug("Finished Creating Quick Menu Listener.");
+            
+            var socialMenuListener = socialMenu.GetOrAddComponent<EnableDisableListener>();
+            socialMenuListener.OnEnabled += SocialMenu.OnOpen;
+            socialMenuListener.OnDisabled += SocialMenu.OnClose;
+            
+            Con.Debug("Finished Creating Social Menu Listener.");
         }
     }
     

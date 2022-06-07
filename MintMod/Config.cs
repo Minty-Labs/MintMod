@@ -89,7 +89,7 @@ namespace MintMod {
 
         // Menu
         public static MelonPreferences_Category Menu;
-        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, EnableActionMenu, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, CopyReModMedia;
+        public static MelonPreferences_Entry<bool> KeepFlightBTNsOnMainMenu, EnableActionMenu, KeepPhotonFreezesOnMainMenu, KeepInfJumpOnMainMenu, CopyReModMedia, AvatarMenuDlVrca;
         public static MelonPreferences_Entry<string> InfoHUDPosition;
         public static MelonPreferences_Entry<float> RefreshAmount;
         private static void _Menu() {
@@ -105,6 +105,7 @@ namespace MintMod {
             KeepInfJumpOnMainMenu = Menu.CreateEntry("KeepInfJumpOnMainMenu", false, "Puts Infinite Jump Toggle on QM");
             CopyReModMedia = Menu.CreateEntry("CopyReModMedia", false, "Extra Debug Panel for Media Title");
             RefreshAmount = Menu.CreateEntry("ReModMediaRefreshAmount", 1f, "Update increment in seconds");
+            AvatarMenuDlVrca = Menu.CreateEntry("AvatarMenuDLVRCA", true, "* Add DLVRCA to Avatar Menu");
         }
 
         // Portal
