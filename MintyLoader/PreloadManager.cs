@@ -84,8 +84,8 @@ namespace MintyLoader {
         internal static void DownloadReModCorePlugin() {
             if (MelonHandler.Plugins.FindIndex(p => p.Info.Name == "ReMod.Core.Updater") != -1) return; // Stop if found
             
-            if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
-                File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) return; // Stop if found
+            // if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
+            //     File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) return; // Stop if found
 
             if (MelonHandler.Plugins.FindIndex(p => p.Info.Name == "ReModCorePlugin") != -1) return; // Run if not found
             var bytes = new HttpClient().GetByteArrayAsync("https://mintlily.lgbt/mod/loader/ReModCorePlugin.dll")

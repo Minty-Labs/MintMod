@@ -13,7 +13,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace MintMod.Resources {
-    class MintyResources : MintSubMod {
+    internal class MintyResources : MintSubMod {
         public override string Name => "MintyResources";
         public override string Description => "Contains images in asset bundles.";
         private static AssetBundle MintBundle;

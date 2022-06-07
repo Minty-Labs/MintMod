@@ -13,7 +13,7 @@ namespace ReModCorePlugin;
 
 public static class BuildInfo {
     public const string Name = "ReModCorePlugin";
-    public const string Version = "1.0.0";
+    public const string Version = "1.0.1";
     public const string Author = "Lily";
     public const string Company = "Minty Labs";
     public const string Description = "Load and update ReMod.Core easily.";
@@ -30,11 +30,11 @@ public class Main : MelonPlugin {
             return;
         }
 
-        if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
-            File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) {
-            _logger.Warning("Not running, ReMod is already going to load ReMod.Core!");
-            return;
-        }
+        // if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll")) ||
+        //     File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"))) {
+        //     _logger.Warning("Not running, ReMod is already going to load ReMod.Core!");
+        //     return;
+        // }
 
         _isRunning = true;
 

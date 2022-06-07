@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Hooks;
@@ -24,15 +25,15 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.34.0";
+            public const string Version = "2.35.0";
 #endif
 #if DEBUG
             public const string Version = "2.XX.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "4 June 2022";
+            public const string UpdatedDate = "6 June 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.9.0";
+            internal const string LoaderVer = "2.9.1";
 #endif
         }
 
