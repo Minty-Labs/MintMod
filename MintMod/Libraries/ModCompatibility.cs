@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using MintyLoader;
 using MintMod.Managers;
@@ -9,8 +10,9 @@ namespace MintMod.Libraries {
     internal class ModCompatibility : MintSubMod {
         public override string Name => "ModCompatibility";
         public override string Description => "Find other mods and do things.";
-        public static bool OGTrustRank, UIX, emmVRC, KeyboardPaste, NameplateStats, ReMod, ReModCE, TeleporterVR, SettingsRestart, ProPlates, GPrivateServer, Styletor;
-        public static bool hasCNP_On, emmVRCPanicMode;
+        public static bool UIX, /*emmVRC,*/ KeyboardPaste, NameplateStats, ReMod, ReModCE, TeleporterVR, SettingsRestart, /*ProPlates,*/ GPrivateServer, Styletor,
+            ListCounter;
+        // public static bool hasCNP_On, emmVRCPanicMode;
 
         public static bool MintyNameplates {
             get {
@@ -20,28 +22,18 @@ namespace MintMod.Libraries {
         }
 
         internal override void OnStart() {
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "OGTrustRanks") != -1)
-                OGTrustRank = true;
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "KeyboardPaste") != -1)
-                KeyboardPaste = true;
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "TeleporterVR") != -1)
-                TeleporterVR = true;
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "NameplateStats") != -1)
-                NameplateStats = true;
-            ReMod = MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ReMod") != -1 || File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll"));
-            ReModCE = MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ReModCE") != -1 || File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"));
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "SettingsRestart") != -1)
-                SettingsRestart = true;
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "ProPlates") != -1)
-                ProPlates = true;
+            KeyboardPaste = MelonHandler.Mods.FindIndex(i => i.Info.Name == "KeyboardPaste") != -1;
+            TeleporterVR = MelonHandler.Mods.FindIndex(i => i.Info.Name == "TeleporterVR") != -1;
+            NameplateStats = MelonHandler.Mods.FindIndex(i => i.Info.Name == "NameplateStats") != -1;
+            ReMod = MelonHandler.Mods.FindIndex(i => i.Info.Name == "ReMod") != -1 || File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReMod.Loader.dll"));
+            ReModCE = MelonHandler.Mods.FindIndex(i => i.Info.Name == "ReModCE") != -1 || File.Exists(Path.Combine(Environment.CurrentDirectory, "Mods", "ReModCE.Loader.dll"));
+            SettingsRestart = MelonHandler.Mods.FindIndex(i => i.Info.Name == "SettingsRestart") != -1;
+            // ProPlates = MelonHandler.Mods.FindIndex(i => i.Info.Name == "ProPlates") != -1;
+            UIX = MelonHandler.Mods.FindIndex(i => i.Info.Name == "UI Expansion Kit") != -1;
+            Styletor = MelonHandler.Mods.FindIndex(i => i.Info.Name == "Styletor") != -1;
+            ListCounter = MelonHandler.Mods.FindIndex(i => i.Info.Name == "ListCounter") != -1;
 
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "UI Expansion Kit") != -1) 
-                UIX = true;
-            
-            if (MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "Styletor") != -1) 
-                Styletor = true;
-
-            if ((MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRC") != -1) || MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRCLoader") != -1) {
+            /*if ((MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRC") != -1) || MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRCLoader") != -1) {
                 emmVRC = true;
                 try { GETemmVRCconfig.LoadConfig(); } catch { }
                 if (Config.RecolorRanks.Value) {
@@ -57,47 +49,14 @@ namespace MintMod.Libraries {
                         Con.Error(apply);
                     }
                 }
-            }
+            }*/
         }
 
-        private void Read_emmVRCConfig() {
+        /*private void Read_emmVRCConfig() {
             if (GETemmVRCconfig.ReadConfig().NameplateColorChangingEnabled) 
                 hasCNP_On = true;
             if (GETemmVRCconfig.ReadConfig().StealthMode)
                 emmVRCPanicMode = true;
-        }
-
-        /*private static IEnumerator ColorUIExpansionKit() {
-            yield return null;
-            Color color = Config.ColorGameMenu.Value ? Colors.Minty : Colors.defaultMenuColor();
-            ColorBlock colors = new ColorBlock {
-                colorMultiplier = 1f,
-                disabledColor = Color.grey,
-                highlightedColor = new Color(color.r * 1.5f, color.g * 1.5f, color.b * 1.5f),
-                normalColor = color,
-                pressedColor = ColorConversion.HexToColor("#e180ff"),
-                fadeDuration = 0.1f
-            };
-            Transform uiExpansionRoot = UIWrappers.GetQuickMenuInstance().transform.Find("ModUiPreloadedBundleContents");
-            foreach (Image img in uiExpansionRoot.GetComponentsInChildren<Image>(true))
-                if (img.transform.parent.name != "PinToggle" && img.transform.parent.parent.name != "PinToggle")
-                    img.color = new Color(color.r * 0.5f, color.g * 0.5f, color.b * 0.5f);
-
-            foreach (Button btn in uiExpansionRoot.GetComponentsInChildren<Button>(true))
-                btn.colors = colors;
-
-            foreach (Toggle tgl in uiExpansionRoot.GetComponentsInChildren<Toggle>(true))
-                if (tgl.gameObject.name != "PinToggle")
-                    tgl.colors = colors;
-
-            foreach (Image img in uiExpansionRoot.GetComponentsInChildren<Image>(true))
-                if (img.transform.name == "Checkmark" && img.transform.parent.name != "PinToggle" && img.transform.parent.parent.name != "PinToggle")
-                    img.color = new Color(0.8f, 0.8f, 0.8f, 0.6f);
-
-            foreach (Text tex in uiExpansionRoot.GetComponentsInChildren<Text>(true))
-                tex.color = Color.white;
-            yield break;
-        }
-        */
+        }*/
     }
 }

@@ -25,13 +25,13 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.35.0";
+            public const string Version = "2.35.1";
 #endif
 #if DEBUG
             public const string Version = "2.XX.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "6 June 2022";
+            public const string UpdatedDate = "9 June 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.9.1";
 #endif
@@ -88,6 +88,7 @@ namespace MintMod {
                 return name && author;
             }) != -1;
             Modules.Add(new Config());
+            Modules.Add(new ModCompatibility());
             Modules.Add(new MintyResources());
             Modules.Add(new Patches());
             Modules.Add(new ServerAuth());
@@ -100,7 +101,6 @@ namespace MintMod {
             Modules.Add(new RankRecoloring());
             Modules.Add(new Movement());
             Modules.Add(new HudIcon());
-            Modules.Add(new ModCompatibility());
             Modules.Add(new ReColor());
             Modules.Add(new AvatarMenu());
             Modules.Add(new SocialMenu());

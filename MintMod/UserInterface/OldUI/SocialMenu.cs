@@ -1,17 +1,11 @@
 ﻿using MintMod.Libraries;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MelonLoader;
 using MintyLoader;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
+using VRC;
 using VRC.Core;
-using Task = Il2CppSystem.Threading.Tasks.Task;
 
 namespace MintMod.UserInterface.OldUI {
     internal class SocialMenu : MintSubMod {
@@ -19,30 +13,44 @@ namespace MintMod.UserInterface.OldUI {
         public override string Description => "Edits on the Social Menu";
 
         private GameObject _socialMenuAvatarBorder;
-        private static int _totalFriends;
+        private static int _totalFriends, _scenesLoaded;
         private static UiUserList _onlineFriendsList;
-        private static Text _onlineFriendsText;
-        private static bool _hasLoadedOnUi;
-        private static GameObject _onlineFriendsViewpoint, _friendsList;
+        private static UiAvatarList _avatarList;
+        private static Text _onlineFriendsText, _avatarsText, _inRoomText;
+        private static bool _hasLoadedOnUi, _hasOpenedSocialMenu, _hasOpenedAvatarMenu;
 
         private static IEnumerator UpdateMembersText(Text textObj, UiUserList online, int total) {
             yield return new WaitForSeconds(1);
+        
             textObj.text = $"Online Friends ({online.field_Private_Int32_0}/{total})";
         }
+    
+        private static IEnumerator UpdateInRoomText(Text textObj) {
+            yield return new WaitForSeconds(1);
+        
+            textObj.text = $"In Room ({PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count})";
+        }
+    
+        private static IEnumerator UpdateAvatarsText(Text textObj, UiAvatarList total) {
+            yield return new WaitForSeconds(1);
+        
+            textObj.text = $"Personal Creations ({total.field_Private_Int32_0})";
+        }
 
-        private static bool _hasOpened;
-
-        public static void OnOpen() {
+        public static void OnOpenSocialMenu() {
             MelonCoroutines.Start(UpdateMembersText(_onlineFriendsText, _onlineFriendsList, _totalFriends));
-            _hasOpened = true;
+            MelonCoroutines.Start(UpdateInRoomText(_inRoomText));
+            _hasOpenedSocialMenu = true;
         }
         
-        public static void OnClose() => _hasOpened = false;
-
-        // internal override void OnUpdate() {
-        //     if (!_hasOpened || !_hasLoadedOnUi) return;
-        //     _onlineFriendsText.text = $"Online Friends ({_onlineFriendsList.field_Private_Int32_0}/{_totalFriends})";
-        // }
+        public static void OnCloseSocialMenu() => _hasOpenedSocialMenu = false;
+    
+        public static void OnOpenAvatarMenu() {
+            MelonCoroutines.Start(UpdateAvatarsText(_avatarsText, _avatarList));
+            _hasOpenedAvatarMenu = true;
+        }
+    
+        public static void OnCloseAvatarMenu() => _hasOpenedAvatarMenu = false;
 
         internal override void OnUserInterface() {
             _socialMenuAvatarBorder = GameObject.Find("/UserInterface/MenuContent/Screens/UserInfo/AvatarImage/AvatarBorder").gameObject;
@@ -50,11 +58,25 @@ namespace MintMod.UserInterface.OldUI {
             
             #region Online / Total Friends
             
-            _friendsList = GameObject.Find("UserInterface/MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content/OnlineFriends");
-            _onlineFriendsViewpoint = GameObject.Find("UserInterface/MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content/OnlineFriends/Button/TitleText");
+            if (ModCompatibility.ListCounter) return;
+            
+            var onlineFriendsViewport = GameObject.Find("UserInterface/MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content/OnlineFriends");
+            var friendsListTextObj = GameObject.Find("UserInterface/MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content/OnlineFriends/Button/TitleText");
             _totalFriends = APIUser.CurrentUser.friendIDs._size;
-            _onlineFriendsList = _friendsList.GetComponent<UiUserList>();
-            _onlineFriendsText = _onlineFriendsViewpoint.GetComponent<Text>();
+            _onlineFriendsList = onlineFriendsViewport.GetComponent<UiUserList>();
+            _onlineFriendsText = friendsListTextObj.GetComponent<Text>();
+            Con.Debug("Got Friends List");
+        
+            var inRoomListTextObj = GameObject.Find("UserInterface/MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content/InRoom/Button/TitleText");
+            _inRoomText = inRoomListTextObj.GetComponent<Text>();
+            Con.Debug("Got In Room List");
+        
+            var avatarsList = GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Vertical Scroll View/Viewport/Content/Personal Avatar List");
+            var avatarCreationTextObj = GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Vertical Scroll View/Viewport/Content/Personal Avatar List/Button/TitleText");
+            _avatarList = avatarsList.GetComponent<UiAvatarList>();
+            _avatarsText = avatarCreationTextObj.GetComponent<Text>();
+            Con.Debug("Got Avatar List");
+        
             _hasLoadedOnUi = true;
 
             #endregion

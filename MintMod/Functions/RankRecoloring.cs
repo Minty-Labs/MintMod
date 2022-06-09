@@ -36,8 +36,8 @@ namespace MintMod.Functions {
                     // }
                     _coloredNameplates = false;
                     break;
-                case false when ModCompatibility.hasCNP_On && !ModCompatibility.emmVRCPanicMode:
-                    yield break;
+                // case false when ModCompatibility.hasCNP_On && !ModCompatibility.emmVRCPanicMode:
+                //     yield break;
                 case true when !Config.RecolorRanks.Value:
                     VRCPlayer.field_Internal_Static_Color_1 = ColorConversion.HexToColor("#FFFF00");
                     VRCPlayer.field_Internal_Static_Color_2 = ColorConversion.HexToColor("#CCCCCC");

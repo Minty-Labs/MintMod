@@ -45,10 +45,10 @@ namespace MintMod.UserInterface.OldUI {
 				functionsButton.GetComponentInChildren<Text>().text = "Restart Game";
 				functionsButton.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
 				functionsButton.GetComponent<Button>().onClick.AddListener(new Action(Utils.General.RestartGame));
-				if ((ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == false) || !ModCompatibility.emmVRC)
+				// if ((ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled == false) || !ModCompatibility.emmVRC)
 					functionsButton.SetActive(true);
-				else if (ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled)
-					functionsButton.SetActive(false);
+				/*else if (ModCompatibility.emmVRC && GETemmVRCconfig.ReadConfig().ForceRestartButtonEnabled)
+					functionsButton.SetActive(false);*/
 			} catch (Exception ex) {
 				Con.Error(ex);
 			}

@@ -25,7 +25,6 @@ namespace MintMod.Libraries {
 
         internal override void OnUserInterface() {
             _quickMenuObj = ReMod.Core.VRChat.QuickMenuEx.Instance.field_Public_GameObject_0;
-            var socialMenu = GameObject.Find("UserInterface/MenuContent/Screens/Social");
 
             var listener = _quickMenuObj.GetOrAddComponent<EnableDisableListener>();
             listener.OnEnabled += QmMediaPanel.OnOpen;
@@ -33,11 +32,22 @@ namespace MintMod.Libraries {
             
             Con.Debug("Finished Creating Quick Menu Listener.");
             
-            var socialMenuListener = socialMenu.GetOrAddComponent<EnableDisableListener>();
-            socialMenuListener.OnEnabled += SocialMenu.OnOpen;
-            socialMenuListener.OnDisabled += SocialMenu.OnClose;
+            if (ModCompatibility.ListCounter) return;
             
+            var socialMenu = GameObject.Find("UserInterface/MenuContent/Screens/Social");
+            var avatarMenu = GameObject.Find("UserInterface/MenuContent/Screens/Avatar");
+        
+            var socialMenuListener = socialMenu.GetOrAddComponent<EnableDisableListener>();
+            socialMenuListener.OnEnabled += SocialMenu.OnOpenSocialMenu;
+            socialMenuListener.OnDisabled += SocialMenu.OnCloseSocialMenu;
+        
             Con.Debug("Finished Creating Social Menu Listener.");
+        
+            var avatarMenuListener = avatarMenu.GetOrAddComponent<EnableDisableListener>();
+            avatarMenuListener.OnEnabled += SocialMenu.OnOpenAvatarMenu;
+            avatarMenuListener.OnDisabled += SocialMenu.OnCloseAvatarMenu;
+        
+            Con.Debug("Finished Creating Avatar Menu Listener.");
         }
     }
     
