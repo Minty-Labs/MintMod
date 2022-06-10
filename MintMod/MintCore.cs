@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Hooks;
@@ -33,7 +32,7 @@ namespace MintMod {
             public const string DownloadLink = null;
             public const string UpdatedDate = "9 June 2022";
 #if !DEBUG
-            internal const string LoaderVer = "2.9.1";
+            internal const string LoaderVer = "2.9.2";
 #endif
         }
 

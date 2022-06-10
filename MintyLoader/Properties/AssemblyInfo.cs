@@ -21,4 +21,4 @@ using MelonLoader;
     MintyLoader.BuildInfo.DownloadLink)]
 [assembly: MelonGame("VRChat", "VRChat")]
 //[assembly: MelonPriority(int.MinValue + 2)] // Fix ReMod patches
-[assembly: MelonPriority(int.MinValue)]
+//[assembly: MelonPriority(int.MinValue)]
