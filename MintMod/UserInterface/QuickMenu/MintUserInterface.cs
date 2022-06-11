@@ -35,7 +35,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static GameObject TheMintMenuButton;
 
-        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ userSelectCategory, playerListCategory;
+        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ playerListCategory;
 
         public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, PlayerListConfig, /*AvatarMenu*/ NameplateMenu, WorldActionsPage;
 
@@ -151,7 +151,7 @@ namespace MintMod.UserInterface.QuickMenu {
             // JumpSelection();
             
             // Build Last
-            UserSelMenu();
+            UserSelectMenu.UserSelMenu();
 
             if (Config.CopyReModMedia.Value)
                 yield return QmMediaPanel.CreateMediaDebugPanel();
@@ -322,6 +322,7 @@ namespace MintMod.UserInterface.QuickMenu {
             e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
             e.AddButton("Respawn Items", "Respawns All pickups to their original location.", Items.Respawn);
             e.AddButton("Teleport Items Out of World", "Teleports all Pickups an XYZ coord of 1 million", Items.TPToOutWorld);
+            e.Active = ServerAuth.HasSpecialPermissions;
             
             var ct = WorldMenu.AddCategory("Component Toggle");
             Components.ComponentToggle(ct);
@@ -392,80 +393,6 @@ namespace MintMod.UserInterface.QuickMenu {
                 else
                     VRCUiManager.prop_VRCUiManager_0.field_Private_List_1_String_0.Clear();
             }, MintyResources.messages);
-        }
-
-        #endregion
-
-        #region UserSelect Menu
-        
-        private static void UserSelMenu() {
-            var f = QuickMenuEx.Instance.field_Public_Transform_0.Find("Window/QMParent/Menu_SelectedUser_Local");
-            var theUserSelectMenu = f.Find("ScrollRect/Viewport/VerticalLayoutGroup").gameObject;
-
-            userSelectCategory = new ReMenuCategory("MintMod", theUserSelectMenu.transform);
-
-            userSelectCategory.AddButton("Download Avatar VRCA", "Downloads the selected user's Avatar .VRCA", async () => await PlayerActions.AvatarDownload(), MintyResources.dl);
-            userSelectCategory.AddButton("Log Asset", "Logs the selected user's information and put it into a text file", PlayerActions.LogAsset, MintyResources.list);
-            userSelectCategory.AddButton("Copy Avatar ID", "Copies the selected user's avatar ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerActions.SelPAvatar().id, MintyResources.copy);
-            userSelectCategory.AddButton("Copy User ID", "Copies the selected user's User ID into your clipboard", () => GUIUtility.systemCopyBuffer = PlayerWrappers.GetSelectedAPIUser().id, MintyResources.copy);
-            userSelectCategory.AddButton("Clone Avatar", "Clones the selected user's avatar if public", () => {
-                var apiAvatar = PlayerActions.SelPAvatar();
-                var avatarIsPublic = apiAvatar.releaseStatus.ToLower().Contains("public");
-                if (!avatarIsPublic) {
-                    VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Avatar is private", MintyResources.Lock);
-                    return;
-                }
-                try {
-                    PlayerManager.field_Private_Static_PlayerManager_0.field_Private_Player_0._vrcplayer.ChangeToAvatar(apiAvatar.id);
-                }
-                catch (Exception fail) {
-                    Con.Error(fail);
-                    Con.Warn("Attempting fallback method");
-                    try {
-                        PageAvatar a = new() { field_Public_SimpleAvatarPedestal_0 = new() };
-                        new ApiAvatar { id = apiAvatar.id }.Get(new Action<ApiContainer>(x => {
-                            a.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0 = x.Model.Cast<ApiAvatar>();
-                            a.ChangeToSelectedAvatar();
-                        }));
-                    }
-                    catch (Exception e) { Con.Error(e); }
-                }
-            }, MintyResources.clone);
-
-            if (Config.AviFavsEnabled.Value) {
-                userSelectCategory.AddButton("Silent Favorite", "Silently favorites the avatar the selected user is wearing if public.", () => {
-                    var v = PlayerActions.SelPAvatar();
-                    if (!v.releaseStatus.ToLower().Contains("private")) {
-                        ReFavs._instance.FavoriteAvatar(v);
-                        VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Favorited the avatar: {v.name}", MintyResources.star);
-                    }
-                    else {
-                        Con.Warn("Avatar is private, cannot favorite");
-                        VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Avatar is private, cannot favorite", MintyResources.Lock);
-                    }
-                    /*foreach (var favoriteList in AviFavSetup.Favorites.Instance.AvatarFavorites.FavoriteLists) {
-                        if (!v.releaseStatus.ToLower().Contains("private")) {
-                            AviFavLogic.FavoriteAvatar(v, favoriteList.ID);
-                            VRCUiPopups.Notify($"Favorited the avatar: {v.name}", NotificationSystem.Alert);
-                        }
-                        else {
-                            Con.Warn("Avatar is private, cannot favorite");
-                            VRCUiPopups.Notify("Avatar is private, cannot favorite", NotificationSystem.Alert);
-                        }
-                    }*/
-                }, MintyResources.star);
-            }
-
-            userSelectCategory.AddButton("Teleport to", "Teleport to the selected user", () => { PlayerActions.Teleport(PlayerWrappers.SelVrcPlayer()); }, MintyResources.marker_hole);
-            userSelectCategory.AddButton("Teleport pickups to", "Teleport all pickup objects to the selected user", () => Items.TPToPlayer(PlayerWrappers.SelVrcPlayer()._player), MintyResources.marker);
-
-            if (!ModCompatibility.GPrivateServer) {
-                if (APIUser.CurrentUser.id.StartsWith("usr_6d71d3be")) {
-                    userSelectCategory.AddButton("Mint Auth Check", "Check to see if the selected user can use MintMod", () => MelonCoroutines.Start(ServerAuth.SimpleAuthCheck(PlayerWrappers.GetSelectedAPIUser().id)), MintyResources.key);
-                }
-            }
-
-            Con.Debug("Done Setting up User Selected Menu", MintCore.IsDebug);
         }
 
         #endregion
@@ -724,11 +651,7 @@ namespace MintMod.UserInterface.QuickMenu {
             _worldToggle?.Toggle(false, true, true);
         }
 
-        internal override void OnUpdate() {
-            PlayerActions.UpdateJump();
-            if (!MintCore.IsDebug) return;
-            if (Input.GetKeyDown(KeyCode.Home)) UserSelMenu();
-        }
+        internal override void OnUpdate() => PlayerActions.UpdateJump();
 
         internal override void OnPrefSave() {
             //DeviceType?.Toggle(Config.SpoofDeviceType.Value);
@@ -757,34 +680,34 @@ namespace MintMod.UserInterface.QuickMenu {
             _mintTags?.Toggle(Config.EnabledMintTags.Value);
         }
 
-        internal static void UpdateMintIconForStreamerMode(bool o) {
-            // if (MintIcon != null && !Config.useTabButtonForMenu.Value) {
-            //     MintIcon.sprite = o ? MintyResources.Transparent : MintyResources.MintIcon;
-            //     MintIcon.color = Color.white;
-            // }
-
-            if (userSelectCategory != null) {
-                userSelectCategory.RectTransform.gameObject.SetActive(!o);
-                userSelectCategory.Active = !o;
-                userSelectCategory.Title = o ? "" : "MintMod";
-            }
-
-            if (MintCategoryOnLaunchPad != null) {
-                MintCategoryOnLaunchPad.RectTransform.gameObject.SetActive(!o);
-                MintCategoryOnLaunchPad.Active = !o;
-                MintCategoryOnLaunchPad.Title = o ? "" : "MintMod";
-            }
-            
-            if (Config.SpoofFramerate.Value)
-                Config.SavePrefValue(Config.mint, Config.SpoofFramerate, false);
-            if (Config.SpoofPing.Value)
-                Config.SavePrefValue(Config.mint, Config.SpoofPing, false);
-
-            //if (Config.useTabButtonForMenu.Value && o) {
-                var msg = "Streamer Mode detected, Mint Tab Button is still visible.";
-                Con.Warn(msg);
-                VRCUiManager.field_Private_Static_VRCUiManager_0.QueueHudMessage(msg, Color.white, 8f);
-            //}
-        }
+        // internal static void UpdateMintIconForStreamerMode(bool o) {
+        //     // if (MintIcon != null && !Config.useTabButtonForMenu.Value) {
+        //     //     MintIcon.sprite = o ? MintyResources.Transparent : MintyResources.MintIcon;
+        //     //     MintIcon.color = Color.white;
+        //     // }
+        //
+        //     if (userSelectCategory != null) {
+        //         userSelectCategory.RectTransform.gameObject.SetActive(!o);
+        //         userSelectCategory.Active = !o;
+        //         userSelectCategory.Title = o ? "" : "MintMod";
+        //     }
+        //
+        //     if (MintCategoryOnLaunchPad != null) {
+        //         MintCategoryOnLaunchPad.RectTransform.gameObject.SetActive(!o);
+        //         MintCategoryOnLaunchPad.Active = !o;
+        //         MintCategoryOnLaunchPad.Title = o ? "" : "MintMod";
+        //     }
+        //     
+        //     if (Config.SpoofFramerate.Value)
+        //         Config.SavePrefValue(Config.mint, Config.SpoofFramerate, false);
+        //     if (Config.SpoofPing.Value)
+        //         Config.SavePrefValue(Config.mint, Config.SpoofPing, false);
+        //
+        //     //if (Config.useTabButtonForMenu.Value && o) {
+        //         var msg = "Streamer Mode detected, Mint Tab Button is still visible.";
+        //         Con.Warn(msg);
+        //         VRCUiManager.field_Private_Static_VRCUiManager_0.QueueHudMessage(msg, Color.white, 8f);
+        //     //}
+        // }
     }
 }

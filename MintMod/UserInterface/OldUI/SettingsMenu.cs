@@ -98,46 +98,46 @@ namespace MintMod.UserInterface.OldUI {
 
 				#region StreamerModeToggle
 
-				var streammerModeToggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle");
-				var e = streammerModeToggle.GetComponent<Toggle>().onValueChanged;
-				e.AddListener(new Action<bool>((isOn) => {
-					// MintUserInterface.isStreamerModeOn = isOn;
-					// if (isOn) {
-					// 	MintInfoButton!.SetActive(false);
-					// 	RealSettingsExit!.SetActive(true);
-					// 	SettingsExit!.SetActive(false);
-					// 	SettingsRestart!.SetActive(false);
-					// 	functionsButton!.SetActive(false);
-					// 	MintInfoPanel!.SetActive(false);
-					//
-					// 	if (Config.AviFavsEnabled.Value) {
-					// 		ReFavs._instance._favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
-					// 		ReFavs._instance._favoriteButton.GameObject.SetActive(Config.AviFavsEnabled.Value);
-					// 	}
-					//
-					// 	/*if (AvatarFavs.AviFavLogic.ranOnce) {
-					// 		AvatarFavs.AviFavLogic.DestroyList();
-					// 		AvatarFavs.AviFavLogic.ranOnce = false;
-					// 		MelonCoroutines.Start(AvatarFavs.AviFavLogic.RefreshMenu(1f));
-					// 	}*/
-					// } else {
-					// 	MintInfoButton!.SetActive(true);
-					// 	RealSettingsExit!.SetActive(false);
-					// 	SettingsExit!.SetActive(true);
-					// 	SettingsRestart!.SetActive(true);
-					// 	functionsButton!.SetActive(true);
-					// 	
-					// 	if (Config.AviFavsEnabled.Value)
-					// 		ReFavs._instance._favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
-					//
-					// 	//if (!AvatarFavs.AviFavLogic.ranOnce)
-					// 	//	AvatarFavs.AviFavLogic.Instance.OnUserInterface();
-					// }
-					MintUserInterface.UpdateMintIconForStreamerMode(isOn);
-					MenuContentBackdrop.UpdateForStreamerMode(isOn);
-					HudIcon.UpdateForStreamerMode(isOn);
-					ReColor.Instance.OnUserInterface();
-				}));
+				// var streammerModeToggle = GameObject.Find("UserInterface/MenuContent/Screens/Settings/ComfortSafetyPanel/StreamerModeToggle");
+				// var e = streammerModeToggle.GetComponent<Toggle>().onValueChanged;
+				// e.AddListener(new Action<bool>((isOn) => {
+				// 	// MintUserInterface.isStreamerModeOn = isOn;
+				// 	// if (isOn) {
+				// 	// 	MintInfoButton!.SetActive(false);
+				// 	// 	RealSettingsExit!.SetActive(true);
+				// 	// 	SettingsExit!.SetActive(false);
+				// 	// 	SettingsRestart!.SetActive(false);
+				// 	// 	functionsButton!.SetActive(false);
+				// 	// 	MintInfoPanel!.SetActive(false);
+				// 	//
+				// 	// 	if (Config.AviFavsEnabled.Value) {
+				// 	// 		ReFavs._instance._favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
+				// 	// 		ReFavs._instance._favoriteButton.GameObject.SetActive(Config.AviFavsEnabled.Value);
+				// 	// 	}
+				// 	//
+				// 	// 	/*if (AvatarFavs.AviFavLogic.ranOnce) {
+				// 	// 		AvatarFavs.AviFavLogic.DestroyList();
+				// 	// 		AvatarFavs.AviFavLogic.ranOnce = false;
+				// 	// 		MelonCoroutines.Start(AvatarFavs.AviFavLogic.RefreshMenu(1f));
+				// 	// 	}*/
+				// 	// } else {
+				// 	// 	MintInfoButton!.SetActive(true);
+				// 	// 	RealSettingsExit!.SetActive(false);
+				// 	// 	SettingsExit!.SetActive(true);
+				// 	// 	SettingsRestart!.SetActive(true);
+				// 	// 	functionsButton!.SetActive(true);
+				// 	// 	
+				// 	// 	if (Config.AviFavsEnabled.Value)
+				// 	// 		ReFavs._instance._favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
+				// 	//
+				// 	// 	//if (!AvatarFavs.AviFavLogic.ranOnce)
+				// 	// 	//	AvatarFavs.AviFavLogic.Instance.OnUserInterface();
+				// 	// }
+				// 	MintUserInterface.UpdateMintIconForStreamerMode(isOn);
+				// 	MenuContentBackdrop.UpdateForStreamerMode(isOn);
+				// 	HudIcon.UpdateForStreamerMode(isOn);
+				// 	ReColor.Instance.OnUserInterface();
+				// }));
 
 				#endregion
 			}

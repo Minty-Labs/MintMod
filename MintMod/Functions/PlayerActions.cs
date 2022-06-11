@@ -8,6 +8,7 @@ using MintMod.Reflections;
 using MintMod.Resources;
 using MintMod.Utils;
 using MintyLoader;
+using ReMod.Core.VRChat;
 using VRC;
 using VRC.Core;
 using VRC.SDKBase;

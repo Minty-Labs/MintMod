@@ -277,6 +277,7 @@
     <Compile Include="UserInterface\QuickMenu\MintUserInterface.cs" />
     <Compile Include="UserInterface\QuickMenu\PlayerInfo.cs" />
     <Compile Include="UserInterface\QuickMenu\QMSlider.cs" />
+    <Compile Include="UserInterface\QuickMenu\UserSelectMenu.cs" />
     <Compile Include="UserInterface\StayMute.cs" />
     <Compile Include="UserInterface\UIXAdapter.cs" />
     <Compile Include="Utils\AssemblyLoader.cs" />
