@@ -121,7 +121,7 @@ namespace MintMod.UserInterface.AvatarFavs {
             }));
         }
 
-        private bool HasAvatarFavorited(string id) => AviFavLogic.GetConfigList(0).Avatars.FirstOrDefault(a => a.id == id) != null;
+        internal bool HasAvatarFavorited(string id) => AviFavLogic.GetConfigList(0).Avatars.FirstOrDefault(a => a.id == id) != null;
 
         private void OnAvatarInstantiated(string url, GameObject avatar, AvatarPerformanceStats avatarPerformanceStats,
             ObjectPublicBoBoBoBoBoBoBoBoBoBoUnique unknown) =>

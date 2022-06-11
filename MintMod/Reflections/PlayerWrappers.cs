@@ -31,14 +31,14 @@ namespace MintMod.Reflections {
 
         private static APIUser GetAPIUser_alt(this Player player) => player.prop_APIUser_0;
 
-        public static Player GetPlayer(this PlayerManager instance, string userId) {
-            var allPlayers = instance.GetAllPlayers();
-            Player result = null;
-            foreach (Player all in allPlayers)
-                if (all.GetAPIUser_alt().id == userId)
-                    result = all;
-            return result;
-        }
+        // public static Player GetPlayer(this PlayerManager instance, string userId) {
+        //     var allPlayers = instance.GetAllPlayers();
+        //     Player result = null;
+        //     foreach (Player all in allPlayers)
+        //         if (all.GetAPIUser_alt().id == userId)
+        //             result = all;
+        //     return result;
+        // }
 
         public static List<Player> GetAllPlayers() =>
             PlayerManager.field_Private_Static_PlayerManager_0 == null ? null : PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0;
@@ -100,11 +100,11 @@ namespace MintMod.Reflections {
             return user.isUntrusted ? Colors.VisitorNP : Color.white;
         }
 
-        public static Player SelPlayer() =>
-            PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer._player;
-
-        public static VRCPlayer SelVrcPlayer() =>
-            PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer;
+        // public static Player SelPlayer() =>
+        //     PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer._player;
+        //
+        // public static VRCPlayer SelVrcPlayer() =>
+        //     PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(GetSelectedAPIUser().id)._vrcplayer;
         
         public static bool IsFriend(Player p) => APIUser.IsFriendsWith(p.field_Private_APIUser_0.id);
         
