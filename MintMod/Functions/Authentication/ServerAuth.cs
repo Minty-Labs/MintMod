@@ -5,6 +5,7 @@ using MelonLoader;
 using UnityEngine;
 using VRC.Core;
 using System.Net.Http;
+using Il2CppSystem.Text;
 using MintMod.Libraries;
 using MintMod.Resources;
 using MintMod.UserInterface.QuickMenu;
@@ -19,7 +20,7 @@ namespace MintMod.Functions.Authentication {
         public override string Name => "Authentication";
         public override string Description => "Deals with authed used for Mint.";
 
-        internal static bool CanLoadMod;
+        internal static bool CanLoadMod, HasSpecialPermissions;
         protected const string MintAuthJsonUrl = "https://api.potato.moe/api-mint/auth"; // From Bono's API
         internal static MintyUser MintyData;
 
@@ -56,6 +57,8 @@ namespace MintMod.Functions.Authentication {
                     MintyData.AltAccounts.Any(x => x != APIUser.CurrentUser.id) && 
                     !ModCompatibility.GPrivateServer) yield break;
                 
+                HasSpecialPermissions = MintyData.SpecialPermission;
+                
                 Con.Msg("Authed for MintMod".Pastel("9fffe3"));
                 CanLoadMod = true;
                 MintCore.Modules.ForEach(u => {
@@ -63,7 +66,19 @@ namespace MintMod.Functions.Authentication {
                     catch (Exception e) { Con.Error(e); }
                 });
                 MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
-                // MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
+                
+                Con.Debug("MintAuthData:");
+                Con.Debug($"Name: {MintyData?.Name}");
+                Con.Debug($"UserID: {MintyData?.UserId}");
+                Con.Debug($"IsBanned: {MintyData?.IsBanned}");
+                var sb = new StringBuilder();
+                foreach (var s in MintyData?.AltAccounts) {
+                    if (string.IsNullOrWhiteSpace(s)) continue;
+                    sb.Append($"{s}, ");
+                }
+                Con.Debug(string.IsNullOrWhiteSpace(sb.ToString()) ? "No Alt Accounts" : $"Alt Accounts: {sb.ToString().TrimEnd(',', ' ')}");
+                Con.Debug($"Special Perms: {MintyData?.SpecialPermission}");
+                
             } catch (Exception r) {
                 if (ModCompatibility.GPrivateServer) {
                     Con.Msg("Authed for MintMod via PrivateServer".Pastel("9fffe3"));
@@ -73,7 +88,6 @@ namespace MintMod.Functions.Authentication {
                         catch (Exception e) { Con.Error(e); }
                     });
                     MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
-                    // MelonCoroutines.Start(MintUserInterface.OnSettingsPageInit());
                 }
                 else {
                     CanLoadMod = false;
@@ -84,7 +98,7 @@ namespace MintMod.Functions.Authentication {
 
         private static IEnumerator LoopNoAuth() {
             while (true) {
-                Con.Warn("You are not authorized to use this mod.");
+                Con.Warn("You are not authorized to use this mod. Reason: " + (string.IsNullOrWhiteSpace(MintyData.BanReason) ? "No reason given." : MintyData.BanReason));
                 yield return new WaitForSeconds(60);
                 Environment.Exit(0);
             }

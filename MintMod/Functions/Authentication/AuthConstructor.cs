@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace MintMod.Functions.Authentication {
     public class MintyUser {
         [JsonProperty("Name")]
         public string Name;
-        
-        // public string DiscordID { get; }
         
         [JsonProperty("UserID")]
         public string UserId;
@@ -13,9 +12,13 @@ namespace MintMod.Functions.Authentication {
         [JsonProperty("IsBanned")]
         public bool IsBanned;
         
-        // public string VoucherName { get; }
+        [JsonProperty("BanReason")]
+        public string BanReason;
         
         [JsonProperty("AltAccounts")]
         public string[] AltAccounts;
+        
+        [JsonProperty("SpecialPermission")]
+        public bool SpecialPermission;
     }
 }

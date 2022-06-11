@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MintMod.Functions;
+using MintMod.Functions.Authentication;
 using MintMod.Libraries;
 using MintMod.Managers;
 using MintMod.Reflections;
@@ -100,7 +101,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 _playerReSliderSp.Active = false;
                 _playerReSliderDi.Active = false;
             });
-            p.AddButton("Teleport\nPickups to", "Teleport all pickups to player", () => {
+            var tpItemsTo = p.AddButton("Teleport\nPickups to", "Teleport all pickups to player", () => {
                 _selectedActionNum = 4;
                 l.Title = "Player List > Teleport Pickups";
                 //PlayerSlider.Enabled = false;
@@ -147,7 +148,8 @@ namespace MintMod.UserInterface.QuickMenu {
                 }
             });
 
-            var unlock = APIUser.CurrentUser.id.StartsWith("usr_6d71d3be");
+            var unlock = ServerAuth.HasSpecialPermissions;
+            tpItemsTo.Active = unlock;
             orbitPickups.Active = unlock;
             orbitPlayer.Active = unlock;
             clearEsp.Active = unlock;
