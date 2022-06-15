@@ -83,7 +83,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 }
             }
             catch {
-                Con.Error("Action from AdBlocker failed. Ignoring");
+                Con.Warn("Action from AdBlocker failed. Ignoring");
             }
             
             var launchPad = new ReCategoryPage(f);
