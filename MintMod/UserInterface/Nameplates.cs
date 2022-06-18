@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using MintMod.Hooks;
 using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
+using ReMod.Core.VRChat;
 using TMPro;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -165,9 +166,7 @@ namespace MintMod.UserInterface {
             if (!Config.EnabledMintTags.Value) return;
             if (string.IsNullOrWhiteSpace(tagText)) return;
             try {
-                
                 var transform = nameplate.transform.Find("Contents");
-                //var transform2 = transform.Find("Status Line");
                 var transform4 = transform.Find("Quick Stats");
                 
                 MintTag = transform.Find("Mint_CustomTag");
@@ -175,17 +174,6 @@ namespace MintMod.UserInterface {
                     MintTag = UnityEngine.Object.Instantiate(transform4, transform4.parent, false);
                     MintTag.name = "Mint_CustomTag";
                     
-                    /*var avatarDynamicsTouchIcon = transform2.Find("InteractionStatus");
-                     
-                     if (avatarDynamicsTouchIcon || ModCompatibility.ProPlates)
-                        transform5.localPosition = new Vector3(0f, -90f, 0f);
-                     else if (avatarDynamicsTouchIcon && ModCompatibility.ProPlates)
-                        transform5.localPosition = new Vector3(0f, -120f, 0f);
-                     else if (ModCompatibility.ProPlates)
-                        transform5.localPosition = new Vector3(0f, -90f, 0f);
-                     else
-                        transform5.localPosition = new Vector3(0f, -60f, 0f);
-                     */
                     MoveMintTag(MintTag, Config.MintTagVerticleLocation.Value);
                     var component = MintTag.Find("Trust Text").GetComponent<TextMeshProUGUI>();
                     component.richText = true;
@@ -207,7 +195,44 @@ namespace MintMod.UserInterface {
             } catch (Exception e) { if (MintCore.IsDebug) Con.Error(e); }
         }
 
-        public static Transform MintTag { get; private set; }
+        private static void AddMonkeTagToPlayer(Component nameplate, MintyNameplateHelper helper,
+            string tagText = null,
+            Color? tagBgColour = null,
+            bool disableBgImage = false,
+            Color? tagFontColour = null) {
+            
+            if (string.IsNullOrWhiteSpace(tagText)) return;
+            try {
+                var transform = nameplate.transform.Find("Contents");
+                var transform4 = transform.Find("Quick Stats");
+                
+                MonkeTag = transform.Find("KnownMonkeTag");
+                if (MonkeTag == null) {
+                    MonkeTag = UnityEngine.Object.Instantiate(transform4, transform4.parent, false);
+                    MonkeTag.name = "KnownMonkeTag";
+                    
+                    MonkeTag.transform.localPosition = new Vector3(0f, 120, 0f);
+                    var component = MonkeTag.Find("Trust Text").GetComponent<TextMeshProUGUI>();
+                    component.richText = true;
+                    component.text = tagText;
+                    component.color = tagFontColour ?? ColorConversion.HexToColor("eeeeee");
+                    
+                    if (disableBgImage)
+                        MonkeTag.GetComponent<ImageThreeSlice>().enabled = false;
+                    else 
+                        MonkeTag.GetComponent<ImageThreeSlice>().color = tagBgColour ?? Color.white;
+                    
+                    for (var i = MonkeTag.childCount; i > 0; i--) {
+                        var child = MonkeTag.GetChild(i - 1);
+                        if (child.name != "Trust Text")
+                            UnityEngine.Object.Destroy(child.gameObject);
+                    }
+                } else MonkeTag.gameObject.SetActive(true);
+            } catch (Exception e) { if (MintCore.IsDebug) Con.Error(e); }
+        }
+
+        private static Transform MintTag { get; set; }
+        private static Transform MonkeTag { get; set; }
 
         internal override void OnPrefSave() {
             if (!Config.EnabledMintTags.Value) return;
@@ -250,6 +275,15 @@ namespace MintMod.UserInterface {
             } else if (Config.RecolorRanks.Value)
                 if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))
                     ApplyFriendsRankColor(helper, ColorConversion.HexToColor(Config.FriendRankHEX.Value));
+
+            try {
+                if (ExtraJSONData.MonkeShitMethods.WorldClientJsonData.Any(x => x.UserId.Contains(nameplate.field_Private_VRCPlayer_0._player.GetAPIUser().id))) {
+                    AddMonkeTagToPlayer(nameplate, helper, "World Client Monke", Color.black, false, ColorConversion.HexToColor("F60B0E"));
+                }
+            }
+            catch (Exception exception) {
+                Con.Debug($"[ERROR] Failed to add Monke Tag to World Client cunt\n{exception}");
+            }
         }
 
         public static void OnRebuild(PlayerNameplate nameplate) {

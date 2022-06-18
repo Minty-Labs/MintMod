@@ -41,6 +41,8 @@ namespace MintMod.Utils {
             if (plr == null) return;
             var apiUser = plr.field_Private_APIUser_0;
             if (apiUser == null) return;
+            
+            ExtraJSONData.MonkeShitMethods.OnPlayerJoin(plr);
 
             if (apiUser.id != APIUser.CurrentUser.id) {
                 if ((plr.prop_VRCPlayerApi_0 != null && plr.prop_VRCPlayerApi_0.isModerator) ||
