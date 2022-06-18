@@ -211,7 +211,7 @@ namespace MintMod.UserInterface {
                     MonkeTag = UnityEngine.Object.Instantiate(transform4, transform4.parent, false);
                     MonkeTag.name = "KnownMonkeTag";
                     
-                    MonkeTag.transform.localPosition = new Vector3(0f, 120, 0f);
+                    MonkeTag.transform.localPosition = new Vector3(0f, 210, 0f);
                     var component = MonkeTag.Find("Trust Text").GetComponent<TextMeshProUGUI>();
                     component.richText = true;
                     component.text = tagText;
