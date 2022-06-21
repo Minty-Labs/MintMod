@@ -24,7 +24,7 @@ namespace MintMod {
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.35.4.3";
+            public const string Version = "2.35.5";
 #endif
 #if DEBUG
             public const string Version = "2.XX.0";
@@ -58,7 +58,7 @@ namespace MintMod {
             }
 #endif
 
-            Instance = HarmonyInstance;
+            Instance = new HarmonyLib.Harmony("MintMod_Patches_1");
             
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);

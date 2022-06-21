@@ -58,13 +58,16 @@ namespace MintMod {
             foreach (var m in typeof(VRC_EventDispatcherRFC).GetMethods()) {
                 if (!m.Name.StartsWith("Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_"))
                     continue;
-                MintCore.Instance.Patch(m, prefix: GetLocalPatch(nameof(ValidateAndTriggerEventPatch)));
+                Con.Debug($"Applying {m.Name} patches!", MintCore.IsDebug);
+                if (MintCore.Instance == null)
+                    Con.Debug("Instance is null");
+                MintCore.Instance!.Patch(m, prefix: GetLocalPatch(nameof(ValidateAndTriggerEventPatch)));
             }
         }
         
         private static HarmonyMethod GetLocalPatch(string name) => new (typeof(Patches).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic));
 
-        internal static List<int> _monkes;
+        internal static List<int> _monkes = new();
         
         private static bool ValidateAndTriggerEventPatch(Player __0, VRC_EventHandler.VrcEvent __1, VRC_EventHandler.VrcBroadcastType __2, int __3, float __4) {
             // (Player player, VRC_EventHandler.VrcEvent evt, VRC_EventHandler.VrcBroadcastType broadcastType, int instagatorId, float fastForward)
@@ -72,6 +75,7 @@ namespace MintMod {
 
             if (_monkes.Contains(__3)) return false;
             _monkes.Add(__3);
+            Con.Warn($"The user {__0.GetAPIUser().displayName} is a known World Client monke.");
             VrcUiPopups.Notify("Mint Mod", $"A known World Client monke has joined the instance\n{__0.GetAPIUser().displayName}", MintyResources.Megaphone, 
                 ColorConversion.HexToColor("F60B0E"), 5f);
 
