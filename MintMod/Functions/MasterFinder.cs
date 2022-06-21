@@ -10,7 +10,6 @@ using MintMod.Resources;
 using VRC;
 using VRC.Core;
 using UnityEngine.UI;
-using MintMod.Hooks;
 using MelonLoader;
 using MintMod.Libraries;
 using MintMod.UserInterface;

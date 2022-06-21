@@ -1,28 +1,22 @@
-﻿using ExitGames.Client.Photon;
-using MelonLoader;
-using MintMod.UserInterface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using ExitGames.Client.Photon;
 using Harmony;
-using MintMod.Functions;
 using MintMod.Libraries;
-using MintMod.UserInterface.QuickMenu;
+using MintMod.Resources;
+using MintMod.UserInterface;
+using MintMod.Utils;
 using MintyLoader;
-using UnhollowerBaseLib;
+using ReMod.Core.VRChat;
 using UnityEngine;
 using VRC;
-using UnhollowerRuntimeLib.XrefScans;
-using VRC.Core;
-using AccessTools = HarmonyLib.AccessTools;
+using VRC.SDKBase;
 using HarmonyMethod = HarmonyLib.HarmonyMethod;
 using MethodType = HarmonyLib.MethodType;
 
-namespace MintMod.Hooks {
+namespace MintMod {
     internal class Patches : MintSubMod {
         public override string Name => "Patches";
         public override string Description => "";
@@ -41,11 +35,12 @@ namespace MintMod.Hooks {
 
         internal override void OnStart() {
             Con.Debug("Setting up patches", MintCore.IsDebug);
-
+            
             if (!ModCompatibility.MintyNameplates) {
                 ApplyPatches(typeof(NameplatePatches));
-                ApplyPatches(typeof(VrcPlayerPatches));
             }
+            
+            ApplyPatches(typeof(VrcPlayerPatches));
             ApplyPatches(typeof(PingSpoof));
             ApplyPatches(typeof(FrameSpoof));
             ApplyPatches(typeof(VrcStation));
@@ -59,6 +54,28 @@ namespace MintMod.Hooks {
             }
             Con.Msg($"Device Type: {(Config.SpoofDeviceType.Value ? "Quest" : "PC")}");
             */
+            
+            foreach (var m in typeof(VRC_EventDispatcherRFC).GetMethods()) {
+                if (!m.Name.StartsWith("Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_"))
+                    continue;
+                MintCore.Instance.Patch(m, prefix: GetLocalPatch(nameof(ValidateAndTriggerEventPatch)));
+            }
+        }
+        
+        private static HarmonyMethod GetLocalPatch(string name) => new (typeof(Patches).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic));
+
+        internal static List<int> _monkes;
+        
+        private static bool ValidateAndTriggerEventPatch(Player __0, VRC_EventHandler.VrcEvent __1, VRC_EventHandler.VrcBroadcastType __2, int __3, float __4) {
+            // (Player player, VRC_EventHandler.VrcEvent evt, VRC_EventHandler.VrcBroadcastType broadcastType, int instagatorId, float fastForward)
+            if (!__1.ParameterString.Contains("rtYKZRlV7sTx76sL")) return true;
+
+            if (_monkes.Contains(__3)) return false;
+            _monkes.Add(__3);
+            VrcUiPopups.Notify("Mint Mod", $"A known World Client monke has joined the instance\n{__0.GetAPIUser().displayName}", MintyResources.Megaphone, 
+                ColorConversion.HexToColor("F60B0E"), 5f);
+
+            return false;
         }
     }
 
@@ -152,7 +169,10 @@ namespace MintMod.Hooks {
     internal class LeftRoomPatches {
         [HarmonyLib.HarmonyPostfix]
         [HarmonyLib.HarmonyPatch("OnLeftRoom")]
-        static void Yeet() => Patches.OnWorldLeave?.Invoke();
+        static void Yeet() {
+            Patches.OnWorldLeave?.Invoke();
+            Patches._monkes.Clear();
+        }
 
         [HarmonyLib.HarmonyPostfix]
         [HarmonyLib.HarmonyPatch("OnJoinedRoom")]

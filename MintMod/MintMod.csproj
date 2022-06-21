@@ -225,7 +225,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
-    <Compile Include="ExtraJSONData\WCJsonInfo.cs" />
+    <Compile Include="ExtraJSONData\OldMate.cs" />
     <Compile Include="Functions\Authentication\AuthConstructor.cs" />
     <Compile Include="Functions\DevThings.cs" />
     <Compile Include="Functions\HeadFlip.cs" />

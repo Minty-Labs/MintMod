@@ -41,8 +41,6 @@ namespace MintMod.Utils {
             if (plr == null) return;
             var apiUser = plr.field_Private_APIUser_0;
             if (apiUser == null) return;
-            
-            ExtraJSONData.MonkeShitMethods.OnPlayerJoin(plr);
 
             if (apiUser.id != APIUser.CurrentUser.id) {
                 if ((plr.prop_VRCPlayerApi_0 != null && plr.prop_VRCPlayerApi_0.isModerator) ||
@@ -88,8 +86,7 @@ namespace MintMod.Utils {
                 if (plr != null) ESP.SetBubbleColor(plr.gameObject);
                 if (ESP.isESPEnabled) MelonCoroutines.Start(ESP.JoinDelay(plr));
             }
-            else
-                MasterFinder.OnSelfJoin();
+            else MasterFinder.OnSelfJoin();
         }
 
         private static void OnPlayerLeft(Player plr) {

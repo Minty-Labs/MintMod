@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Harmony;
 using MelonLoader;
 using MintMod.Functions;
-using MintMod.Hooks;
 using MintMod.Libraries;
 using MintMod.Managers;
 using MintMod.Resources;
@@ -18,19 +18,19 @@ using MintMod.Functions.Authentication;
 
 namespace MintMod {
     public class MintCore : MelonMod {
-        //private MelonMod _instance;
+        internal static HarmonyLib.Harmony Instance;
         public static class ModBuildInfo {
             public static readonly string Name = DateTime.Now.Date == Con.Foolish || Environment.CommandLine.Contains("--Foolish") ? "Walmart Client" : "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.35.4";
+            public const string Version = "2.35.4.3";
 #endif
 #if DEBUG
             public const string Version = "2.XX.0";
 #endif
             public const string DownloadLink = null;
-            public const string UpdatedDate = "18 June 2022";
+            public const string UpdatedDate = "21 June 2022";
 #if !DEBUG
             internal const string LoaderVer = "2.9.2";
 #endif
@@ -57,7 +57,9 @@ namespace MintMod {
                 return;
             }
 #endif
-            //_instance = this;
+
+            Instance = HarmonyInstance;
+            
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);
 #if DEBUG
@@ -119,6 +121,7 @@ namespace MintMod {
             Modules.Add(new StayMute());
             Modules.Add(new WorldSettings.BlackCat());
             Modules.Add(new CreateListener());
+            Modules.Add(new ExtraJSONData.OldMate());
             
             Modules.Add(new DevThings());
             // mods.Add(new );
