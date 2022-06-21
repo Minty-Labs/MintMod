@@ -52,6 +52,15 @@ namespace MintMod.Functions.Authentication {
                     MelonCoroutines.Start(LoopNoAuth());
                     yield break;
                 }
+                
+                ModCompatibility.GPrivateServer = MelonHandler.Mods.FindIndex(i => {
+                    bool name = false, author = false;
+                    if (i.Info.Name == "PrivateServer")
+                        name = true;
+                    if (i.Info.Author == "[information redacted]")
+                        author = true;
+                    return name && author;
+                }) != -1;
 
                 if (MintyData.UserId != APIUser.CurrentUser?.id && 
                     MintyData.AltAccounts.Any(x => x != APIUser.CurrentUser.id) && 

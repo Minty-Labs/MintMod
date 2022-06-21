@@ -80,14 +80,7 @@ namespace MintMod {
 #endif
 
             Con.Msg($"Starting {ModBuildInfo.Name} v{ModBuildInfo.Version} - Built on {ModBuildInfo.UpdatedDate}");
-            ModCompatibility.GPrivateServer = MelonHandler.Mods.FindIndex(i => {
-                bool name = false, author = false;
-                if (i.Info.Name == "PrivateServer")
-                    name = true;
-                if (i.Info.Author == "[information redacted]")
-                    author = true;
-                return name && author;
-            }) != -1;
+            
             Modules.Add(new Config());
             Modules.Add(new ModCompatibility());
             Modules.Add(new MintyResources());
