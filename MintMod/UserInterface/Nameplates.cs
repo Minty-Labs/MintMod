@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MintMod.Hooks;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw;
+using MintMod.ExtraJSONData;
 using MintMod.UserInterface.QuickMenu;
 using MintyLoader;
 using ReMod.Core.VRChat;
@@ -83,7 +84,7 @@ namespace MintMod.UserInterface {
             helper.OnRebuild();
         }
 
-        private static void ApplyNameplateColour(Component nameplate, MintyNameplateHelper helper,
+        private static void ApplyNameplateColour(PlayerNameplate nameplate, MintyNameplateHelper helper,
             bool bgRainbow = false,
             Color? bgColor = null,
             Color? bgColorLerp = null,
@@ -157,7 +158,11 @@ namespace MintMod.UserInterface {
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(forceFakeName))
+            var userId = nameplate.field_Private_VRCPlayer_0._player.GetAPIUser().id;
+
+            if (ModCompatibility.OldMate && OldMate.Contains(userId))
+                helper.SetName(OldMate.GetModifiedName(userId));
+            else if (!string.IsNullOrWhiteSpace(forceFakeName))
                 helper.SetName(forceFakeName);
 
             #endregion
@@ -195,6 +200,9 @@ namespace MintMod.UserInterface {
             } catch (Exception e) { if (MintCore.IsDebug) Con.Error(e); }
         }
 
+        
+        /*private static Transform MonkeTag { get; set; }
+        
         private static void AddMonkeTagToPlayer(Component nameplate, MintyNameplateHelper helper,
             string tagText = null,
             Color? tagBgColour = null,
@@ -229,10 +237,9 @@ namespace MintMod.UserInterface {
                     }
                 } else MonkeTag.gameObject.SetActive(true);
             } catch (Exception e) { if (MintCore.IsDebug) Con.Error(e); }
-        }
+        }*/
 
         private static Transform MintTag { get; set; }
-        private static Transform MonkeTag { get; set; }
 
         internal override void OnPrefSave() {
             if (!Config.EnabledMintTags.Value) return;
@@ -276,14 +283,14 @@ namespace MintMod.UserInterface {
                 if (helper.GetPlayer().field_Private_APIUser_0 != null && APIUser.IsFriendsWith(helper.GetPlayer().field_Private_APIUser_0.id))
                     ApplyFriendsRankColor(helper, ColorConversion.HexToColor(Config.FriendRankHEX.Value));
 
-            try {
+            /*try {
                 if (ExtraJSONData.MonkeShitMethods.WorldClientJsonData.Any(x => x.UserId.Contains(nameplate.field_Private_VRCPlayer_0._player.GetAPIUser().id))) {
                     AddMonkeTagToPlayer(nameplate, helper, "World Client Monke", Color.black, false, ColorConversion.HexToColor("F60B0E"));
                 }
             }
             catch (Exception exception) {
                 Con.Debug($"[ERROR] Failed to add Monke Tag to World Client cunt\n{exception}");
-            }
+            }*/
         }
 
         public static void OnRebuild(PlayerNameplate nameplate) {

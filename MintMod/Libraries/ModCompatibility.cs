@@ -11,7 +11,7 @@ namespace MintMod.Libraries {
         public override string Name => "ModCompatibility";
         public override string Description => "Find other mods and do things.";
         public static bool UIX, /*emmVRC,*/ KeyboardPaste, NameplateStats, ReMod, ReModCE, TeleporterVR, SettingsRestart, /*ProPlates,*/ GPrivateServer, Styletor,
-            ListCounter;
+            ListCounter, OldMate;
         // public static bool hasCNP_On, emmVRCPanicMode;
 
         public static bool MintyNameplates {
@@ -32,6 +32,7 @@ namespace MintMod.Libraries {
             UIX = MelonHandler.Mods.FindIndex(i => i.Info.Name == "UI Expansion Kit") != -1;
             Styletor = MelonHandler.Mods.FindIndex(i => i.Info.Name == "Styletor") != -1;
             ListCounter = MelonHandler.Mods.FindIndex(i => i.Info.Name == "ListCounter") != -1;
+            OldMate = MelonHandler.Mods.FindIndex(i => i.Info.Name == "OldMate") != -1;
 
             /*if ((MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRC") != -1) || MelonHandler.Mods.FindIndex((MelonMod i) => i.Info.Name == "emmVRCLoader") != -1) {
                 emmVRC = true;
