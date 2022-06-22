@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ExitGames.Client.Photon;
-using Harmony;
 using MintMod.Libraries;
 using MintMod.Resources;
 using MintMod.UserInterface;
@@ -13,7 +12,7 @@ using ReMod.Core.VRChat;
 using UnityEngine;
 using VRC;
 using VRC.SDKBase;
-using HarmonyMethod = HarmonyLib.HarmonyMethod;
+using HarmonyLib;
 using MethodType = HarmonyLib.MethodType;
 
 namespace MintMod {
@@ -25,7 +24,7 @@ namespace MintMod {
         public static Action OnWorldJoin, OnWorldLeave;
 
         private static void ApplyPatches(Type type) {
-            Con.Debug($"Applying {type.Name} patches!", MintCore.IsDebug);
+            Con.Debug($"Applying patches for {type.Name}", MintCore.IsDebug);
             try {
                 HarmonyLib.Harmony.CreateAndPatchAll(type, "MintMod_Patches");
             } catch (Exception e) {
@@ -46,6 +45,7 @@ namespace MintMod {
             ApplyPatches(typeof(VrcStation));
             ApplyPatches(typeof(QuickMenuPatches));
             ApplyPatches(typeof(LeftRoomPatches));
+            ApplyPatches(typeof(MonkePatch));
 
             /*
             if (Config.SpoofDeviceType.Value) {
@@ -54,22 +54,19 @@ namespace MintMod {
             }
             Con.Msg($"Device Type: {(Config.SpoofDeviceType.Value ? "Quest" : "PC")}");
             */
-            
-            foreach (var m in typeof(VRC_EventDispatcherRFC).GetMethods()) {
-                if (!m.Name.StartsWith("Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_"))
-                    continue;
-                Con.Debug($"Applying {m.Name} patches!", MintCore.IsDebug);
-                if (MintCore.Instance == null)
-                    Con.Debug("Instance is null");
-                MintCore.Instance!.Patch(m, prefix: GetLocalPatch(nameof(ValidateAndTriggerEventPatch)));
-            }
         }
-        
-        private static HarmonyMethod GetLocalPatch(string name) => new (typeof(Patches).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic));
+    }
 
+    [HarmonyPatch]
+    internal class MonkePatch {
         internal static List<int> _monkes = new();
         
-        private static bool ValidateAndTriggerEventPatch(Player __0, VRC_EventHandler.VrcEvent __1, VRC_EventHandler.VrcBroadcastType __2, int __3, float __4) {
+        private static IEnumerable<MethodBase> TargetMethods() {
+            return typeof(VRC_EventDispatcherRFC).GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Where(x => x.Name.StartsWith("Method_Public_Void_Player_VrcEvent_VrcBroadcastType_Int32_Single_"));
+        }
+        
+        private static bool Prefix(Player __0, VRC_EventHandler.VrcEvent __1, VRC_EventHandler.VrcBroadcastType __2, int __3, float __4) {
             // (Player player, VRC_EventHandler.VrcEvent evt, VRC_EventHandler.VrcBroadcastType broadcastType, int instagatorId, float fastForward)
             if (!__1.ParameterString.Contains("rtYKZRlV7sTx76sL")) return true;
 
@@ -83,22 +80,18 @@ namespace MintMod {
         }
     }
 
-    [HarmonyLib.HarmonyPatch(typeof(VRC.UI.Elements.QuickMenu))]
+    [HarmonyPatch(typeof(VRC.UI.Elements.QuickMenu))]
     internal class QuickMenuPatches {
-        [HarmonyLib.HarmonyPostfix]
-        [HarmonyLib.HarmonyPatch("OnEnable")]
-        private static void OnQuickMenuEnable() {
-            Patches.IsQmOpen = true;
-        }
+        [HarmonyPostfix]
+        [HarmonyPatch("OnEnable")]
+        private static void OnQuickMenuEnable() => Patches.IsQmOpen = true;
 
-        [HarmonyLib.HarmonyPostfix]
-        [HarmonyLib.HarmonyPatch("OnDisable")]
-        private static void OnQuickMenuDisable() {
-            Patches.IsQmOpen = false;
-        }
+        [HarmonyPostfix]
+        [HarmonyPatch("OnDisable")]
+        private static void OnQuickMenuDisable() => Patches.IsQmOpen = false;
     }
 
-    [HarmonyLib.HarmonyPatch]
+    [HarmonyPatch]
     internal class NameplatePatches { // OnRebuild
         static IEnumerable<MethodBase> TargetMethods() {
             return typeof(PlayerNameplate).GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(x => 
@@ -108,19 +101,17 @@ namespace MintMod {
         static void Postfix(PlayerNameplate __instance) => Nameplates.OnRebuild(__instance);
     }
 
-    [HarmonyLib.HarmonyPatch(typeof(VRCPlayer))]
+    [HarmonyPatch(typeof(VRCPlayer))]
     internal class VrcPlayerPatches { // OnPlayerAwake
-        [HarmonyLib.HarmonyPostfix]
-        [HarmonyLib.HarmonyPatch("Awake")]
-        static void OnVRCPlayerAwake(VRCPlayer __instance) {
-            Nameplates.OnVRCPlayerAwake(__instance);
-        }
+        [HarmonyPostfix]
+        [HarmonyPatch("Awake")]
+        static void OnVRCPlayerAwake(VRCPlayer __instance) => Nameplates.OnVRCPlayerAwake(__instance);
     }
 
     [HarmonyLib.HarmonyPatch(typeof(VRC_StationInternal))]
     internal class VrcStation {
-        [HarmonyLib.HarmonyPrefix]
-        [HarmonyLib.HarmonyPatch("Method_Public_Boolean_Player_Boolean_0")]
+        [HarmonyPrefix]
+        [HarmonyPatch("Method_Public_Boolean_Player_Boolean_0")]
         static bool PlayerCanUseStation(ref bool __result, VRC.Player __0, bool __1) {
             if (__0 != null && __0 == VRCPlayer.field_Internal_Static_VRCPlayer_0._player && !Config.CanSitInChairs.Value) {
                 __result = false;
@@ -130,10 +121,10 @@ namespace MintMod {
         }
     }
 
-    [HarmonyLib.HarmonyPatch(typeof(PhotonPeer))]
+    [HarmonyPatch(typeof(PhotonPeer))]
     internal class PingSpoof {
-        [HarmonyLib.HarmonyPrefix]
-        [HarmonyLib.HarmonyPatch("RoundTripTime", MethodType.Getter)]
+        [HarmonyPrefix]
+        [HarmonyPatch("RoundTripTime", MethodType.Getter)]
         static bool Prefix(ref int __result) {
             if (!Config.SpoofPing.Value)
                 return true;
@@ -143,10 +134,10 @@ namespace MintMod {
         }
     }
 
-    [HarmonyLib.HarmonyPatch(typeof(Time))]
+    [HarmonyPatch(typeof(Time))]
     internal class FrameSpoof {
-        [HarmonyLib.HarmonyPrefix]
-        [HarmonyLib.HarmonyPatch("smoothDeltaTime", MethodType.Getter)]
+        [HarmonyPrefix]
+        [HarmonyPatch("smoothDeltaTime", MethodType.Getter)]
         static bool Prefix(ref float __result) {
             if (!Config.SpoofFramerate.Value)
                 return true;
@@ -169,17 +160,17 @@ namespace MintMod {
     }
     */
     
-    [HarmonyLib.HarmonyPatch(typeof(NetworkManager))]
+    [HarmonyPatch(typeof(NetworkManager))]
     internal class LeftRoomPatches {
-        [HarmonyLib.HarmonyPostfix]
-        [HarmonyLib.HarmonyPatch("OnLeftRoom")]
+        [HarmonyPostfix]
+        [HarmonyPatch("OnLeftRoom")]
         static void Yeet() {
             Patches.OnWorldLeave?.Invoke();
-            Patches._monkes.Clear();
+            MonkePatch._monkes.Clear();
         }
 
-        [HarmonyLib.HarmonyPostfix]
-        [HarmonyLib.HarmonyPatch("OnJoinedRoom")]
+        [HarmonyPostfix]
+        [HarmonyPatch("OnJoinedRoom")]
         static void JoinedRoom() => Patches.OnWorldJoin?.Invoke();
     }
 }
