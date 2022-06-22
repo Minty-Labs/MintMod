@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Harmony;
 using MelonLoader;
 using MintMod.Functions;
 using MintMod.Libraries;
@@ -18,13 +17,12 @@ using MintMod.Functions.Authentication;
 
 namespace MintMod {
     public class MintCore : MelonMod {
-        internal static HarmonyLib.Harmony Instance;
         public static class ModBuildInfo {
             public static readonly string Name = DateTime.Now.Date == Con.Foolish || Environment.CommandLine.Contains("--Foolish") ? "Walmart Client" : "MintMod";
             public const string Author = "Lily";
             public const string Company = "Minty Labs";
 #if !DEBUG
-            public const string Version = "2.35.5";
+            public const string Version = "2.35.6";
 #endif
 #if DEBUG
             public const string Version = "2.XX.0";
@@ -57,8 +55,6 @@ namespace MintMod {
                 return;
             }
 #endif
-
-            Instance = new HarmonyLib.Harmony("MintMod_Patches_1");
             
             if (!Directory.Exists(MintDirectory.FullName))
                 Directory.CreateDirectory(MintDirectory.FullName);

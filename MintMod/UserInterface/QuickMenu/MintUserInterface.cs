@@ -21,11 +21,6 @@ using MintMod.Reflections;
 using MintMod.Utils;
 using MintyLoader;
 using MintMod.Functions.Authentication;
-using MintMod.Libraries;
-using MintMod.UserInterface.AvatarFavs;
-using ReMod.Core.UI;
-using UnityEngine.XR;
-using BuildInfo = MintyLoader.BuildInfo;
 using Object = UnityEngine.Object;
 
 namespace MintMod.UserInterface.QuickMenu {
@@ -37,7 +32,7 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ playerListCategory;
 
-        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, RandomMenu, PlayerListMenu, /*AvatarMenu*/ NameplateMenu, WorldActionsPage;
+        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, PlayerListMenu, /*AvatarMenu*/ NameplateMenu, WorldActionsPage;
 
         private static ReMenuSlider FlightSpeedSlider;
 
@@ -47,8 +42,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
         //private static Sprite WorldIcon, PlayerIcon;
 
-        internal static ReMenuToggle ItemESP, PlayerESP, DeviceType, FrameSpoof, PingSpoof, PingNegative, bypassRiskyFunc;
-        public static ReMenuButton Frame, Ping;
+        internal static ReMenuToggle ItemESP, PlayerESP, DeviceType;
+        
 
         private static Image _mintIcon;
 
@@ -133,14 +128,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
             MintQuickActions();
             Player();
-            try {
-                World();
-            }
-            catch (Exception e) {
-                if (e.ToString().Contains("AddSpacer"))
-                    Con.Error("Please remove the ReMod.Core.dll file from the root of your VRChat game directory. Then, restart the game to fix this error.");
-            }
-            RandomStuff();
+            World();
+            UtilityMenu.RandomStuff(BaseActions);
             PlayerListActionSet.MenuSetup(BaseActions);
             PlayerListControls.PlayerListOptions(BaseActions);
             //BuildAvatarMenu();
@@ -174,6 +163,8 @@ namespace MintMod.UserInterface.QuickMenu {
 
         #region Quick Actions
 
+        internal static ReMenuToggle InfJump;
+
         private static void MintQuickActions() {
             var c = MintMenu.AddCategory("Quick Functions", false);
             MintQAFly = c.AddToggle("Flight", "Toggle Flight", b => {
@@ -203,8 +194,6 @@ namespace MintMod.UserInterface.QuickMenu {
         #endregion
 
         #region Player Menu
-
-        private static ReMenuToggle InfJump;
         
         private static void Player() {
             PlayerMenu = BaseActions.AddCategoryPage("Player", "Actions involving players.", MintyResources.people);
@@ -263,19 +252,19 @@ namespace MintMod.UserInterface.QuickMenu {
             w.AddSpacer();
 
             w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
-                    var id = RoomManager.field_Internal_Static_ApiWorld_0.id;
-                    var instance = RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
-                    var faulted = false;
-                    try {
-                        GUIUtility.systemCopyBuffer = $"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}";
-                    }
-                    catch {
-                        Clipboard.SetText($"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}");
-                        faulted = true;
-                    }
+                var id = RoomManager.field_Internal_Static_ApiWorld_0.id;
+                var instance = RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
+                var faulted = false;
+                try {
+                    GUIUtility.systemCopyBuffer = $"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}";
+                }
+                catch {
+                    Clipboard.SetText($"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}");
+                    faulted = true;
+                }
 
-                    Con.Msg(faulted ? "Failed to copy instance ID" : $"Got ID: {RoomManager.field_Internal_Static_ApiWorldInstance_0.id}");
-                }, MintyResources.clipboard);
+                Con.Msg(faulted ? "Failed to copy instance ID" : $"Got ID: {RoomManager.field_Internal_Static_ApiWorldInstance_0.id}");
+            }, MintyResources.clipboard);
             w.AddButton("Join Instance by ID", "Join the room of the instance ID", () => {
                 try {
                     string clip;
@@ -326,73 +315,6 @@ namespace MintMod.UserInterface.QuickMenu {
             
             var ct = WorldMenu.AddCategory("Component Toggle");
             Components.ComponentToggle(ct);
-        }
-
-        #endregion
-
-        #region Utility Menu
-
-        private static void RandomStuff() {
-            RandomMenu = BaseActions.AddCategoryPage("Utilities", "Contains random functions", MintyResources.cog);
-            RandomMenu.AddCategory($"MintMod - v<color=#9fffe3>{MintCore.ModBuildInfo.Version}</color>", false);
-            var r = RandomMenu.AddCategory("General Actions", false);
-            
-            /*DeviceType = r.AddToggle("Spoof as Quest", "Spoof your VRChat login as Quest.",
-                on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofDeviceType.Identifier).Value = on);
-            DeviceType.Toggle(Config.SpoofDeviceType.Value);
-            
-            r.AddSpacer();
-            
-            */
-
-            PingSpoof = r.AddToggle("Spoof Ping", "Spoof your ping for the monkes.",
-                on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofPing.Identifier).Value = on);
-            PingSpoof.Toggle(Config.SpoofPing.Value);
-            
-            PingNegative = r.AddToggle("Negative Ping", "Make your spoofed ping negative.",
-                on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofedPingNegative.Identifier).Value = on);
-            PingNegative.Toggle(Config.SpoofedPingNegative.Value);
-            
-            Ping = r.AddButton($"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>", "This is the number of your spoofed ping.", () => {
-                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Ping", "",
-                    InputField.InputType.Standard, true, "Set Ping", (_, __, ___) => {
-                        int.TryParse(_, out var p);
-                        Config.SavePrefValue(Config.mint, Config.SpoofedPingNumber, p);
-                        Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{p.ToString()}</color>";
-                    }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
-            }, MintyResources.wifi);
-            
-            bypassRiskyFunc = r.AddToggle("Bypass Risky Func", "Forces Mods with Risky Function Checks to work", 
-                on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.bypassRiskyFunc.Identifier).Value = on);
-            bypassRiskyFunc.Toggle(Config.bypassRiskyFunc.Value);
-            
-            FrameSpoof = r.AddToggle("Spoof Frames", "Spoof your framerate for the monkes.",
-                on => MelonPreferences.GetEntry<bool>(Config.mint.Identifier, Config.SpoofFramerate.Identifier).Value = on);
-            FrameSpoof.Toggle(Config.SpoofFramerate.Value);
-            
-            Frame = r.AddButton($"{Config.SpoofedFrameNumber.Value}", "This is the number of your spoofed framerate.", () => {
-                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Set Spoofed Framerate", "",
-                    InputField.InputType.Standard, true, "Set Frames", (_, __, ___) => {
-                        float.TryParse(_, out var f);
-                        Config.SavePrefValue(Config.mint, Config.SpoofedFrameNumber, f);
-                        Frame.Text = f.ToString();
-                    }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
-            }, MintyResources.tv);
-
-            r.AddButton("Refetch Nameplates",
-                "Reloads Mint's custom nameplate addons in case more were added while you're playing", () => {
-                    Players.FetchCustomPlayerObjects(true);
-                    VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
-                }, MintyResources.extlink);
-
-            r.AddButton("Clear HUD Message Queue", "Clears the HUD Popup Message Queue", () => {
-                if (!Config.UseOldHudMessages.Value) {
-                    ReMod.Core.Notification.NotificationSystem.ClearNotification();
-                    ReMod.Core.Notification.NotificationSystem.CloseNotification();
-                }
-                else
-                    VRCUiManager.prop_VRCUiManager_0.field_Private_List_1_String_0.Clear();
-            }, MintyResources.messages);
         }
 
         #endregion
@@ -516,8 +438,8 @@ namespace MintMod.UserInterface.QuickMenu {
             if (buildindex != -1) return;
             PhotonFreeze.ToggleFreeze(false);
             ESP.ClearAllPlayerESP();
-            InfJump?.Toggle(false, true, true);
-            MainQMInfJump?.Toggle(false, true, true);
+            InfJump?.Toggle(Config.KeepInfJumpAlwaysOn.Value, true, true);
+            MainQMInfJump?.Toggle(Config.KeepInfJumpAlwaysOn.Value, true, true);
             _worldToggle?.Toggle(false, true, true);
         }
 
@@ -525,15 +447,15 @@ namespace MintMod.UserInterface.QuickMenu {
 
         internal override void OnPrefSave() {
             //DeviceType?.Toggle(Config.SpoofDeviceType.Value);
-            FrameSpoof?.Toggle(Config.SpoofFramerate.Value);
-            PingSpoof?.Toggle(Config.SpoofPing.Value);
-            PingNegative?.Toggle(Config.SpoofedPingNegative.Value);
-            bypassRiskyFunc?.Toggle(Config.bypassRiskyFunc.Value);
+            UtilityMenu.FrameSpoof?.Toggle(Config.SpoofFramerate.Value);
+            UtilityMenu.PingSpoof?.Toggle(Config.SpoofPing.Value);
+            UtilityMenu.PingNegative?.Toggle(Config.SpoofedPingNegative.Value);
+            UtilityMenu.BypassRiskyFunc?.Toggle(Config.bypassRiskyFunc.Value);
             PlayerListControls.PlEnabled?.Toggle(Config.PLEnabled.Value);
-            if (Frame != null)
-                Frame.Text = $"{Config.SpoofedFrameNumber.Value}";
-            if (Ping != null)
-                Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>";
+            if (UtilityMenu.Frame != null)
+                UtilityMenu.Frame.Text = $"{Config.SpoofedFrameNumber.Value}";
+            if (UtilityMenu.Ping != null)
+                UtilityMenu.Ping.Text = $"<color={(Config.SpoofedPingNegative.Value ? "red>-" : "#00ff00>")}{Config.SpoofedPingNumber.Value}</color>";
             
             if (MainQMFly != null && MainQMNoClip != null) {
                 MainQMFly.Active = Config.KeepFlightBTNsOnMainMenu.Value;
