@@ -78,6 +78,8 @@ namespace MintMod {
 
             return false;
         }
+        
+        private static Exception Finalizer() => null;
     }
 
     [HarmonyPatch(typeof(VRC.UI.Elements.QuickMenu))]
