@@ -5,6 +5,7 @@ using MelonLoader;
 using UnityEngine;
 using VRC.Core;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Il2CppSystem.Text;
 using MintMod.Libraries;
 using MintMod.Resources;
@@ -31,9 +32,17 @@ namespace MintMod.Functions.Authentication {
             try {
                 HttpClient onStartAuth = new();
                 onStartAuth.DefaultRequestHeaders.Add("X-AUTH-TOKEN", APIUser.CurrentUser?.id);
-                var task = onStartAuth.GetStringAsync(MintAuthJsonUrl);
-                task.Wait();
-                onStartAuth.Dispose();
+                Task<string> task;
+                try {
+                    task = onStartAuth.GetStringAsync(MintAuthJsonUrl);
+                    task.Wait();
+                    onStartAuth.Dispose();
+                }
+                catch {
+                    CanLoadMod = false;
+                    Con.Error("Mint Authentication failed => Auth halting.");
+                    yield break;
+                }
 
                 if (!task.IsCompleted || task.Result.Contains("message")) {
                     CanLoadMod = false;
@@ -43,6 +52,7 @@ namespace MintMod.Functions.Authentication {
 
                 MintyData = JsonConvert.DeserializeObject<MintyUser>(task.Result);
                 if (MintyData == null) {
+                    CanLoadMod = false;
                     Con.Error("Mint Authentication failed => Auth halting.");
                     yield break;
                 }
