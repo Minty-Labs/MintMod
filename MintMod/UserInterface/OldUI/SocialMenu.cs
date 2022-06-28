@@ -15,9 +15,8 @@ namespace MintMod.UserInterface.OldUI {
         private GameObject _socialMenuAvatarBorder;
         private static int _totalFriends, _scenesLoaded;
         private static UiUserList _onlineFriendsList;
-        private static UiAvatarList _avatarList;
-        private static Text _onlineFriendsText, _avatarsText, _inRoomText;
-        private static bool _hasLoadedOnUi, _hasOpenedSocialMenu, _hasOpenedAvatarMenu;
+        private static Text _onlineFriendsText, _inRoomText;
+        private static bool _hasLoadedOnUi, _hasOpenedSocialMenu;
 
         private static IEnumerator UpdateMembersText(Text textObj, UiUserList online, int total) {
             yield return new WaitForSeconds(1);
@@ -30,12 +29,6 @@ namespace MintMod.UserInterface.OldUI {
         
             textObj.text = $"In Room ({PlayerManager.field_Private_Static_PlayerManager_0.field_Private_List_1_Player_0.Count})";
         }
-    
-        private static IEnumerator UpdateAvatarsText(Text textObj, UiAvatarList total) {
-            yield return new WaitForSeconds(1);
-        
-            textObj.text = $"Personal Creations ({total.field_Private_Int32_0})";
-        }
 
         public static void OnOpenSocialMenu() {
             MelonCoroutines.Start(UpdateMembersText(_onlineFriendsText, _onlineFriendsList, _totalFriends));
@@ -44,13 +37,6 @@ namespace MintMod.UserInterface.OldUI {
         }
         
         public static void OnCloseSocialMenu() => _hasOpenedSocialMenu = false;
-    
-        public static void OnOpenAvatarMenu() {
-            MelonCoroutines.Start(UpdateAvatarsText(_avatarsText, _avatarList));
-            _hasOpenedAvatarMenu = true;
-        }
-    
-        public static void OnCloseAvatarMenu() => _hasOpenedAvatarMenu = false;
 
         internal override void OnUserInterface() {
             _socialMenuAvatarBorder = GameObject.Find("/UserInterface/MenuContent/Screens/UserInfo/AvatarImage/AvatarBorder").gameObject;
@@ -58,7 +44,7 @@ namespace MintMod.UserInterface.OldUI {
             
             #region Online / Total Friends
             
-            if (ModCompatibility.ListCounter) return;
+            if (MelonHandler.Mods.FindIndex(i => i.Info.Name == "ListCounter") != -1) return;
             
             var onlineFriendsViewport = GameObject.Find("UserInterface/MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content/OnlineFriends");
             var friendsListTextObj = GameObject.Find("UserInterface/MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content/OnlineFriends/Button/TitleText");
@@ -70,12 +56,6 @@ namespace MintMod.UserInterface.OldUI {
             var inRoomListTextObj = GameObject.Find("UserInterface/MenuContent/Screens/Social/Vertical Scroll View/Viewport/Content/InRoom/Button/TitleText");
             _inRoomText = inRoomListTextObj.GetComponent<Text>();
             Con.Debug("Got In Room List");
-        
-            var avatarsList = GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Vertical Scroll View/Viewport/Content/Personal Avatar List");
-            var avatarCreationTextObj = GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Vertical Scroll View/Viewport/Content/Personal Avatar List/Button/TitleText");
-            _avatarList = avatarsList.GetComponent<UiAvatarList>();
-            _avatarsText = avatarCreationTextObj.GetComponent<Text>();
-            Con.Debug("Got Avatar List");
         
             _hasLoadedOnUi = true;
 

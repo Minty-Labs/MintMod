@@ -42,12 +42,6 @@ namespace MintMod.Libraries {
             socialMenuListener.OnDisabled += SocialMenu.OnCloseSocialMenu;
         
             Con.Debug("Finished Creating Social Menu Listener.");
-        
-            var avatarMenuListener = avatarMenu.GetOrAddComponent<EnableDisableListener>();
-            avatarMenuListener.OnEnabled += SocialMenu.OnOpenAvatarMenu;
-            avatarMenuListener.OnDisabled += SocialMenu.OnCloseAvatarMenu;
-        
-            Con.Debug("Finished Creating Avatar Menu Listener.");
         }
     }
     
