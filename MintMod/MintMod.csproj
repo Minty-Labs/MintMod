@@ -269,6 +269,7 @@
     <Compile Include="UserInterface\Nameplates.cs" />
     <Compile Include="UserInterface\OldUI\AvatarMenu.cs" />
     <Compile Include="UserInterface\OldUI\HudIcon.cs" />
+    <Compile Include="UserInterface\OldUI\Keyboard.cs" />
     <Compile Include="UserInterface\OldUI\MenuContentBackdrop.cs" />
     <Compile Include="UserInterface\OldUI\ReColor.cs" />
     <Compile Include="UserInterface\OldUI\SettingsMenu.cs" />
