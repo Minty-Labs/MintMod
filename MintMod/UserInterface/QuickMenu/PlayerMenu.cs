@@ -107,7 +107,10 @@ namespace MintMod.UserInterface.QuickMenu {
                     Con.Error(c);
                 }
             }, MintyResources.checkered);
-            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", async () => await PlayerActions.AvatarSelfDownload(), MintyResources.user);
+            // var a = c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", async ()
+            //     => await PlayerActions.AvatarSelfDownload(), MintyResources.user);
+            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", PlayerActions.AvatarSelfDownload_Take2, MintyResources.user);
+            //a.Interactable = false;
             c.AddButton("Add Jump", "Allows you to jump in the world", PlayerActions.AddJump, MintyResources.jump);
             
             c.AddToggle("Keep Inf Jump On", "Toggles whether you want to keep Infinite Jump on regardless of world changes", b => {

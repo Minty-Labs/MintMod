@@ -15,10 +15,11 @@ using VRC.SDKBase;
 
 namespace MintMod.Functions {
     internal static class PlayerActions {
-        public static async Task AvatarDownload() {
+        public static async Task AvatarDownload(ApiAvatar apiAvatar = null) {
             try {
                 var vrcaPath = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
-                var apiAvatar = SelPAvatar();
+                if (apiAvatar == null)
+                    apiAvatar = SelPAvatar();
                 
                 string grabAssetUrl, grabAssetName, grabAssetImage, grabAssetPlatform;
                 int grabAssetVersion;
@@ -58,6 +59,18 @@ namespace MintMod.Functions {
             }
         }
 
+        public static void AvatarSelfDownload_Take2() {
+            if (RoomManager.field_Internal_Static_ApiWorld_0 != null) {
+                PlayerWrappers.GetEachPlayer(player => {
+                    if (player.prop_APIUser_0.id == APIUser.CurrentUser.id) {
+                        Task.Run(async () => {
+                            await AvatarDownload(SelPAvatar(APIUser.CurrentUser.id));
+                        });
+                    }
+                });
+            }
+        }
+
         public static async Task AvatarSelfDownload() {
             try {
                 var vrcaPath = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
@@ -65,19 +78,22 @@ namespace MintMod.Functions {
                 string grabSelfAssetUrl, grabSelfAssetName, grabSelfAssetImage, grabSelfAssetPlatform;
                 int grabSelfAssetVersion;
 
-                if (PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.platform.Contains("windows")) {
-                    grabSelfAssetUrl = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.assetUrl;
-                    grabSelfAssetName = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.name;
-                    grabSelfAssetVersion = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.version;
-                    grabSelfAssetImage = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.imageUrl;
-                    grabSelfAssetPlatform = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_1.platform;
+                var apiAvatar1 = VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_ApiAvatar_1;
+                var apiAvatar2 = VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_ApiAvatar_0;
+
+                if (apiAvatar1.platform.Contains("windows")) {
+                    grabSelfAssetUrl =      apiAvatar1.assetUrl;
+                    grabSelfAssetName =     apiAvatar1.name;
+                    grabSelfAssetVersion =  apiAvatar1.version;
+                    grabSelfAssetImage =    apiAvatar1.imageUrl;
+                    grabSelfAssetPlatform = apiAvatar1.platform;
                 }
                 else {
-                    grabSelfAssetUrl = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.assetUrl;
-                    grabSelfAssetName = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.name;
-                    grabSelfAssetVersion = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.version;
-                    grabSelfAssetImage = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.imageUrl;
-                    grabSelfAssetPlatform = PlayerWrappers.GetCurrentPlayer().prop_ApiAvatar_0.platform;
+                    grabSelfAssetUrl =      apiAvatar2.assetUrl;
+                    grabSelfAssetName =     apiAvatar2.name;
+                    grabSelfAssetVersion =  apiAvatar2.version;
+                    grabSelfAssetImage =    apiAvatar2.imageUrl;
+                    grabSelfAssetPlatform = apiAvatar2.platform;
                 }
                 
                 if (!Directory.Exists(Path.Combine(vrcaPath)))
@@ -103,14 +119,22 @@ namespace MintMod.Functions {
                 Con.Msg($"Downloaded VRCA for {grabSelfAssetName}.\nLocated in {vrcaPath}");
                 VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Downloaded VRCA for {grabSelfAssetName}");
             }
-            catch {
+            catch (Exception e) {
                 Con.Error("Failed to download VRCA");
+                Con.Error(e);
                 VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Failed to download VRCA", MintyResources.Alert);
             }
         }
 
         public static ApiAvatar SelPAvatar() {
             var a = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id)._vrcplayer;
+            return a.field_Private_VRCAvatarManager_0.field_Private_AvatarKind_0 == VRCAvatarManager.AvatarKind.Custom ?
+                a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0 :
+                a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_1;
+        }
+        
+        public static ApiAvatar SelPAvatar(string id) {
+            var a = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(id)._vrcplayer;
             return a.field_Private_VRCAvatarManager_0.field_Private_AvatarKind_0 == VRCAvatarManager.AvatarKind.Custom ?
                 a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0 :
                 a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_1;
