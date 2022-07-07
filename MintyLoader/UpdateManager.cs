@@ -19,12 +19,12 @@ namespace MintyLoader {
         private static HttpClient _updater, _versionChecker;
         private static string _checkedVer;
         
-        private static LoaderObject LoaderDetails { get; set; }
+        internal static LoaderObject LoaderDetails { get; set; }
 
         internal static void CheckForUpdate() {
             _versionChecker = new HttpClient();
             _versionChecker.DefaultRequestHeaders.Add("User-Agent", BuildInfo.Name);
-            _checkedVer = _versionChecker.GetStringAsync("https://mintlily.lgbt/mod/loader/object.json").GetAwaiter().GetResult();
+            _checkedVer = _versionChecker.GetStringAsync($"{BuildInfo.BaseURL}object.json").GetAwaiter().GetResult();
             _versionChecker.Dispose();
             
             // Con.Debug(_checkedVer);

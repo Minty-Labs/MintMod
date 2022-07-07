@@ -8,8 +8,9 @@ namespace MintyLoader {
         public const string Name = "MintyLoader";
         public const string Author = "Lily";
         public const string Company = "Minty Labs";
-        public const string Version = "2.9.2";
-        public const string DownloadLink = "https://mintlily.lgbt/mod/loader/MintyLoader.dll";
+        public const string Version = "2.9.3";
+        public const string DownloadLink = "https://mod.mintlily.lgbt/MintyLoader.dll";
+        public const string BaseURL = "https://mod.mintlily.lgbt/";
     }
    
     public class MintyLoader : MelonMod {

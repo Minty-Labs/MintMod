@@ -11,13 +11,13 @@ using Pastel;
 namespace MintyLoader {
     internal static class LoadManager {
         internal static MelonMod MintMod;
-        private static string _modURL = "https://mintlily.lgbt/mod/MintMod.dll";
+        private static string _modURL = $"{BuildInfo.BaseURL}MintMod.dll";
         private static Assembly _localMintAssembly;
         private static bool _localLoadingFailed;
 
         internal static void ApplyModURL() {
             if (Environment.CommandLine.Contains("--MintModBeta"))
-                _modURL = "https://mintlily.lgbt/mod/MintModBeta.dll";
+                _modURL = $"{BuildInfo.BaseURL}MintModBeta.dll";
         }
 
         internal static void LoadLocal() {
@@ -84,7 +84,7 @@ namespace MintyLoader {
                         break;
                     case HttpStatusCode.NotFound:
                         MintyLoader.InternalLogger.Msg("[" + "DownloadManager".Pastel("D9856A") + "] No beta module found, loading normal MintMod.");
-                        _modURL = "https://mintlily.lgbt/mod/MintMod.dll";
+                        _modURL = $"{BuildInfo.BaseURL}mod/MintMod.dll";
                         return GetMintAssembly();
                     case HttpStatusCode.InternalServerError:
                         MintyLoader.InternalLogger.Error("The DLL on this server was removed, it is probably getting updated, please try again in 30 seconds.");

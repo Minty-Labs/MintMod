@@ -13,11 +13,11 @@ namespace ReModCorePlugin;
 
 public static class BuildInfo {
     public const string Name = "ReModCorePlugin";
-    public const string Version = "1.0.1";
+    public const string Version = "1.0.2";
     public const string Author = "Lily";
     public const string Company = "Minty Labs";
     public const string Description = "Load and update ReMod.Core easily.";
-    public const string DownloadLink = "https://mintlily.lgbt/mod/loader/ReModCorePlugin.dll";
+    public const string DownloadLink = "https://mod.mintlily.lgbt/ReModCorePlugin.dll";
 }
 
 public class Main : MelonPlugin {
