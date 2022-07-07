@@ -99,7 +99,7 @@ namespace MintMod.Functions.Authentication {
                 Con.Debug($"\t\tSpecial Perms: {MintyData?.SpecialPermission}");
                 if (CanLoadMod && HasSpecialPermissions) {
                     Config.ForceClone = Config.mint.CreateEntry("ForceClone", false, "Enable Force Clone");
-                    Patches.PatchIt(Config.ForceClone.Value);
+                    //Patches.PatchIt(Config.ForceClone.Value);
                 }
                 
             } catch (Exception r) {

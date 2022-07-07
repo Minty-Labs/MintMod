@@ -8,13 +8,20 @@ namespace MintMod.UserInterface.QuickMenu;
 
 public static class MintInfo {
     private static ReCategoryPage _mintInfo;
+    private static ReMenuButton _onlineButton;
 
     internal static void BuildMenu(ReMenuCategory baseActions) {
         _mintInfo = baseActions.AddCategoryPage("Mint Info", "Information about MintMod", MintyResources.MintTabIcon);
         var m = _mintInfo.AddCategory("MintMod Information");
+
+        // _mintInfo.OnOpen += () => {
+        //     // Refresh Online Action
+        // };
         
         m.AddButton($"Version {MintCore.ModBuildInfo.Version}", $"MintMod Version {MintCore.ModBuildInfo.Version}", () => { }, MintyResources.clipboard);
         m.AddButton("Users: 46", "46 Currently using MintMod", () => { }, MintyResources.user);
+        _onlineButton = m.AddButton("Online: ??", "?? Currently online and using MintMod", () => { /* Refresh Online Action */ }, MintyResources.user);
+        _onlineButton.Interactable = false;
         m.AddButton("MOTD", "Current Message of the day", () =>
             QuickMenuEx.Instance.ShowAlertDialog("Message of the Day!", Con.MessageOfTheDay, "Close", () => { }), MintyResources.Megaphone);
         

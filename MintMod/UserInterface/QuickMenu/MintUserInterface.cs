@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using MelonLoader;
 using MintMod.Functions;
@@ -109,18 +110,24 @@ namespace MintMod.UserInterface.QuickMenu {
             BaseActions = MintMenu.AddCategory("Menus", false);
 
             MintQuickActions();
-            PlayerMenu.MenuSetup(BaseActions);
-            WorldMenu.BuildWorld(BaseActions);
-            UtilityMenu.RandomStuff(BaseActions);
-            PlayerListControls.PlayerListOptions(BaseActions);
-            //BuildAvatarMenu();
-            NameplateMenu.BuildNameplateMenu(BaseActions);
-            MintInfo.BuildMenu(BaseActions);
+            var menuBuilding = new List<Action> {
+                () => PlayerMenu.MenuSetup(BaseActions),
+                () => WorldMenu.BuildWorld(BaseActions),
+                () => UtilityMenu.RandomStuff(BaseActions),
+                () => PlayerListControls.PlayerListOptions(BaseActions),
+                () => NameplateMenu.BuildNameplateMenu(BaseActions),
+                () => MintInfo.BuildMenu(BaseActions)
+            };
+
+            menuBuilding!.ForEach(action => {
+                try {
+                    action.Invoke();
+                }
+                catch (Exception e) {
+                    Con.Error(e);
+                }
+            });
             
-            // TEST
-            // JumpSelection();
-            
-            // Build Last
             UserSelectMenu.UserSelMenu();
 
             if (Config.CopyReModMedia.Value)
