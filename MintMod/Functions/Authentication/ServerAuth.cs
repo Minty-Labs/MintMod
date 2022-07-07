@@ -87,16 +87,20 @@ namespace MintMod.Functions.Authentication {
                 MelonCoroutines.Start(MintUserInterface.OnQuickMenu());
                 
                 Con.Debug("MintAuthData:");
-                Con.Debug($"Name: {MintyData?.Name}");
-                Con.Debug($"UserID: {MintyData?.UserId}");
-                Con.Debug($"IsBanned: {MintyData?.IsBanned}");
+                Con.Debug($"\t\tName: {MintyData?.Name}");
+                Con.Debug($"\t\tUserID: {MintyData?.UserId}");
+                Con.Debug($"\t\tIsBanned: {MintyData?.IsBanned}");
                 var sb = new StringBuilder();
                 foreach (var s in MintyData?.AltAccounts) {
                     if (string.IsNullOrWhiteSpace(s)) continue;
                     sb.Append($"{s}, ");
                 }
-                Con.Debug(string.IsNullOrWhiteSpace(sb.ToString()) ? "No Alt Accounts" : $"Alt Accounts: {sb.ToString().TrimEnd(',', ' ')}");
-                Con.Debug($"Special Perms: {MintyData?.SpecialPermission}");
+                Con.Debug(string.IsNullOrWhiteSpace(sb.ToString()) ? "\t\tNo Alt Accounts" : $"\t\tAlt Accounts: {sb.ToString().TrimEnd(',', ' ')}");
+                Con.Debug($"\t\tSpecial Perms: {MintyData?.SpecialPermission}");
+                if (CanLoadMod && HasSpecialPermissions) {
+                    Config.ForceClone = Config.mint.CreateEntry("ForceClone", false, "Enable Force Clone");
+                    Patches.PatchIt(Config.ForceClone.Value);
+                }
                 
             } catch (Exception r) {
                 if (ModCompatibility.GPrivateServer) {

@@ -78,5 +78,8 @@ public class UtilityMenu {
             MintUserInterface.InfJump?.Toggle(true, true, true);
             MintUserInterface.MainQMInfJump?.Toggle(true, true, true);
         }, Config.KeepInfJumpAlwaysOn.Value);
+        var forceClone = r.AddToggle("ForceClone", "Toggle the ability to force clone a public avatar on someone", 
+            Patches.PatchIt, Config.ForceClone.Value);
+        forceClone.Active = ServerAuth.HasSpecialPermissions;
     }
 }

@@ -168,7 +168,7 @@ namespace MintMod {
         }
 
         public static MelonPreferences_Category mint;
-        public static MelonPreferences_Entry<bool> /*SpoofDeviceType,*/ QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc, ModJoinPopup;
+        public static MelonPreferences_Entry<bool> /*SpoofDeviceType,*/ QMStatus, SpoofPing, SpoofedPingNegative, SpoofFramerate, bypassRiskyFunc, ModJoinPopup, ForceClone;
         public static MelonPreferences_Entry<int> SpoofedPingNumber;
         public static MelonPreferences_Entry<float> SpoofedFrameNumber;
         private static void _Random() {

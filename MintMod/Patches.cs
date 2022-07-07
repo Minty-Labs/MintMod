@@ -13,6 +13,8 @@ using UnityEngine;
 using VRC;
 using VRC.SDKBase;
 using HarmonyLib;
+using MintMod.Functions.Authentication;
+using VRC.Core;
 using MethodType = HarmonyLib.MethodType;
 
 namespace MintMod {
@@ -31,6 +33,14 @@ namespace MintMod {
                 Con.Error($"Failed while patching {type.Name}!\n{e}");
             }
         }
+
+        // private void Unpatch(Type type) {
+        //     try {
+        //         MintCore.MintMod.HarmonyInstance.Unpatch((MethodBase)type.GetMethods().GetEnumerator().Current, HarmonyPatchType.All);
+        //     } catch (Exception e) {
+        //         Con.Error($"Failed while unpatching {type.Name}!\n{e}");
+        //     }
+        // }
 
         internal override void OnStart() {
             Con.Debug("Setting up patches", MintCore.IsDebug);
@@ -55,6 +65,41 @@ namespace MintMod {
             Con.Msg($"Device Type: {(Config.SpoofDeviceType.Value ? "Quest" : "PC")}");
             */
         }
+
+        private static HarmonyLib.Harmony instance = new ("MintMod_Patches_Special");
+        private static readonly MethodBase _originalMethod = typeof(APIUser).GetProperty(nameof(APIUser.allowAvatarCopying))?.GetSetMethod();
+        private static readonly HarmonyMethod _hookedMethod = new (typeof(Patches).GetMethod(nameof(Hook),
+            BindingFlags.NonPublic | BindingFlags.Static));
+
+        internal static void PatchIt(bool areYouEnablingIt) {
+            if (areYouEnablingIt) {
+                if (!ServerAuth.HasSpecialPermissions) return;
+                Con.Debug("Applying patches for ForceClone");
+                try {
+                    instance.Patch(_originalMethod, _hookedMethod);
+                    Config.SavePrefValue(Config.mint, Config.ForceClone, true);
+                    _isHooked = true;
+                } catch (Exception e) {
+                    Con.Error($"Failed while patching ForceClone!\n{e}");
+                }
+            }
+            else {
+                if (_isHooked) return;
+                if (!ServerAuth.HasSpecialPermissions) return;
+                Con.Debug("Unpatching ForceClone");
+                try {
+                    instance.Unpatch(_originalMethod, _hookedMethod.method);
+                    Config.SavePrefValue(Config.mint, Config.ForceClone, false);
+                    _isHooked = false;
+                } catch (Exception e) {
+                    Con.Error($"Failed while unpatching ForceClone!\n{e}");
+                }
+            }
+        }
+        
+        private static bool _isHooked;
+        
+        private static void Hook(ref bool __0) => __0 = true;
     }
 
     [HarmonyPatch]
