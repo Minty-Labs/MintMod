@@ -65,10 +65,9 @@ Feature list for my personal VRChat mod. *Note that this mod is private and is n
         </ul>
       </details>
     </li>
+    <li>Unique Nameplate tags visible to other Mint users</li>
   </ul>
-</details>
-
-<h1>Player List Menu Actions</h1>
+<h2>Player List Menu Actions</h2>
 <details>
   <summary>Features</summary>
   <ul>
@@ -79,8 +78,9 @@ Feature list for my personal VRChat mod. *Note that this mod is private and is n
     <li>Orbit pickups</li>
   </ul>
 </details>
+</details>
 
-<h1>Utilites</h1>
+<h1>Utilities</h1>
 <details>
   <summary>Features</summary>
   <ul>
@@ -95,11 +95,11 @@ Feature list for my personal VRChat mod. *Note that this mod is private and is n
   </ul>
 </details>
 
-<h1>Avatar Menu</h1>
+<h1>Avatar</h1>
 <details>
   <summary>Features</summary>
   <ul>
-    <li>Extra Favorited Avatars (Technically unlimited but the more avatars the laggier it'll be)</li>
+    <li>Extra Favorite Avatars</li>
     <li>Download VRCA</li>
   </ul>
 </details>
@@ -118,5 +118,7 @@ Feature list for my personal VRChat mod. *Note that this mod is private and is n
     <li>Color Loading Environment</li>
     <li>Custom Nameplates for Mint Users</li>
     <li>Midnight Rooftop Settings state saving</li>
+    <li>VRChat keyboard Copy and paste buttons</li>
+    <li><a href="https://github.com/MintLily/ListCounter" target="_blank">ListCounter</a></li>
   </ul>
 </details>
