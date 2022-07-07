@@ -46,5 +46,7 @@ namespace MintyLoader {
         }
 
         public static void Warn(string s) => Logger.Warning(s);
+
+        public static string MessageOfTheDay => UpdateManager.LoaderDetails.Motd;
     }
 }

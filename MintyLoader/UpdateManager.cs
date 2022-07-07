@@ -11,6 +11,8 @@ namespace MintyLoader {
         public bool Enabled { get; set; }
         [JsonProperty("Version")]
         public string Version { get; set; }
+        [JsonProperty("MessageOfTheDay")]
+        public string Motd { get; set; }
     }
     
     internal static class UpdateManager {
