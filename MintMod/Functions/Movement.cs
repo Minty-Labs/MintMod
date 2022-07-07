@@ -96,9 +96,11 @@ namespace MintMod.Functions {
 			if (toggle) {
 				FlightEnabled = true;
 				SpeedModified = true;
+				// MintUserInterface.FlightSpeedSlider.Active = true;
 			} else {
 				FlightEnabled = false;
 				SpeedModified = false;
+				// MintUserInterface.FlightSpeedSlider.Active = false;
 
 				if (NoclipEnabled) {
 					NoclipEnabled = false;

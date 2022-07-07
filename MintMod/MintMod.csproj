@@ -274,7 +274,9 @@
     <Compile Include="UserInterface\OldUI\ReColor.cs" />
     <Compile Include="UserInterface\OldUI\SettingsMenu.cs" />
     <Compile Include="UserInterface\OldUI\SocialMenu.cs" />
-    <Compile Include="UserInterface\QuickMenu\PlayerListActionSet.cs" />
+    <Compile Include="UserInterface\QuickMenu\MintInfo.cs" />
+    <Compile Include="UserInterface\QuickMenu\NameplateMenu.cs" />
+    <Compile Include="UserInterface\QuickMenu\PlayerMenu.cs" />
     <Compile Include="UserInterface\QuickMenu\PlayerListControls.cs" />
     <Compile Include="UserInterface\QuickMenu\QmMediaPanel.cs" />
     <Compile Include="UserInterface\QuickMenu\MintUserInterface.cs" />
@@ -282,6 +284,7 @@
     <Compile Include="UserInterface\QuickMenu\QMSlider.cs" />
     <Compile Include="UserInterface\QuickMenu\UserSelectMenu.cs" />
     <Compile Include="UserInterface\QuickMenu\UtilityMenu.cs" />
+    <Compile Include="UserInterface\QuickMenu\WorldMenu.cs" />
     <Compile Include="UserInterface\StayMute.cs" />
     <Compile Include="UserInterface\UIXAdapter.cs" />
     <Compile Include="Utils\AssemblyLoader.cs" />

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using MintMod.Functions;
 using MintMod.Functions.Authentication;
 using MintMod.Libraries;
@@ -9,14 +10,18 @@ using MintMod.Utils;
 using MintyLoader;
 using ReMod.Core.UI.QuickMenu;
 using ReMod.Core.VRChat;
+using UnityEngine;
 using UnityEngine.XR;
 using VRC.Core;
+using VRC.UI;
+using System;
 
 namespace MintMod.UserInterface.QuickMenu {
-    internal static class PlayerListActionSet {
+    internal static class PlayerMenu {
         private static List<ReMenuButton> PlayerButtons = new();
+        internal static ReMenuToggle PlayerEsp;
         private static ReMenuButton _singlePlayerButton;
-        private static ReCategoryPage _playerListMenu;
+        private static ReCategoryPage _player;//, _playerListMenu;
 
         private enum PlayerListActions {
             None,
@@ -45,15 +50,15 @@ namespace MintMod.UserInterface.QuickMenu {
         
         #region Orbit Sliders
         
-        private static void CreateSliders() {
-            _itemSliderCat = _playerListMenu.AddSliderCategory("Items");
+        private static void CreateSliders(ReCategoryPage _page) {
+            _itemSliderCat = _page.AddSliderCategory("Items");
             _itemsReSliderSp = _itemSliderCat.AddSlider("Speed", "Change orbit speed of rotation", f => Items.SpinSpeed = f, 1f, 0f, 2f);
             _itemsReSliderDi = _itemSliderCat.AddSlider("Distance", "Change distance of rotation", f => Items.Distance = f, 1f, 0f, 5f);
             _itemSliderCat.Header.GameObject.SetActive(false);
             _itemsReSliderSp.Active = false;
             _itemsReSliderDi.Active = false;
                 
-            _playerSliderCat = _playerListMenu.AddSliderCategory("Players");
+            _playerSliderCat = _page.AddSliderCategory("Players");
             _playerReSliderSp = _playerSliderCat.AddSlider("Speed", "Change orbit speed of rotation", f => Players.SelfSpinSpeed = f, 1f, 0f, 2f);
             _playerReSliderDi = _playerSliderCat.AddSlider("Distance", "Change distance of rotation", f => Players.SelfDistance = f, 1f, 0.1f, 5f);
             _playerSliderCat.Header.GameObject.SetActive(false);
@@ -64,10 +69,58 @@ namespace MintMod.UserInterface.QuickMenu {
         #endregion
         
         internal static void MenuSetup(ReMenuCategory baseActions) {
-            _playerListMenu = baseActions.AddCategoryPage("Player List", "Actions to do individually on a player.", MintyResources.address_book);
-            var p = _playerListMenu.AddCategory("Actions");
-            CreateSliders();
-            var l = _playerListMenu.AddCategory("Player List (Select an Action)");
+            _player = baseActions.AddCategoryPage("Player", "Actions involving players.", MintyResources.people);
+            var c = _player.AddCategory("General Actions", false);
+            
+            PlayerEsp = c.AddToggle("Player ESP", "Puts a bubble around each player, and is visible through walls.", ESP.PlayerESPState);
+            c.AddButton("Copy Current Avi ID", "Copies your current Avatar ID into your clipboard", () => {
+                try {
+                    Clipboard.SetText(APIUser.CurrentUser.avatarId);
+                }
+                catch (Exception c) {
+                    Con.Error(c);
+                }
+            }, MintyResources.clipboard);
+            c.AddButton("Go into Avi by ID", "Takes an Avatar ID from your clipboard and changes into that avatar.", () => {
+                try {
+                    string clip;
+                    try { clip = GUIUtility.systemCopyBuffer; }
+                    catch { clip = Clipboard.GetText(); }
+
+                    if (clip.Contains("avtr_") && !string.IsNullOrWhiteSpace(clip)) {
+                        try {
+                            PageAvatar a = new() { field_Public_SimpleAvatarPedestal_0 = new() };
+                            new ApiAvatar { id = clip }.Get(new Action<ApiContainer>(x => {
+                                a.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0 = x.Model.Cast<ApiAvatar>();
+                                a.ChangeToSelectedAvatar();
+                            }));
+                        }
+                        catch {
+                            VRCPlayer.field_Internal_Static_VRCPlayer_0.ChangeToAvatar(clip);
+                        }
+                    }
+                    else {
+                        VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "No Avatar ID in clipboard", MintyResources.Alert);
+                    }
+                }
+                catch (Exception c) {
+                    Con.Error(c);
+                }
+            }, MintyResources.checkered);
+            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", async () => await PlayerActions.AvatarSelfDownload(), MintyResources.user);
+            c.AddButton("Add Jump", "Allows you to jump in the world", PlayerActions.AddJump, MintyResources.jump);
+            
+            c.AddToggle("Keep Inf Jump On", "Toggles whether you want to keep Infinite Jump on regardless of world changes", b => {
+                Config.SavePrefValue(Config.Base, Config.KeepInfJumpAlwaysOn, b);
+                if (PlayerActions.InfiniteJump) return;
+                MintUserInterface.InfJump?.Toggle(true, true, true);
+                MintUserInterface.MainQMInfJump?.Toggle(true, true, true);
+            }, Config.KeepInfJumpAlwaysOn.Value);
+            
+            //_playerListMenu = baseActions.AddCategoryPage("Player List", "Actions to do individually on a player.", MintyResources.address_book);
+            var p = _player.AddCategory("Actions");
+            CreateSliders(_player);
+            var l = _player.AddCategory("Player List (Select an Action)");
             p.AddButton("Teleport", "Teleport to player", () => {
                 _selectedActionNum = 1;
                 l.Title = "Player List > Teleport";
@@ -155,7 +208,7 @@ namespace MintMod.UserInterface.QuickMenu {
             clearEsp.Active = unlock;
             clearOrbit.Active = unlock;
 
-            _playerListMenu.OnOpen += () => {
+            _player.OnOpen += () => {
                 foreach (var button in PlayerButtons)
                     button.Destroy();
                 PlayerButtons.Clear();

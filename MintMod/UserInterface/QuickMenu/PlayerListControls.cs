@@ -18,8 +18,8 @@ public static class PlayerListControls {
     private static Color _color;
     
     internal static void PlayerListOptions(ReMenuCategory baseActions) {
-        _playerListConfig = baseActions.AddCategoryPage("Player List Config", "Control the player list's options", MintyResources.userlist);
-        var c = _playerListConfig.AddCategory("Player List Config", false);
+        _playerListConfig = baseActions.AddCategoryPage("QM Player List", "Control the player list's options", MintyResources.userlist);
+        var c = _playerListConfig.AddCategory("Configuration", false);
         var o = Config.PLEnabled.Value;
         
         PlEnabled = c.AddToggle("Enabled", "Toggle the PLayer List", b => {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Windows.Forms;
-using System.Collections.Generic;
 using System.Linq;
 using MelonLoader;
 using MintMod.Functions;
@@ -10,18 +8,9 @@ using ReMod.Core.UI.QuickMenu;
 using ReMod.Core.VRChat;
 using UnityEngine;
 using UnityEngine.UI;
-using VRC;
-using VRC.Core;
 using VRC.UI.Core;
-using VRC.SDKBase;
-using VRC.UI;
-using VRC.UI.Core.Styles;
 using MintMod.Managers;
-using MintMod.Reflections;
-using MintMod.Utils;
 using MintyLoader;
-using MintMod.Functions.Authentication;
-using Object = UnityEngine.Object;
 
 namespace MintMod.UserInterface.QuickMenu {
     internal class MintUserInterface : MintSubMod {
@@ -30,22 +19,15 @@ namespace MintMod.UserInterface.QuickMenu {
 
         private static GameObject TheMintMenuButton;
 
-        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions, /*MintQuickActionsCat,*/ playerListCategory;
+        private static ReMenuCategory MintCategoryOnLaunchPad, BaseActions/*, MintQuickActionsCat,*/;
 
-        public static ReCategoryPage MintMenu, PlayerMenu, WorldMenu, PlayerListMenu, /*AvatarMenu*/ NameplateMenu, WorldActionsPage;
+        public static ReCategoryPage MintMenu/*, AvatarMenu*/;
 
-        private static ReMenuSlider FlightSpeedSlider;
+        internal static ReMenuSlider FlightSpeedSlider;
 
         internal static ReMenuToggle 
             MainQMFly, MainQMNoClip, MainQMFreeze, MainQMInfJump,
             MintQAFly, MintQANoClip, MintQAFreeze;
-
-        //private static Sprite WorldIcon, PlayerIcon;
-
-        internal static ReMenuToggle ItemESP, PlayerESP, DeviceType;
-        
-
-        private static Image _mintIcon;
 
         // internal static bool isStreamerModeOn;
 
@@ -127,14 +109,13 @@ namespace MintMod.UserInterface.QuickMenu {
             BaseActions = MintMenu.AddCategory("Menus", false);
 
             MintQuickActions();
-            Player();
-            World();
+            PlayerMenu.MenuSetup(BaseActions);
+            WorldMenu.BuildWorld(BaseActions);
             UtilityMenu.RandomStuff(BaseActions);
-            PlayerListActionSet.MenuSetup(BaseActions);
             PlayerListControls.PlayerListOptions(BaseActions);
             //BuildAvatarMenu();
-            BuildNameplateMenu();
-            BuildWorldActionsMenu();
+            NameplateMenu.BuildNameplateMenu(BaseActions);
+            MintInfo.BuildMenu(BaseActions);
             
             // TEST
             // JumpSelection();
@@ -185,136 +166,11 @@ namespace MintMod.UserInterface.QuickMenu {
             });
             
             var sc = MintMenu.AddSliderCategory("Flight Speed");
-            FlightSpeedSlider = sc.AddSlider("Min: 0.5", "Control Flight Speed", f => Movement.finalSpeed = f,
+            FlightSpeedSlider = sc.AddSlider("Flight Speed", "Control Flight Speed", f => Movement.finalSpeed = f,
                 1f, 0.5f, 5f);
+            sc.Header.Active = false;
             
             Con.Debug("Done Creating QuickActions", MintCore.IsDebug);
-        }
-
-        #endregion
-
-        #region Player Menu
-        
-        private static void Player() {
-            PlayerMenu = BaseActions.AddCategoryPage("Player", "Actions involving players.", MintyResources.people);
-            var c = PlayerMenu.AddCategory("General Actions", false);
-            PlayerESP = c.AddToggle("Player ESP", "Puts a bubble around each player, and is visible through walls.", ESP.PlayerESPState);
-            c.AddButton("Copy Current Avi ID", "Copies your current Avatar ID into your clipboard", () => {
-                try {
-                    Clipboard.SetText(APIUser.CurrentUser.avatarId);
-                }
-                catch (Exception c) {
-                    Con.Error(c);
-                }
-            }, MintyResources.clipboard);
-            c.AddButton("Go into Avi by ID", "Takes an Avatar ID from your clipboard and changes into that avatar.", () => {
-                try {
-                    string clip;
-                    try { clip = GUIUtility.systemCopyBuffer; }
-                    catch { clip = Clipboard.GetText(); }
-
-                    if (clip.Contains("avtr_") && !string.IsNullOrWhiteSpace(clip)) {
-                        try {
-                            PageAvatar a = new() { field_Public_SimpleAvatarPedestal_0 = new() };
-                            new ApiAvatar { id = clip }.Get(new Action<ApiContainer>(x => {
-                                a.field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0 = x.Model.Cast<ApiAvatar>();
-                                a.ChangeToSelectedAvatar();
-                            }));
-                        }
-                        catch {
-                            VRCPlayer.field_Internal_Static_VRCPlayer_0.ChangeToAvatar(clip);
-                        }
-                    }
-                    else {
-                        VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "No Avatar ID in clipboard", MintyResources.Alert);
-                    }
-                }
-                catch (Exception c) {
-                    Con.Error(c);
-                }
-            }, MintyResources.checkered);
-            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", async () => await PlayerActions.AvatarSelfDownload(), MintyResources.user);
-            //var h = PlayerMenu.AddCategory("Head Lamp");
-        }
-
-        #endregion
-
-        #region World Menu
-
-        private static void World() {
-            WorldMenu = BaseActions.AddCategoryPage("World", "Actions involving the world.", MintyResources.globe);
-            var w = WorldMenu.AddCategory("General Actions");
-            ItemESP = w.AddToggle("Item ESP", "Puts a bubble around all Pickups, can be seen through walls", ESP.SetItemESPToggle);
-            w.AddButton("Add Jump", "Allows you to jump in the world", WorldActions.AddJump, MintyResources.jump);
-            //w.AddButton("Legacy Locomotion", "Adds old SDK2 movement in the current SDK3 world",
-            //    VRCPlayer.field_Internal_Static_VRCPlayer_0.field_Private_VRCPlayerApi_0.UseLegacyLocomotion, MintyResources.history);
-            w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", async () => await WorldActions.WorldDownload(), MintyResources.dl);
-            w.AddSpacer();
-
-            w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
-                var id = RoomManager.field_Internal_Static_ApiWorld_0.id;
-                var instance = RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
-                var faulted = false;
-                try {
-                    GUIUtility.systemCopyBuffer = $"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}";
-                }
-                catch {
-                    Clipboard.SetText($"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}");
-                    faulted = true;
-                }
-
-                Con.Msg(faulted ? "Failed to copy instance ID" : $"Got ID: {RoomManager.field_Internal_Static_ApiWorldInstance_0.id}");
-            }, MintyResources.clipboard);
-            w.AddButton("Join Instance by ID", "Join the room of the instance ID", () => {
-                try {
-                    string clip;
-                    try { clip = GUIUtility.systemCopyBuffer; } catch { clip = Clipboard.GetText(); }
-                    
-                    if (clip.Contains("launch?")) {
-                        Networking.GoToRoom(clip
-                            .Replace("https://vrchat.com/home/launch?worldId=", "")
-                            .Replace("&instanceId=", ":"));
-                    } else if (clip.Contains("wrld_")) {
-                        Networking.GoToRoom(clip);
-                    }
-                    else Con.Warn("Clipboard text is probably not a valid join link.");
-                }
-                catch (Exception j) {
-                    Con.Error(j);
-                }
-            }, MintyResources.globe);
-            w.AddButton("Reset Portal", $"Sets portal timers to {Config.ResetTimerAmount.Value}", () => {
-                if (Object.FindObjectsOfType<PortalInternal>() == null) return;
-                var single = default(Il2CppSystem.Single);
-                single.m_value = Config.ResetTimerAmount.Value < 30 ? 30 : Config.ResetTimerAmount.Value;
-                var @object = single.BoxIl2CppObject();
-                var array = UnityEngine.Resources.FindObjectsOfTypeAll<PortalTrigger>();
-                foreach (var portal in array) {
-                    if (!portal.gameObject.activeInHierarchy) return;
-                    if (portal.gameObject.GetComponentInParent<VRC_PortalMarker>() == null) return;
-                    Networking.RPC(RPC.Destination.AllBufferOne, portal.gameObject, "SetTimerRPC",
-                        new[] { @object });
-                }
-                /*for (int i = 0; i < array.Length; i++) {
-                    if (array[i].gameObject.activeInHierarchy && !(array[i].gameObject.GetComponentInParent<VRC_PortalMarker>() != null)) 
-                        Networking.RPC(RPC.Destination.AllBufferOne, array[i].gameObject, "SetTimerRPC",
-                            new[] { @object });
-                }*/
-            }, MintyResources.history);
-            w.AddButton("Log World", "Logs world info (of various data points) in a text file.", WorldActions.LogWorld, MintyResources.list);
-            
-            w.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
-            w.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
-            w.AddButton("Beautify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
-
-            var e = WorldMenu.AddCategory("Item Manipulation");
-            e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
-            e.AddButton("Respawn Items", "Respawns All pickups to their original location.", Items.Respawn);
-            e.AddButton("Teleport Items Out of World", "Teleports all Pickups an XYZ coord of 1 million", Items.TPToOutWorld);
-            e.Active = ServerAuth.HasSpecialPermissions;
-            
-            var ct = WorldMenu.AddCategory("Component Toggle");
-            Components.ComponentToggle(ct);
         }
 
         #endregion
@@ -361,59 +217,6 @@ namespace MintMod.UserInterface.QuickMenu {
 */
         #endregion
 
-        #region Nameplate Menu
-
-        private static ReMenuToggle _mintNameplates, _mintTags;
-
-        private static void BuildNameplateMenu() {
-            NameplateMenu = BaseActions.AddCategoryPage("Nameplate Settings","Opens Mint Nameplate Settings Menu", MintyResources.user_nameplate);
-
-            var n = NameplateMenu.AddCategory("Nameplate Settings");
-            _mintNameplates = n.AddToggle("Nameplates Changes", "Toggles all Nameplate modifications done by Mint", b => {
-                Config.SavePrefValue(Config.Nameplates, Config.EnableCustomNameplateReColoring, b);
-                VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
-            }, Config.EnableCustomNameplateReColoring.Value);
-            
-            _mintTags = n.AddToggle("Mint Tags", "Toggles all Nameplate modifications done by Mint", b => {
-                Config.SavePrefValue(Config.Nameplates, Config.EnabledMintTags, b);
-                VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
-            }, Config.EnabledMintTags.Value);
-            
-            n.AddButton("Tag Location", "Input a number of vertical tag placement", () => {
-                
-                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.ShowInputPopupWithCancel("Vertical Tag Location",
-                    $"{Config.MintTagVerticleLocation.Value}", InputField.InputType.Standard, false, "Submit",
-                    (_, EllyIs, MegaAdorable) => {
-                        
-                        float.TryParse(_, out var final);
-                        Config.SavePrefValue(Config.Nameplates, Config.MintTagVerticleLocation, final);
-                        VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
-                        
-                    }, VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup, "-60.0");
-                
-            }, MintyResources.user_nameplate_tag_move);
-        }
-
-        #endregion
-
-        #region World Actions
-        
-        private static ReMenuToggle _worldToggle;
-
-        private static void BuildWorldActionsMenu() {
-            WorldActionsPage = BaseActions.AddCategoryPage("World Actions", "Actions involving specific worlds.", MintyResources.globe);
-            var actionCategory = WorldActionsPage.AddCategory("Per-world actions");
-            
-            WorldSettings.BlackCat.BuildMenu(actionCategory);
-            
-            var mintActions = WorldActionsPage.AddCategory("Mint Actions");
-
-            _worldToggle = mintActions.AddToggle("Mint World Toggles", "Toggle Mint specific objects in the world, if there are any.", b => 
-                GameObject.Find("_Mint_SetON")!.SetActive(b));
-        }
-
-        #endregion
-
         // #region DEBUG Jump Selection
         //
         // private static void JumpSelection() {
@@ -440,7 +243,7 @@ namespace MintMod.UserInterface.QuickMenu {
             ESP.ClearAllPlayerESP();
             InfJump?.Toggle(Config.KeepInfJumpAlwaysOn.Value, true, true);
             MainQMInfJump?.Toggle(Config.KeepInfJumpAlwaysOn.Value, true, true);
-            _worldToggle?.Toggle(false, true, true);
+            WorldMenu.OnWorldChange();
         }
 
         internal override void OnUpdate() => PlayerActions.UpdateJump();
@@ -467,9 +270,7 @@ namespace MintMod.UserInterface.QuickMenu {
                 MainQMInfJump.Active = Config.KeepInfJumpOnMainMenu.Value;
 
             QmMediaPanel.OnPrefSaved();
-            
-            _mintNameplates?.Toggle(Config.EnableCustomNameplateReColoring.Value);
-            _mintTags?.Toggle(Config.EnabledMintTags.Value);
+            NameplateMenu.OnPrefSaved();
         }
 
         // internal static void UpdateMintIconForStreamerMode(bool o) {

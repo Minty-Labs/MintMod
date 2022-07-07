@@ -1,5 +1,6 @@
 ﻿using MelonLoader;
 using MintMod.Functions;
+using MintMod.Functions.Authentication;
 using MintMod.Managers;
 using MintMod.Resources;
 using ReMod.Core.UI.QuickMenu;
@@ -8,9 +9,9 @@ using UnityEngine.UI;
 
 namespace MintMod.UserInterface.QuickMenu; 
 
-public class UtilityMenu {
+public static class UtilityMenu {
     private static ReCategoryPage _randomMenu;
-    internal static ReMenuToggle FrameSpoof, PingSpoof, PingNegative, BypassRiskyFunc, KeepInfJump;
+    internal static ReMenuToggle FrameSpoof, PingSpoof, PingNegative, BypassRiskyFunc;
     internal static ReMenuButton Frame, Ping;
     
     internal static void RandomStuff(ReMenuCategory baseActions) {
@@ -58,12 +59,6 @@ public class UtilityMenu {
                 }, () => VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.HideCurrentPopup());
         }, MintyResources.tv);
         
-        r.AddButton("Refetch Nameplates",
-            "Reloads Mint's custom nameplate addons in case more were added while you're playing", () => {
-                Players.FetchCustomPlayerObjects(true);
-                VRCPlayer.field_Internal_Static_VRCPlayer_0.ReloadAllAvatars();
-            }, MintyResources.extlink);
-        
         r.AddButton("Clear HUD Message Queue", "Clears the HUD Popup Message Queue", () => {
             if (!Config.UseOldHudMessages.Value) {
                 ReMod.Core.Notification.NotificationSystem.ClearNotification();
@@ -72,12 +67,6 @@ public class UtilityMenu {
             else VRCUiManager.prop_VRCUiManager_0.field_Private_List_1_String_0.Clear();
         }, MintyResources.messages);
         
-        KeepInfJump = r.AddToggle("Keep Inf Jump On", "Toggles whether you want to keep Infinite Jump on regardless of world changes", b => {
-            Config.SavePrefValue(Config.Base, Config.KeepInfJumpAlwaysOn, b);
-            if (PlayerActions.InfiniteJump) return;
-            MintUserInterface.InfJump?.Toggle(true, true, true);
-            MintUserInterface.MainQMInfJump?.Toggle(true, true, true);
-        }, Config.KeepInfJumpAlwaysOn.Value);
         var forceClone = r.AddToggle("ForceClone", "Toggle the ability to force clone a public avatar on someone", 
             Patches.PatchIt, Config.ForceClone.Value);
         forceClone.Active = ServerAuth.HasSpecialPermissions;

@@ -48,7 +48,7 @@ namespace MintMod.UserInterface {
 
                 CustomSubMenu.AddToggle("ESP", Managers.ESP.isESPEnabled, Managers.ESP.PlayerESPState, MintyResources.ESPIcon);
 
-                CustomSubMenu.AddButton("Jump", WorldActions.AddJump, MintyResources.JumpIcon);
+                CustomSubMenu.AddButton("Jump", PlayerActions.AddJump, MintyResources.JumpIcon);
 
                 CustomSubMenu.AddToggle("Fly", Movement.FlightEnabled, Movement.Fly, MintyResources.FlyIcon);
 

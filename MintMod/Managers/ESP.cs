@@ -28,8 +28,8 @@ namespace MintMod.Managers {
             foreach (var e in array)
                 HighlightBubble(e, false);
             isESPEnabled = false;
-            if (MintUserInterface.PlayerESP != null)
-                MintUserInterface.PlayerESP.Toggle(false);
+            if (PlayerMenu.PlayerEsp != null)
+                PlayerMenu.PlayerEsp.Toggle(false);
         }
 
         public static void SinglePlayerESP(Player ply, bool state) => HighlightBubble(ply.gameObject, state);
@@ -48,8 +48,8 @@ namespace MintMod.Managers {
         }
 
         public static void SetItemESPToggle(bool state) {
-            if (MintUserInterface.ItemESP != null)
-                MintUserInterface.ItemESP.Toggle(state);
+            if (WorldMenu.ItemEsp != null)
+                WorldMenu.ItemEsp.Toggle(state);
             isPickupESPEnabled = state;
         }
 
