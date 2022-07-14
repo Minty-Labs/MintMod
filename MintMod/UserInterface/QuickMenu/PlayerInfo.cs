@@ -35,7 +35,12 @@ namespace MintMod.UserInterface.QuickMenu {
             while (UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>() == null) yield return null;
             
             _quickMenu = UnityEngine.Object.FindObjectOfType<VRC.UI.Elements.QuickMenu>().gameObject.transform;
-            _wing = _quickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
+            try {
+                _wing = Config.Location.Value == 0 ? QuickMenuEx.LeftWing.WingMenuContent() : QuickMenuEx.RightWing.WingMenuContent();
+            }
+            catch {
+                _wing = _quickMenu.Find($"Container/Window/Wing_{(Config.Location.Value == 0 ? "Left" : "Right")}/");
+            }
             
             var c = new Color(Config.BackgroundColor.Value.r, Config.BackgroundColor.Value.g, Config.BackgroundColor.Value.b, Config.BackgroundColor.Value.a);
             

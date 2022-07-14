@@ -156,7 +156,18 @@ namespace MintMod.Functions.Authentication {
                 VrcUiPopups.Notify(BuildInfo.Name, "Player is banned from Mint", MintyResources.Lock);
                 yield break;
             }
-            Con.Msg("Player is authed for Mint");
+            Con.Msg($"Player: {mintyUser.Name} is authed for Mint");
+            Con.Debug("MintAuthData:");
+            Con.Debug($"\t\tName: {mintyUser.Name}");
+            Con.Debug($"\t\tUserID: {mintyUser.UserId}");
+            Con.Debug($"\t\tIsBanned: {mintyUser.IsBanned}");
+            var sb = new StringBuilder();
+            foreach (var s in mintyUser.AltAccounts) {
+                if (string.IsNullOrWhiteSpace(s)) continue;
+                sb.Append($"{s}, ");
+            }
+            Con.Debug(string.IsNullOrWhiteSpace(sb.ToString()) ? "\t\tNo Alt Accounts" : $"\t\tAlt Accounts: {sb.ToString().TrimEnd(',', ' ')}");
+            Con.Debug($"\t\tSpecial Perms: {mintyUser.SpecialPermission}");
             VrcUiPopups.Notify(BuildInfo.Name, "Player is authed for Mint", MintyResources.Key);
         }
     }
