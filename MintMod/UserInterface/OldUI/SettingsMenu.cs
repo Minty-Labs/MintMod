@@ -250,29 +250,23 @@ namespace MintMod.UserInterface.OldUI {
 
 			#region Destroy other objects
 			try {
-				GameObject one = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/MuteUsersToggle");
-				GameObject two = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/BlockAvatarsToggle");
-				GameObject three = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/HeadSetGazeToggle");
-				GameObject four = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/KeyboardToggle");
-				GameObject five = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/GamepadToggle");
-				GameObject six = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/PrimaryInputPanel");
-				GameObject seven = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/LocomotionInputPanel (1)");
-				GameObject eight = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/HoloportToggle");
-				GameObject nine = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/ComfortTurnToggle");
-				GameObject ten = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/PersonalSpaceToggle");
-				GameObject eleven = GameObject.Find($"UserInterface/MenuContent/Screens/Settings/{name}/AllowUntrustedURL");
-				one.Destroy();
-				two.Destroy();
-				three.Destroy();
-				four.Destroy();
-				five.Destroy();
-				six.Destroy();
-				seven.Destroy();
-				eight.Destroy();
-				nine.Destroy();
-				ten.Destroy();
-				eleven.Destroy();
-			} catch { }
+				var list = new List<string> {
+					$"UserInterface/MenuContent/Screens/Settings/{name}/MuteUsersToggle",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/BlockAvatarsToggle",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/HeadSetGazeToggle",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/KeyboardToggle",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/GamepadToggle",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/PrimaryInputPanel",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/LocomotionInputPanel (1)",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/HoloportToggle",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/ComfortTurnToggle",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/PersonalSpaceToggle",
+					$"UserInterface/MenuContent/Screens/Settings/{name}/AllowUntrustedURL"
+				};
+				foreach (var g in list) {
+					GameObject.Find(g)!.Destroy();
+				}
+			} catch { /**/ }
 			#endregion
 			#endregion
 

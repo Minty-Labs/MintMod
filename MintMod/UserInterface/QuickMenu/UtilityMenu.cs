@@ -1,8 +1,10 @@
-﻿using MelonLoader;
+﻿using System;
+using MelonLoader;
 using MintMod.Functions;
 using MintMod.Functions.Authentication;
 using MintMod.Managers;
 using MintMod.Resources;
+using MintyLoader;
 using ReMod.Core.UI.QuickMenu;
 using ReMod.Core.VRChat;
 using UnityEngine.UI;
@@ -66,9 +68,14 @@ public static class UtilityMenu {
             }
             else VRCUiManager.prop_VRCUiManager_0.field_Private_List_1_String_0.Clear();
         }, MintyResources.messages);
-        
-        var forceClone = r.AddToggle("ForceClone", "Toggle the ability to force clone a public avatar on someone", 
-            Patches.PatchIt, Config.ForceClone.Value);
-        forceClone.Active = ServerAuth.HasSpecialPermissions;
+
+        try {
+            var forceClone = r.AddToggle("ForceClone", "Toggle the ability to force clone a public avatar on someone", 
+                Patches.PatchIt, Config.ForceClone.Value);
+            forceClone.Active = ServerAuth.HasSpecialPermissions;
+        }
+        catch (Exception e) {
+            if (MintCore.IsDebug) Con.Error(e);
+        }
     }
 }

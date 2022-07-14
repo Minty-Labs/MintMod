@@ -27,18 +27,23 @@ public static class WorldMenu {
         ItemEsp = w.AddToggle("Item ESP", "Puts a bubble around all Pickups, can be seen through walls", ESP.SetItemESPToggle);
         w.AddButton("Download VRCW", "Downloads the world file (.vrcw)", async () => await WorldActions.WorldDownload(), MintyResources.dl);
         w.AddButton("Copy Instance ID URL", "Copies current instance ID and places it in your system's clipboard.", () => {
-            var id = RoomManager.field_Internal_Static_ApiWorld_0.id;
-            var instance = RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
-            var faulted = false;
             try {
-                GUIUtility.systemCopyBuffer = $"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}";
-            }
-            catch {
-                Clipboard.SetText($"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}");
-                faulted = true;
-            }
+                var id = RoomManager.field_Internal_Static_ApiWorld_0.id;
+                var instance = RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId;
+                var faulted = false;
+                try {
+                    GUIUtility.systemCopyBuffer = $"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}";
+                }
+                catch {
+                    Clipboard.SetText($"https://vrchat.com/home/launch?worldId={id}&instanceId={instance}");
+                    faulted = true;
+                }
 
-            Con.Msg(faulted ? "Failed to copy instance ID" : $"Got ID: {RoomManager.field_Internal_Static_ApiWorldInstance_0.id}");
+                Con.Msg(faulted ? "Failed to copy instance ID" : $"Got ID: {RoomManager.field_Internal_Static_ApiWorldInstance_0.id}");
+            }
+            catch (Exception e) {
+                Con.Error(e);
+            }
         }, MintyResources.clipboard);
         w.AddButton("Join Instance by ID", "Join the room of the instance ID", () => {
             try {
@@ -79,14 +84,16 @@ public static class WorldMenu {
             }*/
         }, MintyResources.history);
         
-        
         var canSee = ServerAuth.HasSpecialPermissions;
         var e = _worldMenu.AddCategory("Item Manipulation");
         var _1 = e.AddButton("Teleport Items to Self", "Teleports all Pickups to your feet.", Items.TPToSelf);
         var _2 = e.AddButton("Respawn Items", "Respawns All pickups to their original location.", Items.Respawn);
         var _3 = e.AddButton("Teleport Items Out of World", "Teleports all Pickups an XYZ coord of 1 million", Items.TPToOutWorld);
         var _4 = e.AddSpacer();
-        _1.Active = canSee; _2.Active = canSee; _3.Active = canSee; _4.Active = canSee;
+        _1.Active = canSee;
+        _2.Active = canSee;
+        _3.Active = canSee;
+        _4.Active = canSee;
         e.AddButton("Normal World Mirrors", "Reverts mirrors to their original state", WorldActions.RevertMirrors);
         e.AddButton("Optimize Mirrors", "Make Mirrors only show players", WorldActions.OptimizeMirrors);
         e.AddButton("Beautify Mirrors", "Make Mirrors show everything", WorldActions.BeautifyMirrors);
