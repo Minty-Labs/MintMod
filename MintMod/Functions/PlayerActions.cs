@@ -18,17 +18,13 @@ namespace MintMod.Functions {
         public static async Task AvatarDownload(ApiAvatar apiAvatar = null) {
             try {
                 var vrcaPath = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
-                if (apiAvatar == null)
-                    apiAvatar = SelPAvatar();
-                
-                string grabAssetUrl, grabAssetName, grabAssetImage, grabAssetPlatform;
-                int grabAssetVersion;
+                apiAvatar ??= SelPAvatar();
 
-                grabAssetUrl = apiAvatar.assetUrl;
-                grabAssetName = apiAvatar.name;
-                grabAssetVersion = apiAvatar.version;
-                grabAssetImage = apiAvatar.imageUrl;
-                grabAssetPlatform = apiAvatar.platform;
+                var grabAssetUrl = apiAvatar.assetUrl;
+                var grabAssetName = apiAvatar.name;
+                var grabAssetVersion = apiAvatar.version;
+                var grabAssetImage = apiAvatar.imageUrl;
+                var grabAssetPlatform = apiAvatar.platform;
                 
                 if (!Directory.Exists(Path.Combine(vrcaPath)))
                     Directory.CreateDirectory(Path.Combine(vrcaPath));
@@ -59,7 +55,7 @@ namespace MintMod.Functions {
             }
         }
 
-        public static void AvatarSelfDownload_Take2() {
+        public static void AvatarSelfDownload() {
             if (RoomManager.field_Internal_Static_ApiWorld_0 != null) {
                 PlayerWrappers.GetEachPlayer(player => {
                     if (player.prop_APIUser_0.id == APIUser.CurrentUser.id) {
@@ -70,81 +66,16 @@ namespace MintMod.Functions {
                 });
             }
         }
-
-        public static async Task AvatarSelfDownload() {
-            try {
-                var vrcaPath = $"{MintCore.MintDirectory}\\Assets\\VRCA\\";
-
-                string grabSelfAssetUrl, grabSelfAssetName, grabSelfAssetImage, grabSelfAssetPlatform;
-                int grabSelfAssetVersion;
-
-                var apiAvatar1 = VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_ApiAvatar_1;
-                var apiAvatar2 = VRCPlayer.field_Internal_Static_VRCPlayer_0.prop_ApiAvatar_0;
-
-                if (apiAvatar1.platform.Contains("windows")) {
-                    grabSelfAssetUrl =      apiAvatar1.assetUrl;
-                    grabSelfAssetName =     apiAvatar1.name;
-                    grabSelfAssetVersion =  apiAvatar1.version;
-                    grabSelfAssetImage =    apiAvatar1.imageUrl;
-                    grabSelfAssetPlatform = apiAvatar1.platform;
-                }
-                else {
-                    grabSelfAssetUrl =      apiAvatar2.assetUrl;
-                    grabSelfAssetName =     apiAvatar2.name;
-                    grabSelfAssetVersion =  apiAvatar2.version;
-                    grabSelfAssetImage =    apiAvatar2.imageUrl;
-                    grabSelfAssetPlatform = apiAvatar2.platform;
-                }
-                
-                if (!Directory.Exists(Path.Combine(vrcaPath)))
-                    Directory.CreateDirectory(Path.Combine(vrcaPath));
-                
-                var vrcaFile = $"{vrcaPath}{grabSelfAssetPlatform}_{grabSelfAssetName}_V{grabSelfAssetVersion}.vrca";
-                var imageFile = $"{vrcaPath}{grabSelfAssetPlatform}_{grabSelfAssetName}_V{grabSelfAssetVersion}.png";
-                var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0");
-                
-                if (!File.Exists(vrcaFile)) {
-                    var a = httpClient.GetByteArrayAsync(grabSelfAssetUrl).GetAwaiter().GetResult();
-                    try { await CustomAsync.File.WriteAllBytesAsync(vrcaFile, a); }
-                    catch { File.WriteAllBytes(vrcaFile, a); }
-                }
-
-                if (!File.Exists(imageFile)) {
-                    var i = httpClient.GetByteArrayAsync(grabSelfAssetImage).GetAwaiter().GetResult();
-                    try { await CustomAsync.File.WriteAllBytesAsync(imageFile, i); }
-                    catch { File.WriteAllBytes(imageFile, i); }
-                }
-                
-                Con.Msg($"Downloaded VRCA for {grabSelfAssetName}.\nLocated in {vrcaPath}");
-                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Downloaded VRCA for {grabSelfAssetName}");
-            }
-            catch (Exception e) {
-                Con.Error("Failed to download VRCA");
-                Con.Error(e);
-                VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, "Failed to download VRCA", MintyResources.Alert);
-            }
-        }
-
-        public static ApiAvatar SelPAvatar() {
-            var a = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id)._vrcplayer;
-            return a.field_Private_VRCAvatarManager_0.field_Private_AvatarKind_0 == VRCAvatarManager.AvatarKind.Custom ?
-                a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0 :
-                a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_1;
-        }
         
-        public static ApiAvatar SelPAvatar(string id) {
-            var a = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(id)._vrcplayer;
+        internal static ApiAvatar SelPAvatar(string id = null) {
+            var playerId = string.IsNullOrWhiteSpace(id) ? PlayerWrappers.GetSelectedAPIUser().id : id;
+            var a = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(playerId)._vrcplayer;
             return a.field_Private_VRCAvatarManager_0.field_Private_AvatarKind_0 == VRCAvatarManager.AvatarKind.Custom ?
                 a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_0 :
                 a.field_Private_VRCAvatarManager_0.field_Private_ApiAvatar_1;
         }
 
-        private static StreamWriter CreateOrAppendToFile(string final) {
-            if (File.Exists(final))
-                return File.AppendText(final);
-            return File.CreateText(final);
-        }
+        private static StreamWriter CreateOrAppendToFile(string final) => File.Exists(final) ? File.AppendText(final) : File.CreateText(final);
 
         public static void LogAsset() {
             var subdir = $"{MintCore.MintDirectory}\\Logs\\";
@@ -154,21 +85,17 @@ namespace MintMod.Functions {
             var u = PlayerManager.field_Private_Static_PlayerManager_0.GetPlayer(PlayerWrappers.GetSelectedAPIUser().id).field_Private_APIUser_0;
             var a = SelPAvatar();
 
-            string playerName, playerStatus, userID, avatarID, assetURL, avatarName, authorID, releaseStatus, playerBio;
-            Il2CppSystem.Collections.Generic.List<string> tags;
-            int version;
-
-            playerName = u.displayName;
-            playerStatus = u.status;
-            userID = u.id;
-            avatarID = a.id;
-            assetURL = a.assetUrl;
-            avatarName = a.name;
-            authorID = a.authorId;
-            version = a.version;
-            releaseStatus = a.releaseStatus;
-            playerBio = u.bio;
-            tags = u.tags;
+            var playerName = u.displayName;
+            var playerStatus = u.status;
+            var userID = u.id;
+            var avatarID = a.id;
+            var assetURL = a.assetUrl;
+            var avatarName = a.name;
+            var authorID = a.authorId;
+            var version = a.version;
+            var releaseStatus = a.releaseStatus;
+            var playerBio = u.bio;
+            Il2CppSystem.Collections.Generic.List<string> tags = u.tags;
 
             var logTimeDate = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
             var sb = new StringBuilder();
@@ -232,7 +159,7 @@ namespace MintMod.Functions {
             }
         }
 
-        private static void GravityChange(bool state) => Networking.LocalPlayer.SetGravityStrength(state ? 0 : 1);
+        // private static void GravityChange(bool state) => Networking.LocalPlayer.SetGravityStrength(state ? 0 : 1);
 
         public static void UpdateJump() {
             if (InfiniteJump) JumpyJump();

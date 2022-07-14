@@ -109,7 +109,7 @@ namespace MintMod.UserInterface.QuickMenu {
             }, MintyResources.checkered);
             // var a = c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", async ()
             //     => await PlayerActions.AvatarSelfDownload(), MintyResources.user);
-            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", PlayerActions.AvatarSelfDownload_Take2, MintyResources.user);
+            c.AddButton("Download Own VRCA", "Downloads the VRCA of the avatar that you're in", PlayerActions.AvatarSelfDownload, MintyResources.user);
             //a.Interactable = false;
             c.AddButton("Add Jump", "Allows you to jump in the world", PlayerActions.AddJump, MintyResources.jump);
             
