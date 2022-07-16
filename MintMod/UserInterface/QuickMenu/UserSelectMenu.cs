@@ -74,16 +74,16 @@ public class UserSelectMenu {
                     var apiAvatar = player.GetApiAvatar();
                     
                     if (!apiAvatar.releaseStatus.ToLower().Contains("private")) {
-                        if (!ReFavs._instance.HasAvatarFavorited(apiAvatar.id)) {
+                        if (!ReFavs.Instance.HasAvatarFavorited(apiAvatar.id)) {
                             AviFavLogic.GetConfigList(0).Avatars.Insert(0, new AvatarObject(apiAvatar));
-                            ReFavs._instance._favoriteButton.Text = "<color=#fd4544>Unfavorite</color>";
+                            ReFavs.Instance.FavoriteButton.Text = "<color=#fd4544>Unfavorite</color>";
                             if (Config.AviLogFavOrUnfavInConsole.Value)
                                 Con.Msg($"Favorited {apiAvatar.name} into Minty Favorites");
                             VrcUiPopups.Notify(MintCore.ModBuildInfo.Name, $"Favorited the avatar: {apiAvatar.name}", MintyResources.star);
                         }
                         else {
                             AviFavLogic.GetConfigList(0).Avatars.Remove(AviFavLogic.GetConfigList(0).Avatars.Single(avi => avi.id == apiAvatar.id));
-                            ReFavs._instance._favoriteButton.Text = "<color=#9fffe3>Favorite</color>";
+                            ReFavs.Instance.FavoriteButton.Text = "<color=#9fffe3>Favorite</color>";
                             if (Config.AviLogFavOrUnfavInConsole.Value)
                                 Con.Msg($"Removed {apiAvatar.name} from Minty Favorites");
                         }

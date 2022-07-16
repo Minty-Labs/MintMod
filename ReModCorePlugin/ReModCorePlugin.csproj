@@ -5,17 +5,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+		<VRChatPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat</VRChatPath>
     </PropertyGroup>
 
     <ItemGroup>
       <Reference Include="MelonLoader">
-        <HintPath>C:\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\MelonLoader.dll</HintPath>
+        <HintPath>$(VRChatPath)\MelonLoader\MelonLoader.dll</HintPath>
       </Reference>
       <Reference Include="System.Net">
-        <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\System.Net.dll</HintPath>
+        <HintPath>$(VRChatPath)\MelonLoader\Managed\System.Net.dll</HintPath>
       </Reference>
       <Reference Include="System.Net.Http">
-        <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\System.Net.Http.dll</HintPath>
+        <HintPath>$(VRChatPath)\MelonLoader\Managed\System.Net.Http.dll</HintPath>
       </Reference>
     </ItemGroup>
 

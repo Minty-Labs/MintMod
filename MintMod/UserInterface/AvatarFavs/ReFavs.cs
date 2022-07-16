@@ -17,36 +17,37 @@ namespace MintMod.UserInterface.AvatarFavs {
         public override string Name => "Avatar Favorites";
         public override string Description => "Complete Rewrite of avatar favoriting";
         
-        internal static ReFavs _instance;
+        internal static ReFavs Instance;
         private bool _initStart, _ranOnce;
 
-        internal ReAvatarList _favoriteAvatarList;
-        internal ReUiButton _favoriteButton;
+        internal ReAvatarList FavoriteAvatarList;
+        internal ReUiButton FavoriteButton;
         private Button.ButtonClickedEvent _changeButtonEvent;
 
         internal override void OnStart() => AviFavLogic.OnAppStart();
 
         internal override void OnUserInterface() {
-            _instance = this;
+            Instance = this;
             if (AviFavLogic.AviFavsErrored) return;
             if (ModCompatibility.GPrivateServer) {
                 Con.Msg("Extended Avatar Favoriting has been disabled.");
                 return;
             }
+            
             Con.Debug("Starting Minty Favorites (Avatar Favorites)", MintCore.IsDebug);
             
-            _favoriteAvatarList = new ReAvatarList($"<color=#{(Config.ColorGameMenu.Value ? Config.MenuColorHEX.Value : Colors.defaultMenuColor())}>Minty Favorites</color>",
+            FavoriteAvatarList = new ReAvatarList($"<color=#{(Config.ColorGameMenu.Value ? Config.MenuColorHEX.Value : Colors.defaultMenuColor())}>Minty Favorites</color>",
                     this, false);
             //_favoriteAvatarList.AvatarPedestal.field_Internal_Action_3_String_GameObject_AvatarPerformanceStats_0 =
-            _favoriteAvatarList.AvatarPedestal.field_Internal_Action_4_String_GameObject_AvatarPerformanceStats_ObjectPublicBoBoBoBoBoBoBoBoBoBoUnique_0 =
+            FavoriteAvatarList.AvatarPedestal.field_Internal_Action_4_String_GameObject_AvatarPerformanceStats_ObjectPublicBoBoBoBoBoBoBoBoBoBoUnique_0 =
                 new Action<string, GameObject, AvatarPerformanceStats, ObjectPublicBoBoBoBoBoBoBoBoBoBoUnique>
                     (OnAvatarInstantiated);
-            _favoriteAvatarList.OnEnable += () => _favoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
+            FavoriteAvatarList.OnEnable += () => FavoriteAvatarList.GameObject.SetActive(Config.AviFavsEnabled.Value);
             
             var parent = GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Favorite Button").transform.parent;
-            _favoriteButton = new ReUiButton("Favorite", new Vector2(200f, 375f), new Vector2(0.5f, 1f),
-                () => FavoriteAvatar(_favoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0), parent);
-            _favoriteButton.GameObject.SetActive(Config.AviFavsEnabled.Value);
+            FavoriteButton = new ReUiButton("Favorite", new Vector2(200f, 375f), new Vector2(0.5f, 1f),
+                () => FavoriteAvatar(FavoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0), parent);
+            FavoriteButton.GameObject.SetActive(Config.AviFavsEnabled.Value);
             
             var changeButton = GameObject.Find("UserInterface/MenuContent/Screens/Avatar/Change Button");
             if (changeButton != null) {
@@ -56,7 +57,7 @@ namespace MintMod.UserInterface.AvatarFavs {
                 button.onClick = new Button.ButtonClickedEvent();
                 button.onClick.AddListener(new Action(ChangeAvatarChecked));
             }
-            _favoriteAvatarList.RefreshAvatars();
+            FavoriteAvatarList.RefreshAvatars();
             _ranOnce = true;
             _initStart = true;
         }
@@ -66,38 +67,40 @@ namespace MintMod.UserInterface.AvatarFavs {
             if (!Config.AviFavsEnabled.Value) return;
             try {
                 if (!_ranOnce)
-                    _instance.OnUserInterface();
+                    Instance.OnUserInterface();
             } catch (Exception a) { Con.Error($"After game start, Avatar Favorites Start Error\n{a}"); }
-            _favoriteAvatarList.RefreshAvatars();
+            FavoriteAvatarList.RefreshAvatars();
         }
 
         internal void FavoriteAvatar(ApiAvatar apiAvatar) {
-            if (_favoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0.id == apiAvatar.id) {
+            if (FavoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0.id == apiAvatar.id) {
                 if (!HasAvatarFavorited(apiAvatar.id)) {
                     AviFavLogic.GetConfigList(0).Avatars.Insert(0, new AvatarObject(apiAvatar));
-                    _favoriteButton.Text = "<color=#fd4544>Unfavorite</color>";
+                    FavoriteButton.Text = "<color=#fd4544>Unfavorite</color>";
                     if (Config.AviLogFavOrUnfavInConsole.Value)
                         Con.Msg($"Favorited {apiAvatar.name} into Minty Favorites");
                 }
                 else {
                     AviFavLogic.GetConfigList(0).Avatars.Remove(AviFavLogic.GetConfigList(0).Avatars.Single(avi => avi.id == apiAvatar.id));
-                    _favoriteButton.Text = "<color=#9fffe3>Favorite</color>";
+                    FavoriteButton.Text = "<color=#9fffe3>Favorite</color>";
                     if (Config.AviLogFavOrUnfavInConsole.Value)
                         Con.Msg($"Removed {apiAvatar.name} from Minty Favorites");
                 }
             }
-            _favoriteAvatarList.RefreshAvatars();
+            FavoriteAvatarList.RefreshAvatars();
             AviFavSetup.Favorites.Instance.SaveConfig();
         }
         
         private void ChangeAvatarChecked() {
             if (!_ranOnce) return;
+            if (AviFavLogic.GetConfigList(0).Avatars == null) return;
+            
             if (!Config.AviFavsEnabled.Value) {
                 _changeButtonEvent.Invoke();
                 return;
             }
 
-            var currentAvatar = _favoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0;
+            var currentAvatar = FavoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0;
             if (!HasAvatarFavorited(currentAvatar.id)) { // this isn't in our list. we don't care about it
                 _changeButtonEvent.Invoke();
                 return;
@@ -125,11 +128,11 @@ namespace MintMod.UserInterface.AvatarFavs {
 
         private void OnAvatarInstantiated(string url, GameObject avatar, AvatarPerformanceStats avatarPerformanceStats,
             ObjectPublicBoBoBoBoBoBoBoBoBoBoUnique unknown) =>
-            _favoriteButton.Text = HasAvatarFavorited(_favoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0.id) ? 
+            FavoriteButton.Text = HasAvatarFavorited(FavoriteAvatarList.AvatarPedestal.field_Internal_ApiAvatar_0.id) ? 
                 "<color=#fd4544>Unfavorite</color>" : "<color=#9fffe3>Favorite</color>";
 
         public AvatarList GetAvatars(ReAvatarList avatarList) {
-            if (avatarList != _favoriteAvatarList) return null;
+            if (avatarList != FavoriteAvatarList) return null;
             var list = new AvatarList();
             foreach (var avi in AviFavLogic.GetConfigList(0).Avatars.Select(x => x.ToApiAvatar()).ToList()) 
                 list.Add(avi);

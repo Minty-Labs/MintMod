@@ -3,6 +3,7 @@ using MintMod.Reflections.VRCAPI;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using VRC.Core;
 
 namespace MintMod.UserInterface.AvatarFavs {
     internal class AviFavSetup {
@@ -18,7 +19,7 @@ namespace MintMod.UserInterface.AvatarFavs {
             public List<AvatarObject> Avatars { get; set; }
         }
 
-        public List<FavoriteList> FavoriteLists = new List<FavoriteList>();
+        public List<FavoriteList> FavoriteLists = new();
 
         public class Favorites {
             public static Favorites Instance;
@@ -33,11 +34,11 @@ namespace MintMod.UserInterface.AvatarFavs {
             public void SaveConfig() => File.WriteAllText(final, JsonConvert.SerializeObject(this, Formatting.Indented));
 
             public static void CreateAviFavJsonFile() {
-                if (!File.Exists(final))
-                    File.WriteAllText(final, JsonConvert.SerializeObject(new Favorites() {
-                        AvatarFavorites = new AviFavSetup() {
-                            FavoriteLists = new List<FavoriteList>() {
-                                new FavoriteList() {
+                if (!File.Exists(final)) {
+                    File.WriteAllText(final, JsonConvert.SerializeObject(new Favorites {
+                        AvatarFavorites = new AviFavSetup {
+                            FavoriteLists = new List<FavoriteList> {
+                                new FavoriteList {
                                     Avatars = new List<AvatarObject>(),
                                     ID = 0,
                                     name = "Minty Favorites",
@@ -47,6 +48,7 @@ namespace MintMod.UserInterface.AvatarFavs {
                             }
                         }
                     }, Formatting.Indented));
+                }
                 Instance = JsonConvert.DeserializeObject<Favorites>(File.ReadAllText(final));
             }
         }
