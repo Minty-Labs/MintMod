@@ -27,3 +27,7 @@ ReModCorePlugin/bin/
 ReModCorePlugin/obj/
 DiscordAddon/bin/
 DiscordAddon/obj/
+MintyRPC/obj/
+MintyRPC/bin/
+MintyRPC/discord_game_sdk.dll
+MintyRPC/discord_game_sdk.so
