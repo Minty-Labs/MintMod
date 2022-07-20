@@ -38,6 +38,8 @@ public class Program {
         Utils.WriteDiscordGameSdkDll();
         ConfigSetup.Setup();
 
+        ConfigSetup.staticDetails = ConfigSetup.GetPresenceInfo().Details;
+        ConfigSetup.staticState = ConfigSetup.GetPresenceInfo().State;
         var cmds = new ConsoleCommands();
         
         cmds.Add("start", "Starts the Discord Rich Presence", StartDiscord);
@@ -51,6 +53,8 @@ public class Program {
         cmds.Add("setpartysizemax", "Sets the party size max of the Discord Rich Presence", SetPartySizeMax);
         cmds.Add("kill", "Kills the Discord Rich Presence", KillDiscord);
         cmds.Wait();
+        if (ConfigSetup.GetGeneralnfo().AutoStart)
+            SetAutoStart("start", new Arguments());
     }
 
     #region Commands
@@ -69,13 +73,18 @@ public class Program {
         }
         Console.Title = $"{BuildInfo.Name} v{BuildInfo.Version} - Starting, please wait...";
         _startTime = DateTime.Now;
-        var currentTime = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-        var finalTime = ConfigSetup.Config.StartTimestamp == 123456789 ? currentTime : ConfigSetup.Config.StartTimestamp;
-        _time = finalTime;
-        _randomLobbyId = GenerateRandomString(69);
+        _time = GetTimeAsLong(ConfigSetup.GetPresenceInfo().StartTimestamp);
+
+        var tempLobbyId = "";
+        if (string.IsNullOrWhiteSpace(ConfigSetup.GetPresenceInfo().LobbyId)) {
+            tempLobbyId = GenerateRandomString(69);
+            ConfigSetup.GetPresenceInfo().LobbyId = tempLobbyId;
+            ConfigSetup.Save();
+        }
+        _randomLobbyId = tempLobbyId;
         
-        //var clientID = Environment.GetEnvironmentVariable("702767245385924659") ?? "702767245385924659";
-        _discord = new Discord.Discord(702767245385924659/*Int64.Parse(clientID)*/, (UInt64)Discord.CreateFlags.Default);
+        var clientId = Environment.GetEnvironmentVariable("702767245385924659") ?? "702767245385924659";
+        _discord = new Discord.Discord(Int64.Parse(clientId), (UInt64)Discord.CreateFlags.Default);
         
         _discord.SetLogHook(Discord.LogLevel.Debug, (level, message) => {
             Log.Status($"Rich Presence has started with code: {message}");
@@ -89,7 +98,16 @@ public class Program {
         _isRunning = true;
         return CommandResult.Okay;
     }
-    
+
+    private static long GetTimeAsLong(long time) 
+        => time switch {
+            123456789 => (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
+            100000001 => (long)DateTime.UtcNow.Subtract(new TimeSpan(_startTime.Hour, _startTime.Minute, _startTime.Second))
+                .Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
+            1 => (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
+            _ => ConfigSetup.GetPresenceInfo().StartTimestamp
+        };
+
     private static CommandResult SetDetails(string command, Arguments args) {
         var sb = new StringBuilder();
         var words = args.GetAll();
@@ -97,7 +115,7 @@ public class Program {
             sb.Append($"{word} ").Replace("setdetails ", "");
         }
         
-        ConfigSetup.Config.Details = sb.ToString();
+        ConfigSetup.GetPresenceInfo().Details = sb.ToString();
         ConfigSetup.Save();
         
         UpdateActivity();
@@ -113,7 +131,7 @@ public class Program {
             sb.Append($"{word} ").Replace("setstate ", "");
         }
         
-        ConfigSetup.Config.State = sb.ToString();
+        ConfigSetup.GetPresenceInfo().State = sb.ToString();
         ConfigSetup.Save();
         
         UpdateActivity();
@@ -129,7 +147,7 @@ public class Program {
             sb.Append($"{word} ").Replace("setlargeimage ", "").Replace(" ", "");
         }
         
-        ConfigSetup.Config.LargeImageKey = sb.ToString();
+        ConfigSetup.GetPresenceInfo().LargeImageKey = sb.ToString().Trim();
         ConfigSetup.Save();
         
         UpdateActivity();
@@ -142,10 +160,10 @@ public class Program {
         var sb = new StringBuilder();
         var words = args.GetAll();
         foreach (var word in words) {
-            sb.Append($"{word} ").Replace("setlargeimagetext ", "");
+            sb.Append($"{word} ").Replace("setlargetooltip ", "");
         }
         
-        ConfigSetup.Config.LargeImageTooltipText = sb.ToString();
+        ConfigSetup.GetPresenceInfo().LargeImageTooltipText = sb.ToString().Trim();
         ConfigSetup.Save();
         
         UpdateActivity();
@@ -161,7 +179,7 @@ public class Program {
             sb.Append($"{word} ").Replace("setsmallimage ", "").Replace(" ", "");
         }
         
-        ConfigSetup.Config.SmallImageKey = sb.ToString();
+        ConfigSetup.GetPresenceInfo().SmallImageKey = sb.ToString().Trim();
         ConfigSetup.Save();
         
         UpdateActivity();
@@ -174,10 +192,10 @@ public class Program {
         var sb = new StringBuilder();
         var words = args.GetAll();
         foreach (var word in words) {
-            sb.Append($"{word} ").Replace("setsmallimagetext ", "");
+            sb.Append($"{word} ").Replace("setsmalltooltip ", "");
         }
         
-        ConfigSetup.Config.SmallImageTooltipText = sb.ToString();
+        ConfigSetup.GetPresenceInfo().SmallImageTooltipText = sb.ToString().Trim();
         ConfigSetup.Save();
         
         UpdateActivity();
@@ -193,7 +211,7 @@ public class Program {
             sb.Append($"{word} ").Replace("setpartysizecurrent ", "").Replace(" ", "");
         }
         
-        ConfigSetup.Config.CurrentSize = int.Parse(sb.ToString());
+        ConfigSetup.GetPresenceInfo().CurrentSize = int.Parse(sb.ToString());
         ConfigSetup.Save();
         
         UpdateActivity();
@@ -209,7 +227,7 @@ public class Program {
             sb.Append($"{word} ").Replace("setpartysizemax ", "").Replace(" ", "");
         }
         
-        ConfigSetup.Config.MaxSize = int.Parse(sb.ToString());
+        ConfigSetup.GetPresenceInfo().MaxSize = int.Parse(sb.ToString());
         ConfigSetup.Save();
         
         UpdateActivity();
@@ -233,7 +251,7 @@ public class Program {
             while (true) {
                 if (!_isRunning) return;
                 _discord?.RunCallbacks();
-                Console.Title = $"{BuildInfo.Name} v{BuildInfo.Version} - Details: {ConfigSetup.Config.Details} - State: {ConfigSetup.Config.State} - Memory Usage: " + Math.Round(GC.GetTotalMemory(false) / 1024f) + " KB";
+                Console.Title = $"{BuildInfo.Name} v{BuildInfo.Version} - Details: {ConfigSetup.staticDetails} - State: {ConfigSetup.staticState} - Memory Usage: " + Math.Round(GC.GetTotalMemory(false) / 1024f) + " KB";
                 Thread.Sleep(1000 / 60);
                 // UpdateActivity();
             }
@@ -251,46 +269,46 @@ public class Program {
         _activityManager = _discord?.GetActivityManager();
         var lobbyManager = _discord?.GetLobbyManager();
 
-        var noParty = ConfigSetup.Config.CurrentSize == 0 && ConfigSetup.Config.MaxSize == 0;
+        var noParty = ConfigSetup.GetPresenceInfo().CurrentSize == 0 && ConfigSetup.GetPresenceInfo().MaxSize == 0;
 
         if (noParty) {
             _activity = new Activity {
-                Name = ConfigSetup.Config.Name ?? "Minty RPC",
+                Name = "MintyRPC",
                 Timestamps = new ActivityTimestamps {
                     Start = _time,
                     End = 0
                 },
-                Details = ConfigSetup.Config.Details ?? "", /* Top Text */
-                State = ConfigSetup.Config.State ?? "",     /* Bottom Text */
+                Details = ConfigSetup.GetPresenceInfo().Details ?? "", /* Top Text */
+                State = ConfigSetup.GetPresenceInfo().State ?? "",     /* Bottom Text */
                 Assets = new ActivityAssets {
-                    LargeImage = ConfigSetup.Config.LargeImageKey ?? "",
-                    LargeText = ConfigSetup.Config.LargeImageTooltipText ?? "",
-                    SmallImage = ConfigSetup.Config.SmallImageKey ?? "",
-                    SmallText = ConfigSetup.Config.SmallImageTooltipText ?? ""
+                    LargeImage = ConfigSetup.GetPresenceInfo().LargeImageKey ?? "",
+                    LargeText = ConfigSetup.GetPresenceInfo().LargeImageTooltipText ?? "",
+                    SmallImage = ConfigSetup.GetPresenceInfo().SmallImageKey ?? "",
+                    SmallText = ConfigSetup.GetPresenceInfo().SmallImageTooltipText ?? ""
                 },
                 Instance = true
             };
         }
         else {
             _activity = new Activity {
-                Name = ConfigSetup.Config.Name ?? "Minty RPC",
+                Name = "MintyRPC",
                 Timestamps = new ActivityTimestamps {
                     Start = _time,
                     End = 0
                 },
-                Details = ConfigSetup.Config.Details ?? "", /* Top Text */
-                State = ConfigSetup.Config.State ?? "",     /* Bottom Text */
+                Details = ConfigSetup.GetPresenceInfo().Details ?? "", /* Top Text */
+                State = ConfigSetup.GetPresenceInfo().State ?? "",     /* Bottom Text */
                 Assets = new ActivityAssets {
-                    LargeImage = ConfigSetup.Config.LargeImageKey ?? "",
-                    LargeText = ConfigSetup.Config.LargeImageTooltipText ?? "",
-                    SmallImage = ConfigSetup.Config.SmallImageKey?? "",
-                    SmallText = ConfigSetup.Config.SmallImageTooltipText ?? ""
+                    LargeImage = ConfigSetup.GetPresenceInfo().LargeImageKey ?? "",
+                    LargeText = ConfigSetup.GetPresenceInfo().LargeImageTooltipText ?? "",
+                    SmallImage = ConfigSetup.GetPresenceInfo().SmallImageKey?? "",
+                    SmallText = ConfigSetup.GetPresenceInfo().SmallImageTooltipText ?? ""
                 },
                 Party = {
                     Id = _randomLobbyId!,
                     Size = {
-                        CurrentSize = ConfigSetup.Config.CurrentSize,
-                        MaxSize = ConfigSetup.Config.MaxSize
+                        CurrentSize = ConfigSetup.GetPresenceInfo().CurrentSize,
+                        MaxSize = ConfigSetup.GetPresenceInfo().MaxSize
                     }
                 },
                 Instance = true
@@ -304,7 +322,7 @@ public class Program {
             
             var t = DateTime.Now - _startTime;
             Log.Status($"Discord Rich Presence started in {t.Milliseconds}ms.");
-            Console.Title = $"{BuildInfo.Name} v{BuildInfo.Version} - Details: {ConfigSetup.Config.Details} - State: {ConfigSetup.Config.State}";
+            Console.Title = $"{BuildInfo.Name} v{BuildInfo.Version} - Details: {ConfigSetup.staticDetails} - State: {ConfigSetup.staticState}";
             _firstStart = true;
         });
     }
