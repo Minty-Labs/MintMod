@@ -9,7 +9,7 @@ namespace MintyRPC;
 
 public static class BuildInfo {
     public const string Name = "MintyRPC";
-    public const string Version = "0.0.2";
+    public const string Version = "0.0.8";
     public const string Author = "Lily";
     public const string Company = "Minty Labs";
     public static bool IsWindows => Environment.OSVersion.ToString().ToLower().Contains("windows");
@@ -40,24 +40,56 @@ public class Program {
 
         ConfigSetup.staticDetails = ConfigSetup.GetPresenceInfo().Details;
         ConfigSetup.staticState = ConfigSetup.GetPresenceInfo().State;
+
         var cmds = new ConsoleCommands();
         
         cmds.Add("start", "Starts the Discord Rich Presence", StartDiscord);
+        cmds.Add("setautostart", "Allow the Discord Rich Presence to automatically start when you open this application", SetAutoStart);
+        cmds.Add("setautorestart", "Automatically restart the Discord Rich Presence if it crashes or closes randomly", SetAutoRestart);
         cmds.Add("setstate", "Sets the state of the Discord Rich Presence", SetState);
         cmds.Add("setdetails", "Sets the details of the Discord Rich Presence", SetDetails);
         cmds.Add("setlargeimage", "Sets the large image of the Discord Rich Presence", SetLargeImage);
-        cmds.Add("setlargeimagetext", "Sets the large image text of the Discord Rich Presence", SetLargeImageText);
+        cmds.Add("setlargetooltip", "Sets the large image text of the Discord Rich Presence", SetLargeImageText);
         cmds.Add("setsmallimage", "Sets the small image of the Discord Rich Presence", SetSmallImage);
-        cmds.Add("setsmallimagetext", "Sets the small image text of the Discord Rich Presence", SetSmallImageText);
+        cmds.Add("setsmalltooltip", "Sets the small image text of the Discord Rich Presence", SetSmallImageText);
         cmds.Add("setpartysizecurrent", "Sets the party size current of the Discord Rich Presence", SetPartySizeCurrent);
         cmds.Add("setpartysizemax", "Sets the party size max of the Discord Rich Presence", SetPartySizeMax);
         cmds.Add("kill", "Kills the Discord Rich Presence", KillDiscord);
         cmds.Wait();
+
         if (ConfigSetup.GetGeneralnfo().AutoStart)
             SetAutoStart("start", new Arguments());
     }
 
     #region Commands
+
+    private static CommandResult SetAutoStart(string command, Arguments args) {
+        var argsString = args.ToString();
+        var _true = argsString!.ToLower().Contains("true") || argsString.ToLower().Contains("t");
+        if (!_true) {
+            ConfigSetup.GetGeneralnfo().AutoStart = false;
+            ConfigSetup.Save();
+            return CommandResult.Okay;
+        }
+        ConfigSetup.GetGeneralnfo().AutoStart = true;
+        ConfigSetup.Save();
+        Log.Info($"Set AutoStart to {ConfigSetup.GetGeneralnfo().AutoStart}");
+        return CommandResult.Okay;
+    }
+
+    private static CommandResult SetAutoRestart(string command, Arguments args) {
+        var argsString = args.ToString();
+        var _true = argsString!.ToLower().Contains("true") || argsString.ToLower().Contains("t");
+        if (!_true) {
+            ConfigSetup.GetGeneralnfo().AutoRestart = false;
+            ConfigSetup.Save();
+            return CommandResult.Okay;
+        }
+        ConfigSetup.GetGeneralnfo().AutoRestart = true;
+        ConfigSetup.Save();
+        Log.Info($"Set AutoRestart to {ConfigSetup.GetGeneralnfo().AutoRestart}");
+        return CommandResult.Okay;
+    }
 
     private static CommandResult StartDiscord(string command, Arguments args) {
         if (_isRunning) return CommandResult.Break;
@@ -257,11 +289,22 @@ public class Program {
             }
         }
         catch (Exception e) {
-            Log.Error($"Unable to callBack: \n{e}");
+            var ee = e.ToString().Replace("C:\\Users\\dephi\\Documents\\_MintMod", "...");
+            Log.Error($"Unable to callBack: \n{ee}");
+            if (e.ToString().Contains("NotRunning")) {
+                KillDiscord("kill", new Arguments());
+            }
         }
         finally {
             _discord?.Dispose();
+            if (ConfigSetup.GetGeneralnfo().AutoRestart)
+                StartDiscord("start", new Arguments());
         }
+    }
+
+    private async Task RestartPresense() {
+        await Task.Delay(10 * 1000);
+        StartDiscord("start", new Arguments());
     }
 
     private static void UpdateActivity() {
