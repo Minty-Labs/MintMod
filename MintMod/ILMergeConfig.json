@@ -1,7 +1,0 @@
-{}/*{
-    "General": {
-        "InputAssemblies": [
-		  "$(TargetDir)Modules\\ReMod.Core.dll"
-        ]
-    }
-}/*
