@@ -21,10 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReModCorePlugin", "ReModCor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordAddon", "DiscordAddon\DiscordAddon.csproj", "{EA9A9C09-5E77-4C34-BAA9-B7041BD9E4B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MintyRPC", "MintyRPC\MintyRPC.csproj", "{43D3D97C-7DE7-4372-A507-6008DB1C53EE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yggdrasil", "Yggdrasil\Yggdrasil\Yggdrasil.csproj", "{4BB8DF19-7D20-429A-AF5F-5D1232538E08}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,14 +63,6 @@ Global
 		{EA9A9C09-5E77-4C34-BAA9-B7041BD9E4B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA9A9C09-5E77-4C34-BAA9-B7041BD9E4B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA9A9C09-5E77-4C34-BAA9-B7041BD9E4B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43D3D97C-7DE7-4372-A507-6008DB1C53EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43D3D97C-7DE7-4372-A507-6008DB1C53EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43D3D97C-7DE7-4372-A507-6008DB1C53EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43D3D97C-7DE7-4372-A507-6008DB1C53EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4BB8DF19-7D20-429A-AF5F-5D1232538E08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BB8DF19-7D20-429A-AF5F-5D1232538E08}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BB8DF19-7D20-429A-AF5F-5D1232538E08}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4BB8DF19-7D20-429A-AF5F-5D1232538E08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

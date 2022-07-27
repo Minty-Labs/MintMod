@@ -2,7 +2,3 @@
 	path = ReMod.Core
 	url = https://github.com/RequiDev/ReMod.Core.git
 	branch = master
-[submodule "Yggdrasil"]
-	path = Yggdrasil
-	url = https://github.com/TotallyWholesomeVRC/Yggdrasil.git
-	branch = master
