@@ -1,5 +1,41 @@
+<table align="center">
+  <thead>
+    <tr>
+      <td align="left">
+        ⚠️ <b>WARNING</b>
+      </td>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        This will not work on VRChat by any means. As of April 1, 2022, VRChat's Easy Anti Cheat implementaion has haulted the use of "safe" mods. <i>Yes, this implies that modding is still technically possible, although the person(s) behind it are nowhere near the original team that built MelonLoader, and they sell it for some reason; which breaks HerpDerpinstine's (LavaGang's)  in which he put on the MelonLoader project.</i>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table align="center">
+  <thead>
+    <tr>
+      <td align="left">
+        ℹ️ <b>NOTE</b>
+      </td>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        Yes, I created mods for the VRChat Modding Community, yes this particular mod breaks their ToS, yes they knew I developed this mod, yes some of them used it, yes I <b>only</b> gave this mod to friends and trusted colleagues.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 # MintMod Features
-Feature list for my personal VRChat mod. *Note that this mod is private and is not given out all willy-nilly*
+Feature list for my personal VRChat mod. *Note that this mod ~~is~~ was private and ~~is~~ was not given out all willy-nilly*
 <img src="https://MintLily.lgbt/assets/img/MintMod_Pride.png" align="right" width="200" height="200" />
 
 <h1>World</h1>
