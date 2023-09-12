@@ -10,7 +10,7 @@
   <tbody>
     <tr>
       <td>
-        This will not work on VRChat by any means. As of April 1, 2022, VRChat's Easy Anti Cheat implementaion has haulted the use of "safe" mods. <i>Yes, this implies that modding is still technically possible, although the person(s) behind it are nowhere near the original team that built MelonLoader, and they sell it for some reason; which breaks HerpDerpinstine's (LavaGang's)  in which he put on the MelonLoader project.</i>
+        This will not work on VRChat by any means. As of April 1, 2022, VRChat's Easy Anti Cheat implementaion has haulted the use of "safe" mods. <i>Yes, this implies that modding is still technically possible, although the person(s) behind it are nowhere near the original team that built MelonLoader, and they sell it for some reason; which breaks HerpDerpinstine's (LavaGang's) license in which he put on the MelonLoader project.</i>
       </td>
     </tr>
   </tbody>
